@@ -1,0 +1,14 @@
+*.class
+
+# Package Files #
+*.war
+*.ear
+
+# IDEA Files #
+*.iml
+/.idea
+
+# Gradle #
+/.gradle
+/build
+/libs
