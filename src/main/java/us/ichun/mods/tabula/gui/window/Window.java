@@ -23,13 +23,16 @@ public class Window
     public int clickY;
     public int clickId;
 
+    public int oriWidth;
+    public int oriHeight;
+
     public int minWidth;
     public int minHeight;
 
     public String titleLocale;
     public boolean hasTitle; //if it has title, it can minimize.
 
-    public boolean docked;
+    public int docked;
     public boolean minimized;
 
     public ArrayList<Element> elements = new ArrayList<Element>();
@@ -55,13 +58,15 @@ public class Window
             elements.add(new ElementMinimize(this, width - 13, 2, 10, 10, 0));
             elements.add(new ElementTitle(this, 0, 0, parent.width - 13, 13, 0));
         }
+
+        docked = -1;
     }
 
     public void draw(int mouseX, int mouseY) //4 pixel border?
     {
         if(!minimized)
         {
-            if(docked)
+            if(docked >= 0)
             {
                 RendererHelper.drawColourOnScreen(34, 34, 34, 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
             }
@@ -165,7 +170,7 @@ public class Window
 
     public int clickedOnBorder(int mouseX, int mouseY, int id)//only left clicks
     {
-        if(!docked && id == 0 && !minimized)
+        if(id == 0 && !minimized)
         {
             return ((mouseY <= BORDER_SIZE + 1) ? 1 : 0) + (((mouseX <= BORDER_SIZE + 1) ? 1 : 0) << 1) + (((mouseY >= getHeight() - BORDER_SIZE - 1) ? 1 : 0) << 2) + (((mouseX >= getWidth() - BORDER_SIZE - 1) ? 1 : 0) << 3) + 1;
         }

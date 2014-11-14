@@ -25,6 +25,10 @@ public class ElementWindow extends Element
         String titleToRender = StatCollector.translateToLocal(mountedWindow.titleLocale);
         while(titleToRender.length() > 1 && parent.workspace.getFontRenderer().getStringWidth(titleToRender) > width )
         {
+            if(titleToRender.startsWith("... "))
+            {
+                break;
+            }
             if(titleToRender.endsWith("... "))
             {
                 titleToRender = titleToRender.substring(0, titleToRender.length() - 5) + "... ";

@@ -21,6 +21,7 @@ public class GuiWorkspace extends GuiScreen
         add(0, new ArrayList<Window>()); // dock left
         add(1, new ArrayList<Window>()); // dock right
         add(2, new ArrayList<Window>()); // dock btm
+        add(3, new ArrayList<Window>()); // dummy
     }};
 
     public boolean mouseLeftDown;
@@ -28,7 +29,7 @@ public class GuiWorkspace extends GuiScreen
     public boolean mouseMiddleDown;
 
     public Window windowDragged;
-    public int dragType; //1 = title drag, 2 = border drag, 3 = corner drag;
+    public int dragType; //1 = title drag, 2 >= border drag.
 
     public Element elementHovered;
     public int hoverTime;
@@ -38,14 +39,18 @@ public class GuiWorkspace extends GuiScreen
     public int elementDragX;
     public int elementDragY;
 
+    public int oldWidth;
+    public int oldHeight;
+
     public static final int VARIABLE_LEVEL = 3;
+    public static final int TOP_DOCK_HEIGHT = 30;
 
     public GuiWorkspace(int scale)
     {
         oriScale = scale;
-        levels.get(2).add(new Window(this, 20, 20, 200, 200, 40, 50, "menu.convertingLevel", true));
-        levels.get(2).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
-        levels.get(2).add(new Window(this, 400, 200, 200, 300, 100, 200, "menu.loadingLevel", true));
+        levels.get(3).add(new Window(this, 20, 20, 200, 200, 40, 50, "menu.convertingLevel", true));
+        levels.get(3).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
+        levels.get(3).add(new Window(this, 400, 200, 200, 300, 100, 200, "menu.loadingLevel", true));
     }
 
     @Override
@@ -67,10 +72,17 @@ public class GuiWorkspace extends GuiScreen
     @Override
     public void drawScreen(int mouseX, int mouseY, float f)
     {
+        if(oldWidth != width || oldHeight != height)
+        {
+            oldWidth = width;
+            oldHeight = height;
+            screenResize();
+        }
+
         //TODO update elements here
         //TODO docks...? Remember to draw upper dock first.
         //TODO a reset all windows button for people who "accidentally" drag the window out of the screen
-        //TODO window tabs!
+        //TODO multiple views to view different things in the workspace.
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthFunc(GL11.GL_LEQUAL);
@@ -147,8 +159,23 @@ public class GuiWorkspace extends GuiScreen
                 bringWindowToFront(windowDragged);
                 if(dragType == 1) // moving the window
                 {
-                    windowDragged.posX -= windowDragged.clickX - (mouseX - windowDragged.posX);
-                    windowDragged.posY -= windowDragged.clickY - (mouseY - windowDragged.posY);
+                    int moveX = windowDragged.clickX - (mouseX - windowDragged.posX);
+                    int moveY = windowDragged.clickY - (mouseY - windowDragged.posY);
+                    if(windowDragged.docked < 0)
+                    {
+                        windowDragged.posX -= moveX;
+                        windowDragged.posY -= moveY;
+                    }
+                    else
+                    {
+                        if(Math.sqrt(moveX * moveX + moveY + moveY) > 5)
+                        {
+                            removeFromDock(windowDragged);
+                            windowDragged.posX -= moveX;
+                            windowDragged.posY -= moveY;
+                        }
+                    }
+
 
                     boolean tabbed = false;
                     for(int i = levels.size() - 1; i >= 0 ; i--)
@@ -181,6 +208,22 @@ public class GuiWorkspace extends GuiScreen
                             }
                         }
                     }
+
+                    if(mouseX <= 10)
+                    {
+                        addToDock(0, windowDragged);
+                        windowDragged = null;
+                    }
+                    if(mouseX >= width - 10)
+                    {
+                        addToDock(1, windowDragged);
+                        windowDragged = null;
+                    }
+                    if(mouseY >= height - 10)
+                    {
+                        addToDock(2, windowDragged);
+                        windowDragged = null;
+                    }
                 }
                 if(dragType >= 2)
                 {
@@ -200,7 +243,7 @@ public class GuiWorkspace extends GuiScreen
                             windowDragged.clickY = mouseY - windowDragged.posY;
                         }
                     }
-                    if((bordersClicked >> 1 & 1) == 1) // top
+                    if((bordersClicked >> 1 & 1) == 1 && windowDragged.docked != 0) // left
                     {
                         windowDragged.width += windowDragged.clickX - (mouseX - windowDragged.posX);
                         windowDragged.posX -= windowDragged.clickX - (mouseX - windowDragged.posX);
@@ -227,7 +270,7 @@ public class GuiWorkspace extends GuiScreen
                             windowDragged.clickY = mouseY - windowDragged.posY;
                         }
                     }
-                    if((bordersClicked >> 3 & 1) == 1) // bottom
+                    if((bordersClicked >> 3 & 1) == 1 && windowDragged.docked != 1) // right
                     {
                         windowDragged.width -= windowDragged.clickX - (mouseX - windowDragged.posX);
                         if(windowDragged.getWidth() < windowDragged.minWidth)
@@ -252,7 +295,6 @@ public class GuiWorkspace extends GuiScreen
             }
             else if(!(mouseX - elementDragged.parent.posX >= 0 && mouseX - elementDragged.parent.posX <= elementDragged.parent.getWidth() && mouseY - elementDragged.parent.posY >= 0 && mouseY - elementDragged.parent.posY <= 12))
             {
-                //TODO handle if tabs only left 1, handle if was currently selected tab, -1 selected tab or +1...?
                 if(elementDragged instanceof ElementWindow)
                 {
                     ElementWindow element = (ElementWindow)elementDragged;
@@ -266,6 +308,7 @@ public class GuiWorkspace extends GuiScreen
                         if(tab.tabs.size() == 1)
                         {
                             addWindowOnTop(tab.tabs.get(0).mountedWindow);
+                            tab.tabs.get(0).mountedWindow.resized();
                         }
                     }
                     else
@@ -284,6 +327,7 @@ public class GuiWorkspace extends GuiScreen
 
                     addWindowOnTop(element.mountedWindow);
                     windowDragged = element.mountedWindow;
+                    windowDragged.docked = -1;
                     dragType = 1;
 
                     windowDragged.width = element.oriWidth;
@@ -292,10 +336,194 @@ public class GuiWorkspace extends GuiScreen
                     windowDragged.posX = mouseX - (windowDragged.getWidth() / 2);
                     windowDragged.posY = mouseY - 6;
 
+                    windowDragged.resized();
+
                     elementDragged = null;
                 }
             }
         }
+
+        updateDock(mouseX, mouseY, f);
+    }
+
+    public void updateDock(int mouseX, int mouseY, float f)
+    {
+    }
+
+    public void addToDock(int dock, Window window)
+    {
+        //TODO docking to the lower mid
+        if(window != null && window.docked < 0)
+        {
+            ArrayList<Window> docked = levels.get(dock);
+            window.docked = dock;
+            window.oriHeight = window.height;
+            window.oriWidth = window.width;
+            if(docked.isEmpty())
+            {
+                docked.add(window);
+                if(dock == 0)
+                {
+                    window.posX = -1;
+                }
+                else if(dock == 1)
+                {
+                    window.posX = width - window.getWidth() + 1;
+                }
+                if(dock <= 1)
+                {
+                    window.posY = TOP_DOCK_HEIGHT;
+                    window.height = height - TOP_DOCK_HEIGHT + 1;
+                }
+
+                window.resized();
+            }
+            else
+            {
+                if(dock <= 1)
+                {
+                    boolean added = false;
+                    for(int i = 0; i < docked.size(); i++)
+                    {
+                        Window window1 = docked.get(i);
+                        if(window1.posY > window.posY)
+                        {
+                            docked.add(i, window);
+                            added = true;
+                            break;
+                        }
+                    }
+                    if(!added)
+                    {
+                        Window prevWin = docked.get(docked.size() - 1);
+                        prevWin.height = window.posY - prevWin.posY + 2;
+                        window.height = height - window.posY + 2;
+                        docked.add(window);
+                    }
+                    else
+                    {
+                        Window first = docked.get(0);
+                        if(first == window)
+                        {
+                            window.posY = TOP_DOCK_HEIGHT;
+                            for(int i = 1; i < docked.size(); i++)
+                            {
+                                docked.get(i).posY += window.height - 2;
+                                if(i == docked.size() - 1)
+                                {
+                                    docked.get(i).height = docked.get(i).oriHeight;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            for(int i = 1; i < docked.size(); i++)
+                            {
+                                boolean foundAddition = false;
+                                Window prevWin = docked.get(i - 1);
+                                Window window1 = docked.get(i);
+                                if(window1 == window)
+                                {
+                                    foundAddition = true;
+                                    prevWin.height = window1.posY - prevWin.height + 2;
+                                }
+                                if(foundAddition)
+                                {
+                                    docked.get(i).posY += window.height;
+                                }
+                            }
+                        }
+                    }
+
+                    if(dock == 0)
+                    {
+                        window.posX = -1;
+                    }
+                    else if(dock == 1)
+                    {
+                        window.posX = width - window.getWidth() + 1;
+                    }
+
+                    screenResize();
+                }
+            }
+            for(int i = VARIABLE_LEVEL; i < levels.size(); i++)
+            {
+                levels.get(i).remove(window);
+            }
+        }
+    }
+
+    public void removeFromDock(Window window)
+    {
+        for(int i = 2; i >= 0; i--)
+        {
+            boolean foundWindow = false;
+            ArrayList<Window> docked = levels.get(i);
+            for(int j = docked.size() - 1; j >= 0; j--)
+            {
+                Window window1 = docked.get(j);
+                if(window1 == window)
+                {
+                    docked.remove(j);
+                    window.docked = -1;
+                    window.height = window.oriHeight;
+                    window.width = window.oriWidth;
+
+                    addWindowOnTop(window);
+
+                    window.resized();
+
+                    foundWindow = true;
+
+                    break;
+                }
+            }
+            if(foundWindow)
+            {
+                for(int j = 0; j < docked.size(); j++)
+                {
+                    if(i <= 1)
+                    {
+                        if(j == 0)
+                        {
+                            docked.get(j).posY = TOP_DOCK_HEIGHT;
+                        }
+                        else
+                        {
+                            docked.get(j).posY = docked.get(j - 1).posY + docked.get(j - 1).height - 2;
+                        }
+                    }
+                }
+            }
+        }
+        screenResize();
+    }
+
+    public void screenResize()
+    {
+        for(int i = 0; i <= 2; i++)
+        {
+            ArrayList<Window> docked = levels.get(i);
+            for(int j = 0; j < docked.size(); j++)
+            {
+                Window window = docked.get(j);
+
+                if(i == 0)
+                {
+                    window.posX = -1;
+                }
+                else if(i == 1)
+                {
+                    window.posX = width - window.getWidth() + 1;
+                }
+                if(j == docked.size() - 1)
+                {
+                    window.height = height - window.posY + 1;
+                }
+            }
+        }
+        //TODO resize windows when docked.
     }
 
     public void removeWindow(Window window)
@@ -333,7 +561,7 @@ public class GuiWorkspace extends GuiScreen
             {
                 Window window1 = levels.get(i).get(j);
                 //TODO inform docking of change.
-                if(window1 == window && !(i == levels.size() - 1 && levels.get(i).size() == 1))
+                if(window1 == window && window.docked < 0 && !(i == levels.size() - 1 && levels.get(i).size() == 1))
                 {
                     ArrayList<Window> topLevel = new ArrayList<Window>();
                     topLevel.add(window1);

@@ -15,6 +15,7 @@ public class WindowTabs extends Window
     public WindowTabs(GuiWorkspace parent, Window original)
     {
         super(parent, original.posX, original.posY, original.width, original.height, original.minWidth, original.minHeight, "", true);
+        docked = original.docked;
         for(int i = 0; i < elements.size(); i++)
         {
             if(elements.get(i) instanceof ElementTitle)
@@ -32,12 +33,7 @@ public class WindowTabs extends Window
             WindowTabs windowTabs = (WindowTabs)window;
             for(int i = 0; i < windowTabs.tabs.size(); i++)
             {
-                tabs.add(windowTabs.tabs.get(i));
-                elements.add(windowTabs.tabs.get(i));
-                if(i == windowTabs.selectedTab && select)
-                {
-                    selectedTab = tabs.size() - 1;
-                }
+                addWindow(windowTabs.tabs.get(i).mountedWindow, i == windowTabs.selectedTab && select);
             }
         }
         else
@@ -47,6 +43,24 @@ public class WindowTabs extends Window
             if(select)
             {
                 selectedTab = tabs.size() - 1;
+            }
+            window.docked = docked;
+
+            if(window.minWidth > minWidth)
+            {
+                minWidth = window.minWidth;
+                if(width < minWidth)
+                {
+                    width = minWidth;
+                }
+            }
+            if(window.minHeight > minHeight)
+            {
+                minHeight = window.minHeight;
+                if(height < minHeight)
+                {
+                    height = minHeight;
+                }
             }
         }
         resized();

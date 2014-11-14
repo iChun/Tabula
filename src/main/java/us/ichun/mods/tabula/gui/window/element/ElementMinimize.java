@@ -53,6 +53,7 @@ public class ElementMinimize extends Element
     {
         if(id == 0)
         {
+            //TODO handle when if docked and is the last tab not minimized.
             parent.toggleMinimize();
         }
         return true;
