@@ -2,6 +2,7 @@ package us.ichun.mods.tabula.gui.window.element;
 
 import ichun.client.render.RendererHelper;
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.tabula.gui.Theme;
 import us.ichun.mods.tabula.gui.window.Window;
 import us.ichun.mods.tabula.gui.window.WindowTabs;
 
@@ -38,7 +39,7 @@ public class ElementWindow extends Element
                 titleToRender = titleToRender.substring(0, titleToRender.length() - 1) + "... ";
             }
         }
-        parent.workspace.getFontRenderer().drawString(titleToRender, parent.posX + posX + 4, parent.posY + posY + 3, 0xffffff, false);
+        parent.workspace.getFontRenderer().drawString(titleToRender, parent.posX + posX + 4, parent.posY + posY + 3, Theme.getAsHex(Theme.font), false);
 
         mountedWindow.posX = parent.posX;
         mountedWindow.posY = parent.posY;
@@ -51,18 +52,18 @@ public class ElementWindow extends Element
             WindowTabs tab = (WindowTabs)parent;
             if(tab.minimized && id != tab.tabs.size() - 1)
             {
-                RendererHelper.drawColourOnScreen(100, 100, 100, 255, getPosX() + width + 1, getPosY() + 1, 1, height, 0);
+                RendererHelper.drawColourOnScreen(Theme.tabSideInactive[0], Theme.tabSideInactive[1], Theme.tabSideInactive[2], 255, getPosX() + width + 1, getPosY() + 1, 1, height, 0);
             }
             if(tab.selectedTab == id && !tab.minimized)
             {
-                RendererHelper.drawColourOnScreen(150, 150, 150, 255, getPosX(), getPosY() + 1 + height, width + 3, 2, 0);
+                RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, getPosX(), getPosY() + 1 + height, width + 3, 2, 0);
             }
             else if(hover)
             {
-                RendererHelper.drawColourOnScreen(0xffffff, 255, getPosX() + 2, getPosY() + 1, width, 1, 0);
-                RendererHelper.drawColourOnScreen(0xffffff, 255, getPosX() + 2, getPosY() + 1, 1, height, 0);
-                RendererHelper.drawColourOnScreen(0xffffff, 255, getPosX() + 2, getPosY() + 1 + height - 1, width, 1, 0);
-                RendererHelper.drawColourOnScreen(0xffffff, 255, getPosX() + width + 1, getPosY() + 1, 1, height, 0);
+                RendererHelper.drawColourOnScreen(Theme.tabBorder[0], Theme.tabBorder[1], Theme.tabBorder[2], 255, getPosX() + 2, getPosY() + 1, width, 1, 0);
+                RendererHelper.drawColourOnScreen(Theme.tabBorder[0], Theme.tabBorder[1], Theme.tabBorder[2], 255, getPosX() + 2, getPosY() + 1, 1, height, 0);
+                RendererHelper.drawColourOnScreen(Theme.tabBorder[0], Theme.tabBorder[1], Theme.tabBorder[2], 255, getPosX() + 2, getPosY() + 1 + height - 1, width, 1, 0);
+                RendererHelper.drawColourOnScreen(Theme.tabBorder[0], Theme.tabBorder[1], Theme.tabBorder[2], 255, getPosX() + width + 1, getPosY() + 1, 1, height, 0);
             }
         }
     }

@@ -3,9 +3,8 @@ package us.ichun.mods.tabula.gui.window;
 import ichun.client.render.RendererHelper;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.tabula.gui.GuiWorkspace;
-import us.ichun.mods.tabula.gui.window.element.Element;
-import us.ichun.mods.tabula.gui.window.element.ElementMinimize;
-import us.ichun.mods.tabula.gui.window.element.ElementTitle;
+import us.ichun.mods.tabula.gui.Theme;
+import us.ichun.mods.tabula.gui.window.element.*;
 
 import java.util.ArrayList;
 
@@ -60,23 +59,36 @@ public class Window
         }
 
         docked = -1;
+
+        //debug
+        elements.add(new ElementTextInput(this, 20, 20, 70, 12, 0, "window.controls.position"));
+        elements.add(new ElementNumberInput(this, 20, 34, 170, 12, 0, "window.controls.dimensions", 10, true));
+    }
+
+    public void update()
+    {
+        for(Element element : elements)
+        {
+            element.update();
+        }
     }
 
     public void draw(int mouseX, int mouseY) //4 pixel border?
     {
+        RendererHelper.startGlScissor(posX + 1, posY + 1, getWidth() - 2, getHeight() - 2);
         if(!minimized)
         {
             if(docked >= 0)
             {
-                RendererHelper.drawColourOnScreen(34, 34, 34, 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
+                RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
             }
             else
             {
-                RendererHelper.drawColourOnScreen(150, 150, 150, 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
-                RendererHelper.drawColourOnScreen(34, 34, 34, 255, posX + BORDER_SIZE, posY + BORDER_SIZE, getWidth() - (BORDER_SIZE * 2), getHeight() - (BORDER_SIZE * 2), 0);
+                RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
+                RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, posX + BORDER_SIZE, posY + BORDER_SIZE, getWidth() - (BORDER_SIZE * 2), getHeight() - (BORDER_SIZE * 2), 0);
             }
         }
-        RendererHelper.drawColourOnScreen(150, 150, 150, 255, posX + 1, posY + 1, getWidth() - 2, 12, 0);
+        RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, posX + 1, posY + 1, getWidth() - 2, 12, 0);
         String titleToRender = StatCollector.translateToLocal(titleLocale);
         while(titleToRender.length() > 1 && workspace.getFontRenderer().getStringWidth(titleToRender) > getWidth() - (BORDER_SIZE * 2) - workspace.getFontRenderer().getStringWidth("  _"))
         {
@@ -93,7 +105,7 @@ public class Window
                 titleToRender = titleToRender.substring(0, titleToRender.length() - 1) + "...";
             }
         }
-        workspace.getFontRenderer().drawString(titleToRender, posX + 4, posY + 3, 0xffffff, false);
+        workspace.getFontRenderer().drawString(titleToRender, posX + 4, posY + 3, Theme.getAsHex(Theme.font), false);
 
         for(Element element : elements)
         {
@@ -135,6 +147,7 @@ public class Window
                 element.draw(mouseX, mouseY, boundary && !obstructed);
             }
         }
+        RendererHelper.endGlScissor();
     }
 
     public int onClick(int mouseX, int mouseY, int id) //returns > 0 if clicked on title//border with LMB.
@@ -154,6 +167,7 @@ public class Window
                     workspace.elementDragX = posX + mouseX;
                     workspace.elementDragY = posY + mouseY;
                 }
+                workspace.elementSelected = element;
                 clickedElement = true;
             }
         }

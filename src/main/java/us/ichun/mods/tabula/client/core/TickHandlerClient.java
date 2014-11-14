@@ -37,7 +37,7 @@ public class TickHandlerClient
                     {
                         btnDummy.func_146113_a(mc.getSoundHandler());
                         int oriScale = mc.gameSettings.guiScale;
-                        mc.gameSettings.guiScale = 1;
+                        mc.gameSettings.guiScale = mc.gameSettings.guiScale == 1 ? 1 : 2;
                         FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale));
                     }
                 }

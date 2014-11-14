@@ -23,6 +23,8 @@ public abstract class Element
         ignoreMinimized = igMin;
     }
 
+    public void update(){}
+
     public abstract void draw(int mouseX, int mouseY, boolean hover);
 
     public boolean onClick(int mouseX, int mouseY, int id)
@@ -30,9 +32,13 @@ public abstract class Element
         return false;
     }
 
-    public void resized()
-    {
-    }
+    public void selected(){}
+
+    public void deselected(){}
+
+    public void resized(){}
+
+    public void keyInput(char c, int key){}
 
     public String tooltip()
     {

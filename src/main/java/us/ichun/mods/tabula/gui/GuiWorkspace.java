@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.StatCollector;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import us.ichun.mods.tabula.gui.window.WindowTabs;
@@ -39,18 +40,32 @@ public class GuiWorkspace extends GuiScreen
     public int elementDragX;
     public int elementDragY;
 
+    public Element elementSelected;
+
     public int oldWidth;
     public int oldHeight;
 
+    public boolean init;
+
     public static final int VARIABLE_LEVEL = 3;
-    public static final int TOP_DOCK_HEIGHT = 30;
+    public static final int TOP_DOCK_HEIGHT = 20;
 
     public GuiWorkspace(int scale)
     {
         oriScale = scale;
-        levels.get(3).add(new Window(this, 20, 20, 200, 200, 40, 50, "menu.convertingLevel", true));
-        levels.get(3).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
-        levels.get(3).add(new Window(this, 400, 200, 150, 300, 100, 200, "menu.loadingLevel", true));
+    }
+
+    @Override
+    public void initGui()
+    {
+        super.initGui();
+        if(!init)
+        {
+            init = true;
+            levels.get(3).add(new Window(this, 20, 20, 200, 200, 40, 50, "menu.convertingLevel", true));
+            levels.get(3).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
+            levels.get(3).add(new Window(this, 400, 200, 150, 300, 100, 200, "menu.loadingLevel", true));
+        }
     }
 
     @Override
@@ -66,6 +81,13 @@ public class GuiWorkspace extends GuiScreen
             {
                 levels.remove(i);
             }
+            else
+            {
+                for(Window window : levels.get(i))
+                {
+                    window.update();
+                }
+            }
         }
     }
 
@@ -77,20 +99,25 @@ public class GuiWorkspace extends GuiScreen
             oldWidth = width;
             oldHeight = height;
             screenResize();
+
+            Keyboard.enableRepeatEvents(true);
         }
 
         //TODO update elements here
         //TODO docks...? Remember to draw upper dock first.
         //TODO a reset all windows button for people who "accidentally" drag the window out of the screen
         //TODO multiple views to view different things in the workspace.
+        //TODO mouse scrolling
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthFunc(GL11.GL_LEQUAL);
         GL11.glDepthMask(true);
-        RendererHelper.drawColourOnScreen(204, 204, 204, 255, 0, 0, width, height, -1000D); //204 cause 0.8F * 255
+        RendererHelper.drawColourOnScreen(Theme.workspaceBackground[0], Theme.workspaceBackground[1], Theme.workspaceBackground[2], 255, 0, 0, width, height, -1000D); //204 cause 0.8F * 255
 
         hovering = false;
         boolean hasClicked = false;
+        Element prevElementSelected = elementSelected;
+        elementSelected = null;
         for(int i = levels.size() - 1; i >= 0 ; i--)
         {
             for(int j = levels.get(i).size() - 1; j >= 0; j--)
@@ -125,20 +152,47 @@ public class GuiWorkspace extends GuiScreen
             GL11.glTranslatef(0F, 0F, -10F);
         }
 
+        if(!hasClicked)
+        {
+            if((Mouse.isButtonDown(0) && !mouseLeftDown || Mouse.isButtonDown(1) && !mouseRightDown || Mouse.isButtonDown(2) && !mouseMiddleDown) && prevElementSelected != null && !(mouseX >= prevElementSelected.getPosX() && mouseX <= prevElementSelected.getPosX() + prevElementSelected.width && mouseY >= prevElementSelected.getPosY() && mouseY <= prevElementSelected.getPosY() + prevElementSelected.height))
+            {
+                prevElementSelected.deselected();
+            }
+            else
+            {
+                elementSelected = prevElementSelected;
+            }
+        }
+        else if(elementSelected != prevElementSelected)
+        {
+            if(elementSelected != null)
+            {
+                elementSelected.selected();
+            }
+            if(prevElementSelected != null)
+            {
+                prevElementSelected.deselected();
+            }
+        }
+        else
+        {
+            elementSelected = prevElementSelected;
+        }
+
         if(!hovering)
         {
             elementHovered = null;
             hoverTime = 0;
         }
-        else if(elementHovered != null && hoverTime > 5 && elementHovered.tooltip() != null) //1s to draw tooltip
+        else if(elementHovered != null && hoverTime > 20 && elementHovered.tooltip() != null) //1s to draw tooltip
         {
             GL11.glTranslatef(0F, 0F, 20F * levels.size());
             String tooltip = StatCollector.translateToLocal(elementHovered.tooltip());
             int xOffset = 5;
             int yOffset = 20;
-            RendererHelper.drawColourOnScreen(150, 150, 150, 255, mouseX + xOffset, mouseY + yOffset, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2), 12, 0);
-            RendererHelper.drawColourOnScreen(34, 34, 34, 255, mouseX + xOffset + 1, mouseY + yOffset + 1, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2) - 2, 12 - 2, 0);
-            fontRendererObj.drawString(tooltip, mouseX + xOffset + (Window.BORDER_SIZE - 1), mouseY + yOffset + (Window.BORDER_SIZE - 1), 0xffffff, false);
+            RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, mouseX + xOffset, mouseY + yOffset, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2), 12, 0);
+            RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, mouseX + xOffset + 1, mouseY + yOffset + 1, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2) - 2, 12 - 2, 0);
+            fontRendererObj.drawString(tooltip, mouseX + xOffset + (Window.BORDER_SIZE - 1), mouseY + yOffset + (Window.BORDER_SIZE - 1), Theme.getAsHex(Theme.font), false);
 //            RendererHelper.drawColourOnScreen(34, 34, 34, 255, posX + BORDER_SIZE, posY + BORDER_SIZE, getWidth() - (BORDER_SIZE * 2), getHeight() - (BORDER_SIZE * 2), 0);
         }
 
@@ -224,11 +278,16 @@ public class GuiWorkspace extends GuiScreen
                         addToDock(2, windowDragged);
                         windowDragged = null;
                     }
+
+                    if(windowDragged != null)
+                    {
+                        windowDragged.resized();
+                    }
                 }
                 if(dragType >= 2)
                 {
                     int bordersClicked = dragType - 3;
-                    if((bordersClicked & 1) == 1) // top
+                    if((bordersClicked & 1) == 1 && !((windowDragged.docked == 0 || windowDragged.docked == 1) && levels.get(windowDragged.docked).get(0) == windowDragged)) // top
                     {
                         windowDragged.height += windowDragged.clickY - (mouseY - windowDragged.posY);
                         windowDragged.posY -= windowDragged.clickY - (mouseY - windowDragged.posY);
@@ -360,6 +419,10 @@ public class GuiWorkspace extends GuiScreen
         //TODO docking to the lower mid
         if(window != null && window.docked < 0)
         {
+            if(window.minimized)
+            {
+                window.toggleMinimize();
+            }
             ArrayList<Window> docked = levels.get(dock);
             window.docked = dock;
             window.oriHeight = window.height;
@@ -441,7 +504,7 @@ public class GuiWorkspace extends GuiScreen
                     else
                     {
                         window.width = docked.get(0).width;
-                        window.posY = docked.get(j - 1).posY + (docked.get(j - 1).minimized ? 12 : docked.get(j - 1).oriHeight);
+                        window.posY = docked.get(j - 1).posY + (docked.get(j - 1).minimized ? 12 : (docked.get(j - 1).height + docked.get(j - 1).posY + 2 >= height) ? docked.get(j - 1).oriHeight : docked.get(j - 1).height);
                         docked.get(j - 1).height = window.posY - docked.get(j - 1).posY + 2;
                     }
                 }
@@ -489,6 +552,8 @@ public class GuiWorkspace extends GuiScreen
                 {
                     window.height = height - window.posY + 1;
                 }
+
+                window.resized();
             }
         }
         //TODO resize windows when docked.
@@ -555,11 +620,17 @@ public class GuiWorkspace extends GuiScreen
             this.mc.displayGuiScreen((GuiScreen)null);
             this.mc.setIngameFocus();
         }
+        else if(elementSelected != null)
+        {
+            elementSelected.keyInput(c, key);
+        }
     }
 
     @Override
     public void onGuiClosed()
     {
+        Keyboard.enableRepeatEvents(false);
+
         Minecraft.getMinecraft().gameSettings.guiScale = oriScale;
     }
 

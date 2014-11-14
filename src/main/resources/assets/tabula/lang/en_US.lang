@@ -1,2 +1,10 @@
 element.minimize=Minimize
 element.expand=Expand
+
+window.controls.cubeName=Selected Cube Name
+window.controls.dimensions=Dimensions
+window.controls.position=Position
+window.controls.offset=Offset
+window.controls.txOffset=Texture Offset
+window.controls.rotation=Rotation
+window.controls.scale=Scale
