@@ -1,10 +1,10 @@
-package us.ichun.mods.tabula.gui.element;
+package us.ichun.mods.tabula.gui.window.element;
 
-import us.ichun.mods.tabula.gui.GuiWindow;
+import us.ichun.mods.tabula.gui.window.Window;
 
 public abstract class Element
 {
-    public final GuiWindow parent;
+    public final Window parent;
     public int posX;
     public int posY;
     public int width;
@@ -12,7 +12,7 @@ public abstract class Element
     public int id;
     public boolean ignoreMinimized;
 
-    public Element(GuiWindow window, int x, int y, int w, int h, int ID, boolean igMin)
+    public Element(Window window, int x, int y, int w, int h, int ID, boolean igMin)
     {
         parent = window;
         posX = x;
@@ -25,12 +25,18 @@ public abstract class Element
 
     public abstract void draw(int mouseX, int mouseY, boolean hover);
 
-    public void onClick(int mouseX, int mouseY, int id)
+    public boolean onClick(int mouseX, int mouseY, int id)
     {
+        return false;
     }
 
     public void resized()
     {
+    }
+
+    public String tooltip()
+    {
+        return null; //return null for no tooltip. This is localized.
     }
 
     public int getPosX()

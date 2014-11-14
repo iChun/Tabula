@@ -1,13 +1,15 @@
-package us.ichun.mods.tabula.gui;
+package us.ichun.mods.tabula.gui.window;
 
 import ichun.client.render.RendererHelper;
 import net.minecraft.util.StatCollector;
-import us.ichun.mods.tabula.gui.element.Element;
-import us.ichun.mods.tabula.gui.element.ElementMinimize;
+import us.ichun.mods.tabula.gui.GuiWorkspace;
+import us.ichun.mods.tabula.gui.window.element.Element;
+import us.ichun.mods.tabula.gui.window.element.ElementMinimize;
+import us.ichun.mods.tabula.gui.window.element.ElementTitle;
 
 import java.util.ArrayList;
 
-public class GuiWindow
+public class Window
 {
     public int level;//not sure if I need this
 
@@ -32,9 +34,9 @@ public class GuiWindow
 
     public ArrayList<Element> elements = new ArrayList<Element>();
 
-    public final int BORDER_SIZE = 3;
+    public static final int BORDER_SIZE = 3;
 
-    public GuiWindow(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH, String title, boolean hasTit)
+    public Window(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH, String title, boolean hasTit)
     {
         workspace = parent;
 
@@ -51,12 +53,12 @@ public class GuiWindow
         if(hasTitle)
         {
             elements.add(new ElementMinimize(this, width - 13, 2, 10, 10, 0));
+            elements.add(new ElementTitle(this, 0, 0, parent.width - 13, 13, 0));
         }
     }
 
     public void draw(int mouseX, int mouseY) //4 pixel border?
     {
-        //TODO remember to draw the title
         if(!minimized)
         {
             if(docked)
@@ -71,7 +73,7 @@ public class GuiWindow
         }
         RendererHelper.drawColourOnScreen(150, 150, 150, 255, posX + 1, posY + 1, getWidth() - 2, 12, 0);
         String titleToRender = StatCollector.translateToLocal(titleLocale);
-        while(titleToRender.length() > 1 && workspace.getFontRenderer().getStringWidth(titleToRender) > getWidth() - (BORDER_SIZE * 2) - workspace.getFontRenderer().getStringWidth(" _"))
+        while(titleToRender.length() > 1 && workspace.getFontRenderer().getStringWidth(titleToRender) > getWidth() - (BORDER_SIZE * 2) - workspace.getFontRenderer().getStringWidth("  _"))
         {
             if(titleToRender.endsWith("..."))
             {
@@ -88,7 +90,40 @@ public class GuiWindow
         {
             if(element.ignoreMinimized && minimized || !minimized)
             {
-                element.draw(mouseX, mouseY, mouseX >= element.posX && mouseX <= element.posX + element.width && mouseY >= element.posY && mouseY <= element.posY + element.height);
+                boolean boundary = mouseX >= element.posX && mouseX <= element.posX + element.width && mouseY >= element.posY && mouseY <= element.posY + element.height;
+                boolean obstructed = false;
+                if(boundary)
+                {
+                    boolean found = false;
+                    for(int i = 0; i < workspace.levels.size(); i++)
+                    {
+                        for(int j = 0; j < workspace.levels.get(i).size(); j++)
+                        {
+                            Window window = workspace.levels.get(i).get(j);
+                            if(!found)
+                            {
+                                if(window == this)
+                                {
+                                    found = true;
+                                }
+                            }
+                            else if(posX + mouseX >= window.posX && posX + mouseX <= window.posX + window.getWidth() && posY + mouseY >= window.posY && posY + mouseY <= window.posY + window.getHeight())
+                            {
+                                obstructed = true;
+                            }
+                        }
+                    }
+                }
+                if(boundary && !obstructed)
+                {
+                    workspace.hovering = true;
+                    if(workspace.elementHovered != element)
+                    {
+                        workspace.elementHovered = element;
+                        workspace.hoverTime = 0;
+                    }
+                }
+                element.draw(mouseX, mouseY, boundary && !obstructed);
             }
         }
     }
@@ -102,9 +137,14 @@ public class GuiWindow
         boolean clickedElement = false;
         for(Element element : elements)
         {
-            if(mouseX >= element.posX && mouseX <= element.posX + element.width && mouseY >= element.posY && mouseY <= element.posY + element.height && (minimized && element.ignoreMinimized || !minimized))
+            if(mouseX >= element.posX && mouseX <= element.posX + element.width && mouseY >= element.posY && mouseY <= element.posY + element.height && (minimized && element.ignoreMinimized || !minimized) && element.onClick(mouseX, mouseY, id))
             {
-                element.onClick(mouseX, mouseY, id);
+                if(id == 0)
+                {
+                    workspace.elementDragged = element;
+                    workspace.elementDragX = posX + mouseX;
+                    workspace.elementDragY = posY + mouseY;
+                }
                 clickedElement = true;
             }
         }
@@ -134,7 +174,7 @@ public class GuiWindow
 
     public boolean clickedOnTitle(int mouseX, int mouseY, int id)
     {
-        return mouseX >= 0 && mouseX <= getWidth() && mouseY >= 0 && mouseY <= 10;
+        return mouseX >= 0 && mouseX <= getWidth() && mouseY >= 0 && mouseY <= 12;
     }
 
     public void resized()

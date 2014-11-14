@@ -4,61 +4,86 @@ import ichun.client.render.RendererHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import us.ichun.mods.tabula.gui.window.WindowTabs;
+import us.ichun.mods.tabula.gui.window.element.Element;
+import us.ichun.mods.tabula.gui.window.Window;
+import us.ichun.mods.tabula.gui.window.element.ElementWindow;
 
 import java.util.ArrayList;
 
 public class GuiWorkspace extends GuiScreen
 {
     public int oriScale;
-    private ArrayList<ArrayList<GuiWindow>> levels = new ArrayList<ArrayList<GuiWindow>>() {{
-        add(0, new ArrayList<GuiWindow>()); // dock left
-        add(1, new ArrayList<GuiWindow>()); // dock right
-        add(2, new ArrayList<GuiWindow>()); // dock btm
+    public ArrayList<ArrayList<Window>> levels = new ArrayList<ArrayList<Window>>() {{
+        add(0, new ArrayList<Window>()); // dock left
+        add(1, new ArrayList<Window>()); // dock right
+        add(2, new ArrayList<Window>()); // dock btm
     }};
 
     public boolean mouseLeftDown;
     public boolean mouseRightDown;
     public boolean mouseMiddleDown;
 
-    public GuiWindow windowDragged;
+    public Window windowDragged;
     public int dragType; //1 = title drag, 2 = border drag, 3 = corner drag;
 
-    public final int VARIABLE_LEVEL = 3;
+    public Element elementHovered;
+    public int hoverTime;
+    public boolean hovering;
+
+    public Element elementDragged;
+    public int elementDragX;
+    public int elementDragY;
+
+    public static final int VARIABLE_LEVEL = 3;
 
     public GuiWorkspace(int scale)
     {
         oriScale = scale;
-        levels.get(2).add(new GuiWindow(this, 20, 20, 200, 200, 40, 50, "menu.convertingLevel", true));
-        levels.get(2).add(new GuiWindow(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
-        levels.get(2).add(new GuiWindow(this, 400, 200, 200, 300, 100, 200, "menu.loadingLevel", true));
+        levels.get(2).add(new Window(this, 20, 20, 200, 200, 40, 50, "menu.convertingLevel", true));
+        levels.get(2).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
+        levels.get(2).add(new Window(this, 400, 200, 200, 300, 100, 200, "menu.loadingLevel", true));
     }
 
     @Override
     public void updateScreen()
     {
+        if(elementHovered != null)
+        {
+            hoverTime++;
+        }
+        for(int i = levels.size() - 1; i >= VARIABLE_LEVEL; i--)//clean up empty levels.
+        {
+            if(levels.get(i).isEmpty())
+            {
+                levels.remove(i);
+            }
+        }
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float f)
     {
         //TODO update elements here
-        //TODO draw elements here
         //TODO docks...? Remember to draw upper dock first.
         //TODO a reset all windows button for people who "accidentally" drag the window out of the screen
+        //TODO window tabs!
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthFunc(GL11.GL_LEQUAL);
         GL11.glDepthMask(true);
         RendererHelper.drawColourOnScreen(204, 204, 204, 255, 0, 0, width, height, -1000D); //204 cause 0.8F * 255
 
+        hovering = false;
         boolean hasClicked = false;
         for(int i = levels.size() - 1; i >= 0 ; i--)
         {
             for(int j = levels.get(i).size() - 1; j >= 0; j--)
             {
-                GuiWindow window = levels.get(i).get(j);
+                Window window = levels.get(i).get(j);
                 if(mouseX >= window.posX && mouseX <= window.posX + window.getWidth() && mouseY >= window.posY && mouseY <= window.posY + window.getHeight())
                 {
                     if(!hasClicked)
@@ -87,6 +112,24 @@ public class GuiWorkspace extends GuiScreen
             }
             GL11.glTranslatef(0F, 0F, -10F);
         }
+
+        if(!hovering)
+        {
+            elementHovered = null;
+            hoverTime = 0;
+        }
+        else if(elementHovered != null && hoverTime > 5 && elementHovered.tooltip() != null) //1s to draw tooltip
+        {
+            GL11.glTranslatef(0F, 0F, 20F * levels.size());
+            String tooltip = StatCollector.translateToLocal(elementHovered.tooltip());
+            int xOffset = 5;
+            int yOffset = 20;
+            RendererHelper.drawColourOnScreen(150, 150, 150, 255, mouseX + xOffset, mouseY + yOffset, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2), 12, 0);
+            RendererHelper.drawColourOnScreen(34, 34, 34, 255, mouseX + xOffset + 1, mouseY + yOffset + 1, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2) - 2, 12 - 2, 0);
+            fontRendererObj.drawString(tooltip, mouseX + xOffset + (Window.BORDER_SIZE - 1), mouseY + yOffset + (Window.BORDER_SIZE - 1), 0xffffff, false);
+//            RendererHelper.drawColourOnScreen(34, 34, 34, 255, posX + BORDER_SIZE, posY + BORDER_SIZE, getWidth() - (BORDER_SIZE * 2), getHeight() - (BORDER_SIZE * 2), 0);
+        }
+
         GL11.glPopMatrix();
 
         mouseLeftDown = Mouse.isButtonDown(0);
@@ -102,10 +145,42 @@ public class GuiWorkspace extends GuiScreen
             else
             {
                 bringWindowToFront(windowDragged);
-                if(dragType == 1)
+                if(dragType == 1) // moving the window
                 {
                     windowDragged.posX -= windowDragged.clickX - (mouseX - windowDragged.posX);
                     windowDragged.posY -= windowDragged.clickY - (mouseY - windowDragged.posY);
+
+                    boolean tabbed = false;
+                    for(int i = levels.size() - 1; i >= 0 ; i--)
+                    {
+                        for(int j = levels.get(i).size() - 1; j >= 0; j--)
+                        {
+                            Window window = levels.get(i).get(j);
+                            //TODO if in dock....?
+                            if(tabbed || window == windowDragged)
+                            {
+                                continue;
+                            }
+                            if(mouseX - window.posX >= 0 && mouseX - window.posX <= window.getWidth() && mouseY - window.posY >= 0 && mouseY - window.posY <= 12)
+                            {
+                                WindowTabs tabs;
+                                if(window instanceof WindowTabs)
+                                {
+                                    tabs = (WindowTabs)window;
+                                }
+                                else
+                                {
+                                    tabs = new WindowTabs(this, window);
+                                }
+                                tabs.addWindow(windowDragged, true);
+                                levels.get(i).remove(j);
+                                levels.get(i).add(j, tabs);
+                                removeWindow(windowDragged);
+                                windowDragged = null;
+                                tabbed = true;
+                            }
+                        }
+                    }
                 }
                 if(dragType >= 2)
                 {
@@ -168,19 +243,99 @@ public class GuiWorkspace extends GuiScreen
                 }
             }
         }
+
+        if(elementDragged != null)
+        {
+            if(!mouseLeftDown)
+            {
+                elementDragged = null;
+            }
+            else if(!(mouseX - elementDragged.parent.posX >= 0 && mouseX - elementDragged.parent.posX <= elementDragged.parent.getWidth() && mouseY - elementDragged.parent.posY >= 0 && mouseY - elementDragged.parent.posY <= 12))
+            {
+                //TODO handle if tabs only left 1, handle if was currently selected tab, -1 selected tab or +1...?
+                if(elementDragged instanceof ElementWindow)
+                {
+                    ElementWindow element = (ElementWindow)elementDragged;
+                    //fix up the tabs.
+                    WindowTabs tab = (WindowTabs)element.parent;
+                    tab.tabs.remove(element);
+                    tab.elements.remove(element);
+                    if(tab.tabs.size() <= 1)
+                    {
+                        removeWindow(tab);
+                        if(tab.tabs.size() == 1)
+                        {
+                            addWindowOnTop(tab.tabs.get(0).mountedWindow);
+                        }
+                    }
+                    else
+                    {
+                        for(int i = 0; i < tab.tabs.size(); i++)
+                        {
+                            tab.tabs.get(i).id = i;
+                        }
+
+                        while(tab.selectedTab >= tab.tabs.size() && tab.selectedTab > 0)
+                        {
+                            tab.selectedTab--;
+                        }
+                        tab.resized();
+                    }
+
+                    addWindowOnTop(element.mountedWindow);
+                    windowDragged = element.mountedWindow;
+                    dragType = 1;
+
+                    windowDragged.width = element.oriWidth;
+                    windowDragged.height = element.oriHeight;
+
+                    windowDragged.posX = mouseX - (windowDragged.getWidth() / 2);
+                    windowDragged.posY = mouseY - 6;
+
+                    elementDragged = null;
+                }
+            }
+        }
     }
 
-    public void bringWindowToFront(GuiWindow window)
+    public void removeWindow(Window window)
     {
         for(int i = levels.size() - 1; i >= 0 ; i--)
         {
             for(int j = levels.get(i).size() - 1; j >= 0; j--)
             {
-                GuiWindow window1 = levels.get(i).get(j);
+                Window window1 = levels.get(i).get(j);
+                //TODO inform docking of change.
+                if(window1 == window)
+                {
+                    levels.get(i).remove(j);
+                    if(levels.get(i).isEmpty())
+                    {
+                        levels.remove(i);
+                    }
+                }
+            }
+        }
+    }
+
+    public void addWindowOnTop(Window window)
+    {
+        ArrayList<Window> topLevel = new ArrayList<Window>();
+        topLevel.add(window);
+        levels.add(topLevel);
+    }
+
+    public void bringWindowToFront(Window window)
+    {
+        for(int i = levels.size() - 1; i >= 0 ; i--)
+        {
+            for(int j = levels.get(i).size() - 1; j >= 0; j--)
+            {
+                Window window1 = levels.get(i).get(j);
                 //TODO inform docking of change.
                 if(window1 == window && !(i == levels.size() - 1 && levels.get(i).size() == 1))
                 {
-                    ArrayList<GuiWindow> topLevel = new ArrayList<GuiWindow>();
+                    ArrayList<Window> topLevel = new ArrayList<Window>();
                     topLevel.add(window1);
                     levels.get(i).remove(j);
                     if(levels.get(i).isEmpty())

@@ -1,12 +1,12 @@
-package us.ichun.mods.tabula.gui.element;
+package us.ichun.mods.tabula.gui.window.element;
 
 import ichun.client.render.RendererHelper;
 import org.lwjgl.opengl.GL11;
-import us.ichun.mods.tabula.gui.GuiWindow;
+import us.ichun.mods.tabula.gui.window.Window;
 
 public class ElementMinimize extends Element
 {
-    public ElementMinimize(GuiWindow window, int x, int y, int w, int h, int id)
+    public ElementMinimize(Window window, int x, int y, int w, int h, int id)
     {
         super(window, x, y, w, h, id, true);
     }
@@ -35,6 +35,7 @@ public class ElementMinimize extends Element
         GL11.glPopMatrix();
     }
 
+    @Override
     public void resized()
     {
         posX = parent.width - 13;
@@ -42,11 +43,18 @@ public class ElementMinimize extends Element
     }
 
     @Override
-    public void onClick(int mouseX, int mouseY, int id)
+    public String tooltip()
+    {
+        return "element.minimize";
+    }
+
+    @Override
+    public boolean onClick(int mouseX, int mouseY, int id)
     {
         if(id == 0)
         {
             parent.toggleMinimize();
         }
+        return true;
     }
 }
