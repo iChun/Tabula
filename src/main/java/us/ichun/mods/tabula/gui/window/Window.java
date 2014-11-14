@@ -80,6 +80,10 @@ public class Window
         String titleToRender = StatCollector.translateToLocal(titleLocale);
         while(titleToRender.length() > 1 && workspace.getFontRenderer().getStringWidth(titleToRender) > getWidth() - (BORDER_SIZE * 2) - workspace.getFontRenderer().getStringWidth("  _"))
         {
+            if(titleToRender.startsWith("..."))
+            {
+                break;
+            }
             if(titleToRender.endsWith("..."))
             {
                 titleToRender = titleToRender.substring(0, titleToRender.length() - 4) + "...";
@@ -193,6 +197,10 @@ public class Window
     public void toggleMinimize()
     {
         minimized = !minimized;
+        if(docked >= 0)
+        {
+            workspace.redock(docked, null);
+        }
     }
 
     public int getHeight()

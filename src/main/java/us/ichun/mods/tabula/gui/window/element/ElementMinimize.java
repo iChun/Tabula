@@ -14,6 +14,10 @@ public class ElementMinimize extends Element
     @Override
     public void draw(int mouseX, int mouseY, boolean hover)
     {
+        if(parent.docked >= 0)
+        {
+            return;
+        }
         if(hover)
         {
             RendererHelper.drawColourOnScreen(0xffffff, 255, getPosX() - 0.5D, getPosY(), width, 1, 0);
@@ -45,13 +49,24 @@ public class ElementMinimize extends Element
     @Override
     public String tooltip()
     {
-        return "element.minimize";
+        if(parent.docked < 0)
+        {
+            if(!parent.minimized)
+            {
+                return "element.minimize";
+            }
+            else
+            {
+                return "element.expand";
+            }
+        }
+        return null;
     }
 
     @Override
     public boolean onClick(int mouseX, int mouseY, int id)
     {
-        if(id == 0)
+        if(id == 0 && parent.docked < 0)
         {
             //TODO handle when if docked and is the last tab not minimized.
             parent.toggleMinimize();

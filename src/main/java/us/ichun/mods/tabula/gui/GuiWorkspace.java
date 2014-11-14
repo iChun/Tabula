@@ -50,7 +50,7 @@ public class GuiWorkspace extends GuiScreen
         oriScale = scale;
         levels.get(3).add(new Window(this, 20, 20, 200, 200, 40, 50, "menu.convertingLevel", true));
         levels.get(3).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
-        levels.get(3).add(new Window(this, 400, 200, 200, 300, 100, 200, "menu.loadingLevel", true));
+        levels.get(3).add(new Window(this, 400, 200, 150, 300, 100, 200, "menu.loadingLevel", true));
     }
 
     @Override
@@ -283,6 +283,11 @@ public class GuiWorkspace extends GuiScreen
                         }
                     }
                     windowDragged.resized();
+
+                    if(windowDragged.docked >= 0)
+                    {
+                        redock(windowDragged.docked, windowDragged);
+                    }
                 }
             }
         }
@@ -359,98 +364,13 @@ public class GuiWorkspace extends GuiScreen
             window.docked = dock;
             window.oriHeight = window.height;
             window.oriWidth = window.width;
-            if(docked.isEmpty())
-            {
-                docked.add(window);
-                if(dock == 0)
-                {
-                    window.posX = -1;
-                }
-                else if(dock == 1)
-                {
-                    window.posX = width - window.getWidth() + 1;
-                }
-                if(dock <= 1)
-                {
-                    window.posY = TOP_DOCK_HEIGHT;
-                    window.height = height - TOP_DOCK_HEIGHT + 1;
-                }
-
-                window.resized();
-            }
-            else
-            {
-                if(dock <= 1)
-                {
-                    boolean added = false;
-                    for(int i = 0; i < docked.size(); i++)
-                    {
-                        Window window1 = docked.get(i);
-                        if(window1.posY > window.posY)
-                        {
-                            docked.add(i, window);
-                            added = true;
-                            break;
-                        }
-                    }
-                    if(!added)
-                    {
-                        Window prevWin = docked.get(docked.size() - 1);
-                        prevWin.height = window.posY - prevWin.posY + 2;
-                        window.height = height - window.posY + 2;
-                        docked.add(window);
-                    }
-                    else
-                    {
-                        Window first = docked.get(0);
-                        if(first == window)
-                        {
-                            window.posY = TOP_DOCK_HEIGHT;
-                            for(int i = 1; i < docked.size(); i++)
-                            {
-                                docked.get(i).posY += window.height - 2;
-                                if(i == docked.size() - 1)
-                                {
-                                    docked.get(i).height = docked.get(i).oriHeight;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            for(int i = 1; i < docked.size(); i++)
-                            {
-                                boolean foundAddition = false;
-                                Window prevWin = docked.get(i - 1);
-                                Window window1 = docked.get(i);
-                                if(window1 == window)
-                                {
-                                    foundAddition = true;
-                                    prevWin.height = window1.posY - prevWin.height + 2;
-                                }
-                                if(foundAddition)
-                                {
-                                    docked.get(i).posY += window.height;
-                                }
-                            }
-                        }
-                    }
-
-                    if(dock == 0)
-                    {
-                        window.posX = -1;
-                    }
-                    else if(dock == 1)
-                    {
-                        window.posX = width - window.getWidth() + 1;
-                    }
-
-                    screenResize();
-                }
-            }
+            docked.add(window);
             for(int i = VARIABLE_LEVEL; i < levels.size(); i++)
             {
                 levels.get(i).remove(window);
             }
+
+            redock(dock, null);
         }
     }
 
@@ -458,7 +378,6 @@ public class GuiWorkspace extends GuiScreen
     {
         for(int i = 2; i >= 0; i--)
         {
-            boolean foundWindow = false;
             ArrayList<Window> docked = levels.get(i);
             for(int j = docked.size() - 1; j >= 0; j--)
             {
@@ -466,36 +385,85 @@ public class GuiWorkspace extends GuiScreen
                 if(window1 == window)
                 {
                     docked.remove(j);
-                    window.docked = -1;
-                    window.height = window.oriHeight;
-                    window.width = window.oriWidth;
 
-                    addWindowOnTop(window);
-
-                    window.resized();
-
-                    foundWindow = true;
+                    redock(i, null);
 
                     break;
                 }
             }
-            if(foundWindow)
+        }
+        window.docked = -1;
+        window.height = window.oriHeight;
+        window.width = window.oriWidth;
+
+        addWindowOnTop(window);
+
+        window.resized();
+    }
+
+    public void redock(int dock, Window pref)
+    {
+        ArrayList<Window> docked = levels.get(dock);
+        int prefInt = -2;
+        if(pref != null)
+        {
+            for(int j = 0; j < docked.size(); j++)
             {
-                for(int j = 0; j < docked.size(); j++)
+                if(docked.get(j) == pref)
                 {
-                    if(i <= 1)
-                    {
-                        if(j == 0)
-                        {
-                            docked.get(j).posY = TOP_DOCK_HEIGHT;
-                        }
-                        else
-                        {
-                            docked.get(j).posY = docked.get(j - 1).posY + docked.get(j - 1).height - 2;
-                        }
-                    }
+                    prefInt = j;
                 }
             }
+        }
+        for(int j = 0; j < docked.size(); j++)
+        {
+            Window window = docked.get(j);
+            if(dock == 0)
+            {
+                window.posX = -1;
+            }
+            else if(dock == 1)
+            {
+                window.posX = width - window.getWidth() + 1;
+            }
+            if(dock <= 1)
+            {
+                if(prefInt != -2)
+                {
+                    docked.get(0).width = docked.get(prefInt).width;
+                }
+                else
+                {
+                    if(j == 0)
+                    {
+                        window.posY = TOP_DOCK_HEIGHT;
+                    }
+                    else
+                    {
+                        window.width = docked.get(0).width;
+                        window.posY = docked.get(j - 1).posY + (docked.get(j - 1).minimized ? 12 : docked.get(j - 1).oriHeight);
+                        docked.get(j - 1).height = window.posY - docked.get(j - 1).posY + 2;
+                    }
+                }
+                if(j - 1 == prefInt)
+                {
+                    window.height += window.posY - (docked.get(j - 1).posY + docked.get(j - 1).height) + 2;
+                    window.posY -= window.posY - (docked.get(j - 1).posY + docked.get(j - 1).height) + 2;
+                }
+                if(j + 1 == prefInt)
+                {
+                    window.height = docked.get(j + 1).posY - window.posY + 2;
+                    if(window.height < window.minHeight + 2)
+                    {
+                        window.height = window.minHeight + 2;
+                        docked.get(prefInt).posY = window.posY + window.height - 2;
+                        windowDragged = null;
+                        dragType = 0;
+                    }
+                }
+                window.width = docked.get(0).width;
+            }
+            window.resized();
         }
         screenResize();
     }
