@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -16,6 +17,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.gui.window.*;
 import us.ichun.mods.tabula.gui.window.element.Element;
 import us.ichun.mods.tabula.gui.window.element.ElementToggle;
@@ -105,9 +107,9 @@ public class GuiWorkspace extends GuiScreen
             projectManager = new WindowProjectSelection(this, 0, 0, width, 20, 20, 20);
             levels.get(3).add(projectManager);
 
-//            levels.get(4).add(new Window(this, 200, 40, 200, 200, 40, 50, "menu.convertingLevel", true));
-//            levels.get(4).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
-//            levels.get(4).add(new Window(this, 400, 200, 150, 300, 100, 200, "menu.loadingLevel", true));
+            //            levels.get(4).add(new Window(this, 200, 40, 200, 200, 40, 50, "menu.convertingLevel", true));
+            //            levels.get(4).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
+            //            levels.get(4).add(new Window(this, 400, 200, 150, 300, 100, 200, "menu.loadingLevel", true));
         }
         resize = true;
         screenResize();
@@ -164,11 +166,14 @@ public class GuiWorkspace extends GuiScreen
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_NORMALIZE);
         GL11.glDepthFunc(GL11.GL_LEQUAL);
         GL11.glDepthMask(true);
         RendererHelper.drawColourOnScreen(Theme.workspaceBackground[0], Theme.workspaceBackground[1], Theme.workspaceBackground[2], 255, 0, 0, width, height, -1000D); //204 cause 0.8F * 255
 
         renderWorkspace(mouseX, mouseY, f);
+
+        GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 
         hovering = false;
         boolean hasClicked = false;
@@ -521,13 +526,21 @@ public class GuiWorkspace extends GuiScreen
 
         GL11.glEnable(GL11.GL_LIGHTING);
 
-        RenderHelper.enableStandardItemLighting();
+        RenderHelper.enableGUIStandardItemLighting();
+
+        int ii = 15728880;
+        int jj = ii % 65536;
+        int kk = ii / 65536;
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)jj / 1.0F, (float)kk / 1.0F);
 
         GL11.glPushMatrix();
 
         Tessellator tessellator = Tessellator.instance;
 
+        tessellator.setBrightness(15728880);
+
         Block block = Blocks.furnace;
+        //        Block block = Blocks.diamond_ore;
 
         GL11.glTranslatef(width - (levels.get(1).isEmpty() ? 15F : 15F + levels.get(1).get(0).width), height - 15F, 0F);
         float scale = 15F;
@@ -594,6 +607,20 @@ public class GuiWorkspace extends GuiScreen
 
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        if(projectManager.selectedProject != -1)
+        {
+            GL11.glPushMatrix();
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GL11.glTranslatef(0.0F, 2F, 0.0F);
+            GL11.glScalef(-1.0F, -1.0F, 1.0F);
+            ProjectInfo info = projectManager.projects.get(projectManager.selectedProject);
+            info.model.render(0.0625F);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glPopMatrix();
+        }
+
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
         Minecraft.getMinecraft().getTextureManager().bindTexture(grid16);
         double dist = 0.125D;

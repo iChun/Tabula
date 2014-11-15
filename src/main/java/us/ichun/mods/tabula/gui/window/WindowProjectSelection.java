@@ -76,7 +76,7 @@ public class WindowProjectSelection extends WindowTopDock
             ProjectInfo info1 = projects.get(i);
             if(info1.identifier.equals(info.identifier))
             {
-                //TODO link the textures together.
+                info.cloneFrom(info1);
                 projects.remove(i);
                 projects.add(i, info);
                 ((ElementProjectTab)elements.get(i)).info = info;
@@ -86,11 +86,28 @@ public class WindowProjectSelection extends WindowTopDock
         }
         if(!added)
         {
+            if(projects.isEmpty())
+            {
+                info.cameraZoom = workspace.cameraZoom;
+                info.cameraYaw = workspace.cameraYaw;
+                info.cameraPitch = workspace.cameraPitch;
+                info.cameraOffsetX = workspace.cameraOffsetX;
+                info.cameraOffsetY = workspace.cameraOffsetY;
+            }
             projects.add(info);
             elements.add(new ElementProjectTab(this, 0, 0, 10, 10, elements.size(), info));
             changeProject(elements.size() - 1);
         }
 
+        updateModelTree(info);
+
+        info.initClient();
+
+        resized();
+    }
+
+    public void updateModelTree(ProjectInfo info)
+    {
         for(int i = 0; i < workspace.levels.size(); i++)
         {
             for(int j = 0; j < workspace.levels.get(i).size(); j++)
@@ -110,8 +127,6 @@ public class WindowProjectSelection extends WindowTopDock
                 }
             }
         }
-
-        resized();
     }
 
     public void changeProject(int i)
@@ -132,6 +147,8 @@ public class WindowProjectSelection extends WindowTopDock
         workspace.cameraPitch = info.cameraPitch;
         workspace.cameraOffsetX = info.cameraOffsetX;
         workspace.cameraOffsetY = info.cameraOffsetY;
+
+        updateModelTree(info);
     }
 
     @Override

@@ -9,7 +9,7 @@ public class CubeInfo
     public CubeInfo(String name)
     {
         this.name = name;
-        dimensions = new int[] { 1, 1, 1 };
+        dimensions = new int[] { 16, 16, 16 };
     }
 
     public String name;
@@ -21,7 +21,7 @@ public class CubeInfo
 
     public double[] scale = new double[3];
 
-    public double[] txOffset = new double[2];
+    public int[] txOffset = new int[2];
     public boolean txMirror = false;
 
     public ArrayList<CubeInfo> children = new ArrayList<CubeInfo>();

@@ -38,7 +38,7 @@ public class WindowNewProject extends Window
         {
             workspace.removeWindow(this, true);
         }
-        if(element.id >= 0)
+        if(element.id > 0)
         {
             String projName = "";
             String authName = "";
@@ -56,6 +56,10 @@ public class WindowNewProject extends Window
                         authName = text.textField.getText();
                     }
                 }
+            }
+            if(projName.isEmpty())
+            {
+                return;
             }
             if(workspace.remoteSession)
             {
