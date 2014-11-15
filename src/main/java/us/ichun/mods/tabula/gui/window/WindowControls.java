@@ -41,6 +41,12 @@ public class WindowControls extends Window
     }
 
     @Override
+    public boolean interactableWhileNoProjects()
+    {
+        return false;
+    }
+
+    @Override
     public void elementTriggered(Element element)
     {
         if(element.id == 0)

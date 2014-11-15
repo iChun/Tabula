@@ -32,6 +32,12 @@ public class WindowTexture extends Window
     }
 
     @Override
+    public boolean interactableWhileNoProjects()
+    {
+        return false;
+    }
+
+    @Override
     public void update()
     {
         super.update();

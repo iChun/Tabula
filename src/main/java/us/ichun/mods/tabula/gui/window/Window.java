@@ -185,7 +185,7 @@ public class Window
         boolean clickedElement = false;
         for(Element element : elements)
         {
-            if(mouseX >= element.posX && mouseX <= element.posX + element.width && mouseY >= element.posY && mouseY <= element.posY + element.height && (minimized && element.ignoreMinimized || !minimized) && element.onClick(mouseX, mouseY, id))
+            if(mouseX >= element.posX && mouseX <= element.posX + element.width && mouseY >= element.posY && mouseY <= element.posY + element.height && (minimized && element.ignoreMinimized || !minimized) && !(workspace.projectManager.projects.isEmpty() && !interactableWhileNoProjects()) && element.onClick(mouseX, mouseY, id))
             {
                 if(id == 0)
                 {
@@ -229,6 +229,11 @@ public class Window
     public boolean allowMultipleInstances()
     {
         return false;
+    }
+
+    public boolean interactableWhileNoProjects()
+    {
+        return true;
     }
 
     public void elementTriggered(Element element)

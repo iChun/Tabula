@@ -4,6 +4,7 @@ import net.minecraft.util.ResourceLocation;
 import us.ichun.mods.tabula.gui.GuiWorkspace;
 import us.ichun.mods.tabula.gui.window.element.Element;
 import us.ichun.mods.tabula.gui.window.element.ElementButtonTextured;
+import us.ichun.mods.tabula.gui.window.element.ElementToggle;
 
 public class WindowTopDock extends Window
 {
@@ -13,12 +14,15 @@ public class WindowTopDock extends Window
     public static final int ID_SAVE_AS = 3;
     public static final int ID_IMPORT = 4;
     public static final int ID_EXPORT = 5;
+    public static final int ID_WOOD = -1;
 
     public WindowTopDock(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "", false);
 
         //ADD Elements
+        elements.add(new ElementToggle(this, width - 44, 4, 40, 12, ID_WOOD, true, 1, 0, "topdock.wood", "topdock.woodFull", true));
+
         elements.add(new ElementButtonTextured(this, 0, 0, ID_NEW, true, 0, 0, "topdock.new", new ResourceLocation("tabula", "textures/icon/new.png")));
         elements.add(new ElementButtonTextured(this, 20, 0, ID_OPEN, true, 0, 0, "topdock.open", new ResourceLocation("tabula", "textures/icon/open.png")));
         elements.add(new ElementButtonTextured(this, 40, 0, ID_SAVE, true, 0, 0, "topdock.save", new ResourceLocation("tabula", "textures/icon/save.png")));

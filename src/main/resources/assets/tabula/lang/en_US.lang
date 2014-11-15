@@ -36,3 +36,5 @@ topdock.save=Save
 topdock.saveAs=Save As
 topdock.import=Import
 topdock.export=Export
+topdock.wood=Wood
+topdock.woodFull=Toggle showing the planks

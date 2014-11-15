@@ -1,16 +1,26 @@
 package us.ichun.mods.tabula.gui;
 
 import ichun.client.render.RendererHelper;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockGrass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.Project;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.gui.window.*;
 import us.ichun.mods.tabula.gui.window.element.Element;
+import us.ichun.mods.tabula.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.gui.window.element.ElementWindow;
 
 import java.util.ArrayList;
@@ -20,6 +30,8 @@ public class GuiWorkspace extends GuiScreen
     public int oriScale;
     public final boolean remoteSession;
     public boolean isEditor;
+
+    public ResourceLocation grid16 = new ResourceLocation("tabula", "textures/workspace/grid16.png");
 
     public ArrayList<ArrayList<Window>> levels = new ArrayList<ArrayList<Window>>() {{
         add(0, new ArrayList<Window>()); // dock left
@@ -48,8 +60,24 @@ public class GuiWorkspace extends GuiScreen
 
     public Element elementSelected;
 
+    public RenderBlocks renderBlocks;
+
     public boolean init;
     public int liveTime;
+    public boolean resize;
+
+    public float zoom = 1.0F;
+    public int zoomInertia = 0;
+    public float zoomPerScroll = 0.05F;
+
+    public float cameraRoll;
+    public float cameraPitch;
+    public float cameraOffsetX;
+    public float cameraOffsetY;
+
+    public boolean clicked;
+    public int prevMouseX;
+    public int prevMouseY;
 
     public static final int VARIABLE_LEVEL = 4;
     public static final int TOP_DOCK_HEIGHT = 19;
@@ -59,6 +87,8 @@ public class GuiWorkspace extends GuiScreen
         oriScale = scale;
         remoteSession = remote;
         isEditor = editing;
+
+        renderBlocks = new RenderBlocks();
     }
 
     @Override
@@ -81,6 +111,7 @@ public class GuiWorkspace extends GuiScreen
 //            levels.get(4).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
 //            levels.get(4).add(new Window(this, 400, 200, 150, 300, 100, 200, "menu.loadingLevel", true));
         }
+        resize = true;
         screenResize();
 
         Keyboard.enableRepeatEvents(true);
@@ -89,6 +120,10 @@ public class GuiWorkspace extends GuiScreen
     @Override
     public void updateScreen()
     {
+        if(resize)
+        {
+            screenResize();
+        }
         if(elementHovered != null)
         {
             hoverTime++;
@@ -108,6 +143,16 @@ public class GuiWorkspace extends GuiScreen
             }
         }
         liveTime++;
+        if(zoomInertia > 0)
+        {
+            zoomInertia--;
+            zoom += zoomPerScroll * ((zoom < 1.0F) ? ((zoom + 0.5F) / 1.5F) : 1.0F ) * ((double)zoomInertia / 10D);
+        }
+        else if(zoomInertia < 0)
+        {
+            zoomInertia++;
+            zoom += zoomPerScroll * ((zoom < 1.0F) ? ((zoom + 0.5F) / 1.5F) : 1.0F ) * ((double)zoomInertia / 10D);
+        }
     }
 
     @Override
@@ -119,15 +164,21 @@ public class GuiWorkspace extends GuiScreen
         //TODO multiple views to view different things in the workspace.
         //TODO mouse scrolling
         GL11.glPushMatrix();
+        GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthFunc(GL11.GL_LEQUAL);
         GL11.glDepthMask(true);
         RendererHelper.drawColourOnScreen(Theme.workspaceBackground[0], Theme.workspaceBackground[1], Theme.workspaceBackground[2], 255, 0, 0, width, height, -1000D); //204 cause 0.8F * 255
 
+        renderWorkspace(mouseX, mouseY, f);
+
         hovering = false;
         boolean hasClicked = false;
+        boolean onWindow = false;
         Element prevElementSelected = elementSelected;
         elementSelected = null;
+
+        GL11.glTranslatef(0F, 0F, 1000F);
         for(int i = levels.size() - 1; i >= 0 ; i--)
         {
             for(int j = levels.get(i).size() - 1; j >= 0; j--)
@@ -135,6 +186,7 @@ public class GuiWorkspace extends GuiScreen
                 Window window = levels.get(i).get(j);
                 if(mouseX >= window.posX && mouseX <= window.posX + window.getWidth() && mouseY >= window.posY && mouseY <= window.posY + window.getHeight())
                 {
+                    onWindow = true;
                     if(!hasClicked && liveTime > 5)
                     {
                         if(Mouse.isButtonDown(0) && !mouseLeftDown)
@@ -189,6 +241,45 @@ public class GuiWorkspace extends GuiScreen
             elementSelected = prevElementSelected;
         }
 
+        if(clicked)
+        {
+            if(GuiScreen.isShiftKeyDown())
+            {
+                float factor = 0.0125F;
+                cameraOffsetX += (prevMouseX - mouseX) * factor;
+                cameraOffsetY -= (prevMouseY - mouseY) * factor;
+            }
+            else
+            {
+                float factor = 0.5F;
+                cameraRoll -= (prevMouseX - mouseX) * factor;
+                cameraPitch += (prevMouseY - mouseY) * factor;
+            }
+
+            prevMouseX = mouseX;
+            prevMouseY = mouseY;
+        }
+        int scroll = Mouse.getDWheel();
+        if(!onWindow)
+        {
+            if(scroll != 0)
+            {
+                zoom += zoomPerScroll * ((zoom < 1.0F) ? ((zoom + 0.5F) / 1.5F) : 1.0F ) * (scroll / 120F);
+                zoomInertia = scroll > 0 ? 10 : -10;
+            }
+
+            if(Mouse.isButtonDown(1) && !mouseRightDown)
+            {
+                clicked = true;
+                prevMouseX = mouseX;
+                prevMouseY = mouseY;
+            }
+        }
+        if(!Mouse.isButtonDown(1))
+        {
+            clicked = false;
+        }
+
         if(!hovering)
         {
             elementHovered = null;
@@ -196,7 +287,6 @@ public class GuiWorkspace extends GuiScreen
         }
         else if(elementHovered != null)
         {
-            int scroll = Mouse.getDWheel();
             boolean activated = false;
             if(scroll > 0)//scroll up
             {
@@ -217,6 +307,11 @@ public class GuiWorkspace extends GuiScreen
                 String tooltip = StatCollector.translateToLocal(elementHovered.tooltip());
                 int xOffset = 5;
                 int yOffset = 20;
+                int size = fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2);
+                if(width - mouseX < size)
+                {
+                    xOffset -= size - (width - mouseX) + 20;
+                }
                 RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, mouseX + xOffset, mouseY + yOffset, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2), 12, 0);
                 RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, mouseX + xOffset + 1, mouseY + yOffset + 1, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2) - 2, 12 - 2, 0);
                 fontRendererObj.drawString(tooltip, mouseX + xOffset + (Window.BORDER_SIZE - 1), mouseY + yOffset + (Window.BORDER_SIZE - 1), Theme.getAsHex(Theme.font), false);
@@ -409,6 +504,124 @@ public class GuiWorkspace extends GuiScreen
                 }
             }
         }
+    }
+
+    public void renderWorkspace(int mouseX, int mouseY, float f)
+    {
+        if(zoom < 0.05F)
+        {
+            zoom = 0.05F;
+        }
+        else if(zoom > 5.3F)
+        {
+            zoom = 5.3F;
+        }
+
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+
+        GL11.glPushMatrix();
+
+        GL11.glEnable(GL11.GL_LIGHTING);
+
+        RenderHelper.enableStandardItemLighting();
+
+        GL11.glPushMatrix();
+
+        Tessellator tessellator = Tessellator.instance;
+
+        Block block = Blocks.furnace;
+
+        GL11.glTranslatef(width - (levels.get(1).isEmpty() ? 15F : 15F + levels.get(1).get(0).width), height - 15F, 0F);
+        float scale = 15F;
+        GL11.glScalef(scale, scale, scale);
+        GL11.glScalef(-1.0F, 1.0F, 1.0F);
+        GL11.glRotatef(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(-38F + cameraRoll + 90F, 0.0F, 1.0F, 0.0F);
+
+        renderBlocks.renderBlockAsItem(block, 0, 1.0F);
+
+        GL11.glPopMatrix();
+
+        scale = 100F;
+        GL11.glScalef(scale, scale, scale);
+        GL11.glTranslatef(4.85F * width / 960, 4.5F * height / 514, -5F);
+        GL11.glScalef(zoom, zoom, zoom);
+        GL11.glScalef(-1.0F, 1.0F, 1.0F);
+        GL11.glTranslatef(cameraOffsetX, cameraOffsetY, 0.0F);
+        GL11.glRotatef(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(-38F + cameraRoll, 0.0F, 1.0F, 0.0F);
+
+        block = Blocks.planks;
+        renderBlocks.setRenderBoundsFromBlock(block);
+        renderBlocks.enableAO = false;
+
+        boolean enableWood = false;
+
+        for(int i = 0; i < levels.get(3).get(0).elements.size(); i++)
+        {
+            if(levels.get(3).get(0).elements.get(i).id == WindowTopDock.ID_WOOD)
+            {
+                ElementToggle toggle = (ElementToggle)levels.get(3).get(0).elements.get(i);
+                enableWood = toggle.toggledState;
+            }
+        }
+
+        if(enableWood)
+        {
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(0.0F, -1.0F, 0.0F);
+            renderBlocks.renderFaceYNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 0, 1));
+            tessellator.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(0.0F, 1.0F, 0.0F);
+            renderBlocks.renderFaceYPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 1, 1));
+            tessellator.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(0.0F, 0.0F, -1.0F);
+            renderBlocks.renderFaceZNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 2, 1));
+            tessellator.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(0.0F, 0.0F, 1.0F);
+            renderBlocks.renderFaceZPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 3, 1));
+            tessellator.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(-1.0F, 0.0F, 0.0F);
+            renderBlocks.renderFaceXNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 4, 1));
+            tessellator.draw();
+            tessellator.startDrawingQuads();
+            tessellator.setNormal(1.0F, 0.0F, 0.0F);
+            renderBlocks.renderFaceXPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 5, 1));
+            tessellator.draw();
+        }
+
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(grid16);
+        double dist = 0.125D;
+        double pX = -3.5D - dist;
+        double pY = 0.500125D;
+        double pZ = -3.5D - dist;
+        double w = 7 + (dist * 2);
+        double l = 7 + (dist * 2);
+        tessellator.startDrawingQuads();
+        tessellator.addVertexWithUV(pX	  , pY, pZ + l, -0.125D, 7.125D);
+        tessellator.addVertexWithUV(pX + w, pY, pZ + l, 7.125D, 7.125D);
+        tessellator.addVertexWithUV(pX + w, pY, pZ, 7.125D, -0.125D);
+        tessellator.addVertexWithUV(pX	  , pY, pZ, -0.125D, -0.125D);
+        tessellator.addVertexWithUV(pX + w, pY, pZ + l, 7.125D, 7.125D);
+        tessellator.addVertexWithUV(pX	  , pY, pZ + l, -0.125D, 7.125D);
+        tessellator.addVertexWithUV(pX	  , pY, pZ, -0.125D, -0.125D);
+        tessellator.addVertexWithUV(pX + w, pY, pZ, 7.125D, -0.125D);
+        tessellator.draw();
+
+        GL11.glDisable(GL11.GL_BLEND);
+
+        RenderHelper.disableStandardItemLighting();
+
+        GL11.glDisable(GL11.GL_LIGHTING);
+
+        GL11.glPopMatrix();
     }
 
     public void addToDock(int dock, Window window)
