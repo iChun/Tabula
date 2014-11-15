@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.gui.window;
 
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.gui.GuiWorkspace;
 import us.ichun.mods.tabula.gui.Theme;
 import us.ichun.mods.tabula.gui.window.element.Element;
@@ -39,7 +40,31 @@ public class WindowNewProject extends Window
         }
         if(element.id >= 0)
         {
-            //DO STUFF.
+            String projName = "";
+            String authName = "";
+            for(int i = 0; i < elements.size(); i++)
+            {
+                if(elements.get(i) instanceof ElementTextInput)
+                {
+                    ElementTextInput text = (ElementTextInput)elements.get(i);
+                    if(text.id == 1)
+                    {
+                        projName = text.textField.getText();
+                    }
+                    else if(text.id == 2)
+                    {
+                        authName = text.textField.getText();
+                    }
+                }
+            }
+            if(workspace.remoteSession)
+            {
+                //TODO remote session
+            }
+            else
+            {
+                Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject(projName, authName);
+            }
             workspace.removeWindow(this, true);
         }
     }

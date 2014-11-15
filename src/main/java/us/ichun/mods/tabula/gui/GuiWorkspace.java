@@ -9,11 +9,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import us.ichun.mods.tabula.common.Tabula;
-import us.ichun.mods.tabula.gui.window.WindowControls;
-import us.ichun.mods.tabula.gui.window.WindowTabs;
-import us.ichun.mods.tabula.gui.window.WindowTopDock;
+import us.ichun.mods.tabula.gui.window.*;
 import us.ichun.mods.tabula.gui.window.element.Element;
-import us.ichun.mods.tabula.gui.window.Window;
 import us.ichun.mods.tabula.gui.window.element.ElementWindow;
 
 import java.util.ArrayList;
@@ -36,6 +33,8 @@ public class GuiWorkspace extends GuiScreen
     public boolean mouseRightDown;
     public boolean mouseMiddleDown;
 
+    public WindowProjectSelection projectManager;
+
     public Window windowDragged;
     public int dragType; //1 = title drag, 2 >= border drag.
 
@@ -48,9 +47,6 @@ public class GuiWorkspace extends GuiScreen
     public int elementDragY;
 
     public Element elementSelected;
-
-    public int oldWidth;
-    public int oldHeight;
 
     public boolean init;
     public int liveTime;
@@ -76,12 +72,16 @@ public class GuiWorkspace extends GuiScreen
             addToDock(0, new WindowControls(this, width / 2 - 80, height / 2 - 125, 160, 250, 160, 250));
 
             levels.get(3).add(new WindowTopDock(this, 0, 0, width, 20, 20, 20));
+            projectManager = new WindowProjectSelection(this, 0, 0, width, 20, 20, 20);
+            levels.get(3).add(projectManager);
 
-
-            levels.get(4).add(new Window(this, 20, 20, 200, 200, 40, 50, "menu.convertingLevel", true));
+            levels.get(4).add(new Window(this, 200, 40, 200, 200, 40, 50, "menu.convertingLevel", true));
             levels.get(4).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
             levels.get(4).add(new Window(this, 400, 200, 150, 300, 100, 200, "menu.loadingLevel", true));
         }
+        screenResize();
+
+        Keyboard.enableRepeatEvents(true);
     }
 
     @Override
@@ -111,15 +111,6 @@ public class GuiWorkspace extends GuiScreen
     @Override
     public void drawScreen(int mouseX, int mouseY, float f)
     {
-        if(oldWidth != width || oldHeight != height)
-        {
-            oldWidth = width;
-            oldHeight = height;
-            screenResize();
-
-            Keyboard.enableRepeatEvents(true);
-        }
-
         //TODO update elements here
         //TODO docks...? Remember to draw upper dock first.
         //TODO a reset all windows button for people who "accidentally" drag the window out of the screen
@@ -201,16 +192,34 @@ public class GuiWorkspace extends GuiScreen
             elementHovered = null;
             hoverTime = 0;
         }
-        else if(elementHovered != null && hoverTime > 20 && elementHovered.tooltip() != null) //1s to draw tooltip
+        else if(elementHovered != null)
         {
-            GL11.glTranslatef(0F, 0F, 20F * levels.size());
-            String tooltip = StatCollector.translateToLocal(elementHovered.tooltip());
-            int xOffset = 5;
-            int yOffset = 20;
-            RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, mouseX + xOffset, mouseY + yOffset, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2), 12, 0);
-            RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, mouseX + xOffset + 1, mouseY + yOffset + 1, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2) - 2, 12 - 2, 0);
-            fontRendererObj.drawString(tooltip, mouseX + xOffset + (Window.BORDER_SIZE - 1), mouseY + yOffset + (Window.BORDER_SIZE - 1), Theme.getAsHex(Theme.font), false);
-//            RendererHelper.drawColourOnScreen(34, 34, 34, 255, posX + BORDER_SIZE, posY + BORDER_SIZE, getWidth() - (BORDER_SIZE * 2), getHeight() - (BORDER_SIZE * 2), 0);
+            int scroll = Mouse.getDWheel();
+            boolean activated = false;
+            if(scroll > 0)//scroll up
+            {
+                activated = elementHovered.mouseScroll(mouseX - elementHovered.parent.posX, mouseY - elementHovered.parent.posY, 1);
+            }
+            else if(scroll < 0)//scroll down
+            {
+                activated = elementHovered.mouseScroll(mouseX - elementHovered.parent.posX, mouseY - elementHovered.parent.posY, -1);
+            }
+            if(activated)
+            {
+                elementHovered.onClick(mouseX - elementHovered.parent.posX, mouseY - elementHovered.parent.posY, 2);
+                elementSelected = elementHovered;
+            }
+            if(hoverTime > 20 && elementHovered.tooltip() != null) //1s to draw tooltip
+            {
+                GL11.glTranslatef(0F, 0F, 20F * levels.size());
+                String tooltip = StatCollector.translateToLocal(elementHovered.tooltip());
+                int xOffset = 5;
+                int yOffset = 20;
+                RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, mouseX + xOffset, mouseY + yOffset, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2), 12, 0);
+                RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, mouseX + xOffset + 1, mouseY + yOffset + 1, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2) - 2, 12 - 2, 0);
+                fontRendererObj.drawString(tooltip, mouseX + xOffset + (Window.BORDER_SIZE - 1), mouseY + yOffset + (Window.BORDER_SIZE - 1), Theme.getAsHex(Theme.font), false);
+                //            RendererHelper.drawColourOnScreen(34, 34, 34, 255, posX + BORDER_SIZE, posY + BORDER_SIZE, getWidth() - (BORDER_SIZE * 2), getHeight() - (BORDER_SIZE * 2), 0);
+            }
         }
 
         GL11.glPopMatrix();
@@ -398,12 +407,6 @@ public class GuiWorkspace extends GuiScreen
                 }
             }
         }
-
-        updateDock(mouseX, mouseY, f);
-    }
-
-    public void updateDock(int mouseX, int mouseY, float f)
-    {
     }
 
     public void addToDock(int dock, Window window)

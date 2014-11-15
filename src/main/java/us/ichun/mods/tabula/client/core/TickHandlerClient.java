@@ -13,6 +13,8 @@ import org.lwjgl.input.Mouse;
 import us.ichun.mods.tabula.client.mainframe.Mainframe;
 import us.ichun.mods.tabula.gui.GuiWorkspace;
 
+import java.util.UUID;
+
 public class TickHandlerClient
 {
     public TickHandlerClient()
@@ -40,6 +42,7 @@ public class TickHandlerClient
                         int oriScale = mc.gameSettings.guiScale;
                         mc.gameSettings.guiScale = mc.gameSettings.guiScale == 1 ? 1 : 2;
                         mainframe = new Mainframe();
+                        mainframe.addListener(UUID.fromString(mc.getSession().getPlayerID()), true);
                         FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale, false, true));
                     }
                 }

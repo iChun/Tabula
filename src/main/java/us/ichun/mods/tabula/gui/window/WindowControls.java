@@ -15,7 +15,7 @@ public class WindowControls extends Window
         super(parent, x, y, w, h, minW, minH, "window.controls.title", true);
 
         elements.add(new ElementTextInput(this, 5, 27, width - 10, 12, 0, "window.controls.cubeName"));
-        elements.add(new ElementNumberInput(this, 5, 53, width - 10, 12, 1, "window.controls.dimensions", 3, false));
+        elements.add(new ElementNumberInput(this, 5, 53, width - 10, 12, 1, "window.controls.dimensions", 3, false, 0, Integer.MAX_VALUE));
         elements.add(new ElementNumberInput(this, 5, 79, width - 10, 12, 2, "window.controls.position", 3, true));
         elements.add(new ElementNumberInput(this, 5, 105, width - 10, 12, 3, "window.controls.offset", 3, true));
         elements.add(new ElementNumberInput(this, 5, 131, width - 10, 12, 4, "window.controls.scale", 3, true));
@@ -50,7 +50,7 @@ public class WindowControls extends Window
         if(element.id >= 0 && element.id != 7)
         {
             //DO STUFF.
-            workspace.removeWindow(this, true);
+//            workspace.removeWindow(this, true);
         }
     }
 }

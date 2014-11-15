@@ -1,5 +1,7 @@
 package us.ichun.mods.tabula.client.mainframe;
 
+import net.minecraft.client.Minecraft;
+import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.common.Tabula;
 
@@ -11,8 +13,9 @@ import java.util.UUID;
 //This is the class that holds all the info of the workspace and handles UI input from everyone.
 public class Mainframe
 {
-    public HashMap<UUID, String> listeners = new HashMap<UUID, String>();
-    public HashMap<UUID, String> editors = new HashMap<UUID, String>();
+
+    public ArrayList<UUID> listeners = new ArrayList<UUID>();
+    public ArrayList<UUID> editors = new ArrayList<UUID>();
 
     public boolean allowEditing;
 
@@ -28,12 +31,47 @@ public class Mainframe
         ProjectInfo projectInfo = new ProjectInfo(name, author);
         projectInfo.projVersion = "1.0.0"; //TODO change this everytime loading changes.
 
+        //TODO add a random identifier
+        projectInfo.identifier = Long.toString(Minecraft.getSystemTime());
+
         projects.add(projectInfo);
+
+        streamProject(projectInfo.identifier, projectInfo.getAsJson());
+
+        //TODO inform listeners of new project.
     }
 
     public void loadProject(File file)
     {
         //TODO load .tbl files?
+    }
+
+    public void streamProject(String ident, String s)
+    {
+        allowEditing = false;
+        for(UUID id : listeners)
+        {
+            //TODO stream to other listeners
+            if(id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            {
+                System.out.println("the hoster.");
+                System.out.println(s);
+                ProjectHelper.addProjectToManager(ProjectHelper.createProjectFromJson(ident, s));
+            }
+        }
+        allowEditing = true;
+    }
+
+    public void addListener(UUID id, boolean isEditor)
+    {
+        if(!listeners.contains(id))
+        {
+            listeners.add(id);
+        }
+        if(isEditor && !editors.contains(id))
+        {
+            editors.add(id);
+        }
     }
 
     public void shutdown()

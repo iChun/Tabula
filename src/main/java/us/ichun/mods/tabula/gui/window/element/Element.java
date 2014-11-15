@@ -45,6 +45,11 @@ public abstract class Element
 
     public void keyInput(char c, int key){}
 
+    public boolean mouseScroll(int mouseX, int mouseY, int k)
+    {
+        return false;//return true to say you're interacted with
+    }
+
     public String tooltip()
     {
         return null; //return null for no tooltip. This is localized.
