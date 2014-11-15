@@ -8,7 +8,9 @@ import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.gui.window.WindowTabs;
+import us.ichun.mods.tabula.gui.window.WindowTopDock;
 import us.ichun.mods.tabula.gui.window.element.Element;
 import us.ichun.mods.tabula.gui.window.Window;
 import us.ichun.mods.tabula.gui.window.element.ElementWindow;
@@ -18,11 +20,15 @@ import java.util.ArrayList;
 public class GuiWorkspace extends GuiScreen
 {
     public int oriScale;
+    public final boolean remoteSession;
+    public boolean isEditor;
+
     public ArrayList<ArrayList<Window>> levels = new ArrayList<ArrayList<Window>>() {{
         add(0, new ArrayList<Window>()); // dock left
         add(1, new ArrayList<Window>()); // dock right
         add(2, new ArrayList<Window>()); // dock btm
-        add(3, new ArrayList<Window>()); // dummy
+        add(3, new ArrayList<Window>()); // dock top
+        add(4, new ArrayList<Window>()); // dummy
     }};
 
     public boolean mouseLeftDown;
@@ -47,12 +53,14 @@ public class GuiWorkspace extends GuiScreen
 
     public boolean init;
 
-    public static final int VARIABLE_LEVEL = 3;
-    public static final int TOP_DOCK_HEIGHT = 20;
+    public static final int VARIABLE_LEVEL = 4;
+    public static final int TOP_DOCK_HEIGHT = 19;
 
-    public GuiWorkspace(int scale)
+    public GuiWorkspace(int scale, boolean remote, boolean editing)
     {
         oriScale = scale;
+        remoteSession = remote;
+        isEditor = editing;
     }
 
     @Override
@@ -62,9 +70,12 @@ public class GuiWorkspace extends GuiScreen
         if(!init)
         {
             init = true;
-            levels.get(3).add(new Window(this, 20, 20, 200, 200, 40, 50, "menu.convertingLevel", true));
-            levels.get(3).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
-            levels.get(3).add(new Window(this, 400, 200, 150, 300, 100, 200, "menu.loadingLevel", true));
+
+            levels.get(3).add(new WindowTopDock(this, 0, 0, width, 20, 20, 20));
+
+            levels.get(4).add(new Window(this, 20, 20, 200, 200, 40, 50, "menu.convertingLevel", true));
+            levels.get(4).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
+            levels.get(4).add(new Window(this, 400, 200, 150, 300, 100, 200, "menu.loadingLevel", true));
         }
     }
 
@@ -238,7 +249,7 @@ public class GuiWorkspace extends GuiScreen
                         {
                             Window window = levels.get(i).get(j);
                             //TODO if in dock....?
-                            if(tabbed || window == windowDragged)
+                            if(tabbed || window instanceof WindowTopDock || window == windowDragged)
                             {
                                 continue;
                             }
@@ -533,7 +544,7 @@ public class GuiWorkspace extends GuiScreen
 
     public void screenResize()
     {
-        for(int i = 0; i <= 2; i++)
+        for(int i = 0; i <= 3; i++)
         {
             ArrayList<Window> docked = levels.get(i);
             for(int j = 0; j < docked.size(); j++)
@@ -588,6 +599,10 @@ public class GuiWorkspace extends GuiScreen
 
     public void bringWindowToFront(Window window)
     {
+        if(window instanceof WindowTopDock)
+        {
+            return;
+        }
         for(int i = levels.size() - 1; i >= 0 ; i--)
         {
             for(int j = levels.get(i).size() - 1; j >= 0; j--)
@@ -632,6 +647,10 @@ public class GuiWorkspace extends GuiScreen
         Keyboard.enableRepeatEvents(false);
 
         Minecraft.getMinecraft().gameSettings.guiScale = oriScale;
+        if(!remoteSession)
+        {
+            Tabula.proxy.tickHandlerClient.mainframe.shutdown();
+        }
     }
 
     public FontRenderer getFontRenderer()

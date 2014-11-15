@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.input.Mouse;
+import us.ichun.mods.tabula.client.mainframe.Mainframe;
 import us.ichun.mods.tabula.gui.GuiWorkspace;
 
 public class TickHandlerClient
@@ -38,7 +39,8 @@ public class TickHandlerClient
                         btnDummy.func_146113_a(mc.getSoundHandler());
                         int oriScale = mc.gameSettings.guiScale;
                         mc.gameSettings.guiScale = mc.gameSettings.guiScale == 1 ? 1 : 2;
-                        FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale));
+                        mainframe = new Mainframe();
+                        FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale, false, true));
                     }
                 }
                 btnDummy.drawButton(mc, i, j);
@@ -47,6 +49,8 @@ public class TickHandlerClient
             }
         }
     }
+
+    public Mainframe mainframe;
 
     private int btnX = 0;
     private int btnY = 0;

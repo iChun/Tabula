@@ -56,7 +56,7 @@ public class ElementWindow extends Element
             }
             if(tab.selectedTab == id && !tab.minimized)
             {
-                RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, getPosX(), getPosY() + 1 + height, width + 3, 2, 0);
+                RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, getPosX(), getPosY() + 1 + height, width + 3, 2, 0);
             }
             else if(hover)
             {

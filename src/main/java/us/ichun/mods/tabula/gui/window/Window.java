@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.gui.window;
 
 import ichun.client.render.RendererHelper;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.tabula.gui.GuiWorkspace;
 import us.ichun.mods.tabula.gui.Theme;
@@ -61,8 +62,13 @@ public class Window
         docked = -1;
 
         //debug
-        elements.add(new ElementTextInput(this, 20, 20, 70, 12, 0, "window.controls.position"));
-        elements.add(new ElementNumberInput(this, 20, 34, 170, 12, 0, "window.controls.dimensions", 10, true));
+        if(!(this instanceof  WindowTopDock))
+        {
+            elements.add(new ElementTextInput(this, 20, 20, 70, 12, 0, "window.controls.position"));
+            elements.add(new ElementNumberInput(this, 20, 34, 170, 12, 0, "window.controls.dimensions", 10, true));
+            elements.add(new ElementButton(this, 20, 70, 50, 20, 0, false, 2, "gui.yes"));
+            elements.add(new ElementButtonTextured(this, 20, 100, 0, false, 2, "gui.no", new ResourceLocation("tabula", "textures/icon/open.png")));
+        }
     }
 
     public void update()
@@ -75,37 +81,48 @@ public class Window
 
     public void draw(int mouseX, int mouseY) //4 pixel border?
     {
-        RendererHelper.startGlScissor(posX + 1, posY + 1, getWidth() - 2, getHeight() - 2);
-        if(!minimized)
+        if(this instanceof WindowTopDock)
         {
-            if(docked >= 0)
+            RendererHelper.startGlScissor(posX, posY, getWidth(), getHeight());
+            RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, posX, posY, getWidth(), getHeight(), 0);
+        }
+        else
+        {
+            RendererHelper.startGlScissor(posX + 1, posY + 1, getWidth() - 2, getHeight() - 2);
+            if(!minimized)
             {
-                RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
-            }
-            else
-            {
-                RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
-                RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, posX + BORDER_SIZE, posY + BORDER_SIZE, getWidth() - (BORDER_SIZE * 2), getHeight() - (BORDER_SIZE * 2), 0);
+                if(docked >= 0)
+                {
+                    RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
+                }
+                else
+                {
+                    RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
+                    RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, posX + BORDER_SIZE, posY + BORDER_SIZE, getWidth() - (BORDER_SIZE * 2), getHeight() - (BORDER_SIZE * 2), 0);
+                }
             }
         }
-        RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, posX + 1, posY + 1, getWidth() - 2, 12, 0);
-        String titleToRender = StatCollector.translateToLocal(titleLocale);
-        while(titleToRender.length() > 1 && workspace.getFontRenderer().getStringWidth(titleToRender) > getWidth() - (BORDER_SIZE * 2) - workspace.getFontRenderer().getStringWidth("  _"))
+        if(hasTitle)
         {
-            if(titleToRender.startsWith("..."))
+            RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, posX + 1, posY + 1, getWidth() - 2, 12, 0);
+            String titleToRender = StatCollector.translateToLocal(titleLocale);
+            while(titleToRender.length() > 1 && workspace.getFontRenderer().getStringWidth(titleToRender) > getWidth() - (BORDER_SIZE * 2) - workspace.getFontRenderer().getStringWidth("  _"))
             {
-                break;
+                if(titleToRender.startsWith("..."))
+                {
+                    break;
+                }
+                if(titleToRender.endsWith("..."))
+                {
+                    titleToRender = titleToRender.substring(0, titleToRender.length() - 4) + "...";
+                }
+                else
+                {
+                    titleToRender = titleToRender.substring(0, titleToRender.length() - 1) + "...";
+                }
             }
-            if(titleToRender.endsWith("..."))
-            {
-                titleToRender = titleToRender.substring(0, titleToRender.length() - 4) + "...";
-            }
-            else
-            {
-                titleToRender = titleToRender.substring(0, titleToRender.length() - 1) + "...";
-            }
+            workspace.getFontRenderer().drawString(titleToRender, posX + 4, posY + 3, Theme.getAsHex(Theme.font), false);
         }
-        workspace.getFontRenderer().drawString(titleToRender, posX + 4, posY + 3, Theme.getAsHex(Theme.font), false);
 
         for(Element element : elements)
         {
@@ -198,6 +215,10 @@ public class Window
     public boolean clickedOnTitle(int mouseX, int mouseY, int id)
     {
         return mouseX >= 0 && mouseX <= getWidth() && mouseY >= 0 && mouseY <= 12;
+    }
+
+    public void elementTriggered(Element element)
+    {
     }
 
     public void resized()

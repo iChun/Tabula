@@ -8,3 +8,10 @@ window.controls.offset=Offset
 window.controls.txOffset=Texture Offset
 window.controls.rotation=Rotation
 window.controls.scale=Scale
+
+topdock.new=New
+topdock.open=Open
+topdock.save=Save
+topdock.saveAs=Save As
+topdock.import=Import
+topdock.export=Export

@@ -38,6 +38,11 @@ public abstract class Element
 
     public void resized(){}
 
+    public void triggerInput()
+    {
+        parent.elementTriggered(this);
+    }
+
     public void keyInput(char c, int key){}
 
     public String tooltip()
@@ -45,12 +50,12 @@ public abstract class Element
         return null; //return null for no tooltip. This is localized.
     }
 
-    public int getPosX()
+    public final int getPosX()
     {
         return parent.posX + posX;
     }
 
-    public int getPosY()
+    public final int getPosY()
     {
         return parent.posY + posY;
     }
