@@ -1,0 +1,38 @@
+element.minimize=Minimizza
+element.expand=Espandi
+
+element.button.ok=OK
+element.button.cancel=Annulla
+
+window.controls.title=Controlli
+window.controls.cubeName=Nome Cubo selezionato
+window.controls.dimensions=Dimensioni
+window.controls.position=Posizione
+window.controls.offset=Offset
+window.controls.rotation=Rotazione
+window.controls.scale=Scala
+window.controls.txOffset=Offset della Texture
+window.controls.txMirror=Specchio
+window.controls.txMirrorFull=Texture a specchio
+
+window.newProject.title=Nuovo progetto
+window.newProject.projName=Nome del progetto
+window.newProject.authName=ANome dell'autore
+
+window.modelTree.title=Albero del modello
+window.modelTree.newCube=Nuovo cubo
+window.modelTree.newGroup=Nuovo gruppo
+window.modelTree.delete=Cancella
+
+window.texture.title=Texture
+window.texture.loadTexture=Carica Texture
+window.texture.clearTexture=Cancella Texture
+window.texture.listenTexture=Aspetta
+window.texture.listenTextureFull=Aspetta per cambiamenti nelle texture
+
+topdock.new=Nuovo
+topdock.open=Apri
+topdock.save=Salva
+topdock.saveAs=Salva con nome
+topdock.import=Importa
+topdock.export=Esporta
