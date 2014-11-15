@@ -13,6 +13,12 @@ public class ProjectInfo
     public transient String identifier;
     public transient File saveFile;
 
+    public transient float cameraZoom = 1.0F;
+    public transient float cameraYaw;
+    public transient float cameraPitch;
+    public transient float cameraOffsetX;
+    public transient float cameraOffsetY;
+
     public String modelName;
     public String authorName;
     public String projVersion;

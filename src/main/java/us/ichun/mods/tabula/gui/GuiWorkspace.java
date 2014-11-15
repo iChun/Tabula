@@ -2,7 +2,6 @@ package us.ichun.mods.tabula.gui;
 
 import ichun.client.render.RendererHelper;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockGrass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -16,7 +15,6 @@ import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.Project;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.gui.window.*;
 import us.ichun.mods.tabula.gui.window.element.Element;
@@ -66,11 +64,11 @@ public class GuiWorkspace extends GuiScreen
     public int liveTime;
     public boolean resize;
 
-    public float zoom = 1.0F;
-    public int zoomInertia = 0;
-    public float zoomPerScroll = 0.05F;
+    public float cameraZoom = 1.0F;
+    public int cameraZoomInertia = 0;
+    public float cameraZoomPerScroll = 0.05F;
 
-    public float cameraRoll;
+    public float cameraYaw;
     public float cameraPitch;
     public float cameraOffsetX;
     public float cameraOffsetY;
@@ -143,15 +141,15 @@ public class GuiWorkspace extends GuiScreen
             }
         }
         liveTime++;
-        if(zoomInertia > 0)
+        if(cameraZoomInertia > 0)
         {
-            zoomInertia--;
-            zoom += zoomPerScroll * ((zoom < 1.0F) ? ((zoom + 0.5F) / 1.5F) : 1.0F ) * ((double)zoomInertia / 10D);
+            cameraZoomInertia--;
+            cameraZoom += cameraZoomPerScroll * ((cameraZoom < 1.0F) ? ((cameraZoom + 0.5F) / 1.5F) : 1.0F ) * ((double)cameraZoomInertia / 10D);
         }
-        else if(zoomInertia < 0)
+        else if(cameraZoomInertia < 0)
         {
-            zoomInertia++;
-            zoom += zoomPerScroll * ((zoom < 1.0F) ? ((zoom + 0.5F) / 1.5F) : 1.0F ) * ((double)zoomInertia / 10D);
+            cameraZoomInertia++;
+            cameraZoom += cameraZoomPerScroll * ((cameraZoom < 1.0F) ? ((cameraZoom + 0.5F) / 1.5F) : 1.0F ) * ((double)cameraZoomInertia / 10D);
         }
     }
 
@@ -252,7 +250,7 @@ public class GuiWorkspace extends GuiScreen
             else
             {
                 float factor = 0.5F;
-                cameraRoll -= (prevMouseX - mouseX) * factor;
+                cameraYaw -= (prevMouseX - mouseX) * factor;
                 cameraPitch += (prevMouseY - mouseY) * factor;
             }
 
@@ -264,8 +262,8 @@ public class GuiWorkspace extends GuiScreen
         {
             if(scroll != 0)
             {
-                zoom += zoomPerScroll * ((zoom < 1.0F) ? ((zoom + 0.5F) / 1.5F) : 1.0F ) * (scroll / 120F);
-                zoomInertia = scroll > 0 ? 10 : -10;
+                cameraZoom += cameraZoomPerScroll * ((cameraZoom < 1.0F) ? ((cameraZoom + 0.5F) / 1.5F) : 1.0F ) * (scroll / 120F);
+                cameraZoomInertia = scroll > 0 ? 10 : -10;
             }
 
             if(Mouse.isButtonDown(1) && !mouseRightDown)
@@ -508,13 +506,13 @@ public class GuiWorkspace extends GuiScreen
 
     public void renderWorkspace(int mouseX, int mouseY, float f)
     {
-        if(zoom < 0.05F)
+        if(cameraZoom < 0.05F)
         {
-            zoom = 0.05F;
+            cameraZoom = 0.05F;
         }
-        else if(zoom > 5.3F)
+        else if(cameraZoom > 5.3F)
         {
-            zoom = 5.3F;
+            cameraZoom = 5.3F;
         }
 
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
@@ -536,7 +534,7 @@ public class GuiWorkspace extends GuiScreen
         GL11.glScalef(scale, scale, scale);
         GL11.glScalef(-1.0F, 1.0F, 1.0F);
         GL11.glRotatef(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(-38F + cameraRoll + 90F, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(-38F + cameraYaw + 90F, 0.0F, 1.0F, 0.0F);
 
         renderBlocks.renderBlockAsItem(block, 0, 1.0F);
 
@@ -545,11 +543,11 @@ public class GuiWorkspace extends GuiScreen
         scale = 100F;
         GL11.glScalef(scale, scale, scale);
         GL11.glTranslatef(4.85F * width / 960, 4.5F * height / 514, -5F);
-        GL11.glScalef(zoom, zoom, zoom);
+        GL11.glScalef(cameraZoom, cameraZoom, cameraZoom);
         GL11.glScalef(-1.0F, 1.0F, 1.0F);
         GL11.glTranslatef(cameraOffsetX, cameraOffsetY, 0.0F);
         GL11.glRotatef(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(-38F + cameraRoll, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(-38F + cameraYaw, 0.0F, 1.0F, 0.0F);
 
         block = Blocks.planks;
         renderBlocks.setRenderBoundsFromBlock(block);

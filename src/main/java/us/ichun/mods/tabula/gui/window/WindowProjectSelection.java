@@ -20,6 +20,8 @@ public class WindowProjectSelection extends WindowTopDock
         super(parent, x, y, w, h, minW, minH);
 
         elements.clear();
+
+        selectedProject = -1;
     }
 
     @Override
@@ -114,7 +116,22 @@ public class WindowProjectSelection extends WindowTopDock
 
     public void changeProject(int i)
     {
+        if(selectedProject != -1)
+        {
+            ProjectInfo info = projects.get(selectedProject);
+            info.cameraZoom = workspace.cameraZoom;
+            info.cameraYaw = workspace.cameraYaw;
+            info.cameraPitch = workspace.cameraPitch;
+            info.cameraOffsetX = workspace.cameraOffsetX;
+            info.cameraOffsetY = workspace.cameraOffsetY;
+        }
         selectedProject = i;
+        ProjectInfo info = projects.get(selectedProject);
+        workspace.cameraZoom = info.cameraZoom;
+        workspace.cameraYaw = info.cameraYaw;
+        workspace.cameraPitch = info.cameraPitch;
+        workspace.cameraOffsetX = info.cameraOffsetX;
+        workspace.cameraOffsetY = info.cameraOffsetY;
     }
 
     @Override
