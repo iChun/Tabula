@@ -48,7 +48,7 @@ public class WindowTopDock extends Window
         }
         else if(element.id == ID_OPEN)
         {
-            workspace.addWindowOnTop(new WindowControls(workspace, workspace.width / 2 - 80, workspace.height / 2 - 125, 160, 250, 160, 250));
+            workspace.addWindowOnTop(new WindowModelTree(workspace, workspace.width / 2 - 80, workspace.height / 2 - 125, 160, 250, 160, 250));
         }
     }
 

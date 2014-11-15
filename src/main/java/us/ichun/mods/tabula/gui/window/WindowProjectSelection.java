@@ -5,6 +5,7 @@ import us.ichun.mods.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.gui.GuiWorkspace;
 import us.ichun.mods.tabula.gui.Theme;
 import us.ichun.mods.tabula.gui.window.element.Element;
+import us.ichun.mods.tabula.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.gui.window.element.ElementProjectTab;
 
 import java.util.ArrayList;
@@ -85,8 +86,29 @@ public class WindowProjectSelection extends WindowTopDock
         {
             projects.add(info);
             elements.add(new ElementProjectTab(this, 0, 0, 10, 10, elements.size(), info));
-            changeProject(elements.size());
+            changeProject(elements.size() - 1);
         }
+
+        for(int i = 0; i < workspace.levels.size(); i++)
+        {
+            for(int j = 0; j < workspace.levels.get(i).size(); j++)
+            {
+                Window window = workspace.levels.get(i).get(j);
+                if(window instanceof WindowModelTree)
+                {
+                    ElementListTree modelList = ((WindowModelTree)window).modelList;
+                    modelList.trees.clear();
+
+                    for(int k = 0; k < info.cubes.size(); k++)
+                    {
+                        modelList.createTree(null, null, info.cubes.get(k), 15, true);
+                    }
+
+                    break;
+                }
+            }
+        }
+
         resized();
     }
 

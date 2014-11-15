@@ -62,6 +62,18 @@ public class Mainframe
         allowEditing = true;
     }
 
+    public void createNewCube(String ident)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                info.createNewCube();
+                streamProject(info.identifier, info.getAsJson());
+            }
+        }
+    }
+
     public void addListener(UUID id, boolean isEditor)
     {
         if(!listeners.contains(id))

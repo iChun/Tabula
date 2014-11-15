@@ -70,14 +70,16 @@ public class GuiWorkspace extends GuiScreen
             init = true;
 
             addToDock(0, new WindowControls(this, width / 2 - 80, height / 2 - 125, 160, 250, 160, 250));
+            addToDock(1, new WindowTexture(this, width / 2 - 53, height / 2 - 50, 106, 100, 106, 100));
+            addToDock(1, new WindowModelTree(this, width / 2 - 53, height / 2 - 125, 106, 250, 106, 250));
 
             levels.get(3).add(new WindowTopDock(this, 0, 0, width, 20, 20, 20));
             projectManager = new WindowProjectSelection(this, 0, 0, width, 20, 20, 20);
             levels.get(3).add(projectManager);
 
-            levels.get(4).add(new Window(this, 200, 40, 200, 200, 40, 50, "menu.convertingLevel", true));
-            levels.get(4).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
-            levels.get(4).add(new Window(this, 400, 200, 150, 300, 100, 200, "menu.loadingLevel", true));
+//            levels.get(4).add(new Window(this, 200, 40, 200, 200, 40, 50, "menu.convertingLevel", true));
+//            levels.get(4).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
+//            levels.get(4).add(new Window(this, 400, 200, 150, 300, 100, 200, "menu.loadingLevel", true));
         }
         screenResize();
 

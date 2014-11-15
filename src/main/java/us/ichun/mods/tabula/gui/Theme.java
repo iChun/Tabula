@@ -26,6 +26,16 @@ public class Theme
     public static int[] elementProjectTabFont               = new int[] { 140, 140, 140 };
     public static int[] elementProjectTabFontChanges        = new int[] { 255, 255, 255 };
 
+    public static int[] elementTreeBorder                   = new int[] { 100, 100, 100 };
+    public static int[] elementTreeScrollBar                = new int[] { 34, 34, 34 };
+    public static int[] elementTreeScrollBarBorder          = new int[] { 60, 60, 60 };
+
+    public static int[] elementTreeItemBorder               = new int[] { 40, 40, 40 };
+    public static int[] elementTreeItemBg                   = new int[] { 100, 100, 100 };
+    public static int[] elementTreeItemBgSelect             = new int[] { 80, 80, 80 };
+    public static int[] elementTreeItemBgHover              = new int[] { 100, 100, 100 };
+
+
     public static int[] font                                = new int[] { 255, 255, 255 };
     
     public static void changeColour(int[] set, int r, int g, int b)
