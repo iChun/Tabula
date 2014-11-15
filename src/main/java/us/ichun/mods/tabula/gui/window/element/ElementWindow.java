@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.gui.window.element;
 
 import ichun.client.render.RendererHelper;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.tabula.gui.Theme;
 import us.ichun.mods.tabula.gui.window.Window;
@@ -18,6 +19,12 @@ public class ElementWindow extends Element
         mountedWindow = mount;
         oriWidth = mountedWindow.width;
         oriHeight = mountedWindow.height;
+    }
+
+    @Override
+    public void update()
+    {
+        mountedWindow.update();
     }
 
     @Override
@@ -41,6 +48,7 @@ public class ElementWindow extends Element
         }
         parent.workspace.getFontRenderer().drawString(titleToRender, parent.posX + posX + 4, parent.posY + posY + 3, Theme.getAsHex(Theme.font), false);
 
+        mountedWindow.docked = parent.docked;
         mountedWindow.posX = parent.posX;
         mountedWindow.posY = parent.posY;
         mountedWindow.width = parent.width;
@@ -56,6 +64,9 @@ public class ElementWindow extends Element
             }
             if(tab.selectedTab == id && !tab.minimized)
             {
+                mountedWindow.isTab = true;
+                mountedWindow.draw(mouseX,mouseY);
+                mountedWindow.isTab = false;
                 RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, getPosX(), getPosY() + 1 + height, width + 3, 2, 0);
             }
             else if(hover)
@@ -98,7 +109,14 @@ public class ElementWindow extends Element
                 width = tab.workspace.getFontRenderer().getStringWidth(StatCollector.translateToLocal(mountedWindow.titleLocale) + " ");
                 height = 12;
             }
+            mountedWindow.docked = parent.docked;
+            mountedWindow.posX = parent.posX;
+            mountedWindow.posY = parent.posY;
+            mountedWindow.width = parent.width;
+            mountedWindow.height = parent.height;
+
         }
+        mountedWindow.resized();
     }
 
     @Override

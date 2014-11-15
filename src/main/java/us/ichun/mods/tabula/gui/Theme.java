@@ -18,6 +18,8 @@ public class Theme
     public static int[] elementButtonBackgroundHover         = new int[] { 70, 70, 70 };
     public static int[] elementButtonBorder                  = new int[] { 140, 140, 140 };
     public static int[] elementButtonClick                   = new int[] { 100, 100, 100 };
+    public static int[] elementButtonToggle                  = new int[] { 30, 30, 30 };
+    public static int[] elementButtonToggleHover             = new int[] { 170, 170, 170 };
 
     public static int[] font                                = new int[] { 255, 255, 255 };
     

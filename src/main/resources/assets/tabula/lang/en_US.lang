@@ -1,13 +1,23 @@
 element.minimize=Minimize
 element.expand=Expand
 
+element.button.ok=OK
+element.button.cancel=Cancel
+
+window.controls.title=Controls
 window.controls.cubeName=Selected Cube Name
 window.controls.dimensions=Dimensions
 window.controls.position=Position
 window.controls.offset=Offset
-window.controls.txOffset=Texture Offset
 window.controls.rotation=Rotation
 window.controls.scale=Scale
+window.controls.txOffset=Texture Offset
+window.controls.txMirror=Mirror
+window.controls.txMirrorFull=Mirror Texture
+
+window.newProject.title=New Project
+window.newProject.projName=Project Name
+window.newProject.authName=Author Name
 
 topdock.new=New
 topdock.open=Open

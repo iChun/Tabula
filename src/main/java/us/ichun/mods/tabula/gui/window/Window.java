@@ -32,6 +32,8 @@ public class Window
     public String titleLocale;
     public boolean hasTitle; //if it has title, it can minimize.
 
+    public boolean isTab;
+
     public int docked;
     public boolean minimized;
 
@@ -62,13 +64,13 @@ public class Window
         docked = -1;
 
         //debug
-        if(!(this instanceof  WindowTopDock))
-        {
-            elements.add(new ElementTextInput(this, 20, 20, 70, 12, 0, "window.controls.position"));
-            elements.add(new ElementNumberInput(this, 20, 34, 170, 12, 0, "window.controls.dimensions", 10, true));
-            elements.add(new ElementButton(this, 20, 70, 50, 20, 0, false, 2, "gui.yes"));
-            elements.add(new ElementButtonTextured(this, 20, 100, 0, false, 2, "gui.no", new ResourceLocation("tabula", "textures/icon/open.png")));
-        }
+//        if(!(this instanceof  WindowTopDock))
+//        {
+//            elements.add(new ElementTextInput(this, 20, 20, 70, 12, 0, "window.controls.position"));
+//            elements.add(new ElementNumberInput(this, 20, 34, 170, 12, 0, "window.controls.dimensions", 3, true));
+//            elements.add(new ElementButton(this, 20, 70, 50, 20, 0, false, 2, "gui.yes"));
+//            elements.add(new ElementButtonTextured(this, 20, 100, 0, false, 2, "gui.no", new ResourceLocation("tabula", "textures/icon/open.png")));
+//        }
     }
 
     public void update()
@@ -88,7 +90,14 @@ public class Window
         }
         else
         {
-            RendererHelper.startGlScissor(posX + 1, posY + 1, getWidth() - 2, getHeight() - 2);
+            if(isTab)
+            {
+                RendererHelper.startGlScissor(posX + 1, posY + 1 + 12, getWidth() - 2, getHeight() - 2 - 12);
+            }
+            else
+            {
+                RendererHelper.startGlScissor(posX + 1, posY + 1, getWidth() - 2, getHeight() - 2);
+            }
             if(!minimized)
             {
                 if(docked >= 0)
@@ -215,6 +224,11 @@ public class Window
     public boolean clickedOnTitle(int mouseX, int mouseY, int id)
     {
         return mouseX >= 0 && mouseX <= getWidth() && mouseY >= 0 && mouseY <= 12;
+    }
+
+    public boolean allowMultipleInstances()
+    {
+        return false;
     }
 
     public void elementTriggered(Element element)

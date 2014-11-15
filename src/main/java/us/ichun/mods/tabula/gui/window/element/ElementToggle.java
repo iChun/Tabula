@@ -6,15 +6,17 @@ import org.lwjgl.input.Mouse;
 import us.ichun.mods.tabula.gui.Theme;
 import us.ichun.mods.tabula.gui.window.Window;
 
-public class ElementButton extends Element
+public class ElementToggle extends Element
 {
     public int anchorH;//0 = left, 1 = right, 2 = middle
     public int spaceH;
     public int anchorV;
     public int spaceV;
     public String text;
+    public String tooltip;
+    public boolean toggledState;
 
-    public ElementButton(Window window, int x, int y, int w, int h, int ID, boolean igMin, int sideH, int sideV, String Text)
+    public ElementToggle(Window window, int x, int y, int w, int h, int ID, boolean igMin, int sideH, int sideV, String Text, String Tooltip, boolean state)
     {
         super(window, x, y, w, h, ID, igMin);
         anchorH = sideH;
@@ -31,6 +33,8 @@ public class ElementButton extends Element
             case 1: spaceV = parent.height - posY - height; break;
         }
         text = Text;
+        tooltip = Tooltip;
+        toggledState = state;
     }
 
     @Override
@@ -50,17 +54,22 @@ public class ElementButton extends Element
         }
         else
         {
-            RendererHelper.drawColourOnScreen(Theme.elementButtonBackgroundInactive[0], Theme.elementButtonBackgroundInactive[1], Theme.elementButtonBackgroundInactive[2], 255, getPosX() + 1, getPosY() + 1, width - 2, height - 2, 0);
+            if(toggledState)
+            {
+                RendererHelper.drawColourOnScreen(Theme.elementButtonToggle[0], Theme.elementButtonToggle[1], Theme.elementButtonToggle[2], 255, getPosX() + 1, getPosY() + 1, width - 2, height - 2, 0);
+            }
+            else
+            {
+                RendererHelper.drawColourOnScreen(Theme.elementButtonBackgroundInactive[0], Theme.elementButtonBackgroundInactive[1], Theme.elementButtonBackgroundInactive[2], 255, getPosX() + 1, getPosY() + 1, width - 2, height - 2, 0);
+            }
         }
-        if(!(this instanceof ElementButtonTextured))
-        {
-            parent.workspace.getFontRenderer().drawString(StatCollector.translateToLocal(text), getPosX() + (width / 2) - (parent.workspace.getFontRenderer().getStringWidth(StatCollector.translateToLocal(text)) / 2), getPosY() + height - (height / 2) - (parent.workspace.getFontRenderer().FONT_HEIGHT / 2), Theme.getAsHex(Theme.font), false);
-        }
+        parent.workspace.getFontRenderer().drawString(StatCollector.translateToLocal(text), getPosX() + (width / 2) - (parent.workspace.getFontRenderer().getStringWidth(StatCollector.translateToLocal(text)) / 2), getPosY() + height - (height / 2) - (parent.workspace.getFontRenderer().FONT_HEIGHT / 2), Theme.getAsHex(!toggledState ? Theme.elementButtonToggleHover : Theme.font), false);
     }
 
     @Override
     public boolean onClick(int mouseX, int mouseY, int id)
     {
+        toggledState = !toggledState;
         parent.elementTriggered(this);
         return true;
     }
@@ -80,5 +89,10 @@ public class ElementButton extends Element
             case 1: posY = parent.height - spaceV - height; break;
             case 2: posY = (parent.height / 2) - (height / 2); break;
         }
+    }
+
+    public String tooltip()
+    {
+        return tooltip; //return null for no tooltip. This is localized.
     }
 }

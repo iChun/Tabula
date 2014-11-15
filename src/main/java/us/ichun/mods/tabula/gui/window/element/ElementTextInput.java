@@ -7,6 +7,7 @@ import us.ichun.mods.tabula.gui.Theme;
 import us.ichun.mods.tabula.gui.window.Window;
 
 public class ElementTextInput extends Element
+        implements ITextInput
 {
     public GuiTextField textField;
     public String tooltip;
@@ -14,7 +15,7 @@ public class ElementTextInput extends Element
 
     public ElementTextInput(Window window, int x, int y, int w, int h, int ID, String tip)
     {
-        super(window, x, y, w, h, ID, false); //12 for height?
+        super(window, x, y, w, 12, ID, false); //12 for height?
         textField = new GuiTextField(parent.workspace.getFontRenderer(), parent.posX + posX + 2, parent.posY + posY + 2, width - 9, parent.workspace.getFontRenderer().FONT_HEIGHT);
         textField.setMaxStringLength(80);
         textField.setEnableBackgroundDrawing(false);
@@ -62,6 +63,15 @@ public class ElementTextInput extends Element
     @Override
     public void keyInput(char c, int key)
     {
+        if(key == Keyboard.KEY_TAB)
+        {
+            tabHit();
+            return;
+        }
+        else if(key == Keyboard.KEY_RETURN)
+        {
+            parent.elementTriggered(this);
+        }
         String prevText = textField.getText();
         textField.textboxKeyTyped(c, key);
         checkAndCorrectText(prevText);
@@ -81,6 +91,7 @@ public class ElementTextInput extends Element
     public void deselected()
     {
         textField.setFocused(false);
+        resized();
     }
 
     @Override
@@ -89,6 +100,7 @@ public class ElementTextInput extends Element
         textField.xPosition = parent.posX + posX + 2;
         textField.yPosition = parent.posY + posY + 2;
         textField.width = width - 9;
+        textField.setCursorPositionZero();
         width = parent.width - posX - spacing;
     }
 
@@ -96,5 +108,47 @@ public class ElementTextInput extends Element
     public String tooltip()
     {
         return tooltip; //return null for no tooltip. This is localized.
+    }
+
+    @Override
+    public void tabHit()
+    {
+        deselected();
+        boolean found = false;
+        boolean foundSelf = false;
+        for(int i = 0; i < parent.elements.size(); i++)
+        {
+            Element e = parent.elements.get(i);
+            if(e == this)
+            {
+                foundSelf = true;
+                continue;
+            }
+            if(e instanceof ITextInput && foundSelf)
+            {
+                found = true;
+                ((ITextInput)e).cycledTo();
+                break;
+            }
+        }
+        if(!found)
+        {
+            for(int i = 0; i < parent.elements.size(); i++)
+            {
+                Element e = parent.elements.get(i);
+                if(e instanceof ITextInput)
+                {
+                    ((ITextInput)e).cycledTo();
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void cycledTo()
+    {
+        parent.workspace.elementSelected = this;
+        selected();
     }
 }

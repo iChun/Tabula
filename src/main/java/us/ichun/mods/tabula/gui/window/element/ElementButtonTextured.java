@@ -9,15 +9,15 @@ public class ElementButtonTextured extends ElementButton
 {
     public ResourceLocation txLocation;
 
-    public ElementButtonTextured(Window window, int x, int y, int w, int h, int ID, boolean igMin, int side, String title, ResourceLocation loc)
+    public ElementButtonTextured(Window window, int x, int y, int w, int h, int ID, boolean igMin, int sideH, int sideV, String title, ResourceLocation loc)
     {
-        super(window, x, y, w, h, ID, igMin, side, title);
+        super(window, x, y, w, h, ID, igMin, sideH, sideV, title);
         txLocation = loc;
     }
 
-    public ElementButtonTextured(Window window, int x, int y, int ID, boolean igMin, int side, String title, ResourceLocation loc)
+    public ElementButtonTextured(Window window, int x, int y, int ID, boolean igMin, int sideH, int sideV, String title, ResourceLocation loc)
     {
-        super(window, x, y, 20, 20, ID, igMin, side, title);
+        super(window, x, y, 20, 20, ID, igMin, sideH, sideV, title);
         txLocation = loc;
     }
 

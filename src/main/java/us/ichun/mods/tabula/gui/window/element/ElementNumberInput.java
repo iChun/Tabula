@@ -11,6 +11,7 @@ import us.ichun.mods.tabula.gui.window.Window;
 import java.util.ArrayList;
 
 public class ElementNumberInput extends Element
+        implements ITextInput
 {
     public ArrayList<GuiTextField> textFields = new ArrayList<GuiTextField>();
     public int selectedTextField = -1;
@@ -26,7 +27,7 @@ public class ElementNumberInput extends Element
 
         for(int i = 0; i < fieldCount; i++)
         {
-            GuiTextField textField = new GuiTextField(parent.workspace.getFontRenderer(), parent.posX + posX + 2 + ((width / fieldCount) * i), parent.posY + posY + 2, (width / fieldCount) - 22, parent.workspace.getFontRenderer().FONT_HEIGHT);
+            GuiTextField textField = new GuiTextField(parent.workspace.getFontRenderer(), parent.posX + posX + 2 + ((width / fieldCount) * i), parent.posY + posY + 2, (width / fieldCount) - 20, parent.workspace.getFontRenderer().FONT_HEIGHT);
             textField.setMaxStringLength(20);
             textField.setEnableBackgroundDrawing(false);
             textField.setTextColor(Theme.getAsHex(Theme.font));
@@ -107,7 +108,7 @@ public class ElementNumberInput extends Element
                         textFields.get(selectedTextField).setText(Integer.toString(Integer.parseInt(text) + 1));
                     }
                 }
-                //TODO actually do something about the input
+                parent.elementTriggered(this);
                 break;
             }
             if(mouseX >= x1 && mouseX < x2 && mouseY >= y1 + 7 && mouseY <= y1 + 12 && id == 0)
@@ -136,7 +137,7 @@ public class ElementNumberInput extends Element
                         textFields.get(selectedTextField).setText(Integer.toString(Integer.parseInt(text) - 1));
                     }
                 }
-                //TODO actually do something about the input
+                parent.elementTriggered(this);
                 break;
             }
         }
@@ -215,15 +216,20 @@ public class ElementNumberInput extends Element
     @Override
     public void keyInput(char c, int key)
     {
+        if(key == Keyboard.KEY_TAB)
+        {
+            tabHit();
+            return;
+        }
         if(selectedTextField != -1)
         {
-            if(Keyboard.KEY_RETURN == key)
-            {
-                //TODO return input
-            }
             if(Keyboard.KEY_D == key) // prevents users from hitting the D key
             {
                 return;
+            }
+            else if(key == Keyboard.KEY_RETURN)
+            {
+                parent.elementTriggered(this);
             }
             String oldText = textFields.get(selectedTextField).getText();
             textFields.get(selectedTextField).textboxKeyTyped(c, key);
@@ -264,6 +270,7 @@ public class ElementNumberInput extends Element
             textFields.get(selectedTextField).setFocused(false);
         }
         selectedTextField = -1;
+        resized();
     }
 
     @Override
@@ -274,14 +281,77 @@ public class ElementNumberInput extends Element
         {
             textFields.get(i).xPosition = parent.posX + posX + 2 + ((width / textFields.size()) * i);
             textFields.get(i).yPosition = parent.posY + posY + 2;
-            textFields.get(i).width = (width / textFields.size()) - 22;
+            textFields.get(i).width = (width / textFields.size()) - 20;
+            textFields.get(i).setCursorPositionZero();
         }
-        //TODO adjust width then adjust the text fields.
     }
 
     @Override
     public String tooltip()
     {
         return tooltip; //return null for no tooltip. This is localized.
+    }
+
+    @Override
+    public void tabHit()
+    {
+        if(selectedTextField < textFields.size() - 1)
+        {
+            if(selectedTextField != -1)
+            {
+                textFields.get(selectedTextField).setFocused(false);
+            }
+            selectedTextField++;
+            textFields.get(selectedTextField).setFocused(true);
+        }
+        else
+        {
+            if(selectedTextField != -1)
+            {
+                textFields.get(selectedTextField).setFocused(false);
+            }
+            selectedTextField = -1;
+            boolean found = false;
+            boolean foundSelf = false;
+            for(int i = 0; i < parent.elements.size(); i++)
+            {
+                Element e = parent.elements.get(i);
+                if(e == this)
+                {
+                    foundSelf = true;
+                    continue;
+                }
+                if(e instanceof ITextInput && foundSelf)
+                {
+                    found = true;
+                    ((ITextInput)e).cycledTo();
+                    break;
+                }
+            }
+            if(!found)
+            {
+                for(int i = 0; i < parent.elements.size(); i++)
+                {
+                    Element e = parent.elements.get(i);
+                    if(e instanceof ITextInput)
+                    {
+                        ((ITextInput)e).cycledTo();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void cycledTo()
+    {
+        parent.workspace.elementSelected = this;
+        if(selectedTextField != -1)
+        {
+            textFields.get(selectedTextField).setFocused(false);
+        }
+        selectedTextField = 0;
+        textFields.get(selectedTextField).setFocused(true);
     }
 }
