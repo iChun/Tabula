@@ -171,11 +171,8 @@ public class GuiWorkspace extends GuiScreen
     @Override
     public void drawScreen(int mouseX, int mouseY, float f)
     {
-        //TODO update elements here
-        //TODO docks...? Remember to draw upper dock first.
         //TODO a reset all windows button for people who "accidentally" drag the window out of the screen
-        //TODO multiple views to view different things in the workspace.
-        //TODO mouse scrolling
+        //TODO Do not close window if it is docked?
         Minecraft mc = Minecraft.getMinecraft();
 
         GL11.glPushMatrix();
@@ -1048,6 +1045,14 @@ public class GuiWorkspace extends GuiScreen
     public void onGuiClosed()
     {
         Keyboard.enableRepeatEvents(false);
+
+        for(int i = levels.size() - 1; i >= 0; i--)
+        {
+            for(int j = levels.get(i).size() - 1; j >= 0; j--)
+            {
+                ((Window)levels.get(i).get(j)).shutdown();
+            }
+        }
 
         Minecraft.getMinecraft().gameSettings.guiScale = oriScale;
         if(!remoteSession)

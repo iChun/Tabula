@@ -117,7 +117,7 @@ public class ClientProxy extends CommonProxy
                 {
                     ModelList.models.add(new ModelInfo(AbstractClientPlayer.locationStevePng, rend.mainModel, EntityPlayer.class));
                 }
-                else
+                else if(rend.mainModel != null)
                 {
                     EntityLivingBase instance;
                     try { instance = (EntityLivingBase)clz.getConstructor(World.class).newInstance(new Object[] { null }); } catch(Exception e){ instance = null; }
@@ -164,7 +164,11 @@ public class ClientProxy extends CommonProxy
                     f.setAccessible(true);
                     if(ModelBase.class.isAssignableFrom(f.getType()))
                     {
-                        ModelList.models.add(new ModelInfo(null, (ModelBase)f.get(rend), te));
+                        ModelBase base = (ModelBase)f.get(rend);
+                        if(base != null)
+                        {
+                            ModelList.models.add(new ModelInfo(null, base, te));
+                        }
                     }
                 }
             }
@@ -188,7 +192,11 @@ public class ClientProxy extends CommonProxy
                     f.setAccessible(true);
                     if(ModelBase.class.isAssignableFrom(f.getType()))
                     {
-                        ModelList.models.add(new ModelInfo(null, (ModelBase)f.get(rend), te));
+                        ModelBase base = (ModelBase)f.get(rend);
+                        if(base != null)
+                        {
+                            ModelList.models.add(new ModelInfo(null, base, te));
+                        }
                     }
                 }
             }

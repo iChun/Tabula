@@ -20,12 +20,13 @@ import java.util.EnumMap;
 
 @Mod(modid = "Tabula", name = "Tabula",
         version = Tabula.version,
-        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".1.0,)",
+        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".0.0,)",
         acceptableRemoteVersions = "[" + iChunUtil.versionMC +".0.0," + iChunUtil.versionMC + ".1.0)"
 )
 public class Tabula
         implements IConfigUser
 {
+    //TODO update dependency
     public static final String version = iChunUtil.versionMC + ".0.0";
 
     @Mod.Instance("Tabula")

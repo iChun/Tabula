@@ -23,7 +23,6 @@ public class WindowTexture extends Window
 
     public BufferedImage image;
     public int imageId = -1;
-    //TODO buffered image id + buffered image
 
     public WindowTexture(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
@@ -83,6 +82,15 @@ public class WindowTexture extends Window
                 tessellator.draw();
                 //TODO draw texture location overlay.
             }
+        }
+    }
+
+    @Override
+    public void shutdown()
+    {
+        if(imageId != -1)
+        {
+            TextureUtil.deleteTexture(imageId);
         }
     }
 

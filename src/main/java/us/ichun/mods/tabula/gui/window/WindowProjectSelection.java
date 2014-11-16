@@ -1,6 +1,8 @@
 package us.ichun.mods.tabula.gui.window;
 
 import ichun.client.render.RendererHelper;
+import net.minecraft.client.renderer.texture.TextureUtil;
+import org.lwjgl.util.glu.Project;
 import us.ichun.mods.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.gui.GuiWorkspace;
@@ -67,6 +69,15 @@ public class WindowProjectSelection extends WindowTopDock
             width = workspace.width - posX;
         }
         height = 12;
+    }
+
+    @Override
+    public void shutdown()
+    {
+        for(ProjectInfo project : projects)
+        {
+            project.destroy();
+        }
     }
 
     public void updateProject(ProjectInfo info)

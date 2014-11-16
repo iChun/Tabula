@@ -1,5 +1,6 @@
 package us.ichun.mods.tabula.client.core;
 
+import com.mojang.util.UUIDTypeAdapter;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -42,7 +43,7 @@ public class TickHandlerClient
                         int oriScale = mc.gameSettings.guiScale;
                         mc.gameSettings.guiScale = mc.gameSettings.guiScale == 1 ? 1 : 2;
                         mainframe = new Mainframe();
-                        mainframe.addListener(UUID.fromString(mc.getSession().getPlayerID()), true);
+                        mainframe.addListener(UUIDTypeAdapter.fromString(mc.getSession().getPlayerID()), true);
                         FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale, false, true));
                     }
                 }

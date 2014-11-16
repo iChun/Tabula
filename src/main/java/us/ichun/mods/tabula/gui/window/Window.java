@@ -248,6 +248,8 @@ public class Window
         }
     }
 
+    public void shutdown(){}
+
     public void toggleMinimize()
     {
         minimized = !minimized;
@@ -256,6 +258,7 @@ public class Window
             workspace.redock(docked, null);
         }
     }
+
 
     public int getHeight()
     {
