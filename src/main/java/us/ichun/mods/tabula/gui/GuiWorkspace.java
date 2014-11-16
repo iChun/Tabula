@@ -21,9 +21,11 @@ import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.gui.window.*;
 import us.ichun.mods.tabula.gui.window.element.Element;
+import us.ichun.mods.tabula.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.gui.window.element.ElementWindow;
 
+import java.security.Key;
 import java.util.ArrayList;
 
 public class GuiWorkspace extends GuiScreen
@@ -45,8 +47,12 @@ public class GuiWorkspace extends GuiScreen
     public boolean mouseLeftDown;
     public boolean mouseRightDown;
     public boolean mouseMiddleDown;
+    public boolean keyDeleteDown;
 
     public WindowProjectSelection projectManager;
+    public WindowControls windowControls;
+    public WindowTexture windowTexture;
+    public WindowModelTree windowModelTree;
 
     public Window windowDragged;
     public int dragType; //1 = title drag, 2 >= border drag.
@@ -100,13 +106,18 @@ public class GuiWorkspace extends GuiScreen
         {
             init = true;
 
-            addToDock(0, new WindowControls(this, width / 2 - 80, height / 2 - 125, 160, 250, 160, 250));
-            addToDock(1, new WindowTexture(this, width / 2 - 53, height / 2 - 50, 106, 100, 106, 100));
-            addToDock(1, new WindowModelTree(this, width / 2 - 53, height / 2 - 125, 106, 250, 106, 250));
+            windowControls = new WindowControls(this, width / 2 - 80, height / 2 - 125, 160, 250, 160, 250);
+            windowTexture = new WindowTexture(this, width / 2 - 53, height / 2 - 44, 106, 88, 106, 88);
+            windowModelTree = new WindowModelTree(this, width / 2 - 53, height / 2 - 125, 106, 250, 106, 250);
+            addToDock(0, windowControls);
+            addToDock(1, windowTexture);
+            addToDock(1, windowModelTree);
 
             levels.get(3).add(new WindowTopDock(this, 0, 0, width, 20, 20, 20));
             projectManager = new WindowProjectSelection(this, 0, 0, width, 20, 20, 20);
             levels.get(3).add(projectManager);
+
+            Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject("New Project", "iChun? :O");
 
             //            levels.get(4).add(new Window(this, 200, 40, 200, 200, 40, 50, "menu.convertingLevel", true));
             //            levels.get(4).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
@@ -123,15 +134,16 @@ public class GuiWorkspace extends GuiScreen
     {
         if(resize)
         {
+            resize = false;
             screenResize();
         }
         if(elementHovered != null)
         {
             hoverTime++;
         }
-        for(int i = levels.size() - 1; i >= VARIABLE_LEVEL; i--)//clean up empty levels.
+        for(int i = levels.size() - 1; i >= 0; i--)//clean up empty levels.
         {
-            if(levels.get(i).isEmpty())
+            if(levels.get(i).isEmpty()&& i >= VARIABLE_LEVEL)
             {
                 levels.remove(i);
             }
@@ -257,7 +269,7 @@ public class GuiWorkspace extends GuiScreen
 
         if(clicked)
         {
-            if(GuiScreen.isShiftKeyDown())
+            if(GuiScreen.isShiftKeyDown() || Mouse.isButtonDown(2))
             {
                 float factor = 0.0125F;
                 cameraOffsetX += (prevMouseX - mouseX) * factor;
@@ -265,9 +277,17 @@ public class GuiWorkspace extends GuiScreen
             }
             else
             {
-                float factor = 0.5F;
-                cameraYaw -= (prevMouseX - mouseX) * factor;
-                cameraPitch += (prevMouseY - mouseY) * factor;
+                if(GuiScreen.isCtrlKeyDown())
+                {
+                    float factor = 0.0125F;
+                    cameraZoom += (prevMouseY - mouseY) * factor;
+                }
+                else
+                {
+                    float factor = 0.5F;
+                    cameraYaw -= (prevMouseX - mouseX) * factor;
+                    cameraPitch += (prevMouseY - mouseY) * factor;
+                }
             }
 
             prevMouseX = mouseX;
@@ -282,14 +302,25 @@ public class GuiWorkspace extends GuiScreen
                 cameraZoomInertia = scroll > 0 ? 10 : -10;
             }
 
-            if(Mouse.isButtonDown(1) && !mouseRightDown)
+            if(Mouse.isButtonDown(1) && !mouseRightDown || Mouse.isButtonDown(2) && !mouseMiddleDown)
             {
                 clicked = true;
                 prevMouseX = mouseX;
                 prevMouseY = mouseY;
             }
+            if(Mouse.isButtonDown(0) && !mouseLeftDown)
+            {
+                windowControls.selectedObject = null;
+                windowControls.refresh = true;
+
+                for(ElementListTree.Tree tree : windowModelTree.modelList.trees)
+                {
+                    tree.selected = false;
+                }
+                windowModelTree.modelList.selectedIdentifier = "";
+            }
         }
-        if(!Mouse.isButtonDown(1))
+        if(!Mouse.isButtonDown(1) && !Mouse.isButtonDown(2))
         {
             clicked = false;
         }
@@ -312,6 +343,10 @@ public class GuiWorkspace extends GuiScreen
             }
             if(activated)
             {
+                if(elementSelected != null)
+                {
+                    elementSelected.deselected();
+                }
                 elementHovered.onClick(mouseX - elementHovered.parent.posX, mouseY - elementHovered.parent.posY, 2);
                 elementSelected = elementHovered;
             }
@@ -333,11 +368,26 @@ public class GuiWorkspace extends GuiScreen
             }
         }
 
+        if(elementSelected == null && Keyboard.isKeyDown(Keyboard.KEY_DELETE) && !keyDeleteDown)
+        {
+            windowControls.selectedObject = null;
+            windowControls.refresh = true;
+
+            for(Element e : windowModelTree.elements)
+            {
+                if(e.id == 2)
+                {
+                    windowModelTree.elementTriggered(e);
+                }
+            }
+        }
+
         GL11.glPopMatrix();
 
         mouseLeftDown = Mouse.isButtonDown(0);
         mouseRightDown = Mouse.isButtonDown(1);
         mouseMiddleDown = Mouse.isButtonDown(2);
+        keyDeleteDown = Keyboard.isKeyDown(Keyboard.KEY_DELETE);
 
         if(windowDragged != null)
         {
@@ -532,9 +582,9 @@ public class GuiWorkspace extends GuiScreen
         {
             cameraZoom = 0.05F;
         }
-        else if(cameraZoom > 5.3F)
+        else if(cameraZoom > 15F)
         {
-            cameraZoom = 5.3F;
+            cameraZoom = 15F;
         }
 
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
@@ -628,13 +678,25 @@ public class GuiWorkspace extends GuiScreen
         if(projectManager.selectedProject != -1)
         {
             GL11.glPushMatrix();
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            GL11.glTranslatef(0.0F, 2F, 0.0F);
+            GL11.glTranslatef(0.0F, 2.0005F, 0.0F);
             GL11.glScalef(-1.0F, -1.0F, 1.0F);
             ProjectInfo info = projectManager.projects.get(projectManager.selectedProject);
-            info.model.render(0.0625F);
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+            if(windowTexture.imageId != -1)
+            {
+                GL11.glBindTexture(GL11.GL_TEXTURE_2D, windowTexture.imageId);
+
+                info.model.render(0.0625F);
+            }
+            else
+            {
+                GL11.glDisable(GL11.GL_TEXTURE_2D);
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+                info.model.render(0.0625F);
+
+                GL11.glEnable(GL11.GL_TEXTURE_2D);
+            }
             GL11.glPopMatrix();
         }
 

@@ -5,6 +5,8 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import us.ichun.mods.tabula.client.model.ModelInfo;
+import us.ichun.mods.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.gui.Theme;
 import us.ichun.mods.tabula.gui.window.Window;
 
@@ -21,13 +23,25 @@ public class ElementListTree extends Element
 
     public ArrayList<Tree> trees = new ArrayList<Tree>();
 
-    public ElementListTree(Window window, int x, int y, int w, int h, int ID, boolean igMin)
+    public boolean canDrag;
+
+    public Tree treeDragged;
+    public int dragX;
+    public int dragY;
+
+    public boolean lmbDown;
+
+    public String selectedIdentifier;
+
+    public ElementListTree(Window window, int x, int y, int w, int h, int ID, boolean igMin, boolean drag)
     {
         super(window, x, y, w, h, ID, igMin);
         spacerL = x;
         spacerR = parent.width - x - width;
         spacerU = y;
         spacerD = parent.height - y - height;
+        selectedIdentifier = "";
+        canDrag = drag;
     }
 
     @Override
@@ -78,11 +92,32 @@ public class ElementListTree extends Element
         {
             Tree tree = trees.get(i);
 
-            tree.draw(mouseX, mouseY, hover, (x2 - x1), treeHeight, 0);
+            tree.draw(mouseX, mouseY, hover, (x2 - x1), treeHeight, treeHeight1 > height, treeHeight1, Mouse.isButtonDown(0) && !lmbDown);
 
             treeHeight += tree.getHeight();
         }
         GL11.glPopMatrix();
+
+        RendererHelper.endGlScissor();
+
+        if(treeDragged != null && !(dragX == mouseX && dragY == mouseY))
+        {
+            treeHeight = 0;
+            for(int i = 0; i < trees.size(); i++)
+            {
+                Tree tree = trees.get(i);
+
+                if(tree == treeDragged)
+                {
+                    break;
+                }
+
+                treeHeight += tree.getHeight();
+            }
+            treeDragged.dragDraw = true;
+            treeDragged.draw(mouseX, mouseY, hover, (x2 - x1), treeHeight, treeHeight1 > height, treeHeight1, Mouse.isButtonDown(0) && !lmbDown);
+            treeDragged.dragDraw = false;
+        }
 
         if(parent.isTab)
         {
@@ -100,6 +135,13 @@ public class ElementListTree extends Element
             RendererHelper.drawColourOnScreen(Theme.elementTreeBorder[0], Theme.elementTreeBorder[1], Theme.elementTreeBorder[2], 255, x1 - 1, y2 + 1, (x2 - x1) + 2, 1, 0);
             RendererHelper.drawColourOnScreen(Theme.elementTreeBorder[0], Theme.elementTreeBorder[1], Theme.elementTreeBorder[2], 255, x2, y1 - 1, 1, height + 2, 0);
         }
+
+        if(!Mouse.isButtonDown(0) && lmbDown)
+        {
+            treeDragged = null;
+        }
+
+        lmbDown = Mouse.isButtonDown(0);
     }
 
     @Override
@@ -135,60 +177,132 @@ public class ElementListTree extends Element
         return null; //return null for no tooltip. This is localized.
     }
 
-    public void createTree(Tree parent, ResourceLocation loc, Object obj, int h, boolean canexp)
+    public void createTree(ResourceLocation loc, Object obj, int h, int attach, boolean expandable, boolean collapse)
     {
-        trees.add(new Tree(parent, loc, obj, h, canexp));
+        trees.add(new Tree(loc, obj, h, attach, expandable, collapse));
+    }
+
+    public void clickElement(Object obj)
+    {
+        if(obj instanceof CubeInfo)
+        {
+            CubeInfo info = (CubeInfo)obj;
+            selectedIdentifier = info.identifier;
+
+            parent.workspace.windowControls.selectedObject = info;
+            parent.workspace.windowControls.refresh = true;
+        }
     }
 
     public class Tree
     {
-        public ArrayList<Tree> branches = new ArrayList<Tree>();
-
-        public Tree root;
-
         public ResourceLocation txLoc;
 
         public Object attachedObject;
 
-        private int height;
+        private int theHeight;
 
         public boolean canExpand;
-        public boolean expanded;
+        public boolean collapsed;
+
+        public int attached;// attachment level
 
         public boolean selected;
 
-        public Tree(Tree parent, ResourceLocation loc, Object obj, int h, boolean canexp)
+        public boolean dragDraw;
+
+        public Tree(ResourceLocation loc, Object obj, int h, int attach, boolean expandable, boolean collapse)
         {
-            if(parent != null)
-            {
-                root = parent;
-                parent.branches.add(this);
-            }
             txLoc = loc;
             attachedObject = obj;
-            height = h;
-            canExpand = canexp;
+            theHeight = h;
+            attached = attach;
+            canExpand = expandable;
+            collapsed = collapse;
         }
 
         public int getHeight()
         {
-            int branchHeight = 0;
-            for(int i = 0; i < branches.size(); i++)
-            {
-                branchHeight += branches.get(i).getHeight();
-            }
-            return height + branchHeight;
+            //TODO get parents and see if they're expanded
+            return theHeight;
         }
 
-        public void draw(int mouseX, int mouseY, boolean hover, int width, int treeHeight, int prevHeight)
+        public Tree draw(int mouseX, int mouseY, boolean hover, int width, int treeHeight, boolean hasScroll, int totalHeight, boolean clicking)
         {
-            RendererHelper.drawColourOnScreen(Theme.elementTreeItemBorder[0], Theme.elementTreeItemBorder[1], Theme.elementTreeItemBorder[2], 255, getPosX(), getPosY() + treeHeight + prevHeight, width, height, 0);
-            //TODO hover, select, nonselected
-            RendererHelper.drawColourOnScreen(Theme.elementTreeItemBg[0], Theme.elementTreeItemBg[1], Theme.elementTreeItemBg[2], 255, getPosX() + 1, getPosY() + treeHeight + prevHeight + 1, width - 2, height - 2, 0);
-
-            for(int i = 0; i < branches.size(); i++)
+            if(!(treeDragged == this && !(dragX == mouseX && dragY == mouseY)) || dragDraw)
             {
-                branches.get(i).draw(mouseX, mouseY, hover, width, treeHeight, prevHeight + height);
+                double scrollHeight = 0.0D;
+                if(hasScroll)
+                {
+                    scrollHeight = (height - totalHeight) * sliderProg;
+                }
+                boolean realBorder = mouseX >= posX && mouseX < posX + width && mouseY >= posY + treeHeight + scrollHeight && mouseY < posY + treeHeight + scrollHeight + theHeight;
+                int offX = 0;
+                int offY = 0;
+                if(dragDraw)
+                {
+                    offX = mouseX - dragX;
+                    offY = mouseY - dragY;
+                }
+                RendererHelper.drawColourOnScreen(Theme.elementTreeItemBorder[0], Theme.elementTreeItemBorder[1], Theme.elementTreeItemBorder[2], 255, getPosX() + offX, getPosY() + offY + treeHeight, width, theHeight, 0);
+                if(selected)
+                {
+                    RendererHelper.drawColourOnScreen(Theme.elementTreeItemBgSelect[0], Theme.elementTreeItemBgSelect[1], Theme.elementTreeItemBgSelect[2], 255, getPosX() + offX + 1, getPosY() + offY + treeHeight + 1, width - 2, theHeight - 2, 0);
+                }
+                else if(realBorder)
+                {
+                    RendererHelper.drawColourOnScreen(Theme.elementTreeItemBgHover[0], Theme.elementTreeItemBgHover[1], Theme.elementTreeItemBgHover[2], 255, getPosX() + offX + 1, getPosY() + offY + treeHeight + 1, width - 2, theHeight - 2, 0);
+                }
+                else
+                {
+                    RendererHelper.drawColourOnScreen(Theme.elementTreeItemBg[0], Theme.elementTreeItemBg[1], Theme.elementTreeItemBg[2], 255, getPosX() + offX + 1, getPosY() + offY + treeHeight + 1, width - 2, theHeight - 2, 0);
+                }
+
+                if(realBorder && hasScroll)
+                {
+                    if(mouseY > height + 5 - scrollHeight || mouseY <= scrollHeight)
+                    {
+                        clicking = false;
+                    }
+                }
+
+                if(attachedObject instanceof CubeInfo)
+                {
+                    CubeInfo info = (CubeInfo)attachedObject;
+                    parent.workspace.getFontRenderer().drawString(info.name, getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.font), false);
+                }
+                else if(attachedObject instanceof ModelInfo)
+                {
+                    ModelInfo info = (ModelInfo)attachedObject;
+                    parent.workspace.getFontRenderer().drawString(info.modelParent.getClass().getSimpleName() + " - " + info.clz.getSimpleName(), getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.font), false);
+                }
+
+                if(realBorder && clicking)
+                {
+                    //TODO action when selected
+                    selected = true;
+                    deselectOthers(trees);
+                    clickElement(attachedObject);
+
+                    if(canDrag)
+                    {
+                        treeDragged = this;
+                        dragX = mouseX;
+                        dragY = mouseY;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public void deselectOthers(ArrayList<Tree> trees)
+        {
+            for(Tree tree : trees)
+            {
+                if(tree != this && tree.selected)
+                {
+                    tree.selected = false;
+                }
             }
         }
     }

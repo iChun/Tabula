@@ -31,9 +31,9 @@ public class Theme
     public static int[] elementTreeScrollBarBorder          = new int[] { 60, 60, 60 };
 
     public static int[] elementTreeItemBorder               = new int[] { 40, 40, 40 };
-    public static int[] elementTreeItemBg                   = new int[] { 100, 100, 100 };
-    public static int[] elementTreeItemBgSelect             = new int[] { 80, 80, 80 };
-    public static int[] elementTreeItemBgHover              = new int[] { 100, 100, 100 };
+    public static int[] elementTreeItemBg                   = new int[] { 60, 60, 60 };
+    public static int[] elementTreeItemBgSelect             = new int[] { 100, 100, 100 };
+    public static int[] elementTreeItemBgHover              = new int[] { 120, 120, 120 };
 
 
     public static int[] font                                = new int[] { 255, 255, 255 };

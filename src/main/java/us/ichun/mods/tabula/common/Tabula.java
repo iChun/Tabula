@@ -3,6 +3,7 @@ package us.ichun.mods.tabula.common;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.relauncher.Side;
@@ -19,7 +20,7 @@ import java.util.EnumMap;
 
 @Mod(modid = "Tabula", name = "Tabula",
         version = Tabula.version,
-        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".0.0,)",
+        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".1.0,)",
         acceptableRemoteVersions = "[" + iChunUtil.versionMC +".0.0," + iChunUtil.versionMC + ".1.0)"
 )
 public class Tabula
@@ -49,6 +50,12 @@ public class Tabula
     @Mod.EventHandler
     public void load(FMLInitializationEvent event)
     {
+    }
+
+    @Mod.EventHandler
+    public void postLoad(FMLPostInitializationEvent event)
+    {
+        proxy.postInit();
     }
 
     public static void console(String s, boolean warning)

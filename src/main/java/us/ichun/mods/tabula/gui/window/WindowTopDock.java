@@ -54,6 +54,10 @@ public class WindowTopDock extends Window
         {
             workspace.addWindowOnTop(new WindowModelTree(workspace, workspace.width / 2 - 80, workspace.height / 2 - 125, 160, 250, 160, 250));
         }
+        else if(element.id == ID_IMPORT)
+        {
+            workspace.addWindowOnTop(new WindowImport(workspace, workspace.width / 2 - 150, workspace.height / 2 - 200, 300, 400, 280, 160));
+        }
     }
 
     @Override

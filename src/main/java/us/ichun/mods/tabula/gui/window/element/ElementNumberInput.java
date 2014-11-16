@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.gui.window.element;
 
 import ichun.client.render.RendererHelper;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -30,7 +31,7 @@ public class ElementNumberInput extends Element
 
         for(int i = 0; i < fieldCount; i++)
         {
-            GuiTextField textField = new GuiTextField(parent.workspace.getFontRenderer(), parent.posX + posX + 2 + ((width / fieldCount) * i), parent.posY + posY + 2, (width / fieldCount) - 20, parent.workspace.getFontRenderer().FONT_HEIGHT);
+            GuiTextField textField = new GuiTextField(parent.workspace.getFontRenderer(), parent.posX + posX + 2 + ((width / fieldCount) * i), parent.posY + posY + 2, (width / fieldCount) - 18, parent.workspace.getFontRenderer().FONT_HEIGHT);
             textField.setMaxStringLength(20);
             textField.setEnableBackgroundDrawing(false);
             textField.setTextColor(Theme.getAsHex(Theme.font));
@@ -85,7 +86,7 @@ public class ElementNumberInput extends Element
                 {
                     if(allowDecimal)
                     {
-                        String val = String.format("%.3f", Double.parseDouble(text) + (k == 1 ? 0.1D : -0.1D));
+                        String val = String.format("%.2f", Double.parseDouble(text) + (k == 1 ? (GuiScreen.isShiftKeyDown() ? 1D : 0.1D) : -(GuiScreen.isShiftKeyDown() ? 1D : 0.1D)));
                         if(val.contains(".") && val.length() > val.indexOf(".") + 4)
                         {
                             val = val.substring(0, val.indexOf(".") + 4);
@@ -128,7 +129,7 @@ public class ElementNumberInput extends Element
         {
             if(textFields.get(selectedTextField).isFocused())
             {
-                textFields.get(selectedTextField).mouseClicked(getPosX() + mouseX - 18, getPosY() + mouseY, id);
+                textFields.get(selectedTextField).mouseClicked(getPosX() + mouseX, getPosY() + mouseY, id);
             }
         }
 
@@ -167,7 +168,7 @@ public class ElementNumberInput extends Element
                 {
                     if(allowDecimal)
                     {
-                        String val = String.format("%.3f", Double.parseDouble(text) + 0.1D);
+                        String val = String.format("%.2f", Double.parseDouble(text) + (GuiScreen.isShiftKeyDown() ? 1D : 0.1D));
                         if(val.contains(".") && val.length() > val.indexOf(".") + 4)
                         {
                             val = val.substring(0, val.indexOf(".") + 4);
@@ -213,7 +214,7 @@ public class ElementNumberInput extends Element
                 {
                     if(allowDecimal)
                     {
-                        String val = String.format("%.3f", Double.parseDouble(text) - 0.1D);
+                        String val = String.format("%.2f", Double.parseDouble(text) - (GuiScreen.isShiftKeyDown() ? 1D : 0.1D));
                         if(val.contains(".") && val.length() > val.indexOf(".") + 4)
                         {
                             val = val.substring(0, val.indexOf(".") + 4);
@@ -338,7 +339,7 @@ public class ElementNumberInput extends Element
             }
             String oldText = textFields.get(selectedTextField).getText();
             textFields.get(selectedTextField).textboxKeyTyped(c, key);
-            if(!textFields.get(selectedTextField).getText().isEmpty())
+            if(!textFields.get(selectedTextField).getText().isEmpty() && !(textFields.get(selectedTextField).getText().startsWith("-") & textFields.get(selectedTextField).getText().length() == 1))
             {
                 try
                 {
@@ -386,7 +387,7 @@ public class ElementNumberInput extends Element
         {
             textFields.get(i).xPosition = parent.posX + posX + 2 + ((width / textFields.size()) * i);
             textFields.get(i).yPosition = parent.posY + posY + 2;
-            textFields.get(i).width = (width / textFields.size()) - 20;
+            textFields.get(i).width = (width / textFields.size()) - 18;
             textFields.get(i).setCursorPositionZero();
         }
     }

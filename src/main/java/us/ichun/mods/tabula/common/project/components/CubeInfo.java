@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.common.project.components;
 
 import net.minecraft.client.model.ModelRenderer;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.ArrayList;
 
@@ -9,7 +10,9 @@ public class CubeInfo
     public CubeInfo(String name)
     {
         this.name = name;
-        dimensions = new int[] { 16, 16, 16 };
+        dimensions = new int[] { 1, 1, 1 };
+        scale = new double[] { 1D, 1D, 1D };
+        identifier = RandomStringUtils.randomAscii(20);
     }
 
     public String name;
@@ -25,6 +28,8 @@ public class CubeInfo
     public boolean txMirror = false;
 
     public ArrayList<CubeInfo> children = new ArrayList<CubeInfo>();
+
+    public String identifier;
 
     public transient ModelRenderer modelCube;
 }

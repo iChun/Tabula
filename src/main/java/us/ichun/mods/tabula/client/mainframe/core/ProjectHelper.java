@@ -7,6 +7,8 @@ import net.minecraft.client.Minecraft;
 import us.ichun.mods.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.gui.GuiWorkspace;
 
+import java.awt.image.BufferedImage;
+
 public class ProjectHelper
 {
     public static ProjectInfo createProjectFromJson(String ident, String s)
@@ -25,6 +27,23 @@ public class ProjectHelper
         {
             GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
             workspace.projectManager.updateProject(project);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void updateProjectTexture(String ident, BufferedImage image)
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+        if(mc.currentScreen instanceof GuiWorkspace)
+        {
+            GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
+            for(ProjectInfo project : workspace.projectManager.projects)
+            {
+                if(project.identifier.equals(ident))
+                {
+                    project.bufferedTexture = image;
+                }
+            }
         }
     }
 }

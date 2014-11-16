@@ -1,6 +1,9 @@
 package us.ichun.mods.tabula.gui.window;
 
+import com.google.gson.Gson;
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.gui.GuiWorkspace;
 import us.ichun.mods.tabula.gui.Theme;
 import us.ichun.mods.tabula.gui.window.element.Element;
@@ -10,6 +13,9 @@ import us.ichun.mods.tabula.gui.window.element.ElementToggle;
 
 public class WindowControls extends Window
 {
+    public Object selectedObject;
+    public boolean refresh;
+
     public WindowControls(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.controls.title", true);
@@ -22,6 +28,96 @@ public class WindowControls extends Window
         elements.add(new ElementNumberInput(this, 5, 157, width - 10 - ((width - 10) / 3), 12, 5, "window.controls.txOffset", 2, false));
         elements.add(new ElementNumberInput(this, 5, 183, width - 10, 12, 6, "window.controls.rotation", 3, true));
         elements.add(new ElementToggle(this, ((width - 10) / 3 * 2) + 7, 157, width - 5 - (((width - 10) / 3 * 2) + 7), 12, 7, false, 1, 0, "window.controls.txMirror", "window.controls.txMirrorFull", false));
+    }
+
+    @Override
+    public void update()
+    {
+        super.update();
+        if(refresh)
+        {
+            refresh = false;
+            if(selectedObject instanceof CubeInfo)
+            {
+                CubeInfo info = (CubeInfo)selectedObject;
+                for(int k = 0; k < elements.size(); k++)
+                {
+                    Element e = elements.get(k);
+                    if(e.id == 0)
+                    {
+                        ((ElementTextInput)e).textField.setText(info.name);
+                    }
+                    else if(e.id == 1)
+                    {
+                        for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
+                        {
+                            ((ElementNumberInput)e).textFields.get(l).setText(Integer.toString(info.dimensions[l]));
+                        }
+                    }
+                    else if(e.id == 2)
+                    {
+                        for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
+                        {
+                            ((ElementNumberInput)e).textFields.get(l).setText(String.format("%.2f", info.position[l]));
+                        }
+                    }
+                    else if(e.id == 3)
+                    {
+                        for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
+                        {
+                            ((ElementNumberInput)e).textFields.get(l).setText(String.format("%.2f", info.offset[l]));
+                        }
+                    }
+                    else if(e.id == 4)
+                    {
+                        for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
+                        {
+                            ((ElementNumberInput)e).textFields.get(l).setText(String.format("%.2f", info.scale[l]));
+                        }
+                    }
+                    else if(e.id == 5)
+                    {
+                        for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
+                        {
+                            ((ElementNumberInput)e).textFields.get(l).setText(Integer.toString(info.txOffset[l]));
+                        }
+                    }
+                    else if(e.id == 6)
+                    {
+                        for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
+                        {
+                            ((ElementNumberInput)e).textFields.get(l).setText(String.format("%.2f", info.rotation[l]));
+                        }
+                    }
+                    else if(e.id == 7)
+                    {
+                        ((ElementToggle)e).toggledState = info.txMirror;
+                    }
+                }
+            }
+            else
+            {
+                for(int k = 0; k < elements.size(); k++)
+                {
+                    Element e = elements.get(k);
+                    if(e.id == 0)
+                    {
+                        ((ElementTextInput)e).textField.setText("");
+                    }
+                    else if(e.id >= 1 && e.id <= 6)
+                    {
+                        for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
+                        {
+                            ((ElementNumberInput)e).textFields.get(l).setText("");
+                        }
+                    }
+                    else if(e.id == 7)
+                    {
+                        ((ElementToggle)e).toggledState = false;
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -49,14 +145,77 @@ public class WindowControls extends Window
     @Override
     public void elementTriggered(Element element)
     {
-        if(element.id == 0)
+        if(element.id >= 0 && element.id <= 7)
         {
-            workspace.removeWindow(this, true);
-        }
-        if(element.id >= 0 && element.id != 7)
-        {
-            //DO STUFF.
-//            workspace.removeWindow(this, true);
+            if(selectedObject instanceof CubeInfo)
+            {
+                CubeInfo info = (CubeInfo)selectedObject;
+                for(int k = 0; k < elements.size(); k++)
+                {
+                    Element e = elements.get(k);
+                    if(e.id == 0)
+                    {
+                        info.name = ((ElementTextInput)e).textField.getText();
+                    }
+                    else if(e.id == 1)
+                    {
+                        for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
+                        {
+                            info.dimensions[l] = Integer.parseInt(((ElementNumberInput)e).textFields.get(l).getText());
+                        }
+                    }
+                    else if(e.id == 2)
+                    {
+                        for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
+                        {
+                            info.position[l] = Double.parseDouble(((ElementNumberInput)e).textFields.get(l).getText());
+                        }
+                    }
+                    else if(e.id == 3)
+                    {
+                        for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
+                        {
+                            info.offset[l] = Double.parseDouble(((ElementNumberInput)e).textFields.get(l).getText());
+                        }
+                    }
+                    else if(e.id == 4)
+                    {
+                        for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
+                        {
+                            info.scale[l] = Double.parseDouble(((ElementNumberInput)e).textFields.get(l).getText());
+                        }
+                    }
+                    else if(e.id == 5)
+                    {
+                        for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
+                        {
+                            info.txOffset[l] = Integer.parseInt(((ElementNumberInput)e).textFields.get(l).getText());
+                        }
+                    }
+                    else if(e.id == 6)
+                    {
+                        for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
+                        {
+                            info.rotation[l] = Double.parseDouble(((ElementNumberInput)e).textFields.get(l).getText());
+                        }
+                    }
+                    else if(e.id == 7)
+                    {
+                        info.txMirror = ((ElementToggle)e).toggledState;
+                    }
+                }
+
+                Gson gson = new Gson();
+                String s = gson.toJson(selectedObject);
+                if(workspace.remoteSession)
+                {
+
+                }
+                else
+                {
+                    Tabula.proxy.tickHandlerClient.mainframe.updateCube(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, s);
+                }
+            }
         }
     }
 }

@@ -57,8 +57,8 @@ public class Window
 
         if(hasTitle)
         {
-            elements.add(new ElementMinimize(this, width - 13, 2, 10, 10, 0));
-            elements.add(new ElementTitle(this, 0, 0, parent.width - 13, 13, 0));
+            elements.add(new ElementMinimize(this, width - 13, 2, 10, 10, -100));
+            elements.add(new ElementTitle(this, 0, 0, parent.width - 13, 13, -100));
         }
 
         docked = -1;

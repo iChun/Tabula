@@ -20,7 +20,7 @@ public class WindowModelTree extends Window
         elements.add(new ElementButtonTextured(this, BORDER_SIZE + 00, height - 20 - BORDER_SIZE, 0, false, 0, 1, "window.modelTree.newCube", new ResourceLocation("tabula", "textures/icon/newShape.png")));
         elements.add(new ElementButtonTextured(this, BORDER_SIZE + 20, height - 20 - BORDER_SIZE, 1, false, 0, 1, "window.modelTree.newGroup", new ResourceLocation("tabula", "textures/icon/newGroup.png")));
         elements.add(new ElementButtonTextured(this, BORDER_SIZE + 40, height - 20 - BORDER_SIZE, 2, false, 0, 1, "window.modelTree.delete", new ResourceLocation("tabula", "textures/icon/delete.png")));
-        modelList = new ElementListTree(this, BORDER_SIZE + 1, BORDER_SIZE + 1 + 10, width - (BORDER_SIZE * 2 + 2), height - BORDER_SIZE - 21 - 16, 3, false);
+        modelList = new ElementListTree(this, BORDER_SIZE + 1, BORDER_SIZE + 1 + 10, width - (BORDER_SIZE * 2 + 2), height - BORDER_SIZE - 21 - 16, 3, false, true);
         elements.add(modelList);
     }
 
@@ -45,11 +45,6 @@ public class WindowModelTree extends Window
     {
         if(element.id == 0) //newcube
         {
-            if(workspace.projectManager.projects.isEmpty())
-            {
-                return;
-            }
-
             if(workspace.remoteSession)
             {
 
@@ -59,11 +54,19 @@ public class WindowModelTree extends Window
                 Tabula.proxy.tickHandlerClient.mainframe.createNewCube(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier);
             }
         }
+        else if(element.id == 2 && !modelList.selectedIdentifier.isEmpty())
+        {
+            if(workspace.remoteSession)
+            {
+
+            }
+            else
+            {
+                Tabula.proxy.tickHandlerClient.mainframe.deleteCube(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, modelList.selectedIdentifier);
+            }
+        }
         else
         {
-            workspace.removeWindow(this, true);
-
-            workspace.addWindowOnTop(new WindowModelTree(workspace, workspace.width / 2 - 80, workspace.height / 2 - 125, 160, 250, 160, 250));
         }
     }
 }

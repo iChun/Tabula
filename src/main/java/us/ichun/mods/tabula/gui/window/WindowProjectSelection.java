@@ -2,6 +2,7 @@ package us.ichun.mods.tabula.gui.window;
 
 import ichun.client.render.RendererHelper;
 import us.ichun.mods.tabula.common.project.ProjectInfo;
+import us.ichun.mods.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.gui.GuiWorkspace;
 import us.ichun.mods.tabula.gui.Theme;
 import us.ichun.mods.tabula.gui.window.element.Element;
@@ -81,7 +82,10 @@ public class WindowProjectSelection extends WindowTopDock
                 projects.remove(i);
                 projects.add(i, info);
                 ((ElementProjectTab)elements.get(i)).info = info;
-                ((ElementProjectTab)elements.get(i)).changed = true;
+                if(i != selectedProject)
+                {
+                    ((ElementProjectTab)elements.get(i)).changed = true;
+                }
                 added = true;
             }
         }
@@ -109,24 +113,36 @@ public class WindowProjectSelection extends WindowTopDock
 
     public void updateModelTree(ProjectInfo info)
     {
-        for(int i = 0; i < workspace.levels.size(); i++)
+        //TODO handling of this better so that refreshing a project won't deselect what you already have...?
+        ElementListTree modelList = workspace.windowModelTree.modelList;
+        modelList.trees.clear();
+
+        for(int k = 0; k < info.cubes.size(); k++)
         {
-            for(int j = 0; j < workspace.levels.get(i).size(); j++)
+            modelList.createTree(null, info.cubes.get(k), 13, 0, true, false);
+        }
+
+        if(!modelList.selectedIdentifier.isEmpty())
+        {
+            boolean found = false;
+            for(int k = 0; k < modelList.trees.size(); k++)
             {
-                Window window = workspace.levels.get(i).get(j);
-                if(window instanceof WindowModelTree)
+                if(modelList.trees.get(k).attachedObject instanceof CubeInfo && ((CubeInfo)modelList.trees.get(k).attachedObject).identifier.equals(modelList.selectedIdentifier))
                 {
-                    ElementListTree modelList = ((WindowModelTree)window).modelList;
-                    modelList.trees.clear();
-
-                    for(int k = 0; k < info.cubes.size(); k++)
-                    {
-                        modelList.createTree(null, null, info.cubes.get(k), 15, true);
-                    }
-
-                    break;
+                    found = true;
+                    modelList.trees.get(k).selected = true;
+                    modelList.clickElement(modelList.trees.get(k).attachedObject);
                 }
             }
+            if(!found)
+            {
+                modelList.selectedIdentifier = "";
+            }
+        }
+        if(modelList.selectedIdentifier.isEmpty())
+        {
+            workspace.windowControls.selectedObject = null;
+            workspace.windowControls.refresh = true;
         }
     }
 
@@ -148,6 +164,8 @@ public class WindowProjectSelection extends WindowTopDock
         workspace.cameraPitch = info.cameraPitch;
         workspace.cameraOffsetX = info.cameraOffsetX;
         workspace.cameraOffsetY = info.cameraOffsetY;
+
+        ((ElementProjectTab)elements.get(i)).changed = false;
 
         updateModelTree(info);
     }

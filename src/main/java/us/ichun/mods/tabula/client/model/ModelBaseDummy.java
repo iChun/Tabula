@@ -54,7 +54,7 @@ public class ModelBaseDummy extends ModelBase
     public void removeCubeInfo(CubeInfo info)
     {
         deleteModelDisplayList(info);
-        cubes.remove(info.modelCube);
+        cubes.remove(info);
     }
 
     private void deleteModelDisplayList(CubeInfo info)//Done to free up Graphics memory
@@ -65,8 +65,8 @@ public class ModelBaseDummy extends ModelBase
         }
         if(info.modelCube != null && info.modelCube.compiled)
         {
-            info.modelCube = null;
             GLAllocation.deleteDisplayLists(info.modelCube.displayList);
+            info.modelCube = null;
         }
     }
 }

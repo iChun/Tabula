@@ -36,7 +36,7 @@ public class ElementTextInput extends Element
     {
         if(textField.isFocused())
         {
-            textField.mouseClicked(getPosX() + mouseX - 18, getPosY() + mouseY, id);
+            textField.mouseClicked(getPosX() + mouseX, getPosY() + mouseY, id);
         }
         return true;
     }
