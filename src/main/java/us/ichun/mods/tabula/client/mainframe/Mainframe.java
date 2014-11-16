@@ -10,8 +10,10 @@ import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.project.components.CubeGroup;
 import us.ichun.mods.tabula.common.project.components.CubeInfo;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -43,7 +45,7 @@ public class Mainframe
 
         projects.add(projectInfo);
 
-        streamProject(projectInfo.identifier, projectInfo.getAsJson());
+        streamProject(projectInfo);
 
         //TODO inform listeners of new project.
     }
@@ -53,7 +55,7 @@ public class Mainframe
         //TODO load .tbl files?
     }
 
-    public void streamProject(String ident, String s)
+    public void streamProject(ProjectInfo project)
     {
         allowEditing = false;
         for(UUID id : listeners)
@@ -61,7 +63,7 @@ public class Mainframe
             //TODO stream to other listeners
             if(id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             {
-                ProjectHelper.addProjectToManager(ProjectHelper.createProjectFromJson(ident, s));
+                ProjectHelper.addProjectToManager(ProjectHelper.createProjectFromJson(project.identifier, project.getAsJson()));
             }
         }
         allowEditing = true;
@@ -79,6 +81,36 @@ public class Mainframe
             }
         }
         allowEditing = true;
+    }
+
+    public void loadTexture(String ident, File texture)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                boolean changed = false;
+                try
+                {
+                    info.bufferedTexture = ImageIO.read(texture);
+                    if(info.bufferedTexture != null && !(info.textureWidth == info.bufferedTexture.getWidth() && info.textureHeight == info.bufferedTexture.getHeight()))
+                    {
+                        changed = true;
+                        info.textureWidth = info.bufferedTexture.getWidth();
+                        info.textureHeight = info.bufferedTexture.getHeight();
+                    }
+                }
+                catch(IOException e)
+                {
+                    info.bufferedTexture = null;
+                }
+                if(changed)
+                {
+                    streamProject(info);
+                }
+                streamProjectTexture(info.identifier, info.bufferedTexture);
+            }
+        }
     }
 
     public void clearTexture(String ident)
@@ -122,7 +154,7 @@ public class Mainframe
         if(projectInfo != null)
         {
             boolean streamTexture = projectInfo.importModel(model, texture);
-            streamProject(projectInfo.identifier, projectInfo.getAsJson());
+            streamProject(projectInfo);
             if(streamTexture)
             {
                 streamProjectTexture(projectInfo.identifier, projectInfo.bufferedTexture);
@@ -137,7 +169,7 @@ public class Mainframe
             if(info.identifier.equals(ident))
             {
                 info.createNewCube();
-                streamProject(info.identifier, info.getAsJson());
+                streamProject(info);
             }
         }
     }
@@ -166,7 +198,7 @@ public class Mainframe
                     replaceCubeInCubeGroups(info, proj.cubeGroups);
                 }
 
-                streamProject(proj.identifier, proj.getAsJson());
+                streamProject(proj);
             }
         }
     }
@@ -193,7 +225,7 @@ public class Mainframe
                     deleteCubeInCubeGroups(cubeIdent, proj.cubeGroups);
                 }
 
-                streamProject(proj.identifier, proj.getAsJson());
+                streamProject(proj);
             }
         }
     }

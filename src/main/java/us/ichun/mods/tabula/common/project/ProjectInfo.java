@@ -29,6 +29,10 @@ public class ProjectInfo
     public transient float cameraOffsetX;
     public transient float cameraOffsetY;
 
+    public transient boolean ignoreNextImage;
+    public transient File textureFile;
+    public transient String textureFileMd5;
+
     public transient BufferedImage bufferedTexture;
 
     public transient ModelBaseDummy model;
@@ -75,6 +79,7 @@ public class ProjectInfo
         model.textureHeight = textureHeight;
         for(int i = 0 ; i < cubes.size(); i++)
         {
+            //TODO remember to support child models.
             model.createModelFromCubeInfo(cubes.get(i));
         }
         //        final RenderCow render = ((RenderCow)RenderManager.instance.getEntityClassRenderObject(EntityCow.class));

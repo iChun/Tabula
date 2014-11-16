@@ -9,6 +9,7 @@ public class ResourceHelper
     private static File autosaveDir;
     private static File texturesDir;
     private static File exportsDir;
+    //TODO do i need a configs dir?
 
     public static void init()
     {
@@ -23,4 +24,30 @@ public class ResourceHelper
         texturesDir.mkdirs();
         exportsDir.mkdirs();
     }
+
+    public static File getWorkRoot()
+    {
+        return workRoot;
+    }
+
+    public static File getSaveDir()
+    {
+        return saveDir;
+    }
+
+    public static File getAutosaveDir()
+    {
+        return autosaveDir;
+    }
+
+    public static File getTexturesDir()
+    {
+        return texturesDir;
+    }
+
+    public static File getExportsDir()
+    {
+        return exportsDir;
+    }
+
 }

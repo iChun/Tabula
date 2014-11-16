@@ -29,12 +29,16 @@ window.texture.loadTexture=Load Texture
 window.texture.clearTexture=Clear Texture
 window.texture.listenTexture=Listen
 window.texture.listenTextureFull=Listen for texture changes (If the texture is yours)
+window.texture.remoteTexture=Remote Texture
+window.texture.noTexture=No Texture
 
 window.import.title=Import Model To Current Project
 window.import.texture=Texture
 window.import.textureFull=Import the Texture (if available) as well?
 window.import.newProject=New?
 window.import.newProjectFull=Import the model into a new project?
+
+window.loadTexture.title=Load Texture
 
 topdock.new=New
 topdock.open=Open

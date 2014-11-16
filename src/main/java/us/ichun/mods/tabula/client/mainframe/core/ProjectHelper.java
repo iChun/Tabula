@@ -41,6 +41,14 @@ public class ProjectHelper
             {
                 if(project.identifier.equals(ident))
                 {
+                    if(project.ignoreNextImage)
+                    {
+                        project.ignoreNextImage = false; //received texture you've just set;
+                    }
+                    else if(project.textureFile != null)
+                    {
+                        project.textureFile = null; //texture file updated for other reasons.. no longer yours. Stop listening.
+                    }
                     project.bufferedTexture = image;
                 }
             }

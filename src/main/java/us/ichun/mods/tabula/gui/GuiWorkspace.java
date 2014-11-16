@@ -106,7 +106,7 @@ public class GuiWorkspace extends GuiScreen
             init = true;
 
             windowControls = new WindowControls(this, width / 2 - 80, height / 2 - 125, 160, 250, 160, 250);
-            windowTexture = new WindowTexture(this, width / 2 - 53, height / 2 - 44, 106, 88, 106, 88);
+            windowTexture = new WindowTexture(this, width / 2 - 53, height / 2 - 100, 106, 100, 106, 88);
             windowModelTree = new WindowModelTree(this, width / 2 - 53, height / 2 - 125, 106, 250, 106, 250);
             addToDock(0, windowControls);
             addToDock(1, windowTexture);

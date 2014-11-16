@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.gui.window.element;
 
 import ichun.client.render.RendererHelper;
+import ichun.common.core.util.MD5Checksum;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
@@ -10,7 +11,11 @@ import us.ichun.mods.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.gui.Theme;
 import us.ichun.mods.tabula.gui.window.Window;
 
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ElementListTree extends Element
 {
@@ -275,6 +280,13 @@ public class ElementListTree extends Element
                 {
                     ModelInfo info = (ModelInfo)attachedObject;
                     parent.workspace.getFontRenderer().drawString(info.modelParent.getClass().getSimpleName() + " - " + info.clz.getSimpleName(), getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.font), false);
+                }
+                else if(attachedObject instanceof File)
+                {
+                    File info = (File)attachedObject;
+                    parent.workspace.getFontRenderer().drawString(info.getName(), getPosX() + offX + 4, getPosY() + offY + 3 + treeHeight, Theme.getAsHex(Theme.font), false);
+                    parent.workspace.getFontRenderer().drawString((new SimpleDateFormat()).format(new Date(info.lastModified())), getPosX() + offX + 4, getPosY() + offY + 14 + treeHeight, Theme.getAsHex(Theme.font), false);
+                    parent.workspace.getFontRenderer().drawString(MD5Checksum.readableFileSize(info.length()), getPosX() + offX + width - 4 - parent.workspace.getFontRenderer().getStringWidth(MD5Checksum.readableFileSize(info.length())), getPosY() + offY + 3 + treeHeight, Theme.getAsHex(Theme.font), false);
                 }
 
                 if(realBorder && clicking)
