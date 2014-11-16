@@ -186,6 +186,14 @@ public class GuiWorkspace extends GuiScreen
 
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 
+        Minecraft minecraft = Minecraft.getMinecraft();
+        ScaledResolution resolution = new ScaledResolution(minecraft, minecraft.displayWidth, minecraft.displayHeight);
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
+        GL11.glOrtho(0.0D, resolution.getScaledWidth_double(), resolution.getScaledHeight_double(), 0.0D, -5000.0D, 5000.0D);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glLoadIdentity();
+
         hovering = false;
         boolean hasClicked = false;
         boolean onWindow = false;
