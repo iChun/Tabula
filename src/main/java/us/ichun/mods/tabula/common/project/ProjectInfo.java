@@ -2,6 +2,14 @@ package us.ichun.mods.tabula.common.project;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.minecraft.client.model.ModelQuadruped;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.entity.RenderCow;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RenderPig;
+import net.minecraft.client.renderer.entity.RendererLivingEntity;
+import net.minecraft.entity.passive.EntityCow;
+import net.minecraft.entity.passive.EntityPig;
 import us.ichun.mods.tabula.client.model.ModelBaseDummy;
 import us.ichun.mods.tabula.common.project.components.CubeGroup;
 import us.ichun.mods.tabula.common.project.components.CubeInfo;
@@ -61,6 +69,32 @@ public class ProjectInfo
         for(int i = 0 ; i < cubes.size(); i++)
         {
             model.createModelFromCubeInfo(cubes.get(i));
+        }
+//        final RenderCow render = ((RenderCow)RenderManager.instance.getEntityClassRenderObject(EntityCow.class));
+//        ArrayList<ModelRenderer> boxes = new ArrayList<ModelRenderer>() {{
+//            add(((ModelQuadruped)render.mainModel).body);
+//            add(((ModelQuadruped)render.mainModel).head);
+//            add(((ModelQuadruped)render.mainModel).leg1);
+//            add(((ModelQuadruped)render.mainModel).leg2);
+//            add(((ModelQuadruped)render.mainModel).leg3);
+//            add(((ModelQuadruped)render.mainModel).leg4);
+//        }};
+//        for(int i = 0; i < boxes.size(); i++)
+//        {
+//            CubeInfo info = new CubeInfo("fake" + i);
+//            info.modelCube = boxes.get(i);
+//            model.cubes.add(info);
+//        }
+    }
+
+    public void destroy()
+    {
+        if(model != null)
+        {
+            for(int i = model.cubes.size() - 1; i >= 0; i--)
+            {
+                model.removeCubeInfo(model.cubes.get(i));
+            }
         }
     }
 

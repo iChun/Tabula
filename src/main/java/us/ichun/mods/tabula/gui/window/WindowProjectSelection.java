@@ -77,6 +77,7 @@ public class WindowProjectSelection extends WindowTopDock
             if(info1.identifier.equals(info.identifier))
             {
                 info.cloneFrom(info1);
+                info1.destroy();
                 projects.remove(i);
                 projects.add(i, info);
                 ((ElementProjectTab)elements.get(i)).info = info;
