@@ -25,7 +25,6 @@ import us.ichun.mods.tabula.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.gui.window.element.ElementWindow;
 
-import java.security.Key;
 import java.util.ArrayList;
 
 public class GuiWorkspace extends GuiScreen

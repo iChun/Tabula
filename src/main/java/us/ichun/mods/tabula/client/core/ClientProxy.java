@@ -34,6 +34,8 @@ public class ClientProxy extends CommonProxy
     {
         super.init();
 
+        ResourceHelper.init();
+
         tickHandlerClient = new TickHandlerClient();
         FMLCommonHandler.instance().bus().register(tickHandlerClient);
     }
