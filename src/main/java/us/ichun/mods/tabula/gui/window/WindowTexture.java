@@ -14,10 +14,10 @@ import us.ichun.mods.tabula.gui.GuiWorkspace;
 import us.ichun.mods.tabula.gui.Theme;
 import us.ichun.mods.tabula.gui.window.element.Element;
 import us.ichun.mods.tabula.gui.window.element.ElementButtonTextured;
+import us.ichun.mods.tabula.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.gui.window.element.ElementToggle;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 
 public class WindowTexture extends Window
 {
@@ -85,18 +85,50 @@ public class WindowTexture extends Window
                 //TODO draw texture location overlay.
             }
 
-            for(CubeInfo cube : project.cubes)
+            RendererHelper.endGlScissor();
+            RendererHelper.startGlScissor((int)pX, (int)pY, (int)w1, (int)h1);
+
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+            GL11.glAlphaFunc(GL11.GL_GREATER, 0.00625F);
+
+            for(ElementListTree.Tree tree : workspace.windowModelTree.modelList.trees)
             {
-                
+                if(tree.attachedObject instanceof CubeInfo)
+                {
+                    CubeInfo info = (CubeInfo)tree.attachedObject;
+                    int alpha = tree.selected ? 125 : 25;
+                    double ratio = (project.textureWidth / w1);
+                    RendererHelper.drawColourOnScreen(255, 0, 0, alpha, pX + info.txOffset[0] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio, info.dimensions[2] / ratio, info.dimensions[1] / ratio, 0D);
+                    RendererHelper.drawColourOnScreen(0, 0, 255, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio, info.dimensions[0] / ratio, info.dimensions[1] / ratio, 0D);
+                    RendererHelper.drawColourOnScreen(170, 0, 0, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio + info.dimensions[0] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio, info.dimensions[2] / ratio, info.dimensions[1] / ratio, 0D);
+                    RendererHelper.drawColourOnScreen(0, 0, 170, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio + info.dimensions[0] / ratio  + info.dimensions[2] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio, info.dimensions[0] / ratio, info.dimensions[1] / ratio, 0D);
+                    RendererHelper.drawColourOnScreen(0, 255, 0, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio, pY + info.txOffset[1] / ratio, info.dimensions[0] / ratio, info.dimensions[2] / ratio, 0D);
+                    RendererHelper.drawColourOnScreen(0, 170, 0, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio + info.dimensions[0] / ratio, pY + info.txOffset[1] / ratio, info.dimensions[0] / ratio, info.dimensions[2] / ratio, 0D);
+                }
+            }
+
+            GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+            GL11.glDisable(GL11.GL_BLEND);
+
+            RendererHelper.endGlScissor();
+            if(this.isTab)
+            {
+                RendererHelper.startGlScissor(this.posX + 1, this.posY + 1 + 12, this.getWidth() - 2, this.getHeight() - 2 - 12);
+            }
+            else
+            {
+                RendererHelper.startGlScissor(this.posX + 1, this.posY + 1, this.getWidth() - 2, this.getHeight() - 2);
             }
 
             if(imageId == -1)
             {
                 workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.texture.noTexture"), posX + 4, posY + height - BORDER_SIZE - 12 - 20, Theme.getAsHex(Theme.font), false);
             }
-            else if(info.textureFile != null)
+            else if(project.textureFile != null)
             {
-                workspace.getFontRenderer().drawString(info.textureFile.getName(), posX + 4, posY + height - BORDER_SIZE - 12 - 20, Theme.getAsHex(Theme.font), false);
+                workspace.getFontRenderer().drawString(project.textureFile.getName(), posX + 4, posY + height - BORDER_SIZE - 12 - 20, Theme.getAsHex(Theme.font), false);
             }
             else
             {
