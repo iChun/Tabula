@@ -62,15 +62,14 @@ public class Window
         }
 
         docked = -1;
+    }
 
-        //debug
-//        if(!(this instanceof  WindowTopDock))
-//        {
-//            elements.add(new ElementTextInput(this, 20, 20, 70, 12, 0, "window.controls.position"));
-//            elements.add(new ElementNumberInput(this, 20, 34, 170, 12, 0, "window.controls.dimensions", 3, true));
-//            elements.add(new ElementButton(this, 20, 70, 50, 20, 0, false, 2, "gui.yes"));
-//            elements.add(new ElementButtonTextured(this, 20, 100, 0, false, 2, "gui.no", new ResourceLocation("tabula", "textures/icon/open.png")));
-//        }
+    public Window putInMiddleOfScreen()
+    {
+        posX = (workspace.width - width) / 2;
+        posY = (workspace.height - height) / 2;
+        resized();
+        return this;
     }
 
     public void update()

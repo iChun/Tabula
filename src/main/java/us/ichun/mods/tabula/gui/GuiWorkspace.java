@@ -152,9 +152,9 @@ public class GuiWorkspace extends GuiScreen
             }
             else
             {
-                for(Window window : levels.get(i))
+                for(int j = levels.get(i).size() - 1; j >= 0; j--)
                 {
-                    window.update();
+                    levels.get(i).get(j).update();
                 }
             }
         }

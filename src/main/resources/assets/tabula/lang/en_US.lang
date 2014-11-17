@@ -45,6 +45,14 @@ window.loadTexture.title=Load Texture
 window.chat.title=Chat
 window.chat.textbox=Hit ENTER to send
 
+window.saveAs.title=Save As
+window.saveAs.fileName=File Name
+window.saveAs.overwrite=Overwrite?
+window.saveAs.confirmOverwrite=File already exists! Confirm overwrite?
+window.saveAs.failed=Failed to save file.
+
+window.popup.title=Alert!
+
 topdock.new=New
 topdock.open=Open
 topdock.save=Save

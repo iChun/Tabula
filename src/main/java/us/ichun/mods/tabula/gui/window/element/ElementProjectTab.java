@@ -93,7 +93,12 @@ public class ElementProjectTab extends Element
         //        {
         //            return mountedWindow.titleLocale;
         //        }
-        return info.modelName + " - " + info.authorName; //return null for no tooltip. This is localized.
+        String tooltip = info.modelName + " - " + info.authorName;
+        if(info.saveFile != null)
+        {
+            tooltip = tooltip + " - " + info.saveFile.getName();
+        }
+        return tooltip; //return null for no tooltip. This is localized.
     }
 
     @Override

@@ -24,6 +24,7 @@ public class ProjectInfo
 {
     public transient String identifier;
     public transient File saveFile;
+    public transient String saveFileMd5;
 
     public transient float cameraZoom = 1.0F;
     public transient float cameraYaw;
@@ -73,8 +74,8 @@ public class ProjectInfo
 
     public String getAsJson()
     {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        //        Gson gson = new Gson();
+//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                Gson gson = new Gson();
 
         return gson.toJson(this);
     }
@@ -207,6 +208,8 @@ public class ProjectInfo
     public void cloneFrom(ProjectInfo info)
     {
         //TODO link the textures together.
+        this.saveFile = info.saveFile;
+        this.saveFileMd5 = info.saveFileMd5;
         this.bufferedTexture = info.bufferedTexture;
         this.cameraZoom = info.cameraZoom;
         this.cameraYaw = info.cameraYaw;

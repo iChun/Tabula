@@ -1,6 +1,9 @@
 package us.ichun.mods.tabula.gui.window;
 
+import ichun.common.core.util.MD5Checksum;
 import net.minecraft.util.ResourceLocation;
+import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
+import us.ichun.mods.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.gui.GuiWorkspace;
 import us.ichun.mods.tabula.gui.window.element.Element;
 import us.ichun.mods.tabula.gui.window.element.ElementButtonTextured;
@@ -57,11 +60,46 @@ public class WindowTopDock extends Window
         }
         else if(element.id == ID_OPEN)
         {
-            workspace.addWindowOnTop(new WindowModelTree(workspace, workspace.width / 2 - 80, workspace.height / 2 - 125, 160, 250, 160, 250));
+        }
+        else if(element.id == ID_SAVE)
+        {
+            if(!workspace.projectManager.projects.isEmpty())
+            {
+                ProjectInfo proj = workspace.projectManager.projects.get(workspace.projectManager.selectedProject);
+                boolean saveAs = true;
+                boolean error = false;
+                if(proj.saveFile != null && proj.saveFile.exists() && MD5Checksum.getMD5Checksum(proj.saveFile).equals(proj.saveFileMd5))
+                {
+                    if(ProjectHelper.saveProject(proj, proj.saveFile))
+                    {
+                        proj.saveFileMd5 = MD5Checksum.getMD5Checksum(proj.saveFile);
+                        saveAs = false;
+                    }
+                    else
+                    {
+                        error = true;
+                    }
+                }
+                if(saveAs)
+                {
+                    workspace.addWindowOnTop(new WindowSaveAs(workspace, workspace.width / 2 - 100, workspace.height / 2 - 80, 200, 100, 200, 100).putInMiddleOfScreen());
+                }
+                if(error)
+                {
+                    workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 180, 80, 180, 80, "window.saveAs.failed").putInMiddleOfScreen());
+                }
+            }
+        }
+        else if(element.id == ID_SAVE_AS)
+        {
+            if(!workspace.projectManager.projects.isEmpty())
+            {
+                workspace.addWindowOnTop(new WindowSaveAs(workspace, workspace.width / 2 - 100, workspace.height / 2 - 80, 200, 100, 200, 100).putInMiddleOfScreen());
+            }
         }
         else if(element.id == ID_IMPORT_MC)
         {
-            workspace.addWindowOnTop(new WindowImport(workspace, workspace.width / 2 - 150, workspace.height / 2 - 200, 300, 400, 280, 160));
+            workspace.addWindowOnTop(new WindowImport(workspace, workspace.width / 2 - 150, workspace.height / 2 - 200, 300, workspace.height < 400 ? workspace.height - 30 < 160 ? 160 : workspace.height - 30 : 400, 280, 160).putInMiddleOfScreen());
         }
         else if(element.id == ID_CHAT)
         {

@@ -293,6 +293,7 @@ public class Mainframe
         //TODO get name from the UUID...? how?
     }
 
+    //TODO do a "maybe the host has crashed" inform to the clients
     public void shutdown()
     {
         //TODO tell listeners that you're shutting down;
