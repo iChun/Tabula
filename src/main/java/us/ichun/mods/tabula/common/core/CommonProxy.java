@@ -6,7 +6,7 @@ public class CommonProxy
 {
     public TickHandlerClient tickHandlerClient;
 
-    public void init()
-    {
-    }
+    public void init(){}
+
+    public void postInit(){}
 }

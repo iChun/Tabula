@@ -19,12 +19,12 @@ apply plugin: 'forge'
 
 // Requires iChunUtil to run. Just put iChunUtil-deobf.jar in the /libs/ folder or it won't compile.
 version = "4.0.0"
-group= "shatter" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "Shatter"
+group= "tabula" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "Tabula"
 
 minecraft {
-    version = "1.7.10-10.13.0.1186"
-    assetDir = "eclipse/assets"
+    version = "1.7.10-10.13.2.1236"
+    runDir = "eclipse"
 }
 processResources
 {

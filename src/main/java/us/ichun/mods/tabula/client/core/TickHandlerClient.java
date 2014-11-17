@@ -1,8 +1,7 @@
 package us.ichun.mods.tabula.client.core;
 
+import com.mojang.util.UUIDTypeAdapter;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.client.Minecraft;
@@ -11,9 +10,7 @@ import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.input.Mouse;
 import us.ichun.mods.tabula.client.mainframe.Mainframe;
-import us.ichun.mods.tabula.gui.GuiWorkspace;
-
-import java.util.UUID;
+import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 
 public class TickHandlerClient
 {
@@ -42,7 +39,7 @@ public class TickHandlerClient
                         int oriScale = mc.gameSettings.guiScale;
                         mc.gameSettings.guiScale = mc.gameSettings.guiScale == 1 ? 1 : 2;
                         mainframe = new Mainframe();
-                        mainframe.addListener(UUID.fromString(mc.getSession().getPlayerID()), true);
+                        mainframe.addListener(UUIDTypeAdapter.fromString(mc.getSession().getPlayerID()), true);
                         FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale, false, true));
                     }
                 }

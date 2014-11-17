@@ -28,11 +28,42 @@ window.texture.title=Texture
 window.texture.loadTexture=Load Texture
 window.texture.clearTexture=Clear Texture
 window.texture.listenTexture=Listen
-window.texture.listenTextureFull=Listen for texture changes
+window.texture.listenTextureFull=Listen for texture changes (If the texture is yours)
+window.texture.remoteTexture=Remote Texture
+window.texture.noTexture=No Texture
+
+window.import.title=Import Model To Current Project
+window.import.texture=Texture
+window.import.textureFull=Import the Texture (if available) as well?
+
+window.importMC.title=Import Minecraft Model
+window.importMC.newProject=New?
+window.importMC.newProjectFull=Import the model into a new project?
+
+window.loadTexture.title=Load Texture
+
+window.chat.title=Chat
+window.chat.textbox=Hit ENTER to send
+
+window.saveAs.title=Save As
+window.saveAs.fileName=File Name
+window.saveAs.overwrite=Overwrite?
+window.saveAs.confirmOverwrite=File already exists! Confirm overwrite?
+window.saveAs.failed=Failed to save file.
+
+window.open.title=Open Project
+window.open.opening=Opening...
+window.open.failed=Failed to open file.
+
+window.popup.title=Alert!
 
 topdock.new=New
 topdock.open=Open
 topdock.save=Save
 topdock.saveAs=Save As
 topdock.import=Import
+topdock.importMC=Import From Minecraft
 topdock.export=Export
+topdock.chat=Toggle Chat Window
+topdock.wood=Wood
+topdock.woodFull=Toggle showing the planks

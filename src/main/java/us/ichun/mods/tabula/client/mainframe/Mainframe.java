@@ -1,21 +1,29 @@
 package us.ichun.mods.tabula.client.mainframe;
 
+import com.google.gson.Gson;
 import net.minecraft.client.Minecraft;
+import org.apache.commons.lang3.RandomStringUtils;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
-import us.ichun.mods.tabula.common.project.ProjectInfo;
-import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.module.tabula.client.model.ModelInfo;
+import us.ichun.module.tabula.common.project.ProjectInfo;
+import us.ichun.mods.tabula.Tabula;
+import us.ichun.module.tabula.common.project.components.CubeGroup;
+import us.ichun.module.tabula.common.project.components.CubeInfo;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 
 //This is the class that holds all the info of the workspace and handles UI input from everyone.
+//The player hosting this doesn't edit this directly, he has his own workspace and whatever he does to the workspace there changes things here, which are sent back to him.
 public class Mainframe
 {
 
     public ArrayList<UUID> listeners = new ArrayList<UUID>();
     public ArrayList<UUID> editors = new ArrayList<UUID>();
+
+    public static final int projVersion = 1;
 
     public boolean allowEditing;
 
@@ -29,24 +37,30 @@ public class Mainframe
     public void loadEmptyProject(String name, String author)
     {
         ProjectInfo projectInfo = new ProjectInfo(name, author);
-        projectInfo.projVersion = "1.0.0"; //TODO change this everytime loading changes.
+        projectInfo.projVersion = projVersion; //TODO change this everytime loading changes.
 
-        //TODO add a random identifier
-        projectInfo.identifier = Long.toString(Minecraft.getSystemTime());
+        projectInfo.identifier = RandomStringUtils.randomAscii(20);
 
         projects.add(projectInfo);
 
-        streamProject(projectInfo.identifier, projectInfo.getAsJson());
+        streamProject(projectInfo);
 
         //TODO inform listeners of new project.
     }
 
-    public void loadProject(File file)
+    public void sendChat(String name, String message)
     {
-        //TODO load .tbl files?
+        for(UUID id : listeners)
+        {
+            //TODO stream to other listeners
+            if(id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            {
+                ProjectHelper.receiveChat(name + ": " + message);
+            }
+        }
     }
 
-    public void streamProject(String ident, String s)
+    public void streamProject(ProjectInfo project)
     {
         allowEditing = false;
         for(UUID id : listeners)
@@ -54,12 +68,122 @@ public class Mainframe
             //TODO stream to other listeners
             if(id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             {
-                System.out.println("the hoster.");
-                System.out.println(s);
-                ProjectHelper.addProjectToManager(ProjectHelper.createProjectFromJson(ident, s));
+                ProjectHelper.addProjectToManager(ProjectHelper.createProjectFromJsonHost(project.identifier, project.getAsJson()));
             }
         }
         allowEditing = true;
+    }
+
+    public void streamProjectTexture(String ident, BufferedImage bufferedImage)
+    {
+        allowEditing = false;
+        for(UUID id : listeners)
+        {
+            //TODO stream to other listeners
+            if(id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            {
+                ProjectHelper.updateProjectTexture(ident, bufferedImage);
+            }
+        }
+        allowEditing = true;
+    }
+
+    public void openProject(String projectString, BufferedImage image)
+    {
+        ProjectInfo project = ((new Gson()).fromJson(projectString, ProjectInfo.class));
+
+        project.identifier = RandomStringUtils.randomAscii(20);
+
+        if(project.projVersion != projVersion)
+        {
+            repairProject(project);
+        }
+
+        projects.add(project);
+
+        project.bufferedTexture = image;
+
+        streamProject(project);
+
+        streamProjectTexture(project.identifier, project.bufferedTexture);
+    }
+
+    public void loadTexture(String ident, BufferedImage image)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                loadTexture(info, image);
+            }
+        }
+    }
+
+    public boolean loadTexture(ProjectInfo info, BufferedImage image)
+    {
+        boolean changed = false;
+        info.bufferedTexture = image;
+        if(info.bufferedTexture != null && !(info.textureWidth == info.bufferedTexture.getWidth() && info.textureHeight == info.bufferedTexture.getHeight()))
+        {
+            changed = true;
+            info.textureWidth = info.bufferedTexture.getWidth();
+            info.textureHeight = info.bufferedTexture.getHeight();
+        }
+        if(changed)
+        {
+            streamProject(info);
+        }
+        streamProjectTexture(info.identifier, info.bufferedTexture);
+        return changed;
+    }
+
+    public void clearTexture(String ident)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                if(info.bufferedTexture != null)
+                {
+                    info.bufferedTexture = null;
+                    streamProjectTexture(info.identifier, info.bufferedTexture);
+                }
+            }
+        }
+    }
+
+    public void importModel(String ident, ModelInfo model, boolean texture)
+    {
+        ProjectInfo projectInfo = null;
+        if(ident.isEmpty())
+        {
+            projectInfo = new ProjectInfo(model.modelParent.getClass().getSimpleName(), "Either Mojang or a mod author");
+            projectInfo.projVersion = projVersion; //TODO change this everytime loading changes.
+
+            projectInfo.identifier = RandomStringUtils.randomAscii(20);
+
+            projects.add(projectInfo);
+        }
+        else
+        {
+            for(ProjectInfo info : projects)
+            {
+                if(info.identifier.equals(ident))
+                {
+                    projectInfo = info;
+                }
+            }
+        }
+
+        if(projectInfo != null)
+        {
+            boolean streamTexture = projectInfo.importModel(model, texture);
+            streamProject(projectInfo);
+            if(streamTexture)
+            {
+                streamProjectTexture(projectInfo.identifier, projectInfo.bufferedTexture);
+            }
+        }
     }
 
     public void createNewCube(String ident)
@@ -69,9 +193,107 @@ public class Mainframe
             if(info.identifier.equals(ident))
             {
                 info.createNewCube();
-                streamProject(info.identifier, info.getAsJson());
+                streamProject(info);
             }
         }
+    }
+
+    public void updateCube(String ident, String cubeInfo)
+    {
+        for(ProjectInfo proj : projects)
+        {
+            if(proj.identifier.equals(ident))
+            {
+                CubeInfo info = ((new Gson()).fromJson(cubeInfo, CubeInfo.class));
+                boolean found = false;
+                for(int i = 0; i < proj.cubes.size(); i++)
+                {
+                    CubeInfo info1 = proj.cubes.get(i);
+                    if(info1.identifier.equals(info.identifier))
+                    {
+                        found = true;
+                        proj.cubes.remove(i);
+                        proj.cubes.add(i, info);
+                        break;
+                    }
+                }
+                if(!found)
+                {
+                    replaceCubeInCubeGroups(info, proj.cubeGroups);
+                }
+
+                streamProject(proj);
+            }
+        }
+    }
+
+    public void deleteCube(String ident, String cubeIdent)
+    {
+        for(ProjectInfo proj : projects)
+        {
+            if(proj.identifier.equals(ident))
+            {
+                boolean found = false;
+                for(int i = 0; i < proj.cubes.size(); i++)
+                {
+                    CubeInfo info1 = proj.cubes.get(i);
+                    if(info1.identifier.equals(cubeIdent))
+                    {
+                        found = true;
+                        proj.cubes.remove(i);
+                        break;
+                    }
+                }
+                if(!found)
+                {
+                    deleteCubeInCubeGroups(cubeIdent, proj.cubeGroups);
+                }
+
+                streamProject(proj);
+            }
+        }
+    }
+
+    public void replaceCubeInCubeGroups(CubeInfo cube, ArrayList<CubeGroup> groups)
+    {
+        for(int j = 0; j < groups.size(); j++)
+        {
+            CubeGroup proj = groups.get(j);
+            for(int i = 0; i < proj.cubes.size(); i++)
+            {
+                CubeInfo info1 = proj.cubes.get(i);
+                if(info1.identifier.equals(cube.identifier))
+                {
+                    proj.cubes.remove(i);
+                    proj.cubes.add(i, cube);
+                    break;
+                }
+            }
+            replaceCubeInCubeGroups(cube, proj.cubeGroups);
+        }
+    }
+
+    public void deleteCubeInCubeGroups(String ident, ArrayList<CubeGroup> groups)
+    {
+        for(int j = 0; j < groups.size(); j++)
+        {
+            CubeGroup proj = groups.get(j);
+            for(int i = 0; i < proj.cubes.size(); i++)
+            {
+                CubeInfo info1 = proj.cubes.get(i);
+                if(info1.identifier.equals(ident))
+                {
+                    proj.cubes.remove(i);
+                    break;
+                }
+            }
+            deleteCubeInCubeGroups(ident, proj.cubeGroups);
+        }
+    }
+
+    //repairs projects which have been outdated or something. idk
+    public void repairProject(ProjectInfo project)
+    {
     }
 
     public void addListener(UUID id, boolean isEditor)
@@ -84,8 +306,10 @@ public class Mainframe
         {
             editors.add(id);
         }
+        //TODO get name from the UUID...? how?
     }
 
+    //TODO do a "maybe the host has crashed" inform to the clients
     public void shutdown()
     {
         //TODO tell listeners that you're shutting down;
