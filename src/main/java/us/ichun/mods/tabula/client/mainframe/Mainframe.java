@@ -4,18 +4,15 @@ import com.google.gson.Gson;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.lang3.RandomStringUtils;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
-import us.ichun.mods.tabula.client.model.ModelInfo;
-import us.ichun.mods.tabula.common.project.ProjectInfo;
-import us.ichun.mods.tabula.common.Tabula;
-import us.ichun.mods.tabula.common.project.components.CubeGroup;
-import us.ichun.mods.tabula.common.project.components.CubeInfo;
+import us.ichun.module.tabula.client.model.ModelInfo;
+import us.ichun.module.tabula.common.project.ProjectInfo;
+import us.ichun.mods.tabula.Tabula;
+import us.ichun.module.tabula.common.project.components.CubeGroup;
+import us.ichun.module.tabula.common.project.components.CubeInfo;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 
 //This is the class that holds all the info of the workspace and handles UI input from everyone.
@@ -76,7 +73,7 @@ public class Mainframe
             //TODO stream to other listeners
             if(id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             {
-                ProjectHelper.addProjectToManager(ProjectHelper.createProjectFromJson(project.identifier, project.getAsJson()));
+                ProjectHelper.addProjectToManager(ProjectHelper.createProjectFromJsonHost(project.identifier, project.getAsJson()));
             }
         }
         allowEditing = true;
@@ -96,34 +93,53 @@ public class Mainframe
         allowEditing = true;
     }
 
-    public void loadTexture(String ident, File texture)
+    public void openProject(String projectString, BufferedImage image)
+    {
+        ProjectInfo project = ((new Gson()).fromJson(projectString, ProjectInfo.class));
+
+        project.identifier = RandomStringUtils.randomAscii(20);
+
+        if(project.projVersion != projVersion)
+        {
+            repairProject(project);
+        }
+
+        projects.add(project);
+
+        project.bufferedTexture = image;
+
+        streamProject(project);
+
+        streamProjectTexture(project.identifier, project.bufferedTexture);
+    }
+
+    public void loadTexture(String ident, BufferedImage image)
     {
         for(ProjectInfo info : projects)
         {
             if(info.identifier.equals(ident))
             {
-                boolean changed = false;
-                try
-                {
-                    info.bufferedTexture = ImageIO.read(texture);
-                    if(info.bufferedTexture != null && !(info.textureWidth == info.bufferedTexture.getWidth() && info.textureHeight == info.bufferedTexture.getHeight()))
-                    {
-                        changed = true;
-                        info.textureWidth = info.bufferedTexture.getWidth();
-                        info.textureHeight = info.bufferedTexture.getHeight();
-                    }
-                }
-                catch(IOException e)
-                {
-                    info.bufferedTexture = null;
-                }
-                if(changed)
-                {
-                    streamProject(info);
-                }
-                streamProjectTexture(info.identifier, info.bufferedTexture);
+                loadTexture(info, image);
             }
         }
+    }
+
+    public boolean loadTexture(ProjectInfo info, BufferedImage image)
+    {
+        boolean changed = false;
+        info.bufferedTexture = image;
+        if(info.bufferedTexture != null && !(info.textureWidth == info.bufferedTexture.getWidth() && info.textureHeight == info.bufferedTexture.getHeight()))
+        {
+            changed = true;
+            info.textureWidth = info.bufferedTexture.getWidth();
+            info.textureHeight = info.bufferedTexture.getHeight();
+        }
+        if(changed)
+        {
+            streamProject(info);
+        }
+        streamProjectTexture(info.identifier, info.bufferedTexture);
+        return changed;
     }
 
     public void clearTexture(String ident)
@@ -278,6 +294,11 @@ public class Mainframe
             }
             deleteCubeInCubeGroups(ident, proj.cubeGroups);
         }
+    }
+
+    //repairs projects which have been outdated or something. idk
+    public void repairProject(ProjectInfo project)
+    {
     }
 
     public void addListener(UUID id, boolean isEditor)

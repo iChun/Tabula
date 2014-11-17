@@ -51,6 +51,10 @@ window.saveAs.overwrite=Overwrite?
 window.saveAs.confirmOverwrite=File already exists! Confirm overwrite?
 window.saveAs.failed=Failed to save file.
 
+window.open.title=Open Project
+window.open.opening=Opening...
+window.open.failed=Failed to open file.
+
 window.popup.title=Alert!
 
 topdock.new=New

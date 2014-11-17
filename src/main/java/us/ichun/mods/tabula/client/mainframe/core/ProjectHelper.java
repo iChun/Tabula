@@ -3,11 +3,13 @@ package us.ichun.mods.tabula.client.mainframe.core;
 import com.google.gson.Gson;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import ichun.common.iChunUtil;
+import ichun.common.core.util.MD5Checksum;
 import net.minecraft.client.Minecraft;
-import us.ichun.mods.tabula.common.Tabula;
-import us.ichun.mods.tabula.common.project.ProjectInfo;
-import us.ichun.mods.tabula.gui.GuiWorkspace;
+import us.ichun.mods.tabula.Tabula;
+import us.ichun.mods.tabula.client.gui.window.Window;
+import us.ichun.mods.tabula.client.gui.window.WindowOpenProject;
+import us.ichun.module.tabula.common.project.ProjectInfo;
+import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -23,6 +25,40 @@ public class ProjectHelper
         Gson gson = new Gson();
         ProjectInfo info = gson.fromJson(s, ProjectInfo.class);
         info.identifier = ident;
+        return info;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static ProjectInfo createProjectFromJsonHost(String ident, String s)
+    {
+        Gson gson = new Gson();
+        ProjectInfo info = gson.fromJson(s, ProjectInfo.class);
+        info.identifier = ident;
+
+        Minecraft mc = Minecraft.getMinecraft();
+        if(mc.currentScreen instanceof GuiWorkspace)
+        {
+            GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
+            for(int i = workspace.levels.size() - 1; i >= 0; i--)
+            {
+                for(int j = workspace.levels.get(i).size() - 1; j >= 0; j--)
+                {
+                    Window window = workspace.levels.get(i).get(j);
+                    if(window instanceof WindowOpenProject)
+                    {
+                        if(((WindowOpenProject)window).openingJson != null && ((WindowOpenProject)window).openingJson.equals(s))
+                        {
+                            info.saveFile = ((WindowOpenProject)window).openingFile;
+                            info.saveFileMd5 = MD5Checksum.getMD5Checksum(info.saveFile);
+
+                            window.workspace.removeWindow(window);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         return info;
     }
 
@@ -74,7 +110,6 @@ public class ProjectHelper
         }
     }
 
-    @SideOnly(Side.CLIENT)
     public static boolean saveProject(ProjectInfo info, File file)
     {
         try
@@ -97,6 +132,8 @@ public class ProjectHelper
             out.closeEntry();
 
             out.close();
+
+            info.saved = true;
             return true;
         }
         catch(Exception e)
@@ -106,5 +143,4 @@ public class ProjectHelper
             return false;
         }
     }
-
 }

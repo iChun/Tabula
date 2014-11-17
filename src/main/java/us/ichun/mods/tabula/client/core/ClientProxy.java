@@ -17,11 +17,10 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import us.ichun.mods.tabula.client.model.ModelInfo;
-import us.ichun.mods.tabula.client.model.ModelList;
+import us.ichun.module.tabula.client.model.ModelInfo;
+import us.ichun.module.tabula.client.model.ModelList;
 import us.ichun.mods.tabula.common.core.CommonProxy;
 
 import java.lang.reflect.Field;
