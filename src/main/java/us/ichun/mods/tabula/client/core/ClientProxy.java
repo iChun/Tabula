@@ -206,5 +206,14 @@ public class ClientProxy extends CommonProxy
             {
             }
         }
+
+        for(int i = ModelList.models.size() - 1; i >= 0 ; i++)
+        {
+            ModelInfo info = ModelList.models.get(i);
+            if(ModelList.modelBlacklist.contains(info.modelParent.getClass()))
+            {
+                ModelList.modelBlacklist.remove(i);
+            }
+        }
     }
 }

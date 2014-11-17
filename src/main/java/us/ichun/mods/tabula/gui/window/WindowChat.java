@@ -6,6 +6,7 @@ import us.ichun.mods.tabula.gui.GuiWorkspace;
 import us.ichun.mods.tabula.gui.window.element.Element;
 import us.ichun.mods.tabula.gui.window.element.ElementTextInput;
 import us.ichun.mods.tabula.gui.window.element.ElementTextWrapper;
+import us.ichun.mods.tabula.gui.window.element.ElementTextWrapperChat;
 
 import java.util.ArrayList;
 
@@ -27,7 +28,7 @@ public class WindowChat extends Window
         wasDocked = -1;
 
         elements.add(new ElementTextInput(this, 5, height - BORDER_SIZE - 14, width - 10, 12, 0, "window.chat.textbox", 200));
-        chatHolder = new ElementTextWrapper(this, 5, BORDER_SIZE + 1 + 12, width - 10, (height - BORDER_SIZE - 14) - (BORDER_SIZE + 1 + 12) - 2, 2, false, true);
+        chatHolder = new ElementTextWrapperChat(this, 5, BORDER_SIZE + 1 + 12, width - 10, (height - BORDER_SIZE - 14) - (BORDER_SIZE + 1 + 12) - 2, 2, false);
         chatHolder.sliderProg = 1.0D;
         elements.add(chatHolder);
     }
@@ -39,6 +40,15 @@ public class WindowChat extends Window
             if(wasDocked >= 0)
             {
                 workspace.addToDock(wasDocked, this);
+
+                if(posY > workspace.height)
+                {
+                    wasDocked = -1;
+                    workspace.removeFromDock(this);
+
+                    posX = (workspace.width - width) / 2;
+                    posY = (workspace.height - height) / 2;
+                }
             }
             else
             {
