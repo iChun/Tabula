@@ -35,16 +35,23 @@ window.texture.noTexture=No Texture
 window.import.title=Import Model To Current Project
 window.import.texture=Texture
 window.import.textureFull=Import the Texture (if available) as well?
-window.import.newProject=New?
-window.import.newProjectFull=Import the model into a new project?
+
+window.importMC.title=Import Minecraft Model
+window.importMC.newProject=New?
+window.importMC.newProjectFull=Import the model into a new project?
 
 window.loadTexture.title=Load Texture
+
+window.chat.title=Chat
+window.chat.textbox=Hit ENTER to send
 
 topdock.new=New
 topdock.open=Open
 topdock.save=Save
 topdock.saveAs=Save As
 topdock.import=Import
+topdock.importMC=Import From Minecraft
 topdock.export=Export
+topdock.chat=Toggle Chat Window
 topdock.wood=Wood
 topdock.woodFull=Toggle showing the planks

@@ -13,11 +13,11 @@ public class ElementTextInput extends Element
     public String tooltip;
     public int spacing;
 
-    public ElementTextInput(Window window, int x, int y, int w, int h, int ID, String tip)
+    public ElementTextInput(Window window, int x, int y, int w, int h, int ID, String tip, int maxLength)
     {
         super(window, x, y, w, 12, ID, false); //12 for height?
         textField = new GuiTextField(parent.workspace.getFontRenderer(), parent.posX + posX + 2, parent.posY + posY + 2, width - 9, parent.workspace.getFontRenderer().FONT_HEIGHT);
-        textField.setMaxStringLength(80);
+        textField.setMaxStringLength(maxLength);
         textField.setEnableBackgroundDrawing(false);
         textField.setTextColor(Theme.getAsHex(Theme.font));
         textField.setCanLoseFocus(false);
@@ -25,10 +25,16 @@ public class ElementTextInput extends Element
         spacing = parent.width - width - x;
     }
 
+    public ElementTextInput(Window window, int x, int y, int w, int h, int ID, String tip)
+    {
+        this(window, x, y, w, h, ID, tip, 80);
+    }
+
     @Override
     public void update()
     {
         textField.updateCursorCounter();
+        textField.setTextColor(Theme.getAsHex(Theme.font));
     }
 
     @Override

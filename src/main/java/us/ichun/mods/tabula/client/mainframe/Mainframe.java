@@ -19,13 +19,14 @@ import java.util.HashMap;
 import java.util.UUID;
 
 //This is the class that holds all the info of the workspace and handles UI input from everyone.
+//The player hosting this doesn't edit this directly, he has his own workspace and whatever he does to the workspace there changes things here, which are sent back to him.
 public class Mainframe
 {
 
     public ArrayList<UUID> listeners = new ArrayList<UUID>();
     public ArrayList<UUID> editors = new ArrayList<UUID>();
 
-    public final String projVersion = "1.0.0";
+    public final int projVersion = 1;
 
     public boolean allowEditing;
 
@@ -53,6 +54,18 @@ public class Mainframe
     public void loadProject(File file)
     {
         //TODO load .tbl files?
+    }
+
+    public void sendChat(String name, String message)
+    {
+        for(UUID id : listeners)
+        {
+            //TODO stream to other listeners
+            if(id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            {
+                ProjectHelper.receiveChat(name + ": " + message);
+            }
+        }
     }
 
     public void streamProject(ProjectInfo project)
@@ -277,6 +290,7 @@ public class Mainframe
         {
             editors.add(id);
         }
+        //TODO get name from the UUID...? how?
     }
 
     public void shutdown()

@@ -25,9 +25,9 @@ public class WindowControls extends Window
         elements.add(new ElementNumberInput(this, 5, 79, width - 10, 12, 2, "window.controls.position", 3, true));
         elements.add(new ElementNumberInput(this, 5, 105, width - 10, 12, 3, "window.controls.offset", 3, true));
         elements.add(new ElementNumberInput(this, 5, 131, width - 10, 12, 4, "window.controls.scale", 3, true));
-        elements.add(new ElementNumberInput(this, 5, 157, width - 10 - ((width - 10) / 3), 12, 5, "window.controls.txOffset", 2, false));
+        elements.add(new ElementNumberInput(this, 5, 157, width - 10 - ((width - 10) / 3) - 2, 12, 5, "window.controls.txOffset", 2, false));
         elements.add(new ElementNumberInput(this, 5, 183, width - 10, 12, 6, "window.controls.rotation", 3, true));
-        elements.add(new ElementToggle(this, ((width - 10) / 3 * 2) + 7, 157, width - 5 - (((width - 10) / 3 * 2) + 7), 12, 7, false, 1, 0, "window.controls.txMirror", "window.controls.txMirrorFull", false));
+        elements.add(new ElementToggle(this, ((width - 10) / 3 * 2) + 7, 157, width - 5 - (((width - 10) / 3 * 2) + 7) - 2, 12, 7, false, 1, 0, "window.controls.txMirror", "window.controls.txMirrorFull", false));
     }
 
     @Override

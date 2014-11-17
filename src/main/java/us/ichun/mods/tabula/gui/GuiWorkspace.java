@@ -40,7 +40,7 @@ public class GuiWorkspace extends GuiScreen
         add(1, new ArrayList<Window>()); // dock right
         add(2, new ArrayList<Window>()); // dock btm
         add(3, new ArrayList<Window>()); // dock top
-        add(4, new ArrayList<Window>()); // dummy
+        add(4, new ArrayList<Window>()); // chat level
     }};
 
     public boolean mouseLeftDown;
@@ -52,6 +52,7 @@ public class GuiWorkspace extends GuiScreen
     public WindowControls windowControls;
     public WindowTexture windowTexture;
     public WindowModelTree windowModelTree;
+    public WindowChat windowChat;
 
     public Window windowDragged;
     public int dragType; //1 = title drag, 2 >= border drag.
@@ -105,7 +106,7 @@ public class GuiWorkspace extends GuiScreen
         {
             init = true;
 
-            windowControls = new WindowControls(this, width / 2 - 80, height / 2 - 125, 160, 250, 160, 250);
+            windowControls = new WindowControls(this, width / 2 - 80, height / 2 - 125, 162, 250, 162, 250);
             windowTexture = new WindowTexture(this, width / 2 - 53, height / 2 - 100, 106, 100, 106, 88);
             windowModelTree = new WindowModelTree(this, width / 2 - 53, height / 2 - 125, 106, 250, 106, 250);
             addToDock(0, windowControls);
@@ -115,6 +116,9 @@ public class GuiWorkspace extends GuiScreen
             levels.get(3).add(new WindowTopDock(this, 0, 0, width, 20, 20, 20));
             projectManager = new WindowProjectSelection(this, 0, 0, width, 20, 20, 20);
             levels.get(3).add(projectManager);
+
+            windowChat = new WindowChat(this, -1000, -1000, 250, 180, 162, 50);
+            levels.get(4).add(windowChat);
 
             Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject("New Project", "iChun? :O");
 

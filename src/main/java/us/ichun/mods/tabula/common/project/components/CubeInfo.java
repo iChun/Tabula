@@ -1,5 +1,7 @@
 package us.ichun.mods.tabula.common.project.components;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelRenderer;
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -31,5 +33,6 @@ public class CubeInfo
 
     public String identifier;
 
+    @SideOnly(Side.CLIENT)
     public transient ModelRenderer modelCube;
 }

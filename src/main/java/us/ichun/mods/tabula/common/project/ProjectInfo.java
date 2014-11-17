@@ -2,6 +2,8 @@ package us.ichun.mods.tabula.common.project;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
@@ -33,13 +35,16 @@ public class ProjectInfo
     public transient File textureFile;
     public transient String textureFileMd5;
 
+    public transient long lastEdit;
+
     public transient BufferedImage bufferedTexture;
 
+    @SideOnly(Side.CLIENT)
     public transient ModelBaseDummy model;
 
     public String modelName;
     public String authorName;
-    public String projVersion;
+    public int projVersion; //TODO if projVersion < current version, do file repairs and resave.
 
     public int textureWidth = 64;
     public int textureHeight = 32;
@@ -48,6 +53,8 @@ public class ProjectInfo
     public ArrayList<CubeInfo> cubes;
 
     public int cubeCount;
+
+    public boolean saved;
 
     public ProjectInfo()
     {
@@ -72,6 +79,7 @@ public class ProjectInfo
         return gson.toJson(this);
     }
 
+    @SideOnly(Side.CLIENT)
     public void initClient()
     {
         model = new ModelBaseDummy(this);
@@ -99,6 +107,7 @@ public class ProjectInfo
         //        }
     }
 
+    @SideOnly(Side.CLIENT)
     public void destroy()
     {
         if(model != null)
@@ -116,6 +125,7 @@ public class ProjectInfo
         cubes.add(new CubeInfo("shape" + Integer.toString(cubeCount)));
     }
 
+    @SideOnly(Side.CLIENT)
     public boolean importModel(ModelInfo model, boolean texture)
     {
         for(Map.Entry<String, ModelRenderer> e : model.modelList.entrySet())

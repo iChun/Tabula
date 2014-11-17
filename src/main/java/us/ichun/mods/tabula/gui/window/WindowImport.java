@@ -14,12 +14,12 @@ public class WindowImport extends Window
 
     public WindowImport(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
-        super(parent, x, y, w, h, minW, minH, "window.import.title", true);
+        super(parent, x, y, w, h, minW, minH, "window.importMC.title", true);
 
         elements.add(new ElementButton(this, width - 140, height - 22, 60, 16, 1, false, 1, 1, "element.button.ok"));
         elements.add(new ElementButton(this, width - 70, height - 22, 60, 16, 0, false, 1, 1, "element.button.cancel"));
         elements.add(new ElementToggle(this, 8, height - 22, 60, 16, 2, false, 0, 1, "window.import.texture", "window.import.textureFull", true));
-        elements.add(new ElementToggle(this, 74, height - 22, 60, 16, 4, false, 0, 1, "window.import.newProject", "window.import.newProjectFull", true));
+        elements.add(new ElementToggle(this, 74, height - 22, 60, 16, 4, false, 0, 1, "window.importMC.newProject", "window.importMC.newProjectFull", true));
         modelList = new ElementListTree(this, BORDER_SIZE + 1, BORDER_SIZE + 1 + 10, width - (BORDER_SIZE * 2 + 2), height - BORDER_SIZE - 22 - 16, 3, false, false);
         elements.add(modelList);
 

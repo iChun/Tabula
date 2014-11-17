@@ -35,6 +35,8 @@ public class WindowTexture extends Window
         elements.add(new ElementButtonTextured(this, width - BORDER_SIZE - 20, height - BORDER_SIZE - 20, 2, false, 1, 1, "window.texture.clearTexture", new ResourceLocation("tabula", "textures/icon/clearTexture.png")));
     }
 
+    //TODO make it so that textureWidth/height stay the same even though the image isn't.
+
     @Override
     public void draw(int mouseX, int mouseY) //4 pixel border?
     {
@@ -58,7 +60,7 @@ public class WindowTexture extends Window
 
             RendererHelper.drawColourOnScreen(200, 200, 200, 255, pX, pY, w1, h1, 0D);
 
-            if(project.bufferedTexture != image) //TODO try comparing image data to see if it's what you synced.
+            if(project.bufferedTexture != image)
             {
                 if(imageId != -1)
                 {
@@ -82,7 +84,6 @@ public class WindowTexture extends Window
                 tessellator.addVertexWithUV(pX + w1, pY			, 0, 1.0D, 0.0D);
                 tessellator.addVertexWithUV(pX		, pY			, 0, 0.0D, 0.0D);
                 tessellator.draw();
-                //TODO draw texture location overlay.
             }
 
             RendererHelper.endGlScissor();

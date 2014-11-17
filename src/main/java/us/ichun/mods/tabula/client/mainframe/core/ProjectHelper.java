@@ -54,4 +54,16 @@ public class ProjectHelper
             }
         }
     }
+
+    @SideOnly(Side.CLIENT)
+    public static void receiveChat(String message)
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+        if(mc.currentScreen instanceof GuiWorkspace)
+        {
+            GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
+            workspace.windowChat.chatHolder.text.add(message);
+            //TODO play a sound
+        }
+    }
 }
