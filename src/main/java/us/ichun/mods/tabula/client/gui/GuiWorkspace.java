@@ -43,6 +43,9 @@ public class GuiWorkspace extends GuiScreen
         add(4, new ArrayList<Window>()); // chat level
     }};
 
+    public int oldWidth;
+    public int oldHeight;
+
     public boolean mouseLeftDown;
     public boolean mouseRightDown;
     public boolean mouseMiddleDown;
@@ -867,9 +870,32 @@ public class GuiWorkspace extends GuiScreen
                     window.height = height - window.posY + 1;
                 }
 
+                if(window.posX == (oldWidth - window.width) / 2 && window.posY == (oldHeight - window.height) / 2)
+                {
+                    window.posX = (width - window.width) / 2;
+                    window.posY = (height - window.height) / 2;
+                }
+
                 window.resized();
             }
         }
+
+        for(int i = 4; i < levels.size(); i++)
+        {
+            ArrayList<Window> docked = levels.get(i);
+            for(int j = 0; j < docked.size(); j++)
+            {
+                Window window = docked.get(j);
+
+                if(window.posX == (oldWidth - window.width) / 2 && window.posY == (oldHeight - window.height) / 2)
+                {
+                    window.putInMiddleOfScreen();
+                }
+            }
+        }
+
+        oldWidth = width;
+        oldHeight = height;
     }
 
     public void removeWindow(Window window, boolean checkTab)

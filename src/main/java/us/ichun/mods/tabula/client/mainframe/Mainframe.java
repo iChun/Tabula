@@ -48,11 +48,6 @@ public class Mainframe
         //TODO inform listeners of new project.
     }
 
-    public void loadProject(File file)
-    {
-        //TODO load .tbl files?
-    }
-
     public void sendChat(String name, String message)
     {
         for(UUID id : listeners)
