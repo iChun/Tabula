@@ -16,8 +16,8 @@ window.controls.txMirror=Spiegeln
 window.controls.txMirrorFull=Textur spiegeln
 
 window.newProject.title=Neues Projekt
-window.newProject.projName=Projekt-Name
-window.newProject.authName=Autor-Name
+window.newProject.projName=Projektname
+window.newProject.authName=Autorenname
 
 window.modelTree.title=Modell-Baum
 window.modelTree.newCube=Neuer Würfel
