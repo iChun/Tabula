@@ -15,30 +15,30 @@ window.controls.txOffset=Textur Offset
 window.controls.txMirror=Spiegeln
 window.controls.txMirrorFull=Textur spiegeln
 
-window.newProject.title=New Project
-window.newProject.projName=Project Name
-window.newProject.authName=Author Name
+window.newProject.title=Neues Projekt
+window.newProject.projName=Projekt-Name
+window.newProject.authName=Autor-Name
 
-window.modelTree.title=Model Tree
-window.modelTree.newCube=New Cube
-window.modelTree.newGroup=New Group
-window.modelTree.delete=Delete
+window.modelTree.title=Modell-Baum
+window.modelTree.newCube=Neuer Würfel
+window.modelTree.newGroup=Neue Gruppe
+window.modelTree.delete=Löschen
 
-window.texture.title=Texture
-window.texture.loadTexture=Load Texture
-window.texture.clearTexture=Clear Texture
-window.texture.listenTexture=Listen
-window.texture.listenTextureFull=Listen for texture changes (If the texture is yours)
+window.texture.title=Textur
+window.texture.loadTexture=Textur laden
+window.texture.clearTexture=Textur leeren
+window.texture.listenTexture=Aufpassen
+window.texture.listenTextureFull=Achte auf Textur-Änderungen (Wenn die Textur dir gehört)
 window.texture.remoteTexture=Remote Texture
-window.texture.noTexture=No Texture
+window.texture.noTexture=Keine Textur
 
-window.import.title=Import Model To Current Project
-window.import.texture=Texture
-window.import.textureFull=Import the Texture (if available) as well?
+window.import.title=Modell in aktuelles Projekt importieren
+window.import.texture=Textur
+window.import.textureFull=Importiere auch die Textur (falls verfügbar)?
 
-window.importMC.title=Import Minecraft Model
-window.importMC.newProject=New?
-window.importMC.newProjectFull=Import the model into a new project?
+window.importMC.title=Minecraft Modell importieren
+window.importMC.newProject=Neu?
+window.importMC.newProjectFull=Das Modell in ein neues Projekt importieren?
 
 window.loadTexture.title=Textur laden
 
