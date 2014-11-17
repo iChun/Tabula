@@ -23,7 +23,7 @@ public class Mainframe
     public ArrayList<UUID> listeners = new ArrayList<UUID>();
     public ArrayList<UUID> editors = new ArrayList<UUID>();
 
-    public final int projVersion = 1;
+    public static final int projVersion = 1;
 
     public boolean allowEditing;
 

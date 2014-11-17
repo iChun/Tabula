@@ -4,7 +4,6 @@ import ichun.common.core.util.MD5Checksum;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
@@ -102,7 +101,7 @@ public class WindowSaveAs extends Window
             }
             else
             {
-                if(ProjectHelper.saveProject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject), file))
+                if(ProjectInfo.saveProject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject), file))
                 {
                     workspace.projectManager.projects.get(workspace.projectManager.selectedProject).saveFile = file;
                     workspace.projectManager.projects.get(workspace.projectManager.selectedProject).saveFileMd5 = MD5Checksum.getMD5Checksum(file);

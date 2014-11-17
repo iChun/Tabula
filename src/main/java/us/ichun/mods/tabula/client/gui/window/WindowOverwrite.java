@@ -5,7 +5,6 @@ import net.minecraft.util.StatCollector;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
-import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.Theme;
 
@@ -52,7 +51,7 @@ public class WindowOverwrite extends Window
             {
                 workspace.windowDragged = null;
             }
-            if(ProjectHelper.saveProject(project, saveFile))
+            if(ProjectInfo.saveProject(project, saveFile))
             {
                 project.saveFile = saveFile;
                 project.saveFileMd5 = MD5Checksum.getMD5Checksum(saveFile);

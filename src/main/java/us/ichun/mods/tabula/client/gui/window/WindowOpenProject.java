@@ -71,29 +71,26 @@ public class WindowOpenProject extends Window
                 ElementListTree.Tree tree = modelList.trees.get(i);
                 if(tree.selected)
                 {
-                    if(workspace.remoteSession)
+                    if(workspace.windowDragged == this)
                     {
-                        //TODO this
+                        workspace.windowDragged = null;
+                    }
+                    ProjectInfo project = ProjectInfo.openProject((File)tree.attachedObject);
+                    if(project == null)
+                    {
+                        workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 180, 80, 180, 80, "window.open.failed").putInMiddleOfScreen());
                     }
                     else
                     {
-                        ProjectInfo project = ProjectInfo.openProject((File)tree.attachedObject);
-                        if(project == null)
+                        openingFile = (File)tree.attachedObject;
+                        openingJson = project.getAsJson();
+                        if(workspace.remoteSession)
                         {
-                            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 180, 80, 180, 80, "window.open.failed").putInMiddleOfScreen());
+                            //TODO this
                         }
                         else
                         {
-                            openingFile = (File)tree.attachedObject;
-                            openingJson = project.getAsJson();
-                            if(workspace.remoteSession)
-                            {
-                                //TODO this
-                            }
-                            else
-                            {
-                                Tabula.proxy.tickHandlerClient.mainframe.openProject(openingJson, project.bufferedTexture);
-                            }
+                            Tabula.proxy.tickHandlerClient.mainframe.openProject(openingJson, project.bufferedTexture);
                         }
                     }
                     break;

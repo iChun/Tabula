@@ -110,37 +110,4 @@ public class ProjectHelper
         }
     }
 
-    public static boolean saveProject(ProjectInfo info, File file)
-    {
-        try
-        {
-            file.getParentFile().mkdirs();
-
-            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
-            out.setLevel(9);
-            out.putNextEntry(new ZipEntry("model.json"));
-
-            byte[] data = (new Gson()).toJson(info).getBytes();
-            out.write(data, 0, data.length);
-            out.closeEntry();
-
-            if(info.bufferedTexture != null)
-            {
-                out.putNextEntry(new ZipEntry("texture.png"));
-                ImageIO.write(info.bufferedTexture, "png", out);
-            }
-            out.closeEntry();
-
-            out.close();
-
-            info.saved = true;
-            return true;
-        }
-        catch(Exception e)
-        {
-            Tabula.console("Failed to save model: " + info.modelName, true);
-            e.printStackTrace();
-            return false;
-        }
-    }
 }

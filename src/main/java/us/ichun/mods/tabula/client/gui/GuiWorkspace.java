@@ -729,6 +729,8 @@ public class GuiWorkspace extends GuiScreen
         GL11.glDisable(GL11.GL_LIGHTING);
 
         GL11.glPopMatrix();
+
+        //TODO render a rotation point.
     }
 
     public void addToDock(int dock, Window window)

@@ -4,7 +4,6 @@ import ichun.common.core.util.MD5Checksum;
 import net.minecraft.util.ResourceLocation;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
-import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButtonTextured;
@@ -71,7 +70,7 @@ public class WindowTopDock extends Window
                 boolean error = false;
                 if(proj.saveFile != null && proj.saveFile.exists() && MD5Checksum.getMD5Checksum(proj.saveFile).equals(proj.saveFileMd5))
                 {
-                    if(ProjectHelper.saveProject(proj, proj.saveFile))
+                    if(ProjectInfo.saveProject(proj, proj.saveFile))
                     {
                         proj.saveFileMd5 = MD5Checksum.getMD5Checksum(proj.saveFile);
                         saveAs = false;
