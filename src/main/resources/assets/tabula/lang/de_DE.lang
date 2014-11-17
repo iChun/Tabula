@@ -1,0 +1,69 @@
+element.minimize=Minimieren
+element.expand=Ausweiten
+
+element.button.ok=OK
+element.button.cancel=Abbrechen
+
+window.controls.title=Steuerungen
+window.controls.cubeName=Gewählter Würfelname
+window.controls.dimensions=Dimensionen
+window.controls.position=Position
+window.controls.offset=Offset
+window.controls.rotation=Rotation
+window.controls.scale=Skalierung
+window.controls.txOffset=Textur Offset
+window.controls.txMirror=Spiegeln
+window.controls.txMirrorFull=Textur spiegeln
+
+window.newProject.title=New Project
+window.newProject.projName=Project Name
+window.newProject.authName=Author Name
+
+window.modelTree.title=Model Tree
+window.modelTree.newCube=New Cube
+window.modelTree.newGroup=New Group
+window.modelTree.delete=Delete
+
+window.texture.title=Texture
+window.texture.loadTexture=Load Texture
+window.texture.clearTexture=Clear Texture
+window.texture.listenTexture=Listen
+window.texture.listenTextureFull=Listen for texture changes (If the texture is yours)
+window.texture.remoteTexture=Remote Texture
+window.texture.noTexture=No Texture
+
+window.import.title=Import Model To Current Project
+window.import.texture=Texture
+window.import.textureFull=Import the Texture (if available) as well?
+
+window.importMC.title=Import Minecraft Model
+window.importMC.newProject=New?
+window.importMC.newProjectFull=Import the model into a new project?
+
+window.loadTexture.title=Textur laden
+
+window.chat.title=Chat
+window.chat.textbox=Drücke ENTER zum Senden
+
+window.saveAs.title=Speichern unter
+window.saveAs.fileName=Datei Name
+window.saveAs.overwrite=Überschreiben?
+window.saveAs.confirmOverwrite=Datei existiert bereits! Überschreiben?
+window.saveAs.failed=Speichern der Datei fehlgeschlagen.
+
+window.open.title=Projekt öffnen
+window.open.opening=Öffne...
+window.open.failed=Öffnen der Datei fehlgeschlagen.
+
+window.popup.title=Achtung!
+
+topdock.new=Neu
+topdock.open=Öffnen
+topdock.save=Speichern
+topdock.saveAs=Speichern unter
+topdock.import=Importieren
+topdock.importMC=Von Minecraft importieren
+topdock.export=Exportieren
+topdock.chat=Chat Fenster umschalten
+topdock.wood=Holz
+topdock.woodFull=Anzeige der Planken umschalten
