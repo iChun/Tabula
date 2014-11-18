@@ -112,6 +112,20 @@ public class ElementTextWrapper extends Element
         }
     }
 
+    public int getLineCount()
+    {
+        int lines = 0;
+        for(int i = 0; i < text.size(); i++)
+        {
+            String msg = text.get(i);
+
+            List list = parent.workspace.getFontRenderer().listFormattedStringToWidth(msg, width - 12);
+
+            lines += list.size();
+        }
+        return lines;
+    }
+
     @Override
     public void resized()
     {

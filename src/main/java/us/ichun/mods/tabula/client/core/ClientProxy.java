@@ -120,13 +120,14 @@ public class ClientProxy extends CommonProxy
                 }
                 else if(rend.mainModel != null)
                 {
+                    //TODO config to set rotation or not?
                     EntityLivingBase instance;
                     try { instance = (EntityLivingBase)clz.getConstructor(World.class).newInstance(new Object[] { null }); } catch(Exception e){ instance = null; }
                     try { rend.mainModel.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, instance); } catch(Exception e){}
                     try { rend.mainModel.render(instance, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F); } catch(Exception e){}
                     try { rend.mainModel.setLivingAnimations(instance, 0.0F, 0.0F, 0.0F); } catch(Exception e){}
                     ResourceLocation loc = null;
-                    if(clz != EntityHorse.class)
+                    if(clz != EntityHorse.class) //horse gives some kind of error that can't be silenced
                     {
                         try
                         {

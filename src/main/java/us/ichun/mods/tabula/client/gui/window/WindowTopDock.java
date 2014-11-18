@@ -18,6 +18,7 @@ public class WindowTopDock extends Window
     public static final int ID_IMPORT_MC = 5;
     public static final int ID_EXPORT = 6;
     public static final int ID_CHAT = 7;
+    public static final int ID_CREDITS = 8;
     public static final int ID_WOOD = -1;
 
     public WindowTopDock(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
@@ -36,6 +37,7 @@ public class WindowTopDock extends Window
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_IMPORT_MC, true, 0, 0, "topdock.importMC", new ResourceLocation("tabula", "textures/icon/importMC.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_EXPORT, true, 0, 0, "topdock.export", new ResourceLocation("tabula", "textures/icon/export.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CHAT, true, 0, 0, "topdock.chat", new ResourceLocation("tabula", "textures/icon/chat.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CREDITS, true, 0, 0, "topdock.info", new ResourceLocation("tabula", "textures/icon/info.png")));
     }
 
     @Override
@@ -104,6 +106,10 @@ public class WindowTopDock extends Window
         else if(element.id == ID_CHAT)
         {
             workspace.windowChat.toggleVisibility();
+        }
+        else if(element.id == ID_CREDITS)
+        {
+            workspace.addWindowOnTop(new WindowCredits(workspace, 0, 0, 300, 200, 300, 200).putInMiddleOfScreen());
         }
     }
 

@@ -681,8 +681,10 @@ public class GuiWorkspace extends GuiScreen
         if(projectManager.selectedProject != -1)
         {
             GL11.glPushMatrix();
+            GL11.glDisable(GL11.GL_CULL_FACE);
             GL11.glTranslatef(0.0F, 2.0005F, 0.0F);
             GL11.glScalef(-1.0F, -1.0F, 1.0F);
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             ProjectInfo info = projectManager.projects.get(projectManager.selectedProject);
 
             if(windowTexture.imageId != -1)
@@ -700,6 +702,7 @@ public class GuiWorkspace extends GuiScreen
 
                 GL11.glEnable(GL11.GL_TEXTURE_2D);
             }
+            GL11.glEnable(GL11.GL_CULL_FACE);
             GL11.glPopMatrix();
         }
 
