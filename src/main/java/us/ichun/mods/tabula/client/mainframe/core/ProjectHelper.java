@@ -5,6 +5,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import ichun.common.core.util.MD5Checksum;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.util.ResourceLocation;
 import us.ichun.mods.tabula.Tabula;
 import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.client.gui.window.WindowOpenProject;
@@ -29,7 +31,7 @@ public class ProjectHelper
     }
 
     @SideOnly(Side.CLIENT)
-    public static ProjectInfo createProjectFromJsonHost(String ident, String s)
+    public static ProjectInfo createProjectFromJsonHost(String ident, String s)//TODO is this for opening just for host or....?
     {
         Gson gson = new Gson();
         ProjectInfo info = gson.fromJson(s, ProjectInfo.class);
@@ -50,6 +52,7 @@ public class ProjectHelper
                         {
                             info.saveFile = ((WindowOpenProject)window).openingFile;
                             info.saveFileMd5 = MD5Checksum.getMD5Checksum(info.saveFile);
+                            info.saved = true;
 
                             window.workspace.removeWindow(window);
                             break;
@@ -70,6 +73,17 @@ public class ProjectHelper
         {
             GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
             workspace.projectManager.updateProject(project);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void removeProjectFromManager(String ident)
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+        if(mc.currentScreen instanceof GuiWorkspace)
+        {
+            GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
+            workspace.projectManager.removeProject(ident);
         }
     }
 
@@ -106,7 +120,7 @@ public class ProjectHelper
         {
             GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
             workspace.windowChat.chatHolder.text.add(message);
-            //TODO play a sound
+            mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("random.successful_hit"), 1.0F));
         }
     }
 

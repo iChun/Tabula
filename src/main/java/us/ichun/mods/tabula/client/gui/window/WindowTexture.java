@@ -37,8 +37,6 @@ public class WindowTexture extends Window
         elements.add(new ElementButtonTextured(this, width - BORDER_SIZE - 20, height - BORDER_SIZE - 20, 2, false, 1, 1, "window.texture.clearTexture", new ResourceLocation("tabula", "textures/icon/clearTexture.png")));
     }
 
-    //TODO make it so that textureWidth/height stay the same even though the image isn't.
-
     @Override
     public void draw(int mouseX, int mouseY) //4 pixel border?
     {
@@ -191,7 +189,7 @@ public class WindowTexture extends Window
                         catch(IOException e)
                         {
                         }
-                        Tabula.proxy.tickHandlerClient.mainframe.loadTexture(info.identifier, image);
+                        Tabula.proxy.tickHandlerClient.mainframe.loadTexture(info.identifier, image, false);
                     }
                 }
             }

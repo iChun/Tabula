@@ -78,6 +78,56 @@ public class WindowProjectSelection extends WindowTopDock
         }
     }
 
+    public void removeProject(String ident)
+    {
+        for(int i = projects.size() - 1; i >= 0; i--)
+        {
+            ProjectInfo project = projects.get(i);
+            if(project.identifier.equals(ident))
+            {
+                project.destroy();
+                projects.remove(i);
+                if(i == selectedProject || selectedProject == projects.size())
+                {
+                    selectedProject--;
+                    if(selectedProject < 0 && !projects.isEmpty())
+                    {
+                        selectedProject = 0;
+                    }
+                    changeProject(selectedProject);
+                }
+                break;
+            }
+        }
+
+        ArrayList<Element> els = new ArrayList<Element>(elements);
+        for(int i = projects.size() - 1; i >= 0; i--)
+        {
+            ProjectInfo project = projects.get(i);
+            for(Element e : elements)
+            {
+                if(e instanceof ElementProjectTab)
+                {
+                    ElementProjectTab tab = (ElementProjectTab)e;
+                    if(tab.info.identifier.equals(project.identifier))
+                    {
+                        tab.id = i;
+                        els.remove(e);
+                    }
+                }
+            }
+        }
+
+        for(int i = els.size() - 1; i >= 0; i--)
+        {
+            if(els.get(i) instanceof ElementProjectTab)
+            {
+                elements.remove(els.get(i));
+            }
+        }
+        resized();
+    }
+
     public void updateProject(ProjectInfo info)
     {
         boolean added = false;
@@ -122,7 +172,6 @@ public class WindowProjectSelection extends WindowTopDock
 
     public void updateModelTree(ProjectInfo info)
     {
-        //TODO handling of this better so that refreshing a project won't deselect what you already have...?
         ElementListTree modelList = workspace.windowModelTree.modelList;
         modelList.trees.clear();
 
@@ -155,8 +204,24 @@ public class WindowProjectSelection extends WindowTopDock
         }
     }
 
+    public void changeProject(ProjectInfo info)
+    {
+        for(int i = 0; i < projects.size(); i++)
+        {
+            if(projects.get(i) == info)
+            {
+                changeProject(i);
+                return;
+            }
+        }
+    }
+
     public void changeProject(int i)
     {
+        if(selectedProject == i)
+        {
+            return;
+        }
         if(selectedProject != -1)
         {
             ProjectInfo info = projects.get(selectedProject);
@@ -167,16 +232,29 @@ public class WindowProjectSelection extends WindowTopDock
             info.cameraOffsetY = workspace.cameraOffsetY;
         }
         selectedProject = i;
-        ProjectInfo info = projects.get(selectedProject);
-        workspace.cameraZoom = info.cameraZoom;
-        workspace.cameraYaw = info.cameraYaw;
-        workspace.cameraPitch = info.cameraPitch;
-        workspace.cameraOffsetX = info.cameraOffsetX;
-        workspace.cameraOffsetY = info.cameraOffsetY;
+        if(selectedProject != -1)
+        {
+            ProjectInfo info = projects.get(selectedProject);
+            workspace.cameraZoom = info.cameraZoom;
+            workspace.cameraYaw = info.cameraYaw;
+            workspace.cameraPitch = info.cameraPitch;
+            workspace.cameraOffsetX = info.cameraOffsetX;
+            workspace.cameraOffsetY = info.cameraOffsetY;
 
-        ((ElementProjectTab)elements.get(i)).changed = false;
+            ((ElementProjectTab)elements.get(i)).changed = false;
 
-        updateModelTree(info);
+            updateModelTree(info);
+        }
+        else
+        {
+            workspace.cameraZoom = 1.0F;
+            workspace.cameraYaw = 0.0F;
+            workspace.cameraPitch = 0.0F;
+            workspace.cameraOffsetX = 0.0F;
+            workspace.cameraOffsetY = 0.0F;
+        }
+
+        workspace.windowModelTree.modelList.sliderProg = 0.0F;
     }
 
     @Override

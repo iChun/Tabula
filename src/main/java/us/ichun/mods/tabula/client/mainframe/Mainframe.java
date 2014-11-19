@@ -19,6 +19,7 @@ import java.util.UUID;
 //The player hosting this doesn't edit this directly, he has his own workspace and whatever he does to the workspace there changes things here, which are sent back to him.
 public class Mainframe
 {
+    public static final int IDENTIFIER_LENGTH = 20;
 
     public ArrayList<UUID> listeners = new ArrayList<UUID>();
     public ArrayList<UUID> editors = new ArrayList<UUID>();
@@ -34,18 +35,46 @@ public class Mainframe
         allowEditing = true;
     }
 
-    public void loadEmptyProject(String name, String author)
+    public void loadEmptyProject(String name, String author, int txWidth, int txHeight)
     {
         ProjectInfo projectInfo = new ProjectInfo(name, author);
         projectInfo.projVersion = projVersion; //TODO change this everytime loading changes.
 
-        projectInfo.identifier = RandomStringUtils.randomAscii(20);
+        projectInfo.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
+
+        projectInfo.textureWidth = txWidth;
+        projectInfo.textureHeight = txHeight;
 
         projects.add(projectInfo);
 
         streamProject(projectInfo);
+    }
 
-        //TODO inform listeners of new project.
+    public void editProject(String ident, String name, String author, int txWidth, int txHeight)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                info.modelName = name;
+                info.authorName = author;
+                info.textureWidth = txWidth;
+                info.textureHeight = txHeight;
+                streamProject(info);
+            }
+        }
+    }
+
+    public void closeProject(String ident)
+    {
+        for(int i = projects.size() - 1; i >= 0; i--)
+        {
+            ProjectInfo info = projects.get(i);
+            if(info.identifier.equals(ident))
+            {
+                streamProjectClosure(ident);
+            }
+        }
     }
 
     public void sendChat(String name, String message)
@@ -56,6 +85,18 @@ public class Mainframe
             if(id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             {
                 ProjectHelper.receiveChat(name + ": " + message);
+            }
+        }
+    }
+
+    public void streamProjectClosure(String ident)
+    {
+        for(UUID id : listeners)
+        {
+            //TODO stream to other listeners
+            if(id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            {
+                ProjectHelper.removeProjectFromManager(ident);
             }
         }
     }
@@ -88,11 +129,51 @@ public class Mainframe
         allowEditing = true;
     }
 
+    public void importProject(String ident, String projectString, BufferedImage image)
+    {
+        ProjectInfo project = ((new Gson()).fromJson(projectString, ProjectInfo.class));
+
+        project.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
+
+        if(project.projVersion != projVersion)
+        {
+            repairProject(project);
+        }
+
+        projects.add(project);
+
+        project.bufferedTexture = image;
+
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                info.cubes.addAll(project.cubes);
+                info.cubeGroups.addAll(info.cubeGroups);
+
+                if(project.bufferedTexture != null)
+                {
+                    info.textureWidth = project.textureWidth;
+                    info.textureHeight = project.textureHeight;
+                    info.bufferedTexture = project.bufferedTexture;
+
+                    streamProject(info);
+
+                    streamProjectTexture(info.identifier, info.bufferedTexture);
+                }
+                else
+                {
+                    streamProject(info);
+                }
+            }
+        }
+    }
+
     public void openProject(String projectString, BufferedImage image)
     {
         ProjectInfo project = ((new Gson()).fromJson(projectString, ProjectInfo.class));
 
-        project.identifier = RandomStringUtils.randomAscii(20);
+        project.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
 
         if(project.projVersion != projVersion)
         {
@@ -108,33 +189,27 @@ public class Mainframe
         streamProjectTexture(project.identifier, project.bufferedTexture);
     }
 
-    public void loadTexture(String ident, BufferedImage image)
+    public void loadTexture(String ident, BufferedImage image, boolean updateDims)
     {
         for(ProjectInfo info : projects)
         {
             if(info.identifier.equals(ident))
             {
-                loadTexture(info, image);
+                boolean changed = false;
+                info.bufferedTexture = image;
+                if(info.bufferedTexture != null && !(info.textureWidth == info.bufferedTexture.getWidth() && info.textureHeight == info.bufferedTexture.getHeight()) && updateDims)
+                {
+                    changed = true;
+                    info.textureWidth = info.bufferedTexture.getWidth();
+                    info.textureHeight = info.bufferedTexture.getHeight();
+                }
+                if(changed)
+                {
+                    streamProject(info);
+                }
+                streamProjectTexture(info.identifier, info.bufferedTexture);
             }
         }
-    }
-
-    public boolean loadTexture(ProjectInfo info, BufferedImage image)
-    {
-        boolean changed = false;
-        info.bufferedTexture = image;
-        if(info.bufferedTexture != null && !(info.textureWidth == info.bufferedTexture.getWidth() && info.textureHeight == info.bufferedTexture.getHeight()))
-        {
-            changed = true;
-            info.textureWidth = info.bufferedTexture.getWidth();
-            info.textureHeight = info.bufferedTexture.getHeight();
-        }
-        if(changed)
-        {
-            streamProject(info);
-        }
-        streamProjectTexture(info.identifier, info.bufferedTexture);
-        return changed;
     }
 
     public void clearTexture(String ident)
@@ -160,7 +235,7 @@ public class Mainframe
             projectInfo = new ProjectInfo(model.modelParent.getClass().getSimpleName(), "Either Mojang or a mod author");
             projectInfo.projVersion = projVersion; //TODO change this everytime loading changes.
 
-            projectInfo.identifier = RandomStringUtils.randomAscii(20);
+            projectInfo.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
 
             projects.add(projectInfo);
         }
@@ -193,6 +268,31 @@ public class Mainframe
             if(info.identifier.equals(ident))
             {
                 info.createNewCube();
+                streamProject(info);
+            }
+        }
+    }
+
+    public void createNewCube(String ident, String json, boolean inPlace)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                CubeInfo cube = ((new Gson()).fromJson(json, CubeInfo.class));
+
+                cube.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
+
+                if(!inPlace)
+                {
+                    cube.position = new double[3];
+                    cube.offset = new double[3];
+                    cube.rotation = new double[3];
+                }
+
+                info.cubeCount++;
+                info.cubes.add(cube);
+
                 streamProject(info);
             }
         }

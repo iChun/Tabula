@@ -246,7 +246,7 @@ public class ElementListTree extends Element
                 if(dragDraw)
                 {
                     offX = mouseX - dragX;
-                    offY = mouseY - dragY;
+                    offY = mouseY - dragY + (int)scrollHeight;
                 }
                 RendererHelper.drawColourOnScreen(Theme.elementTreeItemBorder[0], Theme.elementTreeItemBorder[1], Theme.elementTreeItemBorder[2], 255, getPosX() + offX, getPosY() + offY + treeHeight, width, theHeight, 0);
                 if(selected)

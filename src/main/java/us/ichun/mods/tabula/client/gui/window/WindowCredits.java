@@ -31,6 +31,7 @@ public class WindowCredits extends Window
         textHolder.text.add("");
         textHolder.text.add(StatCollector.translateToLocal("window.about.os1"));
         textHolder.text.add(StatCollector.translateToLocal("window.about.os2"));
+        textHolder.text.add("https://github.com/iChun/Tabula");
 
         height = textHolder.getLineCount() * 15 + 30;
         minHeight = height;

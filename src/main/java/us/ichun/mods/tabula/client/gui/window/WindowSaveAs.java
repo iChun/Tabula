@@ -18,8 +18,9 @@ public class WindowSaveAs extends Window
     private static final String[] invalidChars = new String[] { "\\\\", "/", ":", "\\*", "\\?", "\"", "<", ">", "|" };
 
     public boolean shouldClose;
+    public boolean closeProject;
 
-    public WindowSaveAs(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowSaveAs(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH, boolean close)
     {
         super(parent, x, y, w, h, minW, minH, "window.saveAs.title", true);
 
@@ -37,6 +38,8 @@ public class WindowSaveAs extends Window
         elements.add(text);
         elements.add(new ElementButton(this, width - 140, height - 30, 60, 16, 3, false, 1, 1, "element.button.ok"));
         elements.add(new ElementButton(this, width - 70, height - 30, 60, 16, 0, false, 1, 1, "element.button.cancel"));
+
+        closeProject = close;
     }
 
     @Override
@@ -45,6 +48,10 @@ public class WindowSaveAs extends Window
         if(shouldClose)
         {
             workspace.removeWindow(this, true);
+            if(closeProject && !workspace.projectManager.projects.isEmpty())
+            {
+                workspace.closeProject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject));
+            }
         }
     }
 
@@ -64,6 +71,7 @@ public class WindowSaveAs extends Window
         if(element.id == 0)
         {
             workspace.removeWindow(this, true);
+            workspace.wantToExit = false;
         }
         if(element.id == 3)
         {
@@ -106,6 +114,11 @@ public class WindowSaveAs extends Window
                     workspace.projectManager.projects.get(workspace.projectManager.selectedProject).saveFile = file;
                     workspace.projectManager.projects.get(workspace.projectManager.selectedProject).saveFileMd5 = MD5Checksum.getMD5Checksum(file);
                     workspace.removeWindow(this, true);
+
+                    if(closeProject && !workspace.projectManager.projects.isEmpty())
+                    {
+                        workspace.closeProject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject));
+                    }
                 }
                 else
                 {

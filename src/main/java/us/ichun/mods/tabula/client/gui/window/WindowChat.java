@@ -10,8 +10,6 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementTextWrapperChat;
 
 public class WindowChat extends Window
 {
-    //TODO play sound when received message
-
     public int screenX;
     public int screenY;
     public int wasDocked;

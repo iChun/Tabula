@@ -53,6 +53,10 @@ public class ElementProjectTab extends Element
             }
         }
         parent.workspace.getFontRenderer().drawString(titleToRender, parent.posX + posX + 4, parent.posY + posY + 3, Theme.getAsHex(changed? Theme.elementProjectTabFontChanges : Theme.elementProjectTabFont), false);
+        if(!parent.workspace.remoteSession)
+        {
+            parent.workspace.getFontRenderer().drawString("X", parent.posX + posX + width - 8, parent.posY + posY + 3, Theme.getAsHex(Theme.elementProjectTabFont), false);
+        }
     }
 
     @Override
@@ -63,7 +67,7 @@ public class ElementProjectTab extends Element
         int totalSpace = 0;
         for(ProjectInfo tab1 : tab.projects)
         {
-            totalSpace += tab.workspace.getFontRenderer().getStringWidth(" " + tab1.modelName + " ");
+            totalSpace += tab.workspace.getFontRenderer().getStringWidth(" " + tab1.modelName + (parent.workspace.remoteSession ? " " : " X "));
         }
         if(totalSpace > space)
         {
@@ -77,10 +81,10 @@ public class ElementProjectTab extends Element
             posX = 0;
             for(int i = 0; i < id; i++)
             {
-                posX += tab.workspace.getFontRenderer().getStringWidth(" " + tab.projects.get(i).modelName + " ");
+                posX += tab.workspace.getFontRenderer().getStringWidth(" " + tab.projects.get(i).modelName + (parent.workspace.remoteSession ? " " : " X "));
             }
             posY = 0;
-            width = tab.workspace.getFontRenderer().getStringWidth(" " + info.modelName + " ");
+            width = tab.workspace.getFontRenderer().getStringWidth(" " + info.modelName + (parent.workspace.remoteSession ? " " : " X "));
             height = 12;
         }
     }
@@ -106,8 +110,12 @@ public class ElementProjectTab extends Element
     {
         if(id == 0)
         {
+            if(mouseX + parent.posX > getPosX() + width - 9)
+            {
+                parent.workspace.closeProject(((WindowProjectSelection)parent).projects.get(this.id));
+            }
             ((WindowProjectSelection)parent).changeProject(this.id);
         }
-        return true;
+        return false;
     }
 }
