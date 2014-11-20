@@ -73,7 +73,7 @@ public class WindowModelTree extends Window
             }
             else
             {
-                Tabula.proxy.tickHandlerClient.mainframe.deleteCube(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, modelList.selectedIdentifier);
+                Tabula.proxy.tickHandlerClient.mainframe.deleteObject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, modelList.selectedIdentifier);
             }
         }
         else

@@ -523,7 +523,7 @@ public class Mainframe
         }
     }
 
-    public void deleteCube(String ident, String cubeIdent)
+    public void deleteObject(String ident, String cubeIdent)
     {
         for(ProjectInfo proj : projects)
         {
@@ -542,7 +542,14 @@ public class Mainframe
                 }
                 if(!found)
                 {
-                    deleteCubeInCubeGroups(cubeIdent, proj.cubeGroups);
+                    deleteObjectInCubeGroups(cubeIdent, proj.cubeGroups);
+
+                    CubeInfo cube = (CubeInfo)proj.getObjectByIdent(cubeIdent);
+                    if(cube != null && cube.parentIdentifier != null)
+                    {
+                        CubeInfo info1 = (CubeInfo)proj.getObjectByIdent(cube.parentIdentifier);
+                        info1.removeChild(cube);
+                    }
                 }
 
                 streamProject(proj);
@@ -569,11 +576,16 @@ public class Mainframe
         }
     }
 
-    public void deleteCubeInCubeGroups(String ident, ArrayList<CubeGroup> groups)
+    public void deleteObjectInCubeGroups(String ident, ArrayList<CubeGroup> groups)
     {
-        for(int j = 0; j < groups.size(); j++)
+        for(int j = groups.size() - 1; j >= 0; j--)
         {
             CubeGroup proj = groups.get(j);
+            if(proj.identifier.equals(ident))
+            {
+                groups.remove(j);
+                break;
+            }
             for(int i = 0; i < proj.cubes.size(); i++)
             {
                 CubeInfo info1 = proj.cubes.get(i);
@@ -583,7 +595,7 @@ public class Mainframe
                     break;
                 }
             }
-            deleteCubeInCubeGroups(ident, proj.cubeGroups);
+            deleteObjectInCubeGroups(ident, proj.cubeGroups);
         }
     }
 
