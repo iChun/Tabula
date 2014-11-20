@@ -2,7 +2,6 @@ package us.ichun.mods.tabula.client.gui.window.element;
 
 import ichun.client.render.RendererHelper;
 import ichun.common.core.util.MD5Checksum;
-import javafx.scene.control.Tab;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
