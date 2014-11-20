@@ -29,10 +29,7 @@ public class WindowSaveAs extends Window
         ElementTextInputSaveAs text = new ElementTextInputSaveAs(this, 10, 30, width - 20, 12, 1, "window.saveAs.fileName");
         String name = project.modelName;
 
-        for(String c : invalidChars)
-        {
-            name = name.replaceAll("[^A-Za-z0-9()\\[\\]]", "");
-        }
+        name = name.replaceAll("[^A-Za-z0-9()\\[\\]]", "");
 
         text.textField.setText(name);
         elements.add(text);
