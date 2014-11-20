@@ -19,7 +19,7 @@ public class WindowCredits extends Window
         textHolder = new ElementTextWrapper(this, 5 + 5, BORDER_SIZE + 1 + 12 + 5, width - 10 - 10, (height - BORDER_SIZE - 14) - (BORDER_SIZE + 1 + 12) - 2 - 10, 2, false, false);
         elements.add(textHolder);
 
-        for(int i = 0; i <= 5; i++)
+        for(int i = 0; i <= 6; i++)
         {
             String text = StatCollector.translateToLocal("window.about.line" + i);
             if(i == 0)
