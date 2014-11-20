@@ -748,7 +748,7 @@ public class GuiWorkspace extends GuiScreen
                     }
                     if(tree.attachedObject instanceof CubeInfo)
                     {
-                        addElementsForSelection((CubeInfo)tree.attachedObject, selected);
+                        selected.add((CubeInfo)tree.attachedObject);
                     }
                 }
             }
@@ -855,17 +855,17 @@ public class GuiWorkspace extends GuiScreen
         }
         for(CubeInfo info : group.cubes)
         {
-            selected.add(info);
+            addElementsForSelection(info, selected);
         }
     }
 
     private void addElementsForSelection(CubeInfo cube, ArrayList<CubeInfo> selected)
     {
         selected.add(cube);
-//        for(CubeInfo child : cube.children)
-//        {
-//            addElementsForSelection(child, selected);
-//        }
+        for(CubeInfo child : cube.getChildren())
+        {
+            addElementsForSelection(child, selected);
+        }
     }
 
     public void cut()

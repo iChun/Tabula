@@ -3,15 +3,14 @@ package us.ichun.mods.tabula.client.mainframe;
 import com.google.gson.Gson;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.lang3.RandomStringUtils;
+import us.ichun.mods.tabula.Tabula;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.module.tabula.client.model.ModelInfo;
 import us.ichun.module.tabula.common.project.ProjectInfo;
-import us.ichun.mods.tabula.Tabula;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -274,7 +273,7 @@ public class Mainframe
                 //Cube on Group
                 if(dragged instanceof CubeInfo && draggedOnto instanceof CubeGroup && !((CubeGroup)draggedOnto).cubes.contains(dragged))
                 {
-                        ((CubeGroup)draggedOnto).cubes.add((CubeInfo)dragged);
+                    ((CubeGroup)draggedOnto).cubes.add((CubeInfo)dragged);
                 }
                 //Group on Group
                 else if(dragged instanceof CubeGroup && draggedOnto instanceof CubeGroup && !((CubeGroup)draggedOnto).cubeGroups.contains(dragged))
@@ -305,17 +304,11 @@ public class Mainframe
         }
         for(CubeInfo cube : info.cubes)
         {
-            if(cube != newParent)
-            {
-                removeFromCube(newParent, dragged, cube);
-            }
+            removeFromCube(newParent, dragged, cube);
         }
         for(CubeGroup group : info.cubeGroups)
         {
-            if(group != newParent)
-            {
-                removeFromGroup(newParent, dragged, group);
-            }
+            removeFromGroup(newParent, dragged, group);
         }
         if(newParent == null)
         {
@@ -334,13 +327,10 @@ public class Mainframe
     {
         for(CubeInfo group1 : cube.getChildren())
         {
-            if(group1 != newParent)
-            {
-                removeFromCube(newParent, dragged, group1);
-            }
+            removeFromCube(newParent, dragged, group1);
         }
 
-        if(cube.getChildren().contains(dragged))
+        if(cube.getChildren().contains(dragged) && cube != newParent)
         {
             cube.removeChild((CubeInfo)dragged);
         }
@@ -350,23 +340,17 @@ public class Mainframe
     {
         for(CubeInfo cube : group.cubes)
         {
-            if(cube != newParent)
-            {
-                removeFromCube(newParent, dragged, cube);
-            }
+            removeFromCube(newParent, dragged, cube);
         }
         for(CubeGroup group1 : group.cubeGroups)
         {
-            if(group1 != newParent)
-            {
-                removeFromGroup(newParent, dragged, group1);
-            }
+            removeFromGroup(newParent, dragged, group1);
         }
-        if(group.cubes.contains(dragged))
+        if(group.cubes.contains(dragged) && group != newParent)
         {
             group.cubes.remove(dragged);
         }
-        if(group.cubeGroups.contains(dragged))
+        if(group.cubeGroups.contains(dragged) && group != newParent)
         {
             group.cubeGroups.remove(dragged);
         }
