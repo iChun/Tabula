@@ -2,13 +2,16 @@ package us.ichun.mods.tabula.client.gui.window.element;
 
 import ichun.client.render.RendererHelper;
 import ichun.common.core.util.MD5Checksum;
+import javafx.scene.control.Tab;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import us.ichun.mods.tabula.Tabula;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.module.tabula.client.model.ModelInfo;
+import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.io.File;
@@ -36,6 +39,9 @@ public class ElementListTree extends Element
     public boolean lmbDown;
 
     public String selectedIdentifier;
+
+    public static final ResourceLocation txModel = new ResourceLocation("tabula", "textures/icon/model.png");
+    public static final ResourceLocation txGroup = new ResourceLocation("tabula", "textures/icon/group.png");
 
     public ElementListTree(Window window, int x, int y, int w, int h, int ID, boolean igMin, boolean drag)
     {
@@ -142,10 +148,90 @@ public class ElementListTree extends Element
 
         if(!Mouse.isButtonDown(0) && lmbDown)
         {
+            if(treeDragged != null && !(dragX == mouseX && dragY == mouseY))
+            {
+                boolean unHook = true;
+                treeHeight = 0;
+                for(int i = 0; i < trees.size(); i++)
+                {
+                    Tree tree = trees.get(i);
+
+                    double scrollHeight = 0.0D;
+                    if(treeHeight1 > height)
+                    {
+                        scrollHeight = (height - treeHeight1) * sliderProg;
+                    }
+                    boolean realBorder = mouseX >= posX && mouseX < posX + width && mouseY >= posY + treeHeight + scrollHeight && mouseY < posY + treeHeight + scrollHeight + tree.theHeight;
+
+                    if(realBorder)
+                    {
+                        if(treeHeight1 > height)
+                        {
+                            if(mouseY > height + posY || mouseY <= posY)
+                            {
+                                break;
+                            }
+                        }
+
+                        unHook = false;
+                        if(tree == treeDragged)
+                        {
+                            treeHeight += tree.getHeight();
+                            continue;
+                        }
+
+                        dragOnto(tree.attachedObject, treeDragged.attachedObject);
+                        break;
+                    }
+
+                    treeHeight += tree.getHeight();
+                }
+                if(unHook)
+                {
+                    dragOnto(null, treeDragged.attachedObject);
+                }
+            }
+
             treeDragged = null;
         }
 
         lmbDown = Mouse.isButtonDown(0);
+    }
+
+    public void dragOnto(Object draggedOn, Object dragged)
+    {
+        if(draggedOn instanceof CubeInfo && dragged instanceof CubeGroup)
+        {
+            return; //you can't attach a group to a cube.
+        }
+        String draggedOnIdent = "";
+        if(draggedOn instanceof CubeInfo)
+        {
+            draggedOnIdent = ((CubeInfo)draggedOn).identifier;
+        }
+        else if(draggedOn instanceof CubeGroup)
+        {
+            draggedOnIdent = ((CubeGroup)draggedOn).identifier;
+        }
+        String draggedIdent = "";
+        if(dragged instanceof CubeInfo)
+        {
+            draggedIdent = ((CubeInfo)dragged).identifier;
+        }
+        else if(dragged instanceof CubeGroup)
+        {
+            draggedIdent = ((CubeGroup)dragged).identifier;
+        }
+
+        if(parent.workspace.remoteSession)
+        {
+            //TODO this
+        }
+        else
+        {
+            Tabula.proxy.tickHandlerClient.mainframe.dragOnto(parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, draggedOnIdent, draggedIdent);
+        }
+        sliderProg = 0.0F;
     }
 
     @Override
@@ -188,7 +274,15 @@ public class ElementListTree extends Element
 
     public void clickElement(Object obj)
     {
-        if(obj instanceof CubeInfo)
+        if(obj instanceof CubeGroup)
+        {
+            CubeGroup info = (CubeGroup)obj;
+            selectedIdentifier = info.identifier;
+
+            parent.workspace.windowControls.selectedObject = info;
+            parent.workspace.windowControls.refresh = true;
+        }
+        else if(obj instanceof CubeInfo)
         {
             CubeInfo info = (CubeInfo)obj;
             selectedIdentifier = info.identifier;
@@ -264,7 +358,7 @@ public class ElementListTree extends Element
 
                 if(realBorder && hasScroll)
                 {
-                    if(mouseY > height + 5 - scrollHeight || mouseY <= scrollHeight)
+                    if(mouseY > height + posY || mouseY <= posY)
                     {
                         clicking = false;
                     }
@@ -273,12 +367,21 @@ public class ElementListTree extends Element
                 if(attachedObject instanceof CubeInfo)
                 {
                     CubeInfo info = (CubeInfo)attachedObject;
-                    parent.workspace.getFontRenderer().drawString(info.name, getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.font), false);
+                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    RendererHelper.drawTextureOnScreen(txModel, getPosX() + offX + 1.5D + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, theHeight - 4, theHeight - 4, 0);
+                    parent.workspace.getFontRenderer().drawString(reString(info.name, width - 8), getPosX() + offX + 4 + 8 + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.font), false);
+                }
+                else if(attachedObject instanceof CubeGroup)
+                {
+                    CubeGroup info = (CubeGroup)attachedObject;
+                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    RendererHelper.drawTextureOnScreen(txGroup, getPosX() + offX + 1.5D + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, theHeight - 4, theHeight - 4, 0);
+                    parent.workspace.getFontRenderer().drawString(reString(info.name, width - 8), getPosX() + offX + 4 + 8 + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.font), false);
                 }
                 else if(attachedObject instanceof ModelInfo)
                 {
                     ModelInfo info = (ModelInfo)attachedObject;
-                    parent.workspace.getFontRenderer().drawString(info.modelParent.getClass().getSimpleName() + " - " + info.clz.getSimpleName(), getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.font), false);
+                    parent.workspace.getFontRenderer().drawString(reString(info.modelParent.getClass().getSimpleName() + " - " + info.clz.getSimpleName(), width), getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.font), false);
                 }
                 else if(attachedObject instanceof File)
                 {
@@ -290,7 +393,6 @@ public class ElementListTree extends Element
 
                 if(realBorder && clicking)
                 {
-                    //TODO action when selected
                     selected = true;
                     deselectOthers(trees);
                     clickElement(attachedObject);
@@ -315,6 +417,26 @@ public class ElementListTree extends Element
                     tree.selected = false;
                 }
             }
+        }
+
+        public String reString(String s, int width)
+        {
+            while(s.length() > 1 && parent.workspace.getFontRenderer().getStringWidth(s) > width - 3 - (attached * 5))
+            {
+                if(s.startsWith("..."))
+                {
+                    break;
+                }
+                if(s.endsWith("..."))
+                {
+                    s = s.substring(0, s.length() - 5) + "...";
+                }
+                else
+                {
+                    s = s.substring(0, s.length() - 1) + "...";
+                }
+            }
+            return s;
         }
     }
 }

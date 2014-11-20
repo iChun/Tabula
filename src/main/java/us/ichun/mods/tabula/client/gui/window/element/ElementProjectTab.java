@@ -21,7 +21,6 @@ public class ElementProjectTab extends Element
     @Override
     public void draw(int mouseX, int mouseY, boolean hover)
     {
-        //TODO make a X button to close project.
         WindowProjectSelection proj = (WindowProjectSelection)parent;
         if(id != proj.projects.size() - 1)
         {

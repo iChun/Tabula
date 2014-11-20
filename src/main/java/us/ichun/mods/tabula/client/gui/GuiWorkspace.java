@@ -26,6 +26,7 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.client.gui.window.element.ElementWindow;
 import us.ichun.module.tabula.common.project.ProjectInfo;
+import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.util.ArrayList;
@@ -201,7 +202,7 @@ public class GuiWorkspace extends GuiScreen
                     for(ProjectInfo project : projectManager.projects)
                     {
                         closeProject(project);
-                        if(!project.saved)
+                        if(!project.saved && !project.authorName.equals("iChun? :O"))//TODO remove this
                         {
                             canClose = false;
                             break;
@@ -741,9 +742,13 @@ public class GuiWorkspace extends GuiScreen
             {
                 if(tree.selected)
                 {
+                    if(tree.attachedObject instanceof CubeGroup)
+                    {
+                        addElementsForSelection((CubeGroup)tree.attachedObject, selected);
+                    }
                     if(tree.attachedObject instanceof CubeInfo)
                     {
-                        selected.add((CubeInfo)tree.attachedObject);
+                        addElementsForSelection((CubeInfo)tree.attachedObject, selected);
                     }
                 }
             }
@@ -840,6 +845,27 @@ public class GuiWorkspace extends GuiScreen
         GL11.glPopMatrix();
 
         //TODO render a rotation point.
+    }
+
+    private void addElementsForSelection(CubeGroup group, ArrayList<CubeInfo> selected)
+    {
+        for(CubeGroup group1 : group.cubeGroups)
+        {
+            addElementsForSelection(group1, selected);
+        }
+        for(CubeInfo info : group.cubes)
+        {
+            selected.add(info);
+        }
+    }
+
+    private void addElementsForSelection(CubeInfo cube, ArrayList<CubeInfo> selected)
+    {
+        selected.add(cube);
+        for(CubeInfo child : cube.children)
+        {
+            addElementsForSelection(child, selected);
+        }
     }
 
     public void cut()

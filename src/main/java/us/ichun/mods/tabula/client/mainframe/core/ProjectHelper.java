@@ -61,6 +61,7 @@ public class ProjectHelper
                 }
             }
         }
+//        System.out.println(s);
 
         return info;
     }

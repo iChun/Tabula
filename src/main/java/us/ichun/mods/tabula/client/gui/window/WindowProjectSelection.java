@@ -7,6 +7,7 @@ import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementProjectTab;
 import us.ichun.module.tabula.common.project.ProjectInfo;
+import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.util.ArrayList;
@@ -125,6 +126,11 @@ public class WindowProjectSelection extends WindowTopDock
                 elements.remove(els.get(i));
             }
         }
+        if(selectedProject >= 0)
+        {
+            updateModelTree(projects.get(selectedProject));
+        }
+
         resized();
     }
 
@@ -175,9 +181,15 @@ public class WindowProjectSelection extends WindowTopDock
         ElementListTree modelList = workspace.windowModelTree.modelList;
         modelList.trees.clear();
 
+        for(int k = 0; k < info.cubeGroups.size(); k++)
+        {
+            modelList.createTree(null, info.cubeGroups.get(k), 13, 0, true, false);
+            createTreeForGroup(info.cubeGroups.get(k), modelList, 1);
+        }
         for(int k = 0; k < info.cubes.size(); k++)
         {
             modelList.createTree(null, info.cubes.get(k), 13, 0, true, false);
+            createTreeForCube(info.cubes.get(k), modelList, 1);
         }
 
         if(!modelList.selectedIdentifier.isEmpty())
@@ -185,7 +197,13 @@ public class WindowProjectSelection extends WindowTopDock
             boolean found = false;
             for(int k = 0; k < modelList.trees.size(); k++)
             {
-                if(modelList.trees.get(k).attachedObject instanceof CubeInfo && ((CubeInfo)modelList.trees.get(k).attachedObject).identifier.equals(modelList.selectedIdentifier))
+                if(modelList.trees.get(k).attachedObject instanceof CubeGroup && ((CubeGroup)modelList.trees.get(k).attachedObject).identifier.equals(modelList.selectedIdentifier))
+                {
+                    found = true;
+                    modelList.trees.get(k).selected = true;
+                    modelList.clickElement(modelList.trees.get(k).attachedObject);
+                }
+                else if(modelList.trees.get(k).attachedObject instanceof CubeInfo && ((CubeInfo)modelList.trees.get(k).attachedObject).identifier.equals(modelList.selectedIdentifier))
                 {
                     found = true;
                     modelList.trees.get(k).selected = true;
@@ -201,6 +219,29 @@ public class WindowProjectSelection extends WindowTopDock
         {
             workspace.windowControls.selectedObject = null;
             workspace.windowControls.refresh = true;
+        }
+    }
+
+    public void createTreeForGroup(CubeGroup group, ElementListTree modelList, int attachLevel)
+    {
+        for(int k = 0; k < group.cubeGroups.size(); k++)
+        {
+            modelList.createTree(null, group.cubeGroups.get(k), 13, attachLevel, true, false);
+            createTreeForGroup(group.cubeGroups.get(k), modelList, attachLevel + 1);
+        }
+        for(int k = 0; k < group.cubes.size(); k++)
+        {
+            modelList.createTree(null, group.cubes.get(k), 13, attachLevel, true, false);
+            createTreeForCube(group.cubes.get(k), modelList, attachLevel + 1);
+        }
+    }
+
+    public void createTreeForCube(CubeInfo group, ElementListTree modelList, int attachLevel)
+    {
+        for(int k = 0; k < group.children.size(); k++)
+        {
+            modelList.createTree(null, group.children.get(k), 13, attachLevel, true, false);
+            createTreeForCube(group.children.get(k), modelList, attachLevel + 1);
         }
     }
 

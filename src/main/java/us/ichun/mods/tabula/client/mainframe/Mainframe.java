@@ -19,12 +19,12 @@ import java.util.UUID;
 //The player hosting this doesn't edit this directly, he has his own workspace and whatever he does to the workspace there changes things here, which are sent back to him.
 public class Mainframe
 {
-    public static final int IDENTIFIER_LENGTH = 20;
+    public static final int IDENTIFIER_LENGTH = ProjectInfo.IDENTIFIER_LENGTH;
 
     public ArrayList<UUID> listeners = new ArrayList<UUID>();
     public ArrayList<UUID> editors = new ArrayList<UUID>();
 
-    public static final int projVersion = 1;
+    public static final int projVersion = 1; //TODO change this everytime loading changes.
 
     public boolean allowEditing;
 
@@ -38,7 +38,7 @@ public class Mainframe
     public void loadEmptyProject(String name, String author, int txWidth, int txHeight)
     {
         ProjectInfo projectInfo = new ProjectInfo(name, author);
-        projectInfo.projVersion = projVersion; //TODO change this everytime loading changes.
+        projectInfo.projVersion = projVersion;
 
         projectInfo.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
 
@@ -261,6 +261,129 @@ public class Mainframe
         }
     }
 
+    public void dragOnto(String projIdent, String draggedOntoIdent, String draggedIdent)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(projIdent))
+            {
+                Object draggedOnto = info.getObjectByIdent(draggedOntoIdent);
+                Object dragged = info.getObjectByIdent(draggedIdent);
+
+                //HANDLE.
+                //Cube on Group
+                if(dragged instanceof CubeInfo && draggedOnto instanceof CubeGroup)
+                {
+                    ((CubeGroup)draggedOnto).cubes.add((CubeInfo)dragged);
+                }
+                //Group on Group
+                else if(dragged instanceof CubeGroup && draggedOnto instanceof CubeGroup)
+                {
+                    ((CubeGroup)draggedOnto).cubeGroups.add((CubeGroup)dragged);
+                }
+                //Cube on Cube
+                else if(dragged instanceof CubeInfo && draggedOnto instanceof CubeInfo)
+                {
+                    ((CubeInfo)draggedOnto).children.add((CubeInfo)dragged);
+                }
+                childProtectiveServices(info, draggedOnto, dragged);
+
+                streamProject(info);
+            }
+        }
+    }
+
+    public void childProtectiveServices(ProjectInfo info, Object newParent, Object dragged)
+    {
+        if(info.cubes.contains(dragged))
+        {
+            info.cubes.remove(dragged);
+        }
+        if(info.cubeGroups.contains(dragged))
+        {
+            info.cubeGroups.remove(dragged);
+        }
+        for(CubeInfo cube : info.cubes)
+        {
+            if(cube != newParent)
+            {
+                removeFromCube(newParent, dragged, cube);
+            }
+        }
+        for(CubeGroup group : info.cubeGroups)
+        {
+            if(group != newParent)
+            {
+                removeFromGroup(newParent, dragged, group);
+            }
+        }
+        if(newParent == null)
+        {
+            if(dragged instanceof CubeInfo)
+            {
+                info.cubes.add((CubeInfo)dragged);
+            }
+            else if(dragged instanceof CubeGroup)
+            {
+                info.cubeGroups.add((CubeGroup)dragged);
+            }
+        }
+    }
+
+    public void removeFromCube(Object newParent, Object dragged, CubeInfo cube)
+    {
+        for(CubeInfo group1 : cube.children)
+        {
+            if(group1 != newParent)
+            {
+                removeFromCube(newParent, dragged, group1);
+            }
+        }
+
+        if(cube.children.contains(dragged))
+        {
+            cube.children.remove(dragged);
+        }
+    }
+
+    public void removeFromGroup(Object newParent, Object dragged, CubeGroup group)
+    {
+        for(CubeInfo cube : group.cubes)
+        {
+            if(cube != newParent)
+            {
+                removeFromCube(newParent, dragged, cube);
+            }
+        }
+        for(CubeGroup group1 : group.cubeGroups)
+        {
+            if(group1 != newParent)
+            {
+                removeFromGroup(newParent, dragged, group1);
+            }
+        }
+        if(group.cubes.contains(dragged))
+        {
+            group.cubes.remove(dragged);
+        }
+        if(group.cubeGroups.contains(dragged))
+        {
+            group.cubeGroups.remove(dragged);
+        }
+    }
+
+    public void createNewGroup(String ident)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                info.createNewGroup();
+                streamProject(info);
+            }
+        }
+    }
+
     public void createNewCube(String ident)
     {
         for(ProjectInfo info : projects)
@@ -295,6 +418,74 @@ public class Mainframe
 
                 streamProject(info);
             }
+        }
+    }
+
+    public void updateGroup(String projIdent, String groupIdent, String name, double[] pos, double[] offset, double[] scale, int[] txOffset, double[] rot, boolean mirror)
+    {
+        for(ProjectInfo proj : projects)
+        {
+            if(proj.identifier.equals(projIdent))
+            {
+                boolean found = false;
+                for(int i = 0; i < proj.cubeGroups.size(); i++)
+                {
+                    CubeGroup info1 = proj.cubeGroups.get(i);
+                    if(info1.identifier.equals(groupIdent))
+                    {
+                        found = true;
+                        info1.name = name;
+                        updateGroupPieces(info1, pos, offset, scale, txOffset, rot, mirror);
+                        break;
+                    }
+                }
+                if(!found)
+                {
+                    updateGroupInCubeGroups(groupIdent, proj.cubeGroups, name, pos, offset, scale, txOffset, rot, mirror);
+                }
+
+                streamProject(proj);
+            }
+        }
+    }
+
+    public void updateGroupInCubeGroups(String groupIdent, ArrayList<CubeGroup> groups, String name, double[] pos, double[] offset, double[] scale, int[] txOffset, double[] rot, boolean mirror)
+    {
+        for(int j = 0; j < groups.size(); j++)
+        {
+            CubeGroup proj = groups.get(j);
+            for(int i = 0; i < proj.cubeGroups.size(); i++)
+            {
+                CubeGroup info1 = proj.cubeGroups.get(i);
+                if(info1.identifier.equals(groupIdent))
+                {
+                    info1.name = name;
+                    updateGroupPieces(info1, pos, offset, scale, txOffset, rot, mirror);
+                    break;
+                }
+            }
+            updateGroupInCubeGroups(groupIdent, proj.cubeGroups, name, pos, offset, scale, txOffset, rot, mirror);
+        }
+    }
+
+    public void updateGroupPieces(CubeGroup group, double[] pos, double[] offset, double[] scale, int[] txOffset, double[] rot, boolean mirror)
+    {
+        for(CubeGroup group1 : group.cubeGroups)
+        {
+            updateGroupPieces(group1, pos, offset, scale, txOffset, rot, mirror);
+        }
+        for(CubeInfo cube : group.cubes)
+        {
+            for(int i = 0; i < 3; i++)
+            {
+                cube.position[i] += pos[i];
+                cube.offset[i] += offset[i];
+                cube.scale[i] += scale[i];
+                cube.rotation[i] += rot[i];
+            }
+            cube.txOffset[0] += txOffset[0];
+            cube.txOffset[1] += txOffset[1];
+            cube.txMirror = mirror;
         }
     }
 
