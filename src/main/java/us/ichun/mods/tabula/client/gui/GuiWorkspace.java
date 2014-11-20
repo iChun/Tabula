@@ -757,14 +757,7 @@ public class GuiWorkspace extends GuiScreen
                     }
                 }
             }
-            ArrayList<CubeInfo> hidden = new ArrayList<CubeInfo>();
-            for(ElementListTree.Tree tree : windowModelTree.modelList.trees)
-            {
-                if(tree.attachedObject instanceof CubeGroup)
-                {
-                    addElementsForHiding((CubeGroup)tree.attachedObject, hidden);
-                }
-            }
+            ArrayList<CubeInfo> hidden = getHiddenElements();
 
             if(windowTexture.imageId != -1)
             {
@@ -858,6 +851,19 @@ public class GuiWorkspace extends GuiScreen
         GL11.glPopMatrix();
 
         //TODO render a rotation point.
+    }
+
+    public ArrayList<CubeInfo> getHiddenElements() {
+        ArrayList<CubeInfo> hidden = new ArrayList<CubeInfo>();
+        for(ElementListTree.Tree tree : windowModelTree.modelList.trees)
+        {
+            if(tree.attachedObject instanceof CubeGroup)
+            {
+                addElementsForHiding((CubeGroup)tree.attachedObject, hidden);
+            }
+        }
+
+        return hidden;
     }
 
     private void addElementsForSelection(CubeGroup group, ArrayList<CubeInfo> selected)

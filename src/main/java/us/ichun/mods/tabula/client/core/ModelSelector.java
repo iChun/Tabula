@@ -24,7 +24,7 @@ import java.util.List;
  * Call onClick and the part of the model the user clicked on will get selected.
  *
  * @author Vswe
- * @version 1.0
+ * @version 1.1
  */
 public class ModelSelector {
 
@@ -68,19 +68,18 @@ public class ModelSelector {
             ArrayList<ElementListTree.Tree> trees = workspace.windowModelTree.modelList.trees;
             workspace.windowModelTree.modelList.selectedIdentifier = "";
             workspace.windowControls.selectedObject = null;
-            for (int i = 0; i < trees.size(); i++) {
-                ElementListTree.Tree tree = trees.get(i);
-
-                tree.selected = !tree.selected && i == id;
-                if (tree.selected) {
-                    workspace.windowControls.selectedObject = tree.attachedObject;
-                    if (tree.attachedObject instanceof CubeGroup) {
-                        workspace.windowModelTree.modelList.selectedIdentifier = ((CubeGroup) tree.attachedObject).identifier;
-                    }else if(tree.attachedObject instanceof CubeInfo) {
+            int treeId = 0;
+            for (ElementListTree.Tree tree : trees) {
+                if (tree.attachedObject instanceof CubeInfo) {
+                    tree.selected = !tree.selected && id == treeId;
+                    if (tree.selected) {
+                        workspace.windowControls.selectedObject = tree.attachedObject;
                         workspace.windowModelTree.modelList.selectedIdentifier = ((CubeInfo) tree.attachedObject).identifier;
                     }
+                    treeId++;
+                } else {
+                    tree.selected = false;
                 }
-
             }
             workspace.windowControls.refresh = true;
 
@@ -132,43 +131,58 @@ public class ModelSelector {
 
         fakeRenderModel(info.model, 0.0625F);
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_NORMALIZE);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glPopMatrix();
     }
 
     private void fakeRenderModel(ModelBaseDummy model, float f5) {
+        List<CubeInfo> hidden = workspace.getHiddenElements();
         int id = 1; //leave one id for the background
         for (int i = 0; i < model.cubes.size(); i++) {
-            id = fakeRenderModelPart(model, model.cubes.get(i), id, f5, true);
+            id = fakeRenderModelPart(model, model.cubes.get(i), hidden, id, f5, true);
         }
     }
 
-    private int fakeRenderModelPart(ModelBaseDummy model, CubeInfo info, int id, float f5, boolean top) {
-        //to be able to render child models in their own color, temporarily remove them
-        if (!info.getChildren().isEmpty()) {
-            info.modelCube.childModels.clear();
-        }
-
-        GL11.glPushMatrix();
-        if (top) {
-            applyScale(info, f5);
+    private int fakeRenderModelPart(ModelBaseDummy model, CubeInfo info, List<CubeInfo> hidden, int id, float f5, boolean top) {
+        if (info.hidden || hidden.contains(info)) {
+            id = consumeIds(info, id);
         }else{
-            applyParentTransformations(model.getParents(info), f5);
-        }
-        applyColorAndFakeRender(info.modelCube, id++, f5);
-        GL11.glPopMatrix();
 
-        for (CubeInfo cubeInfo : info.getChildren()) {
-            //noinspection unchecked
-            info.modelCube.childModels.add(cubeInfo.modelCube);
-            id = fakeRenderModelPart(model, cubeInfo, id, f5, false);
+            //to be able to render child models in their own color, temporarily remove them
+            if (!info.getChildren().isEmpty()) {
+                info.modelCube.childModels.clear();
+            }
+
+            GL11.glPushMatrix();
+            if (top) {
+                applyScale(info, f5);
+            }else{
+                applyParentTransformations(model.getParents(info), f5);
+            }
+            applyColorAndFakeRender(info.modelCube, id++, f5);
+            GL11.glPopMatrix();
+
+            for (CubeInfo cubeInfo : info.getChildren()) {
+                //noinspection unchecked
+                info.modelCube.childModels.add(cubeInfo.modelCube);
+                id = fakeRenderModelPart(model, cubeInfo, hidden, id, f5, false);
+            }
         }
         
         return id;
     }
+
+    private int consumeIds(CubeInfo info, int id) {
+        id++;
+        for (CubeInfo cubeInfo : info.getChildren()) {
+            id = consumeIds(cubeInfo, id);
+        }
+        return id;
+    }
+
 
     private void applyColorAndFakeRender(ModelRenderer model, int id, float f5) {
         //calculate the color based on the id, the color can then be used to retrieve the id
