@@ -238,10 +238,10 @@ public class WindowProjectSelection extends WindowTopDock
 
     public void createTreeForCube(CubeInfo group, ElementListTree modelList, int attachLevel)
     {
-        for(int k = 0; k < group.children.size(); k++)
+        for(int k = 0; k < group.getChildren().size(); k++)
         {
-            modelList.createTree(null, group.children.get(k), 13, attachLevel, true, false);
-            createTreeForCube(group.children.get(k), modelList, attachLevel + 1);
+            modelList.createTree(null, group.getChildren().get(k), 13, attachLevel, true, false);
+            createTreeForCube(group.getChildren().get(k), modelList, attachLevel + 1);
         }
     }
 

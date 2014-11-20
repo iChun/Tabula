@@ -272,19 +272,19 @@ public class Mainframe
 
                 //HANDLE.
                 //Cube on Group
-                if(dragged instanceof CubeInfo && draggedOnto instanceof CubeGroup)
+                if(dragged instanceof CubeInfo && draggedOnto instanceof CubeGroup && !((CubeGroup)draggedOnto).cubes.contains(dragged))
                 {
-                    ((CubeGroup)draggedOnto).cubes.add((CubeInfo)dragged);
+                        ((CubeGroup)draggedOnto).cubes.add((CubeInfo)dragged);
                 }
                 //Group on Group
-                else if(dragged instanceof CubeGroup && draggedOnto instanceof CubeGroup)
+                else if(dragged instanceof CubeGroup && draggedOnto instanceof CubeGroup && !((CubeGroup)draggedOnto).cubeGroups.contains(dragged))
                 {
                     ((CubeGroup)draggedOnto).cubeGroups.add((CubeGroup)dragged);
                 }
                 //Cube on Cube
-                else if(dragged instanceof CubeInfo && draggedOnto instanceof CubeInfo)
+                else if(dragged instanceof CubeInfo && draggedOnto instanceof CubeInfo && !((CubeInfo)draggedOnto).getChildren().contains(dragged))
                 {
-                    ((CubeInfo)draggedOnto).children.add((CubeInfo)dragged);
+                    ((CubeInfo)draggedOnto).addChild((CubeInfo)dragged);
                 }
                 childProtectiveServices(info, draggedOnto, dragged);
 
@@ -332,7 +332,7 @@ public class Mainframe
 
     public void removeFromCube(Object newParent, Object dragged, CubeInfo cube)
     {
-        for(CubeInfo group1 : cube.children)
+        for(CubeInfo group1 : cube.getChildren())
         {
             if(group1 != newParent)
             {
@@ -340,9 +340,9 @@ public class Mainframe
             }
         }
 
-        if(cube.children.contains(dragged))
+        if(cube.getChildren().contains(dragged))
         {
-            cube.children.remove(dragged);
+            cube.removeChild((CubeInfo)dragged);
         }
     }
 
@@ -496,21 +496,42 @@ public class Mainframe
             if(proj.identifier.equals(ident))
             {
                 CubeInfo info = ((new Gson()).fromJson(cubeInfo, CubeInfo.class));
-                boolean found = false;
-                for(int i = 0; i < proj.cubes.size(); i++)
+
+                if(info.parentIdentifier != null)
                 {
-                    CubeInfo info1 = proj.cubes.get(i);
-                    if(info1.identifier.equals(info.identifier))
+                    CubeInfo info2 = (CubeInfo)proj.getObjectByIdent(info.parentIdentifier);
+                    if(info2 != null)
                     {
-                        found = true;
-                        proj.cubes.remove(i);
-                        proj.cubes.add(i, info);
-                        break;
+                        for(int i = 0; i < info2.getChildren().size(); i++)
+                        {
+                            CubeInfo info1 = info2.getChildren().get(i);
+                            if(info1.identifier.equals(info.identifier))
+                            {
+                                info2.getChildren().remove(i);
+                                info2.getChildren().add(i, info);
+                                break;
+                            }
+                        }
                     }
                 }
-                if(!found)
+                else
                 {
-                    replaceCubeInCubeGroups(info, proj.cubeGroups);
+                    boolean found = false;
+                    for(int i = 0; i < proj.cubes.size(); i++)
+                    {
+                        CubeInfo info1 = proj.cubes.get(i);
+                        if(info1.identifier.equals(info.identifier))
+                        {
+                            found = true;
+                            proj.cubes.remove(i);
+                            proj.cubes.add(i, info);
+                            break;
+                        }
+                    }
+                    if(!found)
+                    {
+                        replaceCubeInCubeGroups(info, proj.cubeGroups);
+                    }
                 }
 
                 streamProject(proj);

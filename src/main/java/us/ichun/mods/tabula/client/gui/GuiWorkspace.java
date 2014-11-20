@@ -862,10 +862,10 @@ public class GuiWorkspace extends GuiScreen
     private void addElementsForSelection(CubeInfo cube, ArrayList<CubeInfo> selected)
     {
         selected.add(cube);
-        for(CubeInfo child : cube.children)
-        {
-            addElementsForSelection(child, selected);
-        }
+//        for(CubeInfo child : cube.children)
+//        {
+//            addElementsForSelection(child, selected);
+//        }
     }
 
     public void cut()
