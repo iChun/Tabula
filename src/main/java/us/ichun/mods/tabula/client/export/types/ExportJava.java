@@ -37,7 +37,16 @@ public class ExportJava extends Exporter
         sb.append("package " + params[0] + ";\n\n");
         sb.append("import net.minecraft.client.model.ModelBase;\n");
         sb.append("import net.minecraft.client.model.ModelRenderer;\n");
-        sb.append("import net.minecraft.entity.Entity;\n\n");
+        sb.append("import net.minecraft.entity.Entity;\n");
+        for(CubeInfo cube : allCubes)
+        {
+            if(!(cube.scale[0] == 1.0D && cube.scale[1] == 1.0D && cube.scale[2] == 1.0D))
+            {
+                sb.append("import org.lwjgl.opengl.GL11;\n");
+                break;
+            }
+        }
+        sb.append("\n");
         sb.append("/**\n");
         sb.append(" * " + info.modelName + " - " + info.authorName + "\n");
         sb.append(" * Created using Tabula " + Tabula.version + "\n");
@@ -75,7 +84,10 @@ public class ExportJava extends Exporter
             }
             sb.append("        this." + field + ".setRotationPoint(" + cube.position[0] + "F, " + cube.position[1] + "F, " + cube.position[2] + "F);\n");
             sb.append("        this." + field + ".addBox(" + cube.offset[0] + "F, " + cube.offset[1] + "F, " + cube.offset[2] + "F, " + cube.dimensions[0] + ", " + cube.dimensions[1] + ", " + cube.dimensions[2] + ");\n");
-            sb.append("        this.setRotateAngle(" + field + ", " + Math.toRadians(cube.rotation[0]) + "F, " + Math.toRadians(cube.rotation[1]) + "F, " + Math.toRadians(cube.rotation[2]) + "F);\n");
+            if(!(cube.rotation[0] == 0.0D && cube.rotation[1] == 0.0D && cube.rotation[2] == 0.0D))
+            {
+                sb.append("        this.setRotateAngle(" + field + ", " + Math.toRadians(cube.rotation[0]) + "F, " + Math.toRadians(cube.rotation[1]) + "F, " + Math.toRadians(cube.rotation[2]) + "F);\n");
+            }
             for(CubeInfo child : cube.getChildren())
             {
                 parentMap.put(child, cube);
@@ -116,9 +128,9 @@ public class ExportJava extends Exporter
         sb.append("     * This is a helper function from Tabula to set the rotation of model parts\n");
         sb.append("     */\n");
         sb.append("    public void setRotateAngle(ModelRenderer modelRenderer, float x, float y, float z) {\n");
-        sb.append("        modelRenderer.rotateAngleX = x\n");
-        sb.append("        modelRenderer.rotateAngleY = y\n");
-        sb.append("        modelRenderer.rotateAngleZ = z\n");
+        sb.append("        modelRenderer.rotateAngleX = x;\n");
+        sb.append("        modelRenderer.rotateAngleY = y;\n");
+        sb.append("        modelRenderer.rotateAngleZ = z;\n");
         sb.append("    }\n");
         sb.append("}\n");
 
@@ -136,7 +148,7 @@ public class ExportJava extends Exporter
 
     public String getFieldName(CubeInfo cube)
     {
-        String name = cube.name.replaceAll("[^A-Za-z0-9]", "");
+        String name = cube.name.replaceAll("[^A-Za-z0-9_$]", "");
         return name;
     }
 
