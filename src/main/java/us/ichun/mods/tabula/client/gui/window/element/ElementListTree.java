@@ -5,9 +5,11 @@ import ichun.client.render.RendererHelper;
 import ichun.common.core.util.MD5Checksum;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import us.ichun.mods.tabula.Tabula;
+import us.ichun.mods.tabula.client.export.types.Exporter;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.module.tabula.client.model.ModelInfo;
@@ -473,6 +475,11 @@ public class ElementListTree extends Element
                 {
                     ModelInfo info = (ModelInfo)attachedObject;
                     parent.workspace.getFontRenderer().drawString(reString(info.modelParent.getClass().getSimpleName() + " - " + info.clz.getSimpleName(), width), getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.font), false);
+                }
+                else if(attachedObject instanceof Exporter)
+                {
+                    Exporter info = (Exporter)attachedObject;
+                    parent.workspace.getFontRenderer().drawString(reString(StatCollector.translateToLocal(info.name), width), getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.font), false);
                 }
                 else if(attachedObject instanceof File)
                 {

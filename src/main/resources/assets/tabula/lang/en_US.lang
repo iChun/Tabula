@@ -77,6 +77,12 @@ window.about.line6=Function and UI are based off the original Techne by ZeuX and
 window.about.os1=If you have any issues or suggestions go to the following link
 window.about.os2=Project is open source and can be found at:
 
+export.failed=Export Failed!
+export.textureMap.name=Texture Map
+export.javaClass.name=Java Class
+export.javaClass.package=Package For Class
+export.javaClass.className=Class Name
+
 topdock.new=New Project
 topdock.edit=Edit Project
 topdock.open=Open Project
@@ -84,7 +90,7 @@ topdock.save=Save
 topdock.saveAs=Save As
 topdock.import=Import Project
 topdock.importMC=Import From Minecraft
-topdock.export=Export
+topdock.export=Export Project
 topdock.cut=Cut
 topdock.copy=Copy
 topdock.paste=Paste

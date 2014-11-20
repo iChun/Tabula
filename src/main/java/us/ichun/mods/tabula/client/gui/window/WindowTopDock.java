@@ -106,6 +106,13 @@ public class WindowTopDock extends Window
         {
             workspace.addWindowOnTop(new WindowImport(workspace, workspace.width / 2 - 150, workspace.height / 2 - 200, 300, workspace.height < 400 ? workspace.height - 30 < 160 ? 160 : workspace.height - 30 : 400, 280, 160).putInMiddleOfScreen());
         }
+        else if(element.id == ID_EXPORT)
+        {
+            if(!workspace.projectManager.projects.isEmpty())
+            {
+                workspace.addWindowOnTop(new WindowExport(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 260, 160, 240, 160).putInMiddleOfScreen());
+            }
+        }
         else if(element.id == ID_CUT)
         {
             workspace.cut();
