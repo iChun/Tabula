@@ -118,7 +118,7 @@ public class ClientProxy extends CommonProxy
                 {
                     ModelList.models.add(new ModelInfo(AbstractClientPlayer.locationStevePng, rend.mainModel, EntityPlayer.class));
                 }
-                else if(rend.mainModel != null)
+                else if(rend.mainModel != null && clz != null)
                 {
                     //TODO config to set rotation or not?
                     EntityLivingBase instance;
@@ -167,7 +167,7 @@ public class ClientProxy extends CommonProxy
                     if(ModelBase.class.isAssignableFrom(f.getType()))
                     {
                         ModelBase base = (ModelBase)f.get(rend);
-                        if(base != null)
+                        if(base != null && te != null)
                         {
                             ModelList.models.add(new ModelInfo(null, base, te));
                         }
@@ -195,7 +195,7 @@ public class ClientProxy extends CommonProxy
                     if(ModelBase.class.isAssignableFrom(f.getType()))
                     {
                         ModelBase base = (ModelBase)f.get(rend);
-                        if(base != null)
+                        if(base != null && te != null)
                         {
                             ModelList.models.add(new ModelInfo(null, base, te));
                         }

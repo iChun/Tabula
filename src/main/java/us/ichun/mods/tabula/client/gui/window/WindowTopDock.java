@@ -25,6 +25,7 @@ public class WindowTopDock extends Window
     public static final int ID_COPY = 11;
     public static final int ID_PASTE = 12;
     public static final int ID_PASTE_IN_PLACE = 13;
+    public static final int ID_EXIT_TABULA = 14;
 
     public static final int ID_WOOD = -1;
 
@@ -33,7 +34,7 @@ public class WindowTopDock extends Window
         super(parent, x, y, w, h, minW, minH, "", false);
 
         //ADD Elements
-        elements.add(new ElementToggle(this, width - 44, 4, 40, 12, ID_WOOD, true, 1, 0, "topdock.wood", "topdock.woodFull", true));
+        elements.add(new ElementToggle(this, width - 44 - 20, 4, 40, 12, ID_WOOD, true, 1, 0, "topdock.wood", "topdock.woodFull", true));
 
         int button = 0;
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_NEW, true, 0, 0, "topdock.new", new ResourceLocation("tabula", "textures/icon/new.png")));
@@ -50,6 +51,7 @@ public class WindowTopDock extends Window
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE_IN_PLACE, true, 0, 0, "topdock.pasteInPlace", new ResourceLocation("tabula", "textures/icon/pasteInPlace.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CHAT, true, 0, 0, "topdock.chat", new ResourceLocation("tabula", "textures/icon/chat.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CREDITS, true, 0, 0, "topdock.info", new ResourceLocation("tabula", "textures/icon/info.png")));
+        elements.add(new ElementButtonTextured(this, width - 20, 0, ID_EXIT_TABULA, true, 1, 0, "topdock.exitTabula", new ResourceLocation("tabula", "textures/icon/exitTabula.png")));
     }
 
     @Override
@@ -127,6 +129,10 @@ public class WindowTopDock extends Window
         else if(element.id == ID_CREDITS)
         {
             workspace.addWindowOnTop(new WindowCredits(workspace, 0, 0, 300, 200, 300, 200).putInMiddleOfScreen());
+        }
+        else if(element.id == ID_EXIT_TABULA)
+        {
+            workspace.wantToExit = true;
         }
     }
 

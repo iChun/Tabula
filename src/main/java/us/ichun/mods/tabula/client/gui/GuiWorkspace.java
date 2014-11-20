@@ -384,13 +384,9 @@ public class GuiWorkspace extends GuiScreen
         else if(elementHovered != null)
         {
             boolean activated = false;
-            if(scroll > 0)//scroll up
+            if(scroll != 0)//scroll up
             {
-                activated = elementHovered.mouseScroll(mouseX - elementHovered.parent.posX, mouseY - elementHovered.parent.posY, 1);
-            }
-            else if(scroll < 0)//scroll down
-            {
-                activated = elementHovered.mouseScroll(mouseX - elementHovered.parent.posX, mouseY - elementHovered.parent.posY, -1);
+                activated = elementHovered.mouseScroll(mouseX - elementHovered.parent.posX, mouseY - elementHovered.parent.posY, (int)Math.round(scroll / 120));
             }
             if(activated)
             {
@@ -411,6 +407,10 @@ public class GuiWorkspace extends GuiScreen
                 if(width - mouseX < size)
                 {
                     xOffset -= size - (width - mouseX) + 20;
+                }
+                if(height - (mouseY + 12 + yOffset) < 0)
+                {
+                    yOffset = -20;
                 }
                 RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, mouseX + xOffset, mouseY + yOffset, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2), 12, 0);
                 RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, mouseX + xOffset + 1, mouseY + yOffset + 1, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2) - 2, 12 - 2, 0);
