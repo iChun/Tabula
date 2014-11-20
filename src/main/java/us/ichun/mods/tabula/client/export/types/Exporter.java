@@ -1,5 +1,6 @@
 package us.ichun.mods.tabula.client.export.types;
 
+import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 
 public abstract class Exporter
@@ -12,4 +13,9 @@ public abstract class Exporter
     }
 
     public abstract boolean export(ProjectInfo info, Object...params);
+
+    public boolean override(GuiWorkspace workspace)
+    {
+        return false;
+    }
 }

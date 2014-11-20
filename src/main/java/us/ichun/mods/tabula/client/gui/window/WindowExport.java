@@ -59,7 +59,7 @@ public class WindowExport extends Window
                     if(tree.selected)
                     {
                         Exporter exporter = (Exporter)tree.attachedObject;
-                        if(!exporter.export(workspace.projectManager.projects.get(workspace.projectManager.selectedProject)))
+                        if(!exporter.override(workspace) && !exporter.export(workspace.projectManager.projects.get(workspace.projectManager.selectedProject)))
                         {
                             workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 180, 80, 180, 80, "export.failed").putInMiddleOfScreen());
                         }

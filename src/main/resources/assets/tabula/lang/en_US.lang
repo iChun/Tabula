@@ -79,8 +79,9 @@ window.about.os2=Project is open source and can be found at:
 
 export.failed=Export Failed!
 export.textureMap.name=Texture Map
-export.javaClass.name=Java Class
+export.javaClass.title=Export as Java Class
 export.javaClass.package=Package For Class
+export.javaClass.name=Java Class
 export.javaClass.className=Class Name
 
 topdock.new=New Project
