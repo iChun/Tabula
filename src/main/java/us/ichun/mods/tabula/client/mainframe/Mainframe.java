@@ -464,7 +464,7 @@ public class Mainframe
             {
                 cube.position[i] += pos[i];
                 cube.offset[i] += offset[i];
-                cube.scale[i] += scale[i];
+                cube.scale[i] *= scale[i];
                 cube.rotation[i] += rot[i];
             }
             cube.txOffset[0] += txOffset[0];
