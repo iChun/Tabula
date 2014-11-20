@@ -272,7 +272,7 @@ public class WindowControls extends Window
                 String s = gson.toJson(selectedObject);
                 if(workspace.remoteSession)
                 {
-
+                    //TODO this
                 }
                 else
                 {

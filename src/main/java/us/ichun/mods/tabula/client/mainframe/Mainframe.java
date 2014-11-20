@@ -405,6 +405,98 @@ public class Mainframe
         }
     }
 
+    public void copyGroupTo(String projIdent, String groupIdent, boolean inPlace)
+    {
+        CubeGroup group = null;
+        ProjectInfo project = null;
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(projIdent))
+            {
+                project = info;
+            }
+            if(group == null)
+            {
+                group = (CubeGroup)info.getObjectByIdent(groupIdent);
+            }
+        }
+        if(project != null && group != null)
+        {
+            //can't just add, groups and cubes have unique identifiers.
+            CubeGroup group1 = new CubeGroup(group.name);
+            project.cubeGroups.add(group1);
+            cloneGroups(group, group1, inPlace);
+
+            streamProject(project);
+        }
+    }
+
+    public void cloneGroups(CubeGroup ori, CubeGroup clone, boolean inPlace)
+    {
+        clone.txMirror = ori.txMirror;
+        clone.hidden = ori.hidden;
+        for(int i = 0; i < ori.cubeGroups.size(); i++)
+        {
+            CubeGroup group = ori.cubeGroups.get(i);
+            CubeGroup group1 = new CubeGroup(group.name);
+            clone.cubeGroups.add(group1);
+            cloneGroups(group, group1, inPlace);
+        }
+        for(int i = 0; i < ori.cubes.size(); i++)
+        {
+            CubeInfo cube = ori.cubes.get(i);
+            CubeInfo cube1 = new CubeInfo(cube.name);
+            clone.cubes.add(cube1);
+            cloneCube(cube, cube1, inPlace);
+        }
+    }
+
+    public void cloneCube(CubeInfo ori, CubeInfo clone, boolean inPlace)
+    {
+        for(int i = 0; i < 3; i++)
+        {
+            if(inPlace)
+            {
+                clone.position[i] = ori.position[i];
+            }
+            clone.dimensions[i] = ori.dimensions[i];
+            clone.offset[i] = ori.offset[i];
+            clone.scale[i] = ori.scale[i];
+            clone.rotation[i] = ori.rotation[i];
+        }
+        clone.txOffset[0] = ori.txOffset[0];
+        clone.txOffset[1] = ori.txOffset[1];
+        clone.txMirror = ori.txMirror;
+        clone.hidden = ori.hidden;
+        clone.parentIdentifier = ori.parentIdentifier;
+
+        for(int i = 0; i < ori.getChildren().size(); i++)
+        {
+            CubeInfo cube = ori.getChildren().get(i);
+            CubeInfo cube1 = new CubeInfo(cube.name);
+            clone.addChild(cube1);
+            cloneCube(cube, cube1, inPlace);
+        }
+    }
+
+    public void setGroupVisibility(String projIdent, String groupIdent, boolean hidden)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(projIdent))
+            {
+                CubeGroup group = (CubeGroup)info.getObjectByIdent(groupIdent);
+
+                if(group != null)
+                {
+                    group.hidden = hidden;
+                }
+
+                streamProject(info);
+            }
+        }
+    }
+
     public void updateGroup(String projIdent, String groupIdent, String name, double[] pos, double[] offset, double[] scale, int[] txOffset, double[] rot, boolean mirror)
     {
         for(ProjectInfo proj : projects)

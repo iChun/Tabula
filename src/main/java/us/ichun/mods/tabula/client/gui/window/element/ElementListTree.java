@@ -1,5 +1,6 @@
 package us.ichun.mods.tabula.client.gui.window.element;
 
+import com.google.gson.Gson;
 import ichun.client.render.RendererHelper;
 import ichun.common.core.util.MD5Checksum;
 import net.minecraft.util.MathHelper;
@@ -14,6 +15,7 @@ import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,6 +38,7 @@ public class ElementListTree extends Element
     public int dragY;
 
     public boolean lmbDown;
+    public boolean rmbDown;
 
     public String selectedIdentifier;
 
@@ -101,7 +104,7 @@ public class ElementListTree extends Element
         {
             Tree tree = trees.get(i);
 
-            tree.draw(mouseX, mouseY, hover, (x2 - x1), treeHeight, treeHeight1 > height, treeHeight1, Mouse.isButtonDown(0) && !lmbDown);
+            tree.draw(mouseX, mouseY, hover, (x2 - x1), treeHeight, treeHeight1 > height, treeHeight1, Mouse.isButtonDown(0) && !lmbDown, Mouse.isButtonDown(1) && !rmbDown);
 
             treeHeight += tree.getHeight();
         }
@@ -124,7 +127,7 @@ public class ElementListTree extends Element
                 treeHeight += tree.getHeight();
             }
             treeDragged.dragDraw = true;
-            treeDragged.draw(mouseX, mouseY, hover, (x2 - x1), treeHeight, treeHeight1 > height, treeHeight1, Mouse.isButtonDown(0) && !lmbDown);
+            treeDragged.draw(mouseX, mouseY, hover, (x2 - x1), treeHeight, treeHeight1 > height, treeHeight1, Mouse.isButtonDown(0) && !lmbDown, Mouse.isButtonDown(1) && !rmbDown);
             treeDragged.dragDraw = false;
         }
 
@@ -195,6 +198,7 @@ public class ElementListTree extends Element
         }
 
         lmbDown = Mouse.isButtonDown(0);
+        rmbDown = Mouse.isButtonDown(1);
     }
 
     public void dragOnto(Object draggedOn, Object dragged)
@@ -325,7 +329,7 @@ public class ElementListTree extends Element
             return theHeight;
         }
 
-        public Tree draw(int mouseX, int mouseY, boolean hover, int width, int treeHeight, boolean hasScroll, int totalHeight, boolean clicking)
+        public Tree draw(int mouseX, int mouseY, boolean hover, int width, int treeHeight, boolean hasScroll, int totalHeight, boolean clicking, boolean rClicking)
         {
             if(!(treeDragged == this && !(dragX == mouseX && dragY == mouseY)) || dragDraw)
             {
@@ -361,22 +365,109 @@ public class ElementListTree extends Element
                     if(mouseY > height + posY || mouseY <= posY)
                     {
                         clicking = false;
+                        rClicking = false;
                     }
                 }
 
                 if(attachedObject instanceof CubeInfo)
                 {
                     CubeInfo info = (CubeInfo)attachedObject;
+                    boolean hide = info.hidden;
+                    int level = attached;
+                    int index = -1;
+                    for(int i = 0; i < trees.size(); i++)
+                    {
+                        Tree tree = trees.get(i);
+
+                        if(tree == this)
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+                    while(level > 0 && !hide && index != -1)
+                    {
+                        Tree tree = trees.get(--index);
+                        if(tree.attached == level - 1)//that means it's the parent
+                        {
+                            level = tree.attached;
+                            if(tree.attachedObject instanceof CubeInfo)
+                            {
+                                hide = ((CubeInfo)tree.attachedObject).hidden;
+                            }
+                            else if(tree.attachedObject instanceof CubeGroup)
+                            {
+                                hide = ((CubeGroup)tree.attachedObject).hidden;
+                            }
+                        }
+                    }
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                     RendererHelper.drawTextureOnScreen(txModel, getPosX() + offX + 1.5D + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, theHeight - 4, theHeight - 4, 0);
-                    parent.workspace.getFontRenderer().drawString(reString(info.name, width - 8), getPosX() + offX + 4 + 8 + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.font), false);
+                    parent.workspace.getFontRenderer().drawString(reString(info.name, width - 8), getPosX() + offX + 4 + 8 + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, hide ? Theme.getAsHex(Theme.fontDim) : Theme.getAsHex(Theme.font), false);
+                    if(info.parentIdentifier == null && realBorder && rClicking)
+                    {
+                        info.hidden = !info.hidden;
+
+                        Gson gson = new Gson();
+                        String s = gson.toJson(info);
+                        if(parent.workspace.remoteSession)
+                        {
+                            //TODO This
+                        }
+                        else
+                        {
+                            Tabula.proxy.tickHandlerClient.mainframe.updateCube(parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, s);
+                        }
+                    }
                 }
                 else if(attachedObject instanceof CubeGroup)
                 {
                     CubeGroup info = (CubeGroup)attachedObject;
+                    boolean hide = info.hidden;
+                    int level = attached;
+                    int index = -1;
+                    for(int i = 0; i < trees.size(); i++)
+                    {
+                        Tree tree = trees.get(i);
+
+                        if(tree == this)
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+                    while(level > 0 && !hide && index != -1)
+                    {
+                        Tree tree = trees.get(--index);
+                        if(tree.attached == level - 1)//that means it's the parent
+                        {
+                            level = tree.attached;
+                            if(tree.attachedObject instanceof CubeInfo)
+                            {
+                                hide = ((CubeInfo)tree.attachedObject).hidden;
+                            }
+                            else if(tree.attachedObject instanceof CubeGroup)
+                            {
+                                hide = ((CubeGroup)tree.attachedObject).hidden;
+                            }
+                        }
+                    }
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                     RendererHelper.drawTextureOnScreen(txGroup, getPosX() + offX + 1.5D + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, theHeight - 4, theHeight - 4, 0);
-                    parent.workspace.getFontRenderer().drawString(reString(info.name, width - 8), getPosX() + offX + 4 + 8 + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.font), false);
+                    parent.workspace.getFontRenderer().drawString(reString(info.name, width - 8), getPosX() + offX + 4 + 8 + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, hide ? Theme.getAsHex(Theme.fontDim) : Theme.getAsHex(Theme.font), false);
+                    if(realBorder && rClicking)
+                    {
+                        info.hidden = !info.hidden;
+
+                        if(parent.workspace.remoteSession)
+                        {
+                            //TODO This
+                        }
+                        else
+                        {
+                            Tabula.proxy.tickHandlerClient.mainframe.setGroupVisibility(parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, info.identifier, info.hidden);
+                        }
+                    }
                 }
                 else if(attachedObject instanceof ModelInfo)
                 {

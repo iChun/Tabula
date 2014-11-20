@@ -60,7 +60,7 @@ public class GuiWorkspace extends GuiScreen
     public boolean keyVDown;
 
     //TODO copy group.
-    public CubeInfo cubeCopied;
+    public Object cubeCopied;
 
     public WindowProjectSelection projectManager;
     public WindowControls windowControls;
@@ -199,8 +199,9 @@ public class GuiWorkspace extends GuiScreen
                 }
                 if(canClose)
                 {
-                    for(ProjectInfo project : projectManager.projects)
+                    for(int i = projectManager.projects.size() - 1; i >= 0; i--)
                     {
+                        ProjectInfo project = projectManager.projects.get(i);
                         closeProject(project);
                         if(!project.saved && !project.authorName.equals("iChun? :O"))//TODO remove this
                         {
@@ -752,21 +753,29 @@ public class GuiWorkspace extends GuiScreen
                     }
                 }
             }
+            ArrayList<CubeInfo> hidden = new ArrayList<CubeInfo>();
+            for(ElementListTree.Tree tree : windowModelTree.modelList.trees)
+            {
+                if(tree.attachedObject instanceof CubeGroup)
+                {
+                    addElementsForHiding((CubeGroup)tree.attachedObject, hidden);
+                }
+            }
 
             if(windowTexture.imageId != -1)
             {
                 GL11.glBindTexture(GL11.GL_TEXTURE_2D, windowTexture.imageId);
 
-                info.model.render(0.0625F, selected, cameraZoom, true, 0);
-                info.model.render(0.0625F, selected, cameraZoom, true, 1);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 0);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 1);
             }
             else
             {
                 GL11.glDisable(GL11.GL_TEXTURE_2D);
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-                info.model.render(0.0625F, selected, cameraZoom, false, 0);
-                info.model.render(0.0625F, selected, cameraZoom, false, 1);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 0);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 1);
 
                 GL11.glEnable(GL11.GL_TEXTURE_2D);
             }
@@ -859,6 +868,25 @@ public class GuiWorkspace extends GuiScreen
         }
     }
 
+    private void addElementsForHiding(CubeGroup group, ArrayList<CubeInfo> selected)
+    {
+        if(group.hidden)
+        {
+            for(CubeGroup group1 : group.cubeGroups)
+            {
+                addElementsForSelection(group1, selected);
+            }
+            for(CubeInfo info : group.cubes)
+            {
+                addElementsForSelection(info, selected);
+            }
+        }
+        for(CubeGroup group1 : group.cubeGroups)
+        {
+            addElementsForHiding(group1, selected);
+        }
+    }
+
     private void addElementsForSelection(CubeInfo cube, ArrayList<CubeInfo> selected)
     {
         selected.add(cube);
@@ -890,9 +918,9 @@ public class GuiWorkspace extends GuiScreen
         {
             if(tree.selected)
             {
-                if(tree.attachedObject instanceof CubeInfo)
+                if(tree.attachedObject instanceof CubeInfo || tree.attachedObject instanceof CubeGroup)
                 {
-                    cubeCopied = (CubeInfo)tree.attachedObject;
+                    cubeCopied = tree.attachedObject;
                 }
                 break;
             }
@@ -901,7 +929,7 @@ public class GuiWorkspace extends GuiScreen
 
     public void paste(boolean inPlace)
     {
-        if(cubeCopied != null)
+        if(cubeCopied instanceof CubeInfo)
         {
             Gson gson = new Gson();
             String s = gson.toJson(cubeCopied);
@@ -912,6 +940,17 @@ public class GuiWorkspace extends GuiScreen
             else
             {
                 Tabula.proxy.tickHandlerClient.mainframe.createNewCube(this.projectManager.projects.get(this.projectManager.selectedProject).identifier, s, inPlace);
+            }
+        }
+        else if(cubeCopied instanceof CubeGroup)
+        {
+            if(this.remoteSession)
+            {
+
+            }
+            else
+            {
+                Tabula.proxy.tickHandlerClient.mainframe.copyGroupTo(this.projectManager.projects.get(this.projectManager.selectedProject).identifier, ((CubeGroup)cubeCopied).identifier, inPlace);
             }
         }
     }

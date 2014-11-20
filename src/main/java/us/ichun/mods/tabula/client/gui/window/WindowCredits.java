@@ -8,9 +8,14 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextWrapper;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextWrapperChat;
 
+import java.util.ArrayList;
+
 public class WindowCredits extends Window
 {
     public ElementTextWrapper textHolder;
+    private String[] creds = new String[]{
+            Tabula.version, "iChun", "mr_hazard", "heldplayer, Vswe", "Kihira, Dizkonnekted, Dunkleosteus"
+    };
 
     public WindowCredits(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
@@ -22,9 +27,16 @@ public class WindowCredits extends Window
         for(int i = 0; i <= 6; i++)
         {
             String text = StatCollector.translateToLocal("window.about.line" + i);
-            if(i == 0)
+            if(i < creds.length)
             {
-                text = text + Tabula.version;
+                if(text.endsWith(" "))
+                {
+                    text = text + creds[i];
+                }
+                else
+                {
+                    text = text + " " + creds[i];
+                }
             }
             textHolder.text.add(text);
         }

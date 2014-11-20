@@ -37,6 +37,7 @@ public class Theme
 
     public static int[] fontChat                            = new int[] { 220, 220, 220 };
     public static int[] font                                = new int[] { 255, 255, 255 };
+    public static int[] fontDim                             = new int[] { 150, 150, 150 };
     
     public static void changeColour(int[] set, int r, int g, int b)
     {

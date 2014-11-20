@@ -68,12 +68,12 @@ window.popup.title=Alert!
 
 window.about.title=About
 window.about.line0=Mod Version: 
-window.about.line1=Developer: iChun
-window.about.line2=Textures: mr_hazard
-window.about.line3=Current Localization: iChun
-window.about.line4=Contributions: heldplayer, Vswe
-window.about.line5=Testers: Kihira, Dizkonnekted, Dunkleosteus
-window.about.line6=UI and function is based off the original Techne by ZeuX
+window.about.line1=Developer: 
+window.about.line2=Textures: 
+window.about.line3=Contributions: 
+window.about.line4=Testers: 
+window.about.line5=Current Localization: iChun
+window.about.line6=Function and UI are based off the original Techne by ZeuX and r4wk
 window.about.os1=If you have any issues or suggestions go to the following link
 window.about.os2=Project is open source and can be found at:
 
