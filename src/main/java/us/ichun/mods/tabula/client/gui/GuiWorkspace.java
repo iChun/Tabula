@@ -20,6 +20,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import us.ichun.mods.tabula.Tabula;
+import us.ichun.mods.tabula.client.core.ModelSelector;
 import us.ichun.mods.tabula.client.gui.window.*;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
@@ -104,6 +105,8 @@ public class GuiWorkspace extends GuiScreen
 
     public static final int VARIABLE_LEVEL = 4;
     public static final int TOP_DOCK_HEIGHT = 19;
+
+    private ModelSelector modelSelector = new ModelSelector(this, 256);
 
     public GuiWorkspace(int scale, boolean remote, boolean editing)
     {
@@ -244,6 +247,10 @@ public class GuiWorkspace extends GuiScreen
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
 
+        if (Mouse.isButtonDown(0) && !mouseLeftDown) {
+            modelSelector.onClick(mouseX, mouseY);
+        }
+
         RendererHelper.drawColourOnScreen(Theme.workspaceBackground[0], Theme.workspaceBackground[1], Theme.workspaceBackground[2], 255, 0, 0, width, height, -4000D); //204 cause 0.8F * 255
 
         renderWorkspace(mouseX, mouseY, f);
@@ -359,17 +366,6 @@ public class GuiWorkspace extends GuiScreen
                 clicked = true;
                 prevMouseX = mouseX;
                 prevMouseY = mouseY;
-            }
-            if(Mouse.isButtonDown(0) && !mouseLeftDown)
-            {
-                windowControls.selectedObject = null;
-                windowControls.refresh = true;
-
-                for(ElementListTree.Tree tree : windowModelTree.modelList.trees)
-                {
-                    tree.selected = false;
-                }
-                windowModelTree.modelList.selectedIdentifier = "";
             }
         }
         if(!Mouse.isButtonDown(1) && !Mouse.isButtonDown(2))
@@ -646,6 +642,22 @@ public class GuiWorkspace extends GuiScreen
         GL11.glLoadIdentity();
     }
 
+    public void applyCamera() {
+        float scale = 100F;
+        GL11.glScalef(scale, scale, scale);
+        GL11.glTranslatef(4.85F * width / 960, 4.5F * height / 514, -5F);
+        GL11.glScalef(cameraZoom, cameraZoom, cameraZoom);
+        GL11.glScalef(-1.0F, 1.0F, 1.0F);
+        GL11.glTranslatef(cameraOffsetX, cameraOffsetY, 0.0F);
+        GL11.glRotatef(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(-38F + cameraYaw, 0.0F, 1.0F, 0.0F);
+    }
+
+    public void applyModelTranslation() {
+        GL11.glTranslatef(0.0F, 2.0005F, 0.0F);
+        GL11.glScalef(-1.0F, -1.0F, 1.0F);
+    }
+
     public void renderWorkspace(int mouseX, int mouseY, float f)
     {
         if(cameraZoom < 0.05F)
@@ -674,14 +686,7 @@ public class GuiWorkspace extends GuiScreen
         int kk = ii / 65536;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)jj / 1.0F, (float)kk / 1.0F);
 
-        float scale = 100F;
-        GL11.glScalef(scale, scale, scale);
-        GL11.glTranslatef(4.85F * width / 960, 4.5F * height / 514, -5F);
-        GL11.glScalef(cameraZoom, cameraZoom, cameraZoom);
-        GL11.glScalef(-1.0F, 1.0F, 1.0F);
-        GL11.glTranslatef(cameraOffsetX, cameraOffsetY, 0.0F);
-        GL11.glRotatef(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(-38F + cameraYaw, 0.0F, 1.0F, 0.0F);
+        applyCamera();
 
         Block block = Blocks.planks;
         renderBlocks.setRenderBoundsFromBlock(block);
@@ -733,8 +738,7 @@ public class GuiWorkspace extends GuiScreen
         {
             GL11.glPushMatrix();
             GL11.glDisable(GL11.GL_CULL_FACE);
-            GL11.glTranslatef(0.0F, 2.0005F, 0.0F);
-            GL11.glScalef(-1.0F, -1.0F, 1.0F);
+            applyModelTranslation();
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             ProjectInfo info = projectManager.projects.get(projectManager.selectedProject);
 
@@ -818,7 +822,7 @@ public class GuiWorkspace extends GuiScreen
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
         GL11.glTranslatef(width - (levels.get(1).isEmpty() ? 15F : 15F + levels.get(1).get(0).width), height - 15F, 3000F);
-        scale = 15F;
+        float scale = 15F;
         GL11.glScalef(scale, scale, scale);
         GL11.glScalef(-1.0F, 1.0F, 1.0F);
         GL11.glRotatef(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
