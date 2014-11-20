@@ -75,7 +75,7 @@ public class WindowControls extends Window
                     {
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
-                            ((ElementNumberInput)e).textFields.get(l).setText(String.format("%.2f", info.scale[l]));
+                            ((ElementNumberInput)e).textFields.get(l).setText(String.format("%.2f", info.parentIdentifier == null ? info.scale[l] : 1D));
                         }
                     }
                     else if(e.id == 5)
@@ -245,7 +245,7 @@ public class WindowControls extends Window
                     {
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
-                            info.scale[l] = Double.parseDouble(((ElementNumberInput)e).textFields.get(l).getText());
+                            info.scale[l] = info.parentIdentifier == null ? Double.parseDouble(((ElementNumberInput)e).textFields.get(l).getText()) : 1D;
                         }
                     }
                     else if(e.id == 5)

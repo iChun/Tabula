@@ -241,6 +241,7 @@ public class ElementListTree extends Element
         width = parent.width - posX - spacerR;
         posY = spacerU;
         height = parent.height - posY - spacerD;
+        sliderProg = 0.0D;
     }
 
     @Override
