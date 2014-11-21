@@ -36,7 +36,7 @@ public class ElementProjectTab extends Element
         }
 
         String titleToRender = info.modelName;
-        while(titleToRender.length() > 1 && parent.workspace.getFontRenderer().getStringWidth(titleToRender) > width )
+        while(titleToRender.length() > 1 && parent.workspace.getFontRenderer().getStringWidth(titleToRender) > width - (parent.workspace.remoteSession ? 0 : 11) )
         {
             if(titleToRender.startsWith("... "))
             {
