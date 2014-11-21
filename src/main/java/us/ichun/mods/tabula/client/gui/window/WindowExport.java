@@ -43,7 +43,7 @@ public class WindowExport extends Window
         {
             workspace.removeWindow(this, true);
         }
-        if(element.id == 1)
+        if(element.id == 1 || element.id == 3)
         {
             if(!workspace.projectManager.projects.isEmpty())
             {

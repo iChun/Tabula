@@ -39,6 +39,9 @@ public class ElementListTree extends Element
     public int dragX;
     public int dragY;
 
+    public Tree treeClicked;
+    public int clickTimeout;
+
     public boolean lmbDown;
     public boolean rmbDown;
 
@@ -56,6 +59,15 @@ public class ElementListTree extends Element
         spacerD = parent.height - y - height;
         selectedIdentifier = "";
         canDrag = drag;
+    }
+
+    @Override
+    public void update()
+    {
+        if(clickTimeout > 0)
+        {
+            clickTimeout--;
+        }
     }
 
     @Override
@@ -298,6 +310,11 @@ public class ElementListTree extends Element
         }
     }
 
+    public void triggerParent()
+    {
+        parent.elementTriggered(this);
+    }
+
     public class Tree
     {
         public ResourceLocation txLoc;
@@ -494,6 +511,14 @@ public class ElementListTree extends Element
                     selected = true;
                     deselectOthers(trees);
                     clickElement(attachedObject);
+
+                    if(clickTimeout > 0 && treeClicked == this)
+                    {
+                        triggerParent();
+                    }
+
+                    treeClicked = this;
+                    clickTimeout = 10;
 
                     if(canDrag)
                     {

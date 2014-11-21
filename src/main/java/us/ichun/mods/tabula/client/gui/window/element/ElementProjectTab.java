@@ -109,11 +109,11 @@ public class ElementProjectTab extends Element
     {
         if(id == 0)
         {
+            ((WindowProjectSelection)parent).changeProject(this.id);
             if(mouseX + parent.posX > getPosX() + width - 9)
             {
                 parent.workspace.closeProject(((WindowProjectSelection)parent).projects.get(this.id));
             }
-            ((WindowProjectSelection)parent).changeProject(this.id);
         }
         return false;
     }

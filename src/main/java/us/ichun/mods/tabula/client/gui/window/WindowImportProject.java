@@ -61,7 +61,7 @@ public class WindowImportProject extends Window
         {
             workspace.removeWindow(this, true);
         }
-        if(element.id == 1 && openingFile == null)
+        if((element.id == 1 || element.id == 3) && openingFile == null)
         {
             if(!workspace.projectManager.projects.isEmpty())
             {
