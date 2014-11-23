@@ -16,8 +16,8 @@ import net.minecraftforge.common.config.Property;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import us.ichun.module.tabula.client.model.ModelList;
 import us.ichun.mods.tabula.common.core.CommonProxy;
+import us.ichun.module.tabula.client.model.ModelList;
 
 import java.util.EnumMap;
 

@@ -323,12 +323,6 @@ public class GuiWorkspace extends GuiScreen
 
         renderWorkspace(mouseX, mouseY, f);
 
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-        GL11.glLoadIdentity();
-        GL11.glOrtho(0.0D, resolution.getScaledWidth_double(), resolution.getScaledHeight_double(), 0.0D, -5000.0D, 5000.0D);
-        GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        GL11.glLoadIdentity();
-
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 
         hovering = false;
@@ -891,13 +885,14 @@ public class GuiWorkspace extends GuiScreen
         tessellator.addVertexWithUV(pX + w, pY, pZ, 7.125D, -0.125D);
         tessellator.draw();
 
-        GL11.glDisable(GL11.GL_BLEND);
-
-        RenderHelper.disableStandardItemLighting();
-
-        GL11.glDisable(GL11.GL_LIGHTING);
-
         GL11.glPopMatrix();
+
+        ScaledResolution resolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
+        GL11.glOrtho(0.0D, resolution.getScaledWidth_double(), resolution.getScaledHeight_double(), 0.0D, -5000.0D, 5000.0D);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glLoadIdentity();
 
         GL11.glPushMatrix();
 
@@ -939,6 +934,10 @@ public class GuiWorkspace extends GuiScreen
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         GL11.glDisable(GL11.GL_BLEND);
+
+        RenderHelper.disableStandardItemLighting();
+
+        GL11.glDisable(GL11.GL_LIGHTING);
 
         GL11.glPopMatrix();
     }
