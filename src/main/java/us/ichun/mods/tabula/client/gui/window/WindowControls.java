@@ -5,10 +5,7 @@ import net.minecraft.util.StatCollector;
 import us.ichun.mods.tabula.Tabula;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementNumberInput;
-import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
-import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
+import us.ichun.mods.tabula.client.gui.window.element.*;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
@@ -32,6 +29,9 @@ public class WindowControls extends Window
         elements.add(new ElementToggle(this, ((width - 10) / 3 * 2) + 7, 27 + (offset * count), width - 5 - (((width - 10) / 3 * 2) + 7) - 2, 12, 7, false, 1, 0, "window.controls.txMirror", "window.controls.txMirrorFull", false));
         elements.add(new ElementNumberInput(this, 5, 27 + (offset * count++), width - 10 - ((width - 10) / 3) - 2, 12, 5, "window.controls.txOffset", 2, false));
         elements.add(new ElementNumberInput(this, 5, 27 + (offset * count++), width - 10, 12, 6, "window.controls.rotation", 3, true));
+        elements.add(new ElementHoriSlider(this, 5, 27 + (offset * count++) - 12, width - 12, 50, false, "window.controls.rotation"));
+        elements.add(new ElementHoriSlider(this, 5, 27 + (offset * count++) - 24, width - 12, 51, false, "window.controls.rotation"));
+        elements.add(new ElementHoriSlider(this, 5, 27 + (offset * count++) - 36, width - 12, 52, false, "window.controls.rotation"));
     }
 
     @Override
@@ -90,7 +90,9 @@ public class WindowControls extends Window
                     {
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
+                            ((ElementNumberInput)e).textFields.get(l).setSelectionPos(0);
                             ((ElementNumberInput)e).textFields.get(l).setText(String.format("%.2f", info.rotation[l]));
+                            ((ElementNumberInput)e).textFields.get(l).setCursorPositionZero();
                         }
                     }
                     else if(e.id == 7)
@@ -100,6 +102,16 @@ public class WindowControls extends Window
                     else if(e.id == 8)
                     {
                         ((ElementNumberInput)e).textFields.get(0).setText(String.format("%.2f", info.parentIdentifier == null ? info.mcScale : 0D));
+                    }
+                    else if(e.id >= 50 && e.id <= 52)
+                    {
+                        for(int i = 0; i < 3; i++)
+                        {
+                            if(e.id - 50 - i == 0)
+                            {
+                                ((ElementHoriSlider)e).sliderProg = (info.rotation[i] + 180F) / 360F;
+                            }
+                        }
                     }
                 }
             }
@@ -163,6 +175,16 @@ public class WindowControls extends Window
                     {
                         ((ElementNumberInput)e).textFields.get(0).setText(String.format("%.2f", 0F));
                     }
+                    else if(e.id >= 50 && e.id <= 52)
+                    {
+                        for(int i = 0; i < 3; i++)
+                        {
+                            if(e.id - 50 - i == 0)
+                            {
+                                ((ElementHoriSlider)e).sliderProg = 0.5F;
+                            }
+                        }
+                    }
                 }
             }
             else
@@ -184,6 +206,16 @@ public class WindowControls extends Window
                     else if(e.id == 7)
                     {
                         ((ElementToggle)e).toggledState = false;
+                    }
+                    else if(e.id >= 50 && e.id <= 52)
+                    {
+                        for(int i = 0; i < 3; i++)
+                        {
+                            if(e.id - 50 - i == 0)
+                            {
+                                ((ElementHoriSlider)e).sliderProg = 0.5F;
+                            }
+                        }
                     }
                 }
             }
@@ -374,7 +406,24 @@ public class WindowControls extends Window
                     Tabula.proxy.tickHandlerClient.mainframe.updateGroup(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, info.identifier, name, pos, offset, scale, txOffset, rot, mirror, mcScale);
                 }
             }
-
+        }
+        else if(element.id >= 50 && element.id <= 52)
+        {
+            for(int k = 0; k < elements.size(); k++)
+            {
+                Element e = elements.get(k);
+                if(e.id == 6)
+                {
+                    ((ElementNumberInput)e).textFields.get(element.id - 50).setSelectionPos(0);
+                    ((ElementNumberInput)e).textFields.get(element.id - 50).setText(String.format("%.2f", (((ElementHoriSlider)element).sliderProg * 360F) - 180F));
+                    ((ElementNumberInput)e).textFields.get(element.id - 50).setFocused(true);
+                    ((ElementNumberInput)e).textFields.get(element.id - 50).setCursorPositionZero();
+                    ((ElementNumberInput)e).textFields.get(element.id - 50).setSelectionPos(0);
+                    ((ElementNumberInput)e).textFields.get(element.id - 50).setFocused(false);
+                    elementTriggered(e);
+                    break;
+                }
+            }
         }
     }
 }

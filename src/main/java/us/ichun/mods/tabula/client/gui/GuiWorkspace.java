@@ -60,7 +60,6 @@ public class GuiWorkspace extends GuiScreen
     public boolean keyCDown;
     public boolean keyVDown;
 
-    //TODO copy group.
     public Object cubeCopied;
 
     public WindowProjectSelection projectManager;
@@ -125,7 +124,7 @@ public class GuiWorkspace extends GuiScreen
         {
             init = true;
 
-            windowControls = new WindowControls(this, width / 2 - 80, height / 2 - 125, 162, 250, 162, 250);
+            windowControls = new WindowControls(this, width / 2 - 80, height / 2 - 125, 162, 270, 162, 270);
             windowTexture = new WindowTexture(this, width / 2 - 53, height / 2 - 100, 106, 100, 106, 88);
             windowModelTree = new WindowModelTree(this, width / 2 - 53, height / 2 - 125, 106, 250, 106, 250);
             addToDock(0, windowControls);
@@ -298,6 +297,7 @@ public class GuiWorkspace extends GuiScreen
             }
             GL11.glTranslatef(0F, 0F, -10F);
         }
+        RendererHelper.endGlScissor();//end scissor in case any window does it incorrectly.
 
         if(!hasClicked)
         {
@@ -849,8 +849,6 @@ public class GuiWorkspace extends GuiScreen
         GL11.glDisable(GL11.GL_BLEND);
 
         GL11.glPopMatrix();
-
-        //TODO render a rotation point.
     }
 
     public ArrayList<CubeInfo> getHiddenElements() {

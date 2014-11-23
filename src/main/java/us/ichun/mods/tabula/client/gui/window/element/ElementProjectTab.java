@@ -107,10 +107,10 @@ public class ElementProjectTab extends Element
     @Override
     public boolean onClick(int mouseX, int mouseY, int id)
     {
-        if(id == 0)
+        if(id == 0 || id == 2)
         {
             ((WindowProjectSelection)parent).changeProject(this.id);
-            if(mouseX + parent.posX > getPosX() + width - 9)
+            if(mouseX + parent.posX > getPosX() + width - 9 || id == 2)
             {
                 parent.workspace.closeProject(((WindowProjectSelection)parent).projects.get(this.id));
             }
