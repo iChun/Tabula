@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.client.gui.window.element;
 
 import ichun.client.render.RendererHelper;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Mouse;
 import us.ichun.mods.tabula.client.gui.Theme;
@@ -51,6 +52,17 @@ public class ElementHoriSlider extends Element
     }
 
     @Override
+    public boolean mouseScroll(int mouseX, int mouseY, int k)
+    {
+        sliderProg = MathHelper.clamp_double(sliderProg + (GuiScreen.isShiftKeyDown() ? k * 10 : k) * 0.001D, 0.0D, 1.0D);
+        if(sliderProg != prevSliderProg)
+        {
+            parent.elementTriggered(this);
+        }
+        return true;
+    }
+
+        @Override
     public boolean onClick(int mouseX, int mouseY, int id)
     {
         return id == 0;//return true for elements that has input eg typing
