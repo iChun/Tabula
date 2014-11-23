@@ -34,6 +34,37 @@ public class Mainframe
         allowEditing = true;
     }
 
+    public int age;
+
+    public void tick()
+    {
+        age++;
+        for(ProjectInfo proj : projects)
+        {
+            if(age - proj.lastState > 40)//2 second idle before saving a state.
+            {
+                String state = proj.getAsJson();
+                if(proj.states.isEmpty() || !proj.states.get(proj.states.size() - 1).equals(state) && !proj.states.contains(state))
+                {
+                    if(proj.switchState != -1 && proj.switchState < proj.states.size() - 1)
+                    {
+                        while(proj.states.size() > proj.switchState + 1)
+                        {
+                            proj.states.remove(proj.states.size() - 1);
+                        }
+                    }
+                    proj.states.add(state);
+                    while(proj.states.size() > 200)
+                    {
+                        proj.states.remove(0);//max 200 states
+                    }
+                    proj.switchState = -1;
+                }
+                proj.lastState = age;//state has been checked and updated;
+            }
+        }
+    }
+
     public void loadEmptyProject(String name, String author, int txWidth, int txHeight)
     {
         ProjectInfo projectInfo = new ProjectInfo(name, author);
@@ -102,6 +133,7 @@ public class Mainframe
 
     public void streamProject(ProjectInfo project)
     {
+        project.lastState = age;//Update lastState because of an action.
         allowEditing = false;
         for(UUID id : listeners)
         {
@@ -126,6 +158,40 @@ public class Mainframe
             }
         }
         allowEditing = true;
+    }
+
+    public void switchState(String projIdent, boolean undo)//undo/redo
+    {
+        for(int k = 0; k < projects.size(); k++)
+        {
+            ProjectInfo proj = projects.get(k);
+            if(proj.identifier.equals(projIdent))
+            {
+                String state = proj.getAsJson();
+                for(int i = 0; i < proj.states.size(); i++)
+                {
+                    String storedState = proj.states.get(i);
+                    if(storedState.equals(state))
+                    {
+                        if(undo && i == 0 || !undo && i == proj.states.size() - 1)//you can't undo when you're the first state or redo when you're the final state
+                        {
+                            return;
+                        }
+                        String wantedState = proj.states.get(undo ? i - 1 : i + 1);
+                        ProjectInfo newProj = ((new Gson()).fromJson(wantedState, ProjectInfo.class));
+                        newProj.inherit(proj);
+                        projects.remove(k);
+                        projects.add(k, newProj);
+
+                        newProj.switchState = i;
+
+                        streamProject(newProj);
+
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     public void importProject(String ident, String projectString, BufferedImage image)

@@ -133,6 +133,14 @@ public class WindowTopDock extends Window
         {
             workspace.paste(true);
         }
+        else if(element.id == ID_UNDO)
+        {
+            workspace.switchState(true);
+        }
+        else if(element.id == ID_REDO)
+        {
+            workspace.switchState(false);
+        }
         else if(element.id == ID_CHAT)
         {
             workspace.windowChat.toggleVisibility();

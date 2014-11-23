@@ -164,6 +164,7 @@ public class WindowProjectSelection extends WindowTopDock
                 info.cameraOffsetX = workspace.cameraOffsetX;
                 info.cameraOffsetY = workspace.cameraOffsetY;
             }
+            info.lastAutosave = workspace.liveTime;
             projects.add(info);
             elements.add(new ElementProjectTab(this, 0, 0, 10, 10, elements.size(), info));
             changeProject(elements.size() - 1);

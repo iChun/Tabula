@@ -21,15 +21,18 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import us.ichun.mods.tabula.Tabula;
 import us.ichun.mods.tabula.client.core.ModelSelector;
+import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.client.gui.window.*;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.client.gui.window.element.ElementWindow;
+import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class GuiWorkspace extends GuiScreen
@@ -59,6 +62,8 @@ public class GuiWorkspace extends GuiScreen
     public boolean keyXDown;
     public boolean keyCDown;
     public boolean keyVDown;
+    public boolean keyZDown;
+    public boolean keyYDown;
 
     public Object cubeCopied;
 
@@ -182,6 +187,47 @@ public class GuiWorkspace extends GuiScreen
         {
             cameraZoomInertia++;
             cameraZoom += cameraZoomPerScroll * ((cameraZoom < 1.0F) ? ((cameraZoom + 0.5F) / 1.5F) : 1.0F ) * ((double)cameraZoomInertia / 10D);
+        }
+        for(ProjectInfo proj : projectManager.projects)
+        {
+            if(liveTime - proj.lastAutosave > 20 * 60 * 5 && !proj.autosaved)
+            {
+                File file = new File(ResourceHelper.getAutosaveDir(), proj.modelName + "-TabulaAutosave-" + Minecraft.getSystemTime() + ".tbl");
+                if(ProjectInfo.saveProject(proj, file))
+                {
+                    //get the last few files in this name, delete them off.
+                    long timestamp = 0;
+                    File oldestAutosave = null;
+                    int count = 0;
+                    File[] files = ResourceHelper.getAutosaveDir().listFiles();
+                    for(File save : files)
+                    {
+                        if(!save.isDirectory() && save.getName().endsWith(".tbl") && save.getName().startsWith(proj.modelName + "-TabulaAutosave-"))
+                        {
+                            count++;
+                            String stamp = save.getName().substring((proj.modelName + "-TabulaAutosave-").length(), save.getName().length() - 4);//remove the ".tbl"
+                            try
+                            {
+                                long time = Long.parseLong(stamp);
+                                if(time < timestamp || timestamp == 0)
+                                {
+                                    timestamp = time;
+                                    oldestAutosave = save;
+                                }
+                            }
+                            catch(NumberFormatException e)
+                            {
+                            }
+                        }
+                    }
+                    if(oldestAutosave != null && count > 5)
+                    {
+                        oldestAutosave.delete();
+                    }
+                }
+                proj.lastAutosave = liveTime;
+                proj.autosaved = true;
+            }
         }
         if(wantToExit)
         {
@@ -431,17 +477,24 @@ public class GuiWorkspace extends GuiScreen
                     }
                 }
             }
-            if(GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_X) && !keyXDown)
+            if(GuiScreen.isCtrlKeyDown())
             {
-                cut();
-            }
-            if(GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_C) && !keyCDown)
-            {
-                copy();
-            }
-            if(GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_V) && !keyVDown && cubeCopied != null)
-            {
-                paste(GuiScreen.isShiftKeyDown());
+                if(Keyboard.isKeyDown(Keyboard.KEY_X) && !keyXDown)
+                {
+                    cut();
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_C) && !keyCDown)
+                {
+                    copy();
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_V) && !keyVDown && cubeCopied != null)
+                {
+                    paste(GuiScreen.isShiftKeyDown());
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_Z) && !keyZDown || Keyboard.isKeyDown(Keyboard.KEY_Y) && !keyYDown)
+                {
+                    switchState(Keyboard.isKeyDown(Keyboard.KEY_Y) || !GuiScreen.isShiftKeyDown());
+                }
             }
         }
 
@@ -454,6 +507,8 @@ public class GuiWorkspace extends GuiScreen
         keyXDown = Keyboard.isKeyDown(Keyboard.KEY_X);
         keyCDown = Keyboard.isKeyDown(Keyboard.KEY_C);
         keyVDown = Keyboard.isKeyDown(Keyboard.KEY_V);
+        keyZDown = Keyboard.isKeyDown(Keyboard.KEY_Z);
+        keyYDown = Keyboard.isKeyDown(Keyboard.KEY_Y);
 
         if(windowDragged != null)
         {
@@ -993,6 +1048,21 @@ public class GuiWorkspace extends GuiScreen
             if(error)
             {
                 this.addWindowOnTop(new WindowPopup(this, 0, 0, 180, 80, 180, 80, "window.saveAs.failed").putInMiddleOfScreen());
+            }
+        }
+    }
+
+    public void switchState(boolean undo)
+    {
+        if(!projectManager.projects.isEmpty())
+        {
+            if(remoteSession)
+            {
+                //TODO This
+            }
+            else
+            {
+                Tabula.proxy.tickHandlerClient.mainframe.switchState(projectManager.projects.get(projectManager.selectedProject).identifier, undo);
             }
         }
     }

@@ -50,6 +50,18 @@ public class TickHandlerClient
         }
     }
 
+    @SubscribeEvent
+    public void onClientTick(TickEvent.ClientTickEvent event)
+    {
+        if(event.phase == TickEvent.Phase.END)
+        {
+            if(mainframe != null)
+            {
+                mainframe.tick();
+            }
+        }
+    }
+
     public Mainframe mainframe;
 
     private int btnX = 0;
