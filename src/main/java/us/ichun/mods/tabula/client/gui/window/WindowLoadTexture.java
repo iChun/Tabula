@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class WindowLoadTexture extends Window
 {
-    public ElementListTree modelList;
+    public transient ElementListTree modelList;
 
     public WindowLoadTexture(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {

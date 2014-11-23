@@ -158,6 +158,7 @@ public class WindowProjectSelection extends WindowTopDock
         {
             if(projects.isEmpty())
             {
+                info.cameraFov = workspace.cameraFov;
                 info.cameraZoom = workspace.cameraZoom;
                 info.cameraYaw = workspace.cameraYaw;
                 info.cameraPitch = workspace.cameraPitch;
@@ -267,6 +268,7 @@ public class WindowProjectSelection extends WindowTopDock
         if(selectedProject != -1)
         {
             ProjectInfo info = projects.get(selectedProject);
+            info.cameraFov = workspace.cameraFov;
             info.cameraZoom = workspace.cameraZoom;
             info.cameraYaw = workspace.cameraYaw;
             info.cameraPitch = workspace.cameraPitch;
@@ -277,6 +279,7 @@ public class WindowProjectSelection extends WindowTopDock
         if(selectedProject != -1)
         {
             ProjectInfo info = projects.get(selectedProject);
+            workspace.cameraFov = info.cameraFov;
             workspace.cameraZoom = info.cameraZoom;
             workspace.cameraYaw = info.cameraYaw;
             workspace.cameraPitch = info.cameraPitch;

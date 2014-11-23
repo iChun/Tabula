@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class Window
 {
-    public transient final GuiWorkspace workspace;
+    public final GuiWorkspace workspace;
 
     public int posX;
     public int posY;
@@ -22,24 +22,24 @@ public class Window
     public int docked;
     public boolean minimized;
 
-    public transient int clickX;
-    public transient int clickY;
-    public transient int clickId;
+    public int clickX;
+    public int clickY;
+    public int clickId;
 
-    public transient int oriWidth;
-    public transient int oriHeight;
+    public int oriWidth;
+    public int oriHeight;
 
-    public transient int minWidth;
-    public transient int minHeight;
+    public int minWidth;
+    public int minHeight;
 
-    public transient String titleLocale;
-    public transient boolean hasTitle; //if it has title, it can minimize.
+    public String titleLocale;
+    public boolean hasTitle; //if it has title, it can minimize.
 
-    public transient boolean isTab;
+    public boolean isTab;
 
-    public transient ArrayList<Element> elements = new ArrayList<Element>();
+    public ArrayList<Element> elements = new ArrayList<Element>();
 
-    public transient static final int BORDER_SIZE = 3;
+    public static final int BORDER_SIZE = 3;
 
     public Window(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH, String title, boolean hasTit)
     {

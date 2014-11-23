@@ -19,6 +19,7 @@ import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.Project;
 import us.ichun.mods.tabula.Tabula;
 import us.ichun.mods.tabula.client.core.ModelSelector;
 import us.ichun.mods.tabula.client.core.ResourceHelper;
@@ -27,7 +28,6 @@ import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.client.gui.window.element.ElementWindow;
-import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
@@ -96,6 +96,10 @@ public class GuiWorkspace extends GuiScreen
     public int cameraZoomInertia = 0;
     public float cameraZoomPerScroll = 0.05F;
 
+    public float cameraFov = 30F;
+    public int cameraFovInertia = 0;
+    public float cameraFovPerScroll = 1F;
+
     public float cameraYaw;
     public float cameraPitch;
     public float cameraOffsetX;
@@ -143,7 +147,7 @@ public class GuiWorkspace extends GuiScreen
             windowChat = new WindowChat(this, -1000, -1000, 250, 180, 162, 50);
             levels.get(4).add(windowChat);
 
-            Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject("New Project", "iChun? :O", 64, 32);
+//            Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject("New Project", "iChun? :O", 64, 32);
         }
         resize = true;
         screenResize();
@@ -178,6 +182,16 @@ public class GuiWorkspace extends GuiScreen
             }
         }
         liveTime++;
+        if(cameraFovInertia > 0)
+        {
+            cameraFovInertia--;
+            cameraFov += cameraFovPerScroll * (double)cameraFovInertia / 10D;
+        }
+        else if(cameraFovInertia < 0)
+        {
+            cameraFovInertia++;
+            cameraFov += cameraFovPerScroll * (double)cameraFovInertia / 10D;
+        }
         if(cameraZoomInertia > 0)
         {
             cameraZoomInertia--;
@@ -251,7 +265,7 @@ public class GuiWorkspace extends GuiScreen
                     {
                         ProjectInfo project = projectManager.projects.get(i);
                         closeProject(project);
-                        if(!project.saved && !project.authorName.equals("iChun? :O"))//TODO remove this
+                        if(!project.saved)
                         {
                             canClose = false;
                             break;
@@ -285,20 +299,35 @@ public class GuiWorkspace extends GuiScreen
         GL11.glDepthFunc(GL11.GL_LEQUAL);
         GL11.glDepthMask(true);
 
+        if(cameraFov < 15F)
+        {
+            cameraFov = 15F;
+        }
+        else if(cameraFov > 160F)
+        {
+            cameraFov = 160F;
+        }
+
         ScaledResolution resolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GL11.glOrtho(0.0D, resolution.getScaledWidth_double(), resolution.getScaledHeight_double(), 0.0D, -5000.0D, 5000.0D);
+        Project.gluPerspective(cameraFov, (float)(resolution.getScaledWidth_double() / resolution.getScaledHeight_double()), 1F, 10000F);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
+        GL11.glClearColor((float)Theme.workspaceBackground[0] / 255F, (float)Theme.workspaceBackground[1] / 255F, (float)Theme.workspaceBackground[2] / 255F, 255F);
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
         if (Mouse.isButtonDown(0) && !mouseLeftDown) {
             modelSelector.onClick(mouseX, mouseY);
         }
 
-        RendererHelper.drawColourOnScreen(Theme.workspaceBackground[0], Theme.workspaceBackground[1], Theme.workspaceBackground[2], 255, 0, 0, width, height, -4000D); //204 cause 0.8F * 255
-
         renderWorkspace(mouseX, mouseY, f);
+
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
+        GL11.glOrtho(0.0D, resolution.getScaledWidth_double(), resolution.getScaledHeight_double(), 0.0D, -5000.0D, 5000.0D);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glLoadIdentity();
 
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 
@@ -403,8 +432,16 @@ public class GuiWorkspace extends GuiScreen
         {
             if(scroll != 0)
             {
-                cameraZoom += cameraZoomPerScroll * ((cameraZoom < 1.0F) ? ((cameraZoom + 0.5F) / 1.5F) : 1.0F ) * (scroll / 120F);
-                cameraZoomInertia = scroll > 0 ? 10 : -10;
+                if(GuiScreen.isShiftKeyDown())
+                {
+                    cameraFov += cameraFovPerScroll * (scroll / 120F);
+                    cameraFovInertia = scroll > 0 ? 10 : -10;
+                }
+                else
+                {
+                    cameraZoom += cameraZoomPerScroll * ((cameraZoom < 1.0F) ? ((cameraZoom + 0.5F) / 1.5F) : 1.0F) * (scroll / 120F);
+                    cameraZoomInertia = scroll > 0 ? 10 : -10;
+                }
             }
 
             if(Mouse.isButtonDown(1) && !mouseRightDown || Mouse.isButtonDown(2) && !mouseMiddleDown)
@@ -700,9 +737,9 @@ public class GuiWorkspace extends GuiScreen
     public void applyCamera() {
         float scale = 100F;
         GL11.glScalef(scale, scale, scale);
-        GL11.glTranslatef(4.85F * width / 960, 4.5F * height / 514, -5F);
+        GL11.glTranslatef(0F, -1.75F, -9F);
         GL11.glScalef(cameraZoom, cameraZoom, cameraZoom);
-        GL11.glScalef(-1.0F, 1.0F, 1.0F);
+        GL11.glScalef(-1.0F, -1.0F, 1.0F);
         GL11.glTranslatef(cameraOffsetX, cameraOffsetY, 0.0F);
         GL11.glRotatef(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(-38F + cameraYaw, 0.0F, 1.0F, 0.0F);
