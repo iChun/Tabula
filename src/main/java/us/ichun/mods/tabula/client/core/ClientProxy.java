@@ -17,8 +17,11 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.IItemRenderer;
+import net.minecraftforge.client.MinecraftForgeClient;
 import us.ichun.module.tabula.client.model.ModelInfo;
 import us.ichun.module.tabula.client.model.ModelList;
 import us.ichun.mods.tabula.common.core.CommonProxy;
@@ -230,6 +233,36 @@ public class ClientProxy extends CommonProxy
             {
             }
         }
+
+        IdentityHashMap<Item, IItemRenderer> customItemRenderers = ObfuscationReflectionHelper.getPrivateValue(MinecraftForgeClient.class, null, "customItemRenderers");//TODO move this string to iChunUtil obfhelper in 1.8
+        Iterator ite3 = customItemRenderers.entrySet().iterator();
+        while(ite3.hasNext())
+        {
+            Map.Entry<Item, IItemRenderer> e = (Map.Entry)ite3.next();
+            Item item = e.getKey();
+            IItemRenderer renderer = e.getValue();
+
+            try
+            {
+                Field[] fields = renderer.getClass().getDeclaredFields();
+                for(Field f : fields)
+                {
+                    f.setAccessible(true);
+                    if(ModelBase.class.isAssignableFrom(f.getType()))
+                    {
+                        ModelBase base = (ModelBase)f.get(renderer);
+                        if(base != null && item != null)
+                        {
+                            ModelList.models.add(new ModelInfo(null, base, item.getClass()));
+                        }
+                    }
+                }
+            }
+            catch(Exception e1)
+            {
+            }
+        }
+
 
         for(int i = ModelList.models.size() - 1; i >= 0 ; i--)
         {
