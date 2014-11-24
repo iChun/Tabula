@@ -54,6 +54,17 @@ public class WindowModelTree extends Window
                 Tabula.proxy.tickHandlerClient.mainframe.createNewCube(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier);
             }
         }
+        else if(element.id == 1) //newgroup
+        {
+            if(workspace.remoteSession)
+            {
+
+            }
+            else
+            {
+                Tabula.proxy.tickHandlerClient.mainframe.createNewGroup(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier);
+            }
+        }
         else if(element.id == 2 && !modelList.selectedIdentifier.isEmpty())
         {
             if(workspace.remoteSession)
@@ -62,7 +73,7 @@ public class WindowModelTree extends Window
             }
             else
             {
-                Tabula.proxy.tickHandlerClient.mainframe.deleteCube(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, modelList.selectedIdentifier);
+                Tabula.proxy.tickHandlerClient.mainframe.deleteObject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, modelList.selectedIdentifier);
             }
         }
         else

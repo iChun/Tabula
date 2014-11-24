@@ -10,6 +10,7 @@ import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.Window;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class ElementNumberInput extends Element
         implements ITextInput
@@ -86,7 +87,7 @@ public class ElementNumberInput extends Element
                 {
                     if(allowDecimal)
                     {
-                        String val = String.format("%.2f", Double.parseDouble(text) + (k == 1 ? (GuiScreen.isShiftKeyDown() ? 1D : 0.1D) : -(GuiScreen.isShiftKeyDown() ? 1D : 0.1D)));
+                        String val = String.format(Locale.ENGLISH, "%.2f", Double.parseDouble(text) + (k > 0 ? (GuiScreen.isShiftKeyDown() ? 1D : 0.1D) : -(GuiScreen.isShiftKeyDown() ? 1D : 0.1D)));
                         if(val.contains(".") && val.length() > val.indexOf(".") + 4)
                         {
                             val = val.substring(0, val.indexOf(".") + 4);
@@ -104,7 +105,7 @@ public class ElementNumberInput extends Element
                     }
                     else
                     {
-                        textFields.get(selectedTextField).setText(Integer.toString(Integer.parseInt(text) + (k == 1 ? 1 : -1)));
+                        textFields.get(selectedTextField).setText(Integer.toString(Integer.parseInt(text) + (k > 0 ? 1 : -1)));
                         if(Integer.parseInt(textFields.get(selectedTextField).getText()) < min)
                         {
                             textFields.get(selectedTextField).setText(Integer.toString(min));
@@ -168,7 +169,7 @@ public class ElementNumberInput extends Element
                 {
                     if(allowDecimal)
                     {
-                        String val = String.format("%.2f", Double.parseDouble(text) + (GuiScreen.isShiftKeyDown() ? 1D : 0.1D));
+                        String val = String.format(Locale.ENGLISH, "%.2f", Double.parseDouble(text) + (GuiScreen.isShiftKeyDown() ? 1D : 0.1D));
                         if(val.contains(".") && val.length() > val.indexOf(".") + 4)
                         {
                             val = val.substring(0, val.indexOf(".") + 4);
@@ -214,7 +215,7 @@ public class ElementNumberInput extends Element
                 {
                     if(allowDecimal)
                     {
-                        String val = String.format("%.2f", Double.parseDouble(text) - (GuiScreen.isShiftKeyDown() ? 1D : 0.1D));
+                        String val = String.format(Locale.ENGLISH, "%.2f", Double.parseDouble(text) - (GuiScreen.isShiftKeyDown() ? 1D : 0.1D));
                         if(val.contains(".") && val.length() > val.indexOf(".") + 4)
                         {
                             val = val.substring(0, val.indexOf(".") + 4);

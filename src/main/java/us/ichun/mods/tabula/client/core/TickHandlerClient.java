@@ -8,9 +8,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Blocks;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 import us.ichun.mods.tabula.client.mainframe.Mainframe;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
+
+import java.util.UUID;
 
 public class TickHandlerClient
 {
@@ -28,18 +36,32 @@ public class TickHandlerClient
 
             if(mc.currentScreen instanceof GuiMainMenu)
             {
+                btnX = mc.currentScreen.width / 2 - 124;
+                btnY = mc.currentScreen.height / 4 + 48 + 24 * 2;
+                btnDummy.xPosition = btnX;
+                btnDummy.yPosition = btnY;
+
                 ScaledResolution reso = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
                 int i = Mouse.getX() * reso.getScaledWidth() / mc.displayWidth;
                 int j = reso.getScaledHeight() - Mouse.getY() * reso.getScaledHeight() / mc.displayHeight - 1;
-                if(Mouse.isButtonDown(0) && !mouseDown)
+                if(Mouse.isButtonDown(0) && !mouseDown || Keyboard.isKeyDown(Keyboard.KEY_T))
                 {
-                    if(i >= btnX && i <= btnX + 20 && j >= btnY && j <= btnY + 20)
+                    if(i >= btnX && i <= btnX + 20 && j >= btnY && j <= btnY + 20 || Keyboard.isKeyDown(Keyboard.KEY_T))
                     {
                         btnDummy.func_146113_a(mc.getSoundHandler());
                         int oriScale = mc.gameSettings.guiScale;
                         mc.gameSettings.guiScale = mc.gameSettings.guiScale == 1 ? 1 : 2;
                         mainframe = new Mainframe();
-                        mainframe.addListener(UUIDTypeAdapter.fromString(mc.getSession().getPlayerID()), true);
+                        UUID uuid;
+                        try
+                        {
+                            uuid = UUIDTypeAdapter.fromString(mc.getSession().getPlayerID());
+                        }
+                        catch(IllegalArgumentException e)
+                        {
+                            uuid = UUIDTypeAdapter.fromString("deadbeef-dead-beef-dead-beefdeadbeef");
+                        }
+                        mainframe.addListener(uuid, true);
                         FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale, false, true));
                     }
                 }
@@ -50,11 +72,22 @@ public class TickHandlerClient
         }
     }
 
+    @SubscribeEvent
+    public void onClientTick(TickEvent.ClientTickEvent event)
+    {
+        if(event.phase == TickEvent.Phase.END)
+        {
+            if(mainframe != null)
+            {
+                mainframe.tick();
+            }
+        }
+    }
+
     public Mainframe mainframe;
 
     private int btnX = 0;
     private int btnY = 0;
     private boolean mouseDown;
     private GuiButton btnDummy;
-
 }

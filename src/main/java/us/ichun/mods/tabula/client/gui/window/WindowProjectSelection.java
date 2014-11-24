@@ -7,6 +7,7 @@ import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementProjectTab;
 import us.ichun.module.tabula.common.project.ProjectInfo;
+import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.util.ArrayList;
@@ -78,6 +79,61 @@ public class WindowProjectSelection extends WindowTopDock
         }
     }
 
+    public void removeProject(String ident)
+    {
+        for(int i = projects.size() - 1; i >= 0; i--)
+        {
+            ProjectInfo project = projects.get(i);
+            if(project.identifier.equals(ident))
+            {
+                project.destroy();
+                projects.remove(i);
+                if(i == selectedProject || selectedProject == projects.size())
+                {
+                    selectedProject--;
+                    if(selectedProject < 0 && !projects.isEmpty())
+                    {
+                        selectedProject = 0;
+                    }
+                    changeProject(selectedProject);
+                }
+                break;
+            }
+        }
+
+        ArrayList<Element> els = new ArrayList<Element>(elements);
+        for(int i = projects.size() - 1; i >= 0; i--)
+        {
+            ProjectInfo project = projects.get(i);
+            for(Element e : elements)
+            {
+                if(e instanceof ElementProjectTab)
+                {
+                    ElementProjectTab tab = (ElementProjectTab)e;
+                    if(tab.info.identifier.equals(project.identifier))
+                    {
+                        tab.id = i;
+                        els.remove(e);
+                    }
+                }
+            }
+        }
+
+        for(int i = els.size() - 1; i >= 0; i--)
+        {
+            if(els.get(i) instanceof ElementProjectTab)
+            {
+                elements.remove(els.get(i));
+            }
+        }
+        if(selectedProject >= 0)
+        {
+            updateModelTree(projects.get(selectedProject));
+        }
+
+        resized();
+    }
+
     public void updateProject(ProjectInfo info)
     {
         boolean added = false;
@@ -102,12 +158,14 @@ public class WindowProjectSelection extends WindowTopDock
         {
             if(projects.isEmpty())
             {
+                info.cameraFov = workspace.cameraFov;
                 info.cameraZoom = workspace.cameraZoom;
                 info.cameraYaw = workspace.cameraYaw;
                 info.cameraPitch = workspace.cameraPitch;
                 info.cameraOffsetX = workspace.cameraOffsetX;
                 info.cameraOffsetY = workspace.cameraOffsetY;
             }
+            info.lastAutosave = workspace.liveTime;
             projects.add(info);
             elements.add(new ElementProjectTab(this, 0, 0, 10, 10, elements.size(), info));
             changeProject(elements.size() - 1);
@@ -122,13 +180,18 @@ public class WindowProjectSelection extends WindowTopDock
 
     public void updateModelTree(ProjectInfo info)
     {
-        //TODO handling of this better so that refreshing a project won't deselect what you already have...?
         ElementListTree modelList = workspace.windowModelTree.modelList;
         modelList.trees.clear();
 
+        for(int k = 0; k < info.cubeGroups.size(); k++)
+        {
+            modelList.createTree(null, info.cubeGroups.get(k), 13, 0, true, false);
+            createTreeForGroup(info.cubeGroups.get(k), modelList, 1);
+        }
         for(int k = 0; k < info.cubes.size(); k++)
         {
             modelList.createTree(null, info.cubes.get(k), 13, 0, true, false);
+            createTreeForCube(info.cubes.get(k), modelList, 1);
         }
 
         if(!modelList.selectedIdentifier.isEmpty())
@@ -136,7 +199,13 @@ public class WindowProjectSelection extends WindowTopDock
             boolean found = false;
             for(int k = 0; k < modelList.trees.size(); k++)
             {
-                if(modelList.trees.get(k).attachedObject instanceof CubeInfo && ((CubeInfo)modelList.trees.get(k).attachedObject).identifier.equals(modelList.selectedIdentifier))
+                if(modelList.trees.get(k).attachedObject instanceof CubeGroup && ((CubeGroup)modelList.trees.get(k).attachedObject).identifier.equals(modelList.selectedIdentifier))
+                {
+                    found = true;
+                    modelList.trees.get(k).selected = true;
+                    modelList.clickElement(modelList.trees.get(k).attachedObject);
+                }
+                else if(modelList.trees.get(k).attachedObject instanceof CubeInfo && ((CubeInfo)modelList.trees.get(k).attachedObject).identifier.equals(modelList.selectedIdentifier))
                 {
                     found = true;
                     modelList.trees.get(k).selected = true;
@@ -155,11 +224,51 @@ public class WindowProjectSelection extends WindowTopDock
         }
     }
 
+    public void createTreeForGroup(CubeGroup group, ElementListTree modelList, int attachLevel)
+    {
+        for(int k = 0; k < group.cubeGroups.size(); k++)
+        {
+            modelList.createTree(null, group.cubeGroups.get(k), 13, attachLevel, true, false);
+            createTreeForGroup(group.cubeGroups.get(k), modelList, attachLevel + 1);
+        }
+        for(int k = 0; k < group.cubes.size(); k++)
+        {
+            modelList.createTree(null, group.cubes.get(k), 13, attachLevel, true, false);
+            createTreeForCube(group.cubes.get(k), modelList, attachLevel + 1);
+        }
+    }
+
+    public void createTreeForCube(CubeInfo group, ElementListTree modelList, int attachLevel)
+    {
+        for(int k = 0; k < group.getChildren().size(); k++)
+        {
+            modelList.createTree(null, group.getChildren().get(k), 13, attachLevel, true, false);
+            createTreeForCube(group.getChildren().get(k), modelList, attachLevel + 1);
+        }
+    }
+
+    public void changeProject(ProjectInfo info)
+    {
+        for(int i = 0; i < projects.size(); i++)
+        {
+            if(projects.get(i) == info)
+            {
+                changeProject(i);
+                return;
+            }
+        }
+    }
+
     public void changeProject(int i)
     {
+        if(selectedProject == i)
+        {
+            return;
+        }
         if(selectedProject != -1)
         {
             ProjectInfo info = projects.get(selectedProject);
+            info.cameraFov = workspace.cameraFov;
             info.cameraZoom = workspace.cameraZoom;
             info.cameraYaw = workspace.cameraYaw;
             info.cameraPitch = workspace.cameraPitch;
@@ -167,16 +276,30 @@ public class WindowProjectSelection extends WindowTopDock
             info.cameraOffsetY = workspace.cameraOffsetY;
         }
         selectedProject = i;
-        ProjectInfo info = projects.get(selectedProject);
-        workspace.cameraZoom = info.cameraZoom;
-        workspace.cameraYaw = info.cameraYaw;
-        workspace.cameraPitch = info.cameraPitch;
-        workspace.cameraOffsetX = info.cameraOffsetX;
-        workspace.cameraOffsetY = info.cameraOffsetY;
+        if(selectedProject != -1)
+        {
+            ProjectInfo info = projects.get(selectedProject);
+            workspace.cameraFov = info.cameraFov;
+            workspace.cameraZoom = info.cameraZoom;
+            workspace.cameraYaw = info.cameraYaw;
+            workspace.cameraPitch = info.cameraPitch;
+            workspace.cameraOffsetX = info.cameraOffsetX;
+            workspace.cameraOffsetY = info.cameraOffsetY;
 
-        ((ElementProjectTab)elements.get(i)).changed = false;
+            ((ElementProjectTab)elements.get(i)).changed = false;
 
-        updateModelTree(info);
+            updateModelTree(info);
+        }
+        else
+        {
+            workspace.cameraZoom = 1.0F;
+            workspace.cameraYaw = 0.0F;
+            workspace.cameraPitch = 0.0F;
+            workspace.cameraOffsetX = 0.0F;
+            workspace.cameraOffsetY = 0.0F;
+        }
+
+        workspace.windowModelTree.modelList.sliderProg = 0.0F;
     }
 
     @Override

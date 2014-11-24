@@ -12,14 +12,16 @@ import java.util.ArrayList;
 
 public class Window
 {
-    public int level;//not sure if I need this
-
     public final GuiWorkspace workspace;
 
     public int posX;
     public int posY;
     public int width;
     public int height;
+
+    public int docked;
+    public boolean minimized;
+
     public int clickX;
     public int clickY;
     public int clickId;
@@ -34,9 +36,6 @@ public class Window
     public boolean hasTitle; //if it has title, it can minimize.
 
     public boolean isTab;
-
-    public int docked;
-    public boolean minimized;
 
     public ArrayList<Element> elements = new ArrayList<Element>();
 
@@ -183,8 +182,9 @@ public class Window
         clickId = id;
 
         boolean clickedElement = false;
-        for(Element element : elements)
+        for(int k = elements.size() - 1; k >= 0; k--)
         {
+            Element element = elements.get(k);
             if(mouseX >= element.posX && mouseX <= element.posX + element.width && mouseY >= element.posY && mouseY <= element.posY + element.height && (minimized && element.ignoreMinimized || !minimized) && !(workspace.projectManager.projects.isEmpty() && !interactableWhileNoProjects()) && element.onClick(mouseX, mouseY, id))
             {
                 if(id == 0)

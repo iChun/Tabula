@@ -1,3 +1,5 @@
+tabula.name=Tabula
+
 element.minimize=Minimize
 element.expand=Expand
 
@@ -10,7 +12,8 @@ window.controls.dimensions=Dimensions
 window.controls.position=Position
 window.controls.offset=Offset
 window.controls.rotation=Rotation
-window.controls.scale=Scale
+window.controls.mcScale=MC Scale
+window.controls.scale=Custom Scale
 window.controls.txOffset=Texture Offset
 window.controls.txMirror=Mirror
 window.controls.txMirrorFull=Mirror Texture
@@ -18,6 +21,9 @@ window.controls.txMirrorFull=Mirror Texture
 window.newProject.title=New Project
 window.newProject.projName=Project Name
 window.newProject.authName=Author Name
+window.newProject.txDimensions=Texture width and height
+
+window.editProject.title=Edit Project
 
 window.modelTree.title=Model Tree
 window.modelTree.newCube=New Cube
@@ -41,6 +47,8 @@ window.importMC.newProject=New?
 window.importMC.newProjectFull=Import the model into a new project?
 
 window.loadTexture.title=Load Texture
+window.loadTexture.updateTextureDimensions=Update?
+window.loadTexture.updateTextureDimensionsFull=Update the texture dimensions of the project?
 
 window.chat.title=Chat
 window.chat.textbox=Hit ENTER to send
@@ -51,19 +59,59 @@ window.saveAs.overwrite=Overwrite?
 window.saveAs.confirmOverwrite=File already exists! Confirm overwrite?
 window.saveAs.failed=Failed to save file.
 
+window.notSaved.title=Project not saved!
+window.notSaved.unsaved=Project is not saved!
+window.notSaved.save=Would you like to save before closing?
+
 window.open.title=Open Project
 window.open.opening=Opening...
 window.open.failed=Failed to open file.
 
 window.popup.title=Alert!
 
-topdock.new=New
-topdock.open=Open
+window.about.title=About
+window.about.line0=Mod Version: 
+window.about.line1=Developer: 
+window.about.line2=Textures: 
+window.about.line3=Contributions: 
+window.about.line4=Testers: 
+window.about.line5=Current Localization: iChun
+window.about.line6=Function and UI are based off the original Techne by ZeuX and r4wk
+window.about.os1=If you have any issues or suggestions go to the following link
+window.about.os2=Project is open source and can be found at:
+
+export.title=Export Project
+export.failed=Export Failed!
+export.textureMap.name=Texture Map
+export.javaClass.title=Export as Java Class
+export.javaClass.package=Package For Class
+export.javaClass.name=Java Class
+export.javaClass.className=Class Name
+export.projTexture.name=Project Texture
+
+topdock.new=New Project
+topdock.edit=Edit Project
+topdock.open=Open Project
 topdock.save=Save
 topdock.saveAs=Save As
-topdock.import=Import
+topdock.import=Import Project
 topdock.importMC=Import From Minecraft
-topdock.export=Export
+topdock.export=Export Project
+topdock.cut=Cut
+topdock.copy=Copy
+topdock.paste=Paste
+topdock.pasteInPlace=Paste In Place
+topdock.undo=Undo
+topdock.redo=Redo
 topdock.chat=Toggle Chat Window
+topdock.info=About this mod
+topdock.exitTabula=Exit Tabula
 topdock.wood=Wood
 topdock.woodFull=Toggle showing the planks
+
+system.joinedSession=%s has joined the session.
+system.addEditor=%1$s has added %2$s as an editor.
+system.removeEditor=%1$s has removed %2$s as an editor.
+system.cannotRemoveHost=%s is host and cannot be removed as an editor.
+system.cannotReachHost=Host is unavailable. They might have crashed or disconnected. Consider saving the models for them before exiting.
+system.sessionEnded=Host has ended session.
