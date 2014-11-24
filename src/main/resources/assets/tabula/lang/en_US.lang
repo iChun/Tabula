@@ -80,6 +80,7 @@ window.about.line6=Function and UI are based off the original Techne by ZeuX and
 window.about.os1=If you have any issues or suggestions go to the following link
 window.about.os2=Project is open source and can be found at:
 
+export.title=Export Project
 export.failed=Export Failed!
 export.textureMap.name=Texture Map
 export.javaClass.title=Export as Java Class

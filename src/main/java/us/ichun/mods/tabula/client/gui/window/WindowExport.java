@@ -17,7 +17,7 @@ public class WindowExport extends Window
 
     public WindowExport(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
-        super(parent, x, y, w, h, minW, minH, "window.export.title", true);
+        super(parent, x, y, w, h, minW, minH, "export.title", true);
 
         elements.add(new ElementButton(this, width - 140, height - 22, 60, 16, 1, false, 1, 1, "element.button.ok"));
         elements.add(new ElementButton(this, width - 70, height - 22, 60, 16, 0, false, 1, 1, "element.button.cancel"));
