@@ -76,6 +76,14 @@ public class ExportJava extends Exporter
         for(Map.Entry<CubeInfo, String> e : cubeFieldMap.entrySet())
         {
             CubeInfo cube = e.getKey();
+            for(CubeInfo child : cube.getChildren())
+            {
+                parentMap.put(child, cube);
+            }
+        }
+        for(Map.Entry<CubeInfo, String> e : cubeFieldMap.entrySet())
+        {
+            CubeInfo cube = e.getKey();
             String field = e.getValue();
             sb.append("        this." + field + " = new ModelRenderer(this, " + cube.txOffset[0] + ", " + cube.txOffset[1] + ");\n");
             if(cube.txMirror)
