@@ -87,6 +87,7 @@ export.javaClass.title=Export as Java Class
 export.javaClass.package=Package For Class
 export.javaClass.name=Java Class
 export.javaClass.className=Class Name
+export.projTexture.name=Project Texture
 
 topdock.new=New Project
 topdock.edit=Edit Project

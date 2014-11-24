@@ -20,7 +20,7 @@ public class ExportTextureMap extends Exporter
     @Override
     public boolean export(ProjectInfo info, Object... params)
     {
-        File file = new File(ResourceHelper.getExportsDir(), info.modelName + ".png");
+        File file = new File(ResourceHelper.getExportsDir(), info.modelName + "-texturemap.png");
 
         BufferedImage tmp = new BufferedImage(info.textureWidth, info.textureHeight, BufferedImage.TYPE_INT_ARGB);
 
