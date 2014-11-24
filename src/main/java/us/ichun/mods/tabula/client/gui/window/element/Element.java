@@ -29,7 +29,7 @@ public abstract class Element
 
     public boolean onClick(int mouseX, int mouseY, int id)
     {
-        return false;
+        return false;//return true for elements that has input eg typing
     }
 
     public void selected(){}

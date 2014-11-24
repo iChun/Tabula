@@ -8,7 +8,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Blocks;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 import us.ichun.mods.tabula.client.mainframe.Mainframe;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 
@@ -28,6 +33,11 @@ public class TickHandlerClient
 
             if(mc.currentScreen instanceof GuiMainMenu)
             {
+                btnX = mc.currentScreen.width / 2 - 124;
+                btnY = mc.currentScreen.height / 4 + 48 + 24 * 2;
+                btnDummy.xPosition = btnX;
+                btnDummy.yPosition = btnY;
+
                 ScaledResolution reso = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
                 int i = Mouse.getX() * reso.getScaledWidth() / mc.displayWidth;
                 int j = reso.getScaledHeight() - Mouse.getY() * reso.getScaledHeight() / mc.displayHeight - 1;
@@ -50,11 +60,22 @@ public class TickHandlerClient
         }
     }
 
+    @SubscribeEvent
+    public void onClientTick(TickEvent.ClientTickEvent event)
+    {
+        if(event.phase == TickEvent.Phase.END)
+        {
+            if(mainframe != null)
+            {
+                mainframe.tick();
+            }
+        }
+    }
+
     public Mainframe mainframe;
 
     private int btnX = 0;
     private int btnY = 0;
     private boolean mouseDown;
     private GuiButton btnDummy;
-
 }

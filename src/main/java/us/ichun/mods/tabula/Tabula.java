@@ -10,20 +10,22 @@ import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.relauncher.Side;
 import ichun.common.core.config.Config;
 import ichun.common.core.config.IConfigUser;
+import ichun.common.core.updateChecker.ModVersionChecker;
+import ichun.common.core.updateChecker.ModVersionInfo;
 import ichun.common.iChunUtil;
 import net.minecraft.client.model.ModelBase;
 import net.minecraftforge.common.config.Property;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import us.ichun.module.tabula.client.model.ModelList;
 import us.ichun.mods.tabula.common.core.CommonProxy;
+import us.ichun.module.tabula.client.model.ModelList;
 
 import java.util.EnumMap;
 
 @Mod(modid = "Tabula", name = "Tabula",
         version = Tabula.version,
-        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".0.0,)",
+        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".1.0,)",
         acceptableRemoteVersions = "[" + iChunUtil.versionMC +".0.0," + iChunUtil.versionMC + ".1.0)"
 )
 public class Tabula
@@ -49,6 +51,8 @@ public class Tabula
     public void preLoad(FMLPreInitializationEvent event)
     {
         proxy.init();
+
+        ModVersionChecker.register_iChunMod(new ModVersionInfo("Tabula", iChunUtil.versionOfMC, version, false));
     }
 
     @Mod.EventHandler

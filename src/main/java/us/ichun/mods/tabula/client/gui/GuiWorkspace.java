@@ -1,6 +1,8 @@
 package us.ichun.mods.tabula.client.gui;
 
+import com.google.gson.Gson;
 import ichun.client.render.RendererHelper;
+import ichun.common.core.util.MD5Checksum;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -17,14 +19,20 @@ import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.Project;
 import us.ichun.mods.tabula.Tabula;
+import us.ichun.mods.tabula.client.core.ModelSelector;
+import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.client.gui.window.*;
-import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.client.gui.window.element.ElementWindow;
+import us.ichun.module.tabula.common.project.ProjectInfo;
+import us.ichun.module.tabula.common.project.components.CubeGroup;
+import us.ichun.module.tabula.common.project.components.CubeInfo;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class GuiWorkspace extends GuiScreen
@@ -34,6 +42,7 @@ public class GuiWorkspace extends GuiScreen
     public boolean isEditor;
 
     public ResourceLocation grid16 = new ResourceLocation("tabula", "textures/workspace/grid16.png");
+    public ResourceLocation orientationBase = new ResourceLocation("tabula", "textures/workspace/orientationBase.png");
 
     public ArrayList<ArrayList<Window>> levels = new ArrayList<ArrayList<Window>>() {{
         add(0, new ArrayList<Window>()); // dock left
@@ -50,6 +59,14 @@ public class GuiWorkspace extends GuiScreen
     public boolean mouseRightDown;
     public boolean mouseMiddleDown;
     public boolean keyDeleteDown;
+    public boolean keyXDown;
+    public boolean keyCDown;
+    public boolean keyVDown;
+    public boolean keyZDown;
+    public boolean keyYDown;
+    public boolean keySDown;
+
+    public Object cubeCopied;
 
     public WindowProjectSelection projectManager;
     public WindowControls windowControls;
@@ -80,6 +97,10 @@ public class GuiWorkspace extends GuiScreen
     public int cameraZoomInertia = 0;
     public float cameraZoomPerScroll = 0.05F;
 
+    public float cameraFov = 30F;
+    public int cameraFovInertia = 0;
+    public float cameraFovPerScroll = 1F;
+
     public float cameraYaw;
     public float cameraPitch;
     public float cameraOffsetX;
@@ -89,8 +110,12 @@ public class GuiWorkspace extends GuiScreen
     public int prevMouseX;
     public int prevMouseY;
 
+    public boolean wantToExit;
+
     public static final int VARIABLE_LEVEL = 4;
     public static final int TOP_DOCK_HEIGHT = 19;
+
+    private ModelSelector modelSelector = new ModelSelector(this, 256);
 
     public GuiWorkspace(int scale, boolean remote, boolean editing)
     {
@@ -109,7 +134,7 @@ public class GuiWorkspace extends GuiScreen
         {
             init = true;
 
-            windowControls = new WindowControls(this, width / 2 - 80, height / 2 - 125, 162, 250, 162, 250);
+            windowControls = new WindowControls(this, width / 2 - 80, height / 2 - 125, 162, 270, 162, 270);
             windowTexture = new WindowTexture(this, width / 2 - 53, height / 2 - 100, 106, 100, 106, 88);
             windowModelTree = new WindowModelTree(this, width / 2 - 53, height / 2 - 125, 106, 250, 106, 250);
             addToDock(0, windowControls);
@@ -123,11 +148,7 @@ public class GuiWorkspace extends GuiScreen
             windowChat = new WindowChat(this, -1000, -1000, 250, 180, 162, 50);
             levels.get(4).add(windowChat);
 
-            Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject("New Project", "iChun? :O");
-
-            //            levels.get(4).add(new Window(this, 200, 40, 200, 200, 40, 50, "menu.convertingLevel", true));
-            //            levels.get(4).add(new Window(this, 700, 100, 300, 500, 100, 200, "menu.generatingTerrain", true));
-            //            levels.get(4).add(new Window(this, 400, 200, 150, 300, 100, 200, "menu.loadingLevel", true));
+//            Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject("New Project", "iChun? :O", 64, 32);
         }
         resize = true;
         screenResize();
@@ -162,6 +183,16 @@ public class GuiWorkspace extends GuiScreen
             }
         }
         liveTime++;
+        if(cameraFovInertia > 0)
+        {
+            cameraFovInertia--;
+            cameraFov += cameraFovPerScroll * (double)cameraFovInertia / 10D;
+        }
+        else if(cameraFovInertia < 0)
+        {
+            cameraFovInertia++;
+            cameraFov += cameraFovPerScroll * (double)cameraFovInertia / 10D;
+        }
         if(cameraZoomInertia > 0)
         {
             cameraZoomInertia--;
@@ -171,6 +202,87 @@ public class GuiWorkspace extends GuiScreen
         {
             cameraZoomInertia++;
             cameraZoom += cameraZoomPerScroll * ((cameraZoom < 1.0F) ? ((cameraZoom + 0.5F) / 1.5F) : 1.0F ) * ((double)cameraZoomInertia / 10D);
+        }
+        for(ProjectInfo proj : projectManager.projects)
+        {
+            if(liveTime - proj.lastAutosave > 20 * 60 * 5 && !proj.autosaved)
+            {
+                File file = new File(ResourceHelper.getAutosaveDir(), proj.modelName + "-TabulaAutosave-" + Minecraft.getSystemTime() + ".tbl");
+                if(ProjectInfo.saveProject(proj, file))
+                {
+                    //get the last few files in this name, delete them off.
+                    long timestamp = 0;
+                    File oldestAutosave = null;
+                    int count = 0;
+                    File[] files = ResourceHelper.getAutosaveDir().listFiles();
+                    for(File save : files)
+                    {
+                        if(!save.isDirectory() && save.getName().endsWith(".tbl") && save.getName().startsWith(proj.modelName + "-TabulaAutosave-"))
+                        {
+                            count++;
+                            String stamp = save.getName().substring((proj.modelName + "-TabulaAutosave-").length(), save.getName().length() - 4);//remove the ".tbl"
+                            try
+                            {
+                                long time = Long.parseLong(stamp);
+                                if(time < timestamp || timestamp == 0)
+                                {
+                                    timestamp = time;
+                                    oldestAutosave = save;
+                                }
+                            }
+                            catch(NumberFormatException e)
+                            {
+                            }
+                        }
+                    }
+                    if(oldestAutosave != null && count > 5)
+                    {
+                        oldestAutosave.delete();
+                    }
+                }
+                proj.lastAutosave = liveTime;
+                proj.autosaved = true;
+            }
+        }
+        if(wantToExit)
+        {
+            if(!remoteSession)
+            {
+                boolean canClose = true;
+                for(int i = levels.size() - 1; i >= 0 ; i--)
+                {
+                    for(int j = levels.get(i).size() - 1; j >= 0; j--)
+                    {
+                        Window window = levels.get(i).get(j);
+                        if(window instanceof WindowSaveBeforeClosing)
+                        {
+                            canClose = false;
+                        }
+                    }
+                }
+                if(canClose)
+                {
+                    for(int i = projectManager.projects.size() - 1; i >= 0; i--)
+                    {
+                        ProjectInfo project = projectManager.projects.get(i);
+                        closeProject(project);
+                        if(!project.saved)
+                        {
+                            canClose = false;
+                            break;
+                        }
+                        else
+                        {
+                            project.destroy();
+                        }
+                    }
+                    if(canClose)
+                    {
+                        this.mc.displayGuiScreen((GuiScreen)null);
+                        this.mc.setIngameFocus();
+                    }
+                }
+            }
         }
     }
 
@@ -188,14 +300,27 @@ public class GuiWorkspace extends GuiScreen
         GL11.glDepthFunc(GL11.GL_LEQUAL);
         GL11.glDepthMask(true);
 
+        if(cameraFov < 15F)
+        {
+            cameraFov = 15F;
+        }
+        else if(cameraFov > 160F)
+        {
+            cameraFov = 160F;
+        }
+
         ScaledResolution resolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GL11.glOrtho(0.0D, resolution.getScaledWidth_double(), resolution.getScaledHeight_double(), 0.0D, -5000.0D, 5000.0D);
+        Project.gluPerspective(cameraFov, (float)(resolution.getScaledWidth_double() / resolution.getScaledHeight_double()), 1F, 10000F);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
+        GL11.glClearColor((float)Theme.workspaceBackground[0] / 255F, (float)Theme.workspaceBackground[1] / 255F, (float)Theme.workspaceBackground[2] / 255F, 255F);
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-        RendererHelper.drawColourOnScreen(Theme.workspaceBackground[0], Theme.workspaceBackground[1], Theme.workspaceBackground[2], 255, 0, 0, width, height, -4000D); //204 cause 0.8F * 255
+        if (Mouse.isButtonDown(0) && !mouseLeftDown) {
+            modelSelector.onClick(mouseX, mouseY);
+        }
 
         renderWorkspace(mouseX, mouseY, f);
 
@@ -242,6 +367,7 @@ public class GuiWorkspace extends GuiScreen
             }
             GL11.glTranslatef(0F, 0F, -10F);
         }
+        RendererHelper.endGlScissor();//end scissor in case any window does it incorrectly.
 
         if(!hasClicked)
         {
@@ -301,8 +427,16 @@ public class GuiWorkspace extends GuiScreen
         {
             if(scroll != 0)
             {
-                cameraZoom += cameraZoomPerScroll * ((cameraZoom < 1.0F) ? ((cameraZoom + 0.5F) / 1.5F) : 1.0F ) * (scroll / 120F);
-                cameraZoomInertia = scroll > 0 ? 10 : -10;
+                if(GuiScreen.isShiftKeyDown())
+                {
+                    cameraFov += cameraFovPerScroll * (scroll / 120F);
+                    cameraFovInertia = scroll > 0 ? 10 : -10;
+                }
+                else
+                {
+                    cameraZoom += cameraZoomPerScroll * ((cameraZoom < 1.0F) ? ((cameraZoom + 0.5F) / 1.5F) : 1.0F) * (scroll / 120F);
+                    cameraZoomInertia = scroll > 0 ? 10 : -10;
+                }
             }
 
             if(Mouse.isButtonDown(1) && !mouseRightDown || Mouse.isButtonDown(2) && !mouseMiddleDown)
@@ -310,17 +444,6 @@ public class GuiWorkspace extends GuiScreen
                 clicked = true;
                 prevMouseX = mouseX;
                 prevMouseY = mouseY;
-            }
-            if(Mouse.isButtonDown(0) && !mouseLeftDown)
-            {
-                windowControls.selectedObject = null;
-                windowControls.refresh = true;
-
-                for(ElementListTree.Tree tree : windowModelTree.modelList.trees)
-                {
-                    tree.selected = false;
-                }
-                windowModelTree.modelList.selectedIdentifier = "";
             }
         }
         if(!Mouse.isButtonDown(1) && !Mouse.isButtonDown(2))
@@ -336,13 +459,9 @@ public class GuiWorkspace extends GuiScreen
         else if(elementHovered != null)
         {
             boolean activated = false;
-            if(scroll > 0)//scroll up
+            if(scroll != 0)//scroll up
             {
-                activated = elementHovered.mouseScroll(mouseX - elementHovered.parent.posX, mouseY - elementHovered.parent.posY, 1);
-            }
-            else if(scroll < 0)//scroll down
-            {
-                activated = elementHovered.mouseScroll(mouseX - elementHovered.parent.posX, mouseY - elementHovered.parent.posY, -1);
+                activated = elementHovered.mouseScroll(mouseX - elementHovered.parent.posX, mouseY - elementHovered.parent.posY, (int)Math.round(scroll / 120));
             }
             if(activated)
             {
@@ -364,6 +483,10 @@ public class GuiWorkspace extends GuiScreen
                 {
                     xOffset -= size - (width - mouseX) + 20;
                 }
+                if(height - (mouseY + 12 + yOffset) < 0)
+                {
+                    yOffset = -20;
+                }
                 RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, mouseX + xOffset, mouseY + yOffset, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2), 12, 0);
                 RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, mouseX + xOffset + 1, mouseY + yOffset + 1, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2) - 2, 12 - 2, 0);
                 fontRendererObj.drawString(tooltip, mouseX + xOffset + (Window.BORDER_SIZE - 1), mouseY + yOffset + (Window.BORDER_SIZE - 1), Theme.getAsHex(Theme.font), false);
@@ -371,16 +494,49 @@ public class GuiWorkspace extends GuiScreen
             }
         }
 
-        if(elementSelected == null && Keyboard.isKeyDown(Keyboard.KEY_DELETE) && !keyDeleteDown)
+        if(elementSelected == null)
         {
-            windowControls.selectedObject = null;
-            windowControls.refresh = true;
-
-            for(Element e : windowModelTree.elements)
+            if(Keyboard.isKeyDown(Keyboard.KEY_DELETE) && !keyDeleteDown)
             {
-                if(e.id == 2)
+                windowControls.selectedObject = null;
+                windowControls.refresh = true;
+
+                for(Element e : windowModelTree.elements)
                 {
-                    windowModelTree.elementTriggered(e);
+                    if(e.id == 2)
+                    {
+                        windowModelTree.elementTriggered(e);
+                    }
+                }
+            }
+            if(GuiScreen.isCtrlKeyDown())
+            {
+                if(Keyboard.isKeyDown(Keyboard.KEY_X) && !keyXDown)
+                {
+                    cut();
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_C) && !keyCDown)
+                {
+                    copy();
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_V) && !keyVDown && cubeCopied != null)
+                {
+                    paste(GuiScreen.isShiftKeyDown());
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_Z) && !keyZDown || Keyboard.isKeyDown(Keyboard.KEY_Y) && !keyYDown)
+                {
+                    switchState(Keyboard.isKeyDown(Keyboard.KEY_Y) || !GuiScreen.isShiftKeyDown());
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_S) && !keySDown)
+                {
+                    if(GuiScreen.isShiftKeyDown())
+                    {
+                        this.addWindowOnTop(new WindowSaveAs(this, 0, 0, 200, 100, 200, 100, false).putInMiddleOfScreen());
+                    }
+                    else
+                    {
+                        save(false);
+                    }
                 }
             }
         }
@@ -391,6 +547,12 @@ public class GuiWorkspace extends GuiScreen
         mouseRightDown = Mouse.isButtonDown(1);
         mouseMiddleDown = Mouse.isButtonDown(2);
         keyDeleteDown = Keyboard.isKeyDown(Keyboard.KEY_DELETE);
+        keyXDown = Keyboard.isKeyDown(Keyboard.KEY_X);
+        keyCDown = Keyboard.isKeyDown(Keyboard.KEY_C);
+        keyVDown = Keyboard.isKeyDown(Keyboard.KEY_V);
+        keyZDown = Keyboard.isKeyDown(Keyboard.KEY_Z);
+        keyYDown = Keyboard.isKeyDown(Keyboard.KEY_Y);
+        keySDown = Keyboard.isKeyDown(Keyboard.KEY_S);
 
         if(windowDragged != null)
         {
@@ -579,6 +741,22 @@ public class GuiWorkspace extends GuiScreen
         GL11.glLoadIdentity();
     }
 
+    public void applyCamera() {
+        float scale = 100F;
+        GL11.glScalef(scale, scale, scale);
+        GL11.glTranslatef(0F, -1.75F, -9F);
+        GL11.glScalef(cameraZoom, cameraZoom, cameraZoom);
+        GL11.glScalef(-1.0F, -1.0F, 1.0F);
+        GL11.glTranslatef(cameraOffsetX, cameraOffsetY, 0.0F);
+        GL11.glRotatef(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(-38F + cameraYaw, 0.0F, 1.0F, 0.0F);
+    }
+
+    public void applyModelTranslation() {
+        GL11.glTranslatef(0.0F, 2.0005F, 0.0F);
+        GL11.glScalef(-1.0F, -1.0F, 1.0F);
+    }
+
     public void renderWorkspace(int mouseX, int mouseY, float f)
     {
         if(cameraZoom < 0.05F)
@@ -596,6 +774,10 @@ public class GuiWorkspace extends GuiScreen
 
         GL11.glEnable(GL11.GL_LIGHTING);
 
+        Tessellator tessellator = Tessellator.instance;
+
+        tessellator.setBrightness(15728880);
+
         RenderHelper.enableGUIStandardItemLighting();
 
         int ii = 15728880;
@@ -603,36 +785,9 @@ public class GuiWorkspace extends GuiScreen
         int kk = ii / 65536;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)jj / 1.0F, (float)kk / 1.0F);
 
-        GL11.glPushMatrix();
+        applyCamera();
 
-        Tessellator tessellator = Tessellator.instance;
-
-        tessellator.setBrightness(15728880);
-
-        Block block = Blocks.furnace;
-        //        Block block = Blocks.diamond_ore;
-
-        GL11.glTranslatef(width - (levels.get(1).isEmpty() ? 15F : 15F + levels.get(1).get(0).width), height - 15F, 0F);
-        float scale = 15F;
-        GL11.glScalef(scale, scale, scale);
-        GL11.glScalef(-1.0F, 1.0F, 1.0F);
-        GL11.glRotatef(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(-38F + cameraYaw + 90F, 0.0F, 1.0F, 0.0F);
-
-        renderBlocks.renderBlockAsItem(block, 0, 1.0F);
-
-        GL11.glPopMatrix();
-
-        scale = 100F;
-        GL11.glScalef(scale, scale, scale);
-        GL11.glTranslatef(4.85F * width / 960, 4.5F * height / 514, -5F);
-        GL11.glScalef(cameraZoom, cameraZoom, cameraZoom);
-        GL11.glScalef(-1.0F, 1.0F, 1.0F);
-        GL11.glTranslatef(cameraOffsetX, cameraOffsetY, 0.0F);
-        GL11.glRotatef(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(-38F + cameraYaw, 0.0F, 1.0F, 0.0F);
-
-        block = Blocks.planks;
+        Block block = Blocks.planks;
         renderBlocks.setRenderBoundsFromBlock(block);
         renderBlocks.enableAO = false;
 
@@ -681,25 +836,46 @@ public class GuiWorkspace extends GuiScreen
         if(projectManager.selectedProject != -1)
         {
             GL11.glPushMatrix();
-            GL11.glTranslatef(0.0F, 2.0005F, 0.0F);
-            GL11.glScalef(-1.0F, -1.0F, 1.0F);
+            GL11.glDisable(GL11.GL_CULL_FACE);
+            applyModelTranslation();
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             ProjectInfo info = projectManager.projects.get(projectManager.selectedProject);
+
+            ArrayList<CubeInfo> selected = new ArrayList<CubeInfo>();
+            for(ElementListTree.Tree tree : windowModelTree.modelList.trees)
+            {
+                if(tree.selected)
+                {
+                    if(tree.attachedObject instanceof CubeGroup)
+                    {
+                        addElementsForSelection((CubeGroup)tree.attachedObject, selected);
+                    }
+                    if(tree.attachedObject instanceof CubeInfo)
+                    {
+                        selected.add((CubeInfo)tree.attachedObject);
+                    }
+                }
+            }
+            ArrayList<CubeInfo> hidden = getHiddenElements();
 
             if(windowTexture.imageId != -1)
             {
                 GL11.glBindTexture(GL11.GL_TEXTURE_2D, windowTexture.imageId);
 
-                info.model.render(0.0625F);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 0);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 1);
             }
             else
             {
                 GL11.glDisable(GL11.GL_TEXTURE_2D);
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-                info.model.render(0.0625F);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 0);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 1);
 
                 GL11.glEnable(GL11.GL_TEXTURE_2D);
             }
+            GL11.glEnable(GL11.GL_CULL_FACE);
             GL11.glPopMatrix();
         }
 
@@ -722,6 +898,54 @@ public class GuiWorkspace extends GuiScreen
         tessellator.addVertexWithUV(pX + w, pY, pZ, 7.125D, -0.125D);
         tessellator.draw();
 
+        GL11.glPopMatrix();
+
+        ScaledResolution resolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
+        GL11.glOrtho(0.0D, resolution.getScaledWidth_double(), resolution.getScaledHeight_double(), 0.0D, -5000.0D, 5000.0D);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glLoadIdentity();
+
+        GL11.glPushMatrix();
+
+        block = Blocks.furnace;
+        //        Block block = Blocks.diamond_ore;
+
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+
+        GL11.glTranslatef(width - (levels.get(1).isEmpty() ? 15F : 15F + levels.get(1).get(0).width), height - 15F, 3000F);
+        float scale = 15F;
+        GL11.glScalef(scale, scale, scale);
+        GL11.glScalef(-1.0F, 1.0F, 1.0F);
+        GL11.glRotatef(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(-38F + cameraYaw + 90F, 0.0F, 1.0F, 0.0F);
+
+        renderBlocks.renderBlockAsItem(block, 0, 1.0F);
+
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(orientationBase);
+        dist = 0.125D;
+        pX = -1D - dist;
+        pY = -0.500125D;
+        pZ = -1D - dist;
+        w = 2 + (dist * 2);
+        l = 2 + (dist * 2);
+        tessellator.startDrawingQuads();
+        tessellator.addVertexWithUV(pX, pY, pZ + l, 0.0D, 1.0D);
+        tessellator.addVertexWithUV(pX + w, pY, pZ + l, 1.0D, 1.0D);
+        tessellator.addVertexWithUV(pX + w, pY, pZ, 1.0D, 0.0D);
+        tessellator.addVertexWithUV(pX	  , pY, pZ, 0.0D, 0.0D);
+        tessellator.addVertexWithUV(pX + w, pY, pZ + l, 1.0D, 1.0D);
+        tessellator.addVertexWithUV(pX	  , pY, pZ + l, 0.0D, 1.0D);
+        tessellator.addVertexWithUV(pX	  , pY, pZ, 0.0D, 0.0D);
+        tessellator.addVertexWithUV(pX + w, pY, pZ, 1.0D, 0.0D);
+        tessellator.draw();
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
         GL11.glDisable(GL11.GL_BLEND);
 
         RenderHelper.disableStandardItemLighting();
@@ -729,8 +953,180 @@ public class GuiWorkspace extends GuiScreen
         GL11.glDisable(GL11.GL_LIGHTING);
 
         GL11.glPopMatrix();
+    }
 
-        //TODO render a rotation point.
+    public ArrayList<CubeInfo> getHiddenElements() {
+        ArrayList<CubeInfo> hidden = new ArrayList<CubeInfo>();
+        for(ElementListTree.Tree tree : windowModelTree.modelList.trees)
+        {
+            if(tree.attachedObject instanceof CubeGroup)
+            {
+                addElementsForHiding((CubeGroup)tree.attachedObject, hidden);
+            }
+        }
+
+        return hidden;
+    }
+
+    private void addElementsForSelection(CubeGroup group, ArrayList<CubeInfo> selected)
+    {
+        for(CubeGroup group1 : group.cubeGroups)
+        {
+            addElementsForSelection(group1, selected);
+        }
+        for(CubeInfo info : group.cubes)
+        {
+            addElementsForSelection(info, selected);
+        }
+    }
+
+    private void addElementsForHiding(CubeGroup group, ArrayList<CubeInfo> selected)
+    {
+        if(group.hidden)
+        {
+            for(CubeGroup group1 : group.cubeGroups)
+            {
+                addElementsForSelection(group1, selected);
+            }
+            for(CubeInfo info : group.cubes)
+            {
+                addElementsForSelection(info, selected);
+            }
+        }
+        for(CubeGroup group1 : group.cubeGroups)
+        {
+            addElementsForHiding(group1, selected);
+        }
+    }
+
+    private void addElementsForSelection(CubeInfo cube, ArrayList<CubeInfo> selected)
+    {
+        selected.add(cube);
+        for(CubeInfo child : cube.getChildren())
+        {
+            addElementsForSelection(child, selected);
+        }
+    }
+
+    public void cut()
+    {
+        windowControls.selectedObject = null;
+        windowControls.refresh = true;
+
+        copy();
+
+        for(Element e : windowModelTree.elements)
+        {
+            if(e.id == 2)
+            {
+                windowModelTree.elementTriggered(e);
+            }
+        }
+    }
+
+    public void copy()
+    {
+        for(ElementListTree.Tree tree : windowModelTree.modelList.trees)
+        {
+            if(tree.selected)
+            {
+                if(tree.attachedObject instanceof CubeInfo || tree.attachedObject instanceof CubeGroup)
+                {
+                    cubeCopied = tree.attachedObject;
+                }
+                break;
+            }
+        }
+    }
+
+    public void paste(boolean inPlace)
+    {
+        if(cubeCopied instanceof CubeInfo)
+        {
+            Gson gson = new Gson();
+            String s = gson.toJson(cubeCopied);
+            if(this.remoteSession)
+            {
+
+            }
+            else
+            {
+                Tabula.proxy.tickHandlerClient.mainframe.createNewCube(this.projectManager.projects.get(this.projectManager.selectedProject).identifier, s, inPlace);
+            }
+        }
+        else if(cubeCopied instanceof CubeGroup)
+        {
+            if(this.remoteSession)
+            {
+
+            }
+            else
+            {
+                Tabula.proxy.tickHandlerClient.mainframe.copyGroupTo(this.projectManager.projects.get(this.projectManager.selectedProject).identifier, ((CubeGroup)cubeCopied).identifier, inPlace);
+            }
+        }
+    }
+
+    public void save(boolean close)
+    {
+        if(!this.projectManager.projects.isEmpty())
+        {
+            ProjectInfo proj = this.projectManager.projects.get(this.projectManager.selectedProject);
+            boolean saveAs = true;
+            boolean error = false;
+            if(proj.saveFile != null && proj.saveFile.exists() && MD5Checksum.getMD5Checksum(proj.saveFile).equals(proj.saveFileMd5))
+            {
+                if(ProjectInfo.saveProject(proj, proj.saveFile))
+                {
+                    proj.saveFileMd5 = MD5Checksum.getMD5Checksum(proj.saveFile);
+                    saveAs = false;
+                    if(close)
+                    {
+                        closeProject(proj);
+                    }
+                }
+                else
+                {
+                    error = true;
+                }
+            }
+            if(saveAs)
+            {
+                this.addWindowOnTop(new WindowSaveAs(this, this.width / 2 - 100, this.height / 2 - 80, 200, 100, 200, 100, close).putInMiddleOfScreen());
+            }
+            if(error)
+            {
+                this.addWindowOnTop(new WindowPopup(this, 0, 0, 180, 80, 180, 80, "window.saveAs.failed").putInMiddleOfScreen());
+            }
+        }
+    }
+
+    public void switchState(boolean undo)
+    {
+        if(!projectManager.projects.isEmpty())
+        {
+            if(remoteSession)
+            {
+                //TODO This
+            }
+            else
+            {
+                Tabula.proxy.tickHandlerClient.mainframe.switchState(projectManager.projects.get(projectManager.selectedProject).identifier, undo);
+            }
+        }
+    }
+
+    public void closeProject(ProjectInfo project)
+    {
+        if(!project.saved)
+        {
+            projectManager.changeProject(project);
+            addWindowOnTop(new WindowSaveBeforeClosing(this, projectManager.projects.get(projectManager.selectedProject)).putInMiddleOfScreen());
+        }
+        else
+        {
+            Tabula.proxy.tickHandlerClient.mainframe.closeProject(project.identifier);
+        }
     }
 
     public void addToDock(int dock, Window window)
@@ -1063,8 +1459,24 @@ public class GuiWorkspace extends GuiScreen
     {
         if (key == 1)
         {
-            this.mc.displayGuiScreen((GuiScreen)null);
-            this.mc.setIngameFocus();
+            boolean wantedToExit = wantToExit;
+            wantToExit = true;
+            if(wantedToExit)
+            {
+                for(int i = levels.size() - 1; i >= 0 ; i--)
+                {
+                    for(int j = levels.get(i).size() - 1; j >= 0; j--)
+                    {
+                        Window window = levels.get(i).get(j);
+                        if(window instanceof WindowSaveBeforeClosing)
+                        {
+                            wantToExit = false;
+                            removeWindow(window);
+                            break;
+                        }
+                    }
+                }
+            }
         }
         else if(elementSelected != null)
         {

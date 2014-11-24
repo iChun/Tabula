@@ -21,7 +21,6 @@ public class ElementProjectTab extends Element
     @Override
     public void draw(int mouseX, int mouseY, boolean hover)
     {
-        //TODO make a X button to close project.
         WindowProjectSelection proj = (WindowProjectSelection)parent;
         if(id != proj.projects.size() - 1)
         {
@@ -37,7 +36,7 @@ public class ElementProjectTab extends Element
         }
 
         String titleToRender = info.modelName;
-        while(titleToRender.length() > 1 && parent.workspace.getFontRenderer().getStringWidth(titleToRender) > width )
+        while(titleToRender.length() > 1 && parent.workspace.getFontRenderer().getStringWidth(titleToRender) > width - (parent.workspace.remoteSession ? 0 : 11) )
         {
             if(titleToRender.startsWith("... "))
             {
@@ -53,6 +52,10 @@ public class ElementProjectTab extends Element
             }
         }
         parent.workspace.getFontRenderer().drawString(titleToRender, parent.posX + posX + 4, parent.posY + posY + 3, Theme.getAsHex(changed? Theme.elementProjectTabFontChanges : Theme.elementProjectTabFont), false);
+        if(!parent.workspace.remoteSession)
+        {
+            parent.workspace.getFontRenderer().drawString("X", parent.posX + posX + width - 8, parent.posY + posY + 3, Theme.getAsHex(Theme.elementProjectTabFont), false);
+        }
     }
 
     @Override
@@ -63,7 +66,7 @@ public class ElementProjectTab extends Element
         int totalSpace = 0;
         for(ProjectInfo tab1 : tab.projects)
         {
-            totalSpace += tab.workspace.getFontRenderer().getStringWidth(" " + tab1.modelName + " ");
+            totalSpace += tab.workspace.getFontRenderer().getStringWidth(" " + tab1.modelName + (parent.workspace.remoteSession ? " " : " X "));
         }
         if(totalSpace > space)
         {
@@ -77,10 +80,10 @@ public class ElementProjectTab extends Element
             posX = 0;
             for(int i = 0; i < id; i++)
             {
-                posX += tab.workspace.getFontRenderer().getStringWidth(" " + tab.projects.get(i).modelName + " ");
+                posX += tab.workspace.getFontRenderer().getStringWidth(" " + tab.projects.get(i).modelName + (parent.workspace.remoteSession ? " " : " X "));
             }
             posY = 0;
-            width = tab.workspace.getFontRenderer().getStringWidth(" " + info.modelName + " ");
+            width = tab.workspace.getFontRenderer().getStringWidth(" " + info.modelName + (parent.workspace.remoteSession ? " " : " X "));
             height = 12;
         }
     }
@@ -104,10 +107,14 @@ public class ElementProjectTab extends Element
     @Override
     public boolean onClick(int mouseX, int mouseY, int id)
     {
-        if(id == 0)
+        if(id == 0 || id == 2)
         {
             ((WindowProjectSelection)parent).changeProject(this.id);
+            if(mouseX + parent.posX > getPosX() + width - 9 || id == 2)
+            {
+                parent.workspace.closeProject(((WindowProjectSelection)parent).projects.get(this.id));
+            }
         }
-        return true;
+        return false;
     }
 }
