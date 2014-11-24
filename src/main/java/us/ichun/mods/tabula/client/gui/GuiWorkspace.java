@@ -64,6 +64,7 @@ public class GuiWorkspace extends GuiScreen
     public boolean keyVDown;
     public boolean keyZDown;
     public boolean keyYDown;
+    public boolean keySDown;
 
     public Object cubeCopied;
 
@@ -526,6 +527,17 @@ public class GuiWorkspace extends GuiScreen
                 {
                     switchState(Keyboard.isKeyDown(Keyboard.KEY_Y) || !GuiScreen.isShiftKeyDown());
                 }
+                if(Keyboard.isKeyDown(Keyboard.KEY_S) && !keySDown)
+                {
+                    if(GuiScreen.isShiftKeyDown())
+                    {
+                        this.addWindowOnTop(new WindowSaveAs(this, 0, 0, 200, 100, 200, 100, false).putInMiddleOfScreen());
+                    }
+                    else
+                    {
+                        save(false);
+                    }
+                }
             }
         }
 
@@ -540,6 +552,7 @@ public class GuiWorkspace extends GuiScreen
         keyVDown = Keyboard.isKeyDown(Keyboard.KEY_V);
         keyZDown = Keyboard.isKeyDown(Keyboard.KEY_Z);
         keyYDown = Keyboard.isKeyDown(Keyboard.KEY_Y);
+        keySDown = Keyboard.isKeyDown(Keyboard.KEY_S);
 
         if(windowDragged != null)
         {
