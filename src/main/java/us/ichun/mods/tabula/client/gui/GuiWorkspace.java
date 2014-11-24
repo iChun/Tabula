@@ -882,9 +882,9 @@ public class GuiWorkspace extends GuiScreen
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
         Minecraft.getMinecraft().getTextureManager().bindTexture(grid16);
         double dist = 0.125D;
-        double pX = -3.5D - dist;
+        double pX = -3.495D - dist;
         double pY = 0.500125D;
-        double pZ = -3.5D - dist;
+        double pZ = -3.495D - dist;
         double w = 7 + (dist * 2);
         double l = 7 + (dist * 2);
         tessellator.startDrawingQuads();
