@@ -17,8 +17,11 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.IItemRenderer;
+import net.minecraftforge.client.MinecraftForgeClient;
 import us.ichun.module.tabula.client.model.ModelInfo;
 import us.ichun.module.tabula.client.model.ModelList;
 import us.ichun.mods.tabula.common.core.CommonProxy;
@@ -58,7 +61,7 @@ public class ClientProxy extends CommonProxy
         }
         compatibleEntities.add(EntityPlayer.class);
 
-        HashMap<Class, RendererLivingEntity> renders = new HashMap<Class, RendererLivingEntity>();
+        HashMap<Class, Render> renders = new HashMap<Class, Render>();
         try
         {
             List entityRenderers = (List)ObfuscationReflectionHelper.getPrivateValue(RenderingRegistry.class, RenderingRegistry.instance(), "entityRenderers");
@@ -80,9 +83,9 @@ public class ClientProxy extends CommonProxy
                         clzz = (Class)f.get(obj);
                     }
                 }
-                if(render instanceof RendererLivingEntity && clzz != null)
+                if(render != null && clzz != null)
                 {
-                    renders.put(clzz, (RendererLivingEntity)render);
+                    renders.put(clzz, render);
                 }
             }
         }
@@ -101,32 +104,33 @@ public class ClientProxy extends CommonProxy
             {
                 rend = renders.get(compatibleEntities.get(i));
             }
-            if(!(rend instanceof RendererLivingEntity))
-            {
-                compatibleEntities.remove(i);
-                continue;
-            }
-            renders.put(compatibleEntities.get(i), (RendererLivingEntity)rend);
+            renders.put(compatibleEntities.get(i), rend);
         }
 
         for(Class clz : compatibleEntities)
         {
             try
             {
-                RendererLivingEntity rend = (RendererLivingEntity)renders.get(clz);
+                Render rend1 = renders.get(clz);
+                if(!(rend1 instanceof RendererLivingEntity))
+                {
+                    continue;
+                }
+                RendererLivingEntity rend = (RendererLivingEntity)rend1;
                 if(clz == EntityPlayer.class)
                 {
                     ModelList.models.add(new ModelInfo(AbstractClientPlayer.locationStevePng, rend.mainModel, EntityPlayer.class));
                 }
-                else if(rend.mainModel != null)
+                else if(rend.mainModel != null && clz != null)
                 {
+                    //TODO config to set rotation or not?
                     EntityLivingBase instance;
                     try { instance = (EntityLivingBase)clz.getConstructor(World.class).newInstance(new Object[] { null }); } catch(Exception e){ instance = null; }
                     try { rend.mainModel.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, instance); } catch(Exception e){}
                     try { rend.mainModel.render(instance, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F); } catch(Exception e){}
                     try { rend.mainModel.setLivingAnimations(instance, 0.0F, 0.0F, 0.0F); } catch(Exception e){}
                     ResourceLocation loc = null;
-                    if(clz != EntityHorse.class)
+                    if(clz != EntityHorse.class) //horse gives some kind of error that can't be silenced
                     {
                         try
                         {
@@ -141,6 +145,30 @@ public class ClientProxy extends CommonProxy
                 }
             }
             catch(Exception e)
+            {
+            }
+            renders.remove(clz);
+        }
+
+        for(Map.Entry<Class, Render> e : renders.entrySet())
+        {
+            try
+            {
+                Field[] fields = e.getValue().getClass().getDeclaredFields();
+                for(Field f : fields)
+                {
+                    f.setAccessible(true);
+                    if(ModelBase.class.isAssignableFrom(f.getType()))
+                    {
+                        ModelBase base = (ModelBase)f.get(e.getValue());
+                        if(base != null && e.getKey() != null)
+                        {
+                            ModelList.models.add(new ModelInfo(null, base, e.getKey()));
+                        }
+                    }
+                }
+            }
+            catch(Exception e1)
             {
             }
         }
@@ -166,7 +194,7 @@ public class ClientProxy extends CommonProxy
                     if(ModelBase.class.isAssignableFrom(f.getType()))
                     {
                         ModelBase base = (ModelBase)f.get(rend);
-                        if(base != null)
+                        if(base != null && te != null)
                         {
                             ModelList.models.add(new ModelInfo(null, base, te));
                         }
@@ -194,7 +222,7 @@ public class ClientProxy extends CommonProxy
                     if(ModelBase.class.isAssignableFrom(f.getType()))
                     {
                         ModelBase base = (ModelBase)f.get(rend);
-                        if(base != null)
+                        if(base != null && te != null)
                         {
                             ModelList.models.add(new ModelInfo(null, base, te));
                         }
@@ -205,6 +233,36 @@ public class ClientProxy extends CommonProxy
             {
             }
         }
+
+        IdentityHashMap<Item, IItemRenderer> customItemRenderers = ObfuscationReflectionHelper.getPrivateValue(MinecraftForgeClient.class, null, "customItemRenderers");//TODO move this string to iChunUtil obfhelper in 1.8
+        Iterator ite3 = customItemRenderers.entrySet().iterator();
+        while(ite3.hasNext())
+        {
+            Map.Entry<Item, IItemRenderer> e = (Map.Entry)ite3.next();
+            Item item = e.getKey();
+            IItemRenderer renderer = e.getValue();
+
+            try
+            {
+                Field[] fields = renderer.getClass().getDeclaredFields();
+                for(Field f : fields)
+                {
+                    f.setAccessible(true);
+                    if(ModelBase.class.isAssignableFrom(f.getType()))
+                    {
+                        ModelBase base = (ModelBase)f.get(renderer);
+                        if(base != null && item != null)
+                        {
+                            ModelList.models.add(new ModelInfo(null, base, item.getClass()));
+                        }
+                    }
+                }
+            }
+            catch(Exception e1)
+            {
+            }
+        }
+
 
         for(int i = ModelList.models.size() - 1; i >= 0 ; i--)
         {

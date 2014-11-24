@@ -37,8 +37,6 @@ public class WindowTexture extends Window
         elements.add(new ElementButtonTextured(this, width - BORDER_SIZE - 20, height - BORDER_SIZE - 20, 2, false, 1, 1, "window.texture.clearTexture", new ResourceLocation("tabula", "textures/icon/clearTexture.png")));
     }
 
-    //TODO make it so that textureWidth/height stay the same even though the image isn't.
-
     @Override
     public void draw(int mouseX, int mouseY) //4 pixel border?
     {
@@ -103,12 +101,12 @@ public class WindowTexture extends Window
                     CubeInfo info = (CubeInfo)tree.attachedObject;
                     int alpha = tree.selected ? 125 : 25;
                     double ratio = (project.textureWidth / w1);
-                    RendererHelper.drawColourOnScreen(255, 0, 0, alpha, pX + info.txOffset[0] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio, info.dimensions[2] / ratio, info.dimensions[1] / ratio, 0D);
-                    RendererHelper.drawColourOnScreen(0, 0, 255, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio, info.dimensions[0] / ratio, info.dimensions[1] / ratio, 0D);
-                    RendererHelper.drawColourOnScreen(170, 0, 0, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio + info.dimensions[0] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio, info.dimensions[2] / ratio, info.dimensions[1] / ratio, 0D);
-                    RendererHelper.drawColourOnScreen(0, 0, 170, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio + info.dimensions[0] / ratio  + info.dimensions[2] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio, info.dimensions[0] / ratio, info.dimensions[1] / ratio, 0D);
-                    RendererHelper.drawColourOnScreen(0, 255, 0, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio, pY + info.txOffset[1] / ratio, info.dimensions[0] / ratio, info.dimensions[2] / ratio, 0D);
-                    RendererHelper.drawColourOnScreen(0, 170, 0, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio + info.dimensions[0] / ratio, pY + info.txOffset[1] / ratio, info.dimensions[0] / ratio, info.dimensions[2] / ratio, 0D);
+                    RendererHelper.drawColourOnScreen(255, 0, 0, alpha, pX + info.txOffset[0] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio                                                                                               , info.dimensions[2] / ratio, info.dimensions[1] / ratio, 0D);
+                    RendererHelper.drawColourOnScreen(0, 0, 255, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio                                                                  , info.dimensions[0] / ratio, info.dimensions[1] / ratio, 0D);
+                    RendererHelper.drawColourOnScreen(170, 0, 0, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio + info.dimensions[0] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio                                     , info.dimensions[2] / ratio, info.dimensions[1] / ratio, 0D);
+                    RendererHelper.drawColourOnScreen(0, 0, 170, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio + info.dimensions[0] / ratio  + info.dimensions[2] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio       , info.dimensions[0] / ratio, info.dimensions[1] / ratio, 0D);
+                    RendererHelper.drawColourOnScreen(0, 255, 0, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio, pY + info.txOffset[1] / ratio                                                                                               , info.dimensions[0] / ratio, info.dimensions[2] / ratio, 0D);
+                    RendererHelper.drawColourOnScreen(0, 170, 0, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio + info.dimensions[0] / ratio, pY + info.txOffset[1] / ratio                                                                  , info.dimensions[0] / ratio, info.dimensions[2] / ratio, 0D);
                 }
             }
 
@@ -191,7 +189,7 @@ public class WindowTexture extends Window
                         catch(IOException e)
                         {
                         }
-                        Tabula.proxy.tickHandlerClient.mainframe.loadTexture(info.identifier, image);
+                        Tabula.proxy.tickHandlerClient.mainframe.loadTexture(info.identifier, image, false);
                     }
                 }
             }

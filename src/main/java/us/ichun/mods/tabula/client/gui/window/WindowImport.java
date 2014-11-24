@@ -43,7 +43,7 @@ public class WindowImport extends Window
         {
             workspace.removeWindow(this, true);
         }
-        if(element.id == 1)
+        if(element.id == 1 || element.id == 3)
         {
             boolean found = false;
 

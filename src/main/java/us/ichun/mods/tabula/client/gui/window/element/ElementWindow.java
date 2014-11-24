@@ -53,7 +53,6 @@ public class ElementWindow extends Element
         mountedWindow.width = parent.width;
         mountedWindow.height = parent.height;
 
-        //TODO if selected tab, draw window. Right now I don't have anything in the window so there's nothing to draw.
         if(parent instanceof WindowTabs)
         {
             WindowTabs tab = (WindowTabs)parent;
