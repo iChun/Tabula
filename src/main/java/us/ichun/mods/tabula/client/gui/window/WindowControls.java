@@ -318,7 +318,7 @@ public class WindowControls extends Window
                     }
                     else if(e.id == 8)
                     {
-                        info.mcScale = info.parentIdentifier == null ? Double.parseDouble(((ElementNumberInput)e).textFields.get(0).getText()) : 1D;
+                        info.mcScale = info.parentIdentifier == null ? Double.parseDouble(((ElementNumberInput)e).textFields.get(0).getText()) : 0D;
                     }
                 }
 
