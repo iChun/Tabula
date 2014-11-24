@@ -112,7 +112,7 @@ public class Mainframe
         for(UUID id : listeners)
         {
             //TODO stream to other listeners
-            if(id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             {
                 ProjectHelper.receiveChat(name + ": " + message);
             }
@@ -124,7 +124,7 @@ public class Mainframe
         for(UUID id : listeners)
         {
             //TODO stream to other listeners
-            if(id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             {
                 ProjectHelper.removeProjectFromManager(ident);
             }
@@ -138,7 +138,7 @@ public class Mainframe
         for(UUID id : listeners)
         {
             //TODO stream to other listeners
-            if(id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             {
                 ProjectHelper.addProjectToManager(ProjectHelper.createProjectFromJsonHost(project.identifier, project.getAsJson()));
             }
@@ -152,7 +152,7 @@ public class Mainframe
         for(UUID id : listeners)
         {
             //TODO stream to other listeners
-            if(id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             {
                 ProjectHelper.updateProjectTexture(ident, bufferedImage);
             }

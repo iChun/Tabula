@@ -17,6 +17,8 @@ import org.lwjgl.opengl.GL11;
 import us.ichun.mods.tabula.client.mainframe.Mainframe;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 
+import java.util.UUID;
+
 public class TickHandlerClient
 {
     public TickHandlerClient()
@@ -49,7 +51,16 @@ public class TickHandlerClient
                         int oriScale = mc.gameSettings.guiScale;
                         mc.gameSettings.guiScale = mc.gameSettings.guiScale == 1 ? 1 : 2;
                         mainframe = new Mainframe();
-                        mainframe.addListener(UUIDTypeAdapter.fromString(mc.getSession().getPlayerID()), true);
+                        UUID uuid;
+                        try
+                        {
+                            uuid = UUIDTypeAdapter.fromString(mc.getSession().getPlayerID());
+                        }
+                        catch(IllegalArgumentException e)
+                        {
+                            uuid = UUIDTypeAdapter.fromString("deadbeef-dead-beef-dead-beefdeadbeef");
+                        }
+                        mainframe.addListener(uuid, true);
                         FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale, false, true));
                     }
                 }
