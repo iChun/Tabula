@@ -65,6 +65,8 @@ public class GuiWorkspace extends GuiScreen
     public boolean keyZDown;
     public boolean keyYDown;
     public boolean keySDown;
+    public boolean keyNDown;
+    public boolean keyODown;
 
     public Object cubeCopied;
 
@@ -538,6 +540,14 @@ public class GuiWorkspace extends GuiScreen
                         save(false);
                     }
                 }
+                if(Keyboard.isKeyDown(Keyboard.KEY_N) && !keyNDown)
+                {
+                    this.addWindowOnTop(new WindowNewProject(this, this.width / 2 - 100, this.height / 2 - 80, 200, 160, 200, 160).putInMiddleOfScreen());
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_O) && !keyODown)
+                {
+                    this.addWindowOnTop(new WindowOpenProject(this, this.width / 2 - 130, this.height / 2 - 160, 260, 320, 240, 160).putInMiddleOfScreen());
+                }
             }
         }
 
@@ -553,6 +563,8 @@ public class GuiWorkspace extends GuiScreen
         keyZDown = Keyboard.isKeyDown(Keyboard.KEY_Z);
         keyYDown = Keyboard.isKeyDown(Keyboard.KEY_Y);
         keySDown = Keyboard.isKeyDown(Keyboard.KEY_S);
+        keyNDown = Keyboard.isKeyDown(Keyboard.KEY_N);
+        keyODown = Keyboard.isKeyDown(Keyboard.KEY_O);
 
         if(windowDragged != null)
         {
