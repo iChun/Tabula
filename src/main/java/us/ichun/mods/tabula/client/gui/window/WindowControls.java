@@ -9,6 +9,8 @@ import us.ichun.mods.tabula.client.gui.window.element.*;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
+import java.util.Locale;
+
 public class WindowControls extends Window
 {
     public Object selectedObject;
@@ -62,21 +64,21 @@ public class WindowControls extends Window
                     {
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
-                            ((ElementNumberInput)e).textFields.get(l).setText(String.format("%.2f", info.position[l]));
+                            ((ElementNumberInput)e).textFields.get(l).setText(String.format(Locale.ENGLISH, "%.2f", info.position[l]));
                         }
                     }
                     else if(e.id == 3)
                     {
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
-                            ((ElementNumberInput)e).textFields.get(l).setText(String.format("%.2f", info.offset[l]));
+                            ((ElementNumberInput)e).textFields.get(l).setText(String.format(Locale.ENGLISH, "%.2f", info.offset[l]));
                         }
                     }
                     else if(e.id == 4)
                     {
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
-                            ((ElementNumberInput)e).textFields.get(l).setText(String.format("%.2f", info.parentIdentifier == null ? info.scale[l] : 1D));
+                            ((ElementNumberInput)e).textFields.get(l).setText(String.format(Locale.ENGLISH, "%.2f", info.parentIdentifier == null ? info.scale[l] : 1D));
                         }
                     }
                     else if(e.id == 5)
@@ -91,7 +93,7 @@ public class WindowControls extends Window
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
                             ((ElementNumberInput)e).textFields.get(l).setSelectionPos(0);
-                            ((ElementNumberInput)e).textFields.get(l).setText(String.format("%.2f", info.rotation[l]));
+                            ((ElementNumberInput)e).textFields.get(l).setText(String.format(Locale.ENGLISH, "%.2f", info.rotation[l]));
                             ((ElementNumberInput)e).textFields.get(l).setCursorPositionZero();
                         }
                     }
@@ -101,7 +103,7 @@ public class WindowControls extends Window
                     }
                     else if(e.id == 8)
                     {
-                        ((ElementNumberInput)e).textFields.get(0).setText(String.format("%.2f", info.parentIdentifier == null ? info.mcScale : 0D));
+                        ((ElementNumberInput)e).textFields.get(0).setText(String.format(Locale.ENGLISH, "%.2f", info.parentIdentifier == null ? info.mcScale : 0D));
                     }
                     else if(e.id >= 50 && e.id <= 52)
                     {
@@ -136,21 +138,21 @@ public class WindowControls extends Window
                     {
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
-                            ((ElementNumberInput)e).textFields.get(l).setText(String.format("%.2f", 0F));
+                            ((ElementNumberInput)e).textFields.get(l).setText(String.format(Locale.ENGLISH, "%.2f", 0F));
                         }
                     }
                     else if(e.id == 3)
                     {
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
-                            ((ElementNumberInput)e).textFields.get(l).setText(String.format("%.2f", 0F));
+                            ((ElementNumberInput)e).textFields.get(l).setText(String.format(Locale.ENGLISH, "%.2f", 0F));
                         }
                     }
                     else if(e.id == 4)
                     {
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
-                            ((ElementNumberInput)e).textFields.get(l).setText(String.format("%.2f", 1F));
+                            ((ElementNumberInput)e).textFields.get(l).setText(String.format(Locale.ENGLISH, "%.2f", 1F));
                         }
                     }
                     else if(e.id == 5)
@@ -164,7 +166,7 @@ public class WindowControls extends Window
                     {
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
-                            ((ElementNumberInput)e).textFields.get(l).setText(String.format("%.2f", 0F));
+                            ((ElementNumberInput)e).textFields.get(l).setText(String.format(Locale.ENGLISH, "%.2f", 0F));
                         }
                     }
                     else if(e.id == 7)
@@ -173,7 +175,7 @@ public class WindowControls extends Window
                     }
                     else if(e.id == 8)
                     {
-                        ((ElementNumberInput)e).textFields.get(0).setText(String.format("%.2f", 0F));
+                        ((ElementNumberInput)e).textFields.get(0).setText(String.format(Locale.ENGLISH, "%.2f", 0F));
                     }
                     else if(e.id >= 50 && e.id <= 52)
                     {
@@ -415,7 +417,7 @@ public class WindowControls extends Window
                 if(e.id == 6)
                 {
                     ((ElementNumberInput)e).textFields.get(element.id - 50).setSelectionPos(0);
-                    ((ElementNumberInput)e).textFields.get(element.id - 50).setText(String.format("%.2f", (((ElementHoriSlider)element).sliderProg * 360F) - 180F));
+                    ((ElementNumberInput)e).textFields.get(element.id - 50).setText(String.format(Locale.ENGLISH, "%.2f", (((ElementHoriSlider)element).sliderProg * 360F) - 180F));
                     ((ElementNumberInput)e).textFields.get(element.id - 50).setFocused(true);
                     ((ElementNumberInput)e).textFields.get(element.id - 50).setCursorPositionZero();
                     ((ElementNumberInput)e).textFields.get(element.id - 50).setSelectionPos(0);
