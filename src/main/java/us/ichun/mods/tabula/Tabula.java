@@ -31,8 +31,7 @@ import java.util.EnumMap;
 public class Tabula
         implements IConfigUser
 {
-    //TODO update dependency
-    public static final String version = iChunUtil.versionMC + ".0.0";
+    public static final String version = iChunUtil.versionMC + ".0.1";
 
     @Mod.Instance("Tabula")
     public static Tabula instance;
