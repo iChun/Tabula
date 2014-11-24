@@ -1,16 +1,19 @@
+tabula.name=Tabula
+
 element.minimize=Minimieren
-element.expand=Ausweiten
+element.expand=Erweitern
 
 element.button.ok=OK
 element.button.cancel=Abbrechen
 
-window.controls.title=Steuerungen
+window.controls.title=Steuerung
 window.controls.cubeName=Gewählter Würfelname
 window.controls.dimensions=Dimensionen
 window.controls.position=Position
 window.controls.offset=Offset
 window.controls.rotation=Rotation
-window.controls.scale=Skalierung
+window.controls.mcScale=MC Skalierung
+window.controls.scale=Eigene Skalierung
 window.controls.txOffset=Textur Offset
 window.controls.txMirror=Spiegeln
 window.controls.txMirrorFull=Textur spiegeln
@@ -18,6 +21,9 @@ window.controls.txMirrorFull=Textur spiegeln
 window.newProject.title=Neues Projekt
 window.newProject.projName=Projektname
 window.newProject.authName=Autorenname
+window.newProject.txDimensions=Texturen-Breite und -Höhe
+
+window.editProject.title=Projekt bearbeiten
 
 window.modelTree.title=Modell-Baum
 window.modelTree.newCube=Neuer Würfel
@@ -27,29 +33,35 @@ window.modelTree.delete=Löschen
 window.texture.title=Textur
 window.texture.loadTexture=Textur laden
 window.texture.clearTexture=Textur leeren
-window.texture.listenTexture=Aufpassen
+window.texture.listenTexture=Auf Änderungen achten
 window.texture.listenTextureFull=Achte auf Textur-Änderungen (Wenn die Textur dir gehört)
-window.texture.remoteTexture=Remote Texture
+window.texture.remoteTexture=Remote Textur
 window.texture.noTexture=Keine Textur
 
 window.import.title=Modell in aktuelles Projekt importieren
 window.import.texture=Textur
-window.import.textureFull=Importiere auch die Textur (falls verfügbar)?
+window.import.textureFull=Auch die Textur (falls verfügbar) importieren?
 
 window.importMC.title=Minecraft Modell importieren
 window.importMC.newProject=Neu?
 window.importMC.newProjectFull=Das Modell in ein neues Projekt importieren?
 
 window.loadTexture.title=Textur laden
+window.loadTexture.updateTextureDimensions=Aktualisieren?
+window.loadTexture.updateTextureDimensionsFull=Die Textur-Dimensionen des Projekts aktualisieren?
 
 window.chat.title=Chat
 window.chat.textbox=Drücke ENTER zum Senden
 
 window.saveAs.title=Speichern unter
-window.saveAs.fileName=Datei Name
+window.saveAs.fileName=Dateiname
 window.saveAs.overwrite=Überschreiben?
 window.saveAs.confirmOverwrite=Datei existiert bereits! Überschreiben?
 window.saveAs.failed=Speichern der Datei fehlgeschlagen.
+
+window.notSaved.title=Projekt nicht gespeichert!
+window.notSaved.unsaved=Das Projekt ist nicht gespeichert!
+window.notSaved.save=Möchtest du vor dem Schließen speichern?
 
 window.open.title=Projekt öffnen
 window.open.opening=Öffne...
@@ -57,13 +69,49 @@ window.open.failed=Öffnen der Datei fehlgeschlagen.
 
 window.popup.title=Achtung!
 
-topdock.new=Neu
-topdock.open=Öffnen
+window.about.title=Über
+window.about.line0=Mod Version: 
+window.about.line1=Entwickler: 
+window.about.line2=Texturen: 
+window.about.line3=Beiträge: 
+window.about.line4=Tester: 
+window.about.line5=Aktuelle Lokalisierung: NPException
+window.about.line6=Funktion und User Interface basieren auf dem ursprünglichen Techne von ZeuX und r4wk
+window.about.os1=Wenn du irgendwelche Probleme oder Vorschläge hast, gehe zu folgendem Link
+window.about.os2=Das Projekt ist Open Source und kann hier gefunden werden:
+
+export.title=Projekt exportieren
+export.failed=Export fehlgeschlagen!
+export.textureMap.name=Textur Map
+export.javaClass.title=Als Java-Klasse exportieren
+export.javaClass.package=Paket für die Klasse
+export.javaClass.name=Java-Klasse
+export.javaClass.className=Klassenname
+export.projTexture.name=Projekt Textur
+
+topdock.new=Neues Projekt
+topdock.edit=Projekt bearbeiten
+topdock.open=Projekt öffnen
 topdock.save=Speichern
 topdock.saveAs=Speichern unter
-topdock.import=Importieren
+topdock.import=Projekt Importieren
 topdock.importMC=Von Minecraft importieren
-topdock.export=Exportieren
-topdock.chat=Chat Fenster umschalten
+topdock.export=Projekt exportieren
+topdock.cut=Ausschneiden
+topdock.copy=Kopieren
+topdock.paste=Einfügen
+topdock.pasteInPlace=An Position einfügen
+topdock.undo=Rückgängig
+topdock.redo=Wiederholen
+topdock.chat=Chat Fenster an-/ausschalten
+topdock.info=Über diese Mod
+topdock.exitTabula=Tabula verlassen
 topdock.wood=Holz
-topdock.woodFull=Anzeige der Planken umschalten
+topdock.woodFull=Anzeige der Planken an-/ausschalten
+
+system.joinedSession=%s ist der Sitzung beigetreten.
+system.addEditor=%1$s hat %2$s als Bearbeiter hinzugefügt.
+system.removeEditor=%1$s hat %2$s als Bearbeiter entfernt.
+system.cannotRemoveHost=%s ist der Host und kann nicht als Bearbeiter entfernt werden.
+system.cannotReachHost=Der Host ist nicht erreichbar. Er ist möglicherweise gecrasht oder hat die Verbindung getrennt. Ziehe vor dem Verlassen ein Speichern der Modelle für ihn in Erwägung.
+system.sessionEnded=Der Host hat die Sitzung beendet.
