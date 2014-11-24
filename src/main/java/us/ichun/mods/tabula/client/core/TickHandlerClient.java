@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import us.ichun.mods.tabula.client.mainframe.Mainframe;
@@ -43,9 +44,9 @@ public class TickHandlerClient
                 ScaledResolution reso = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
                 int i = Mouse.getX() * reso.getScaledWidth() / mc.displayWidth;
                 int j = reso.getScaledHeight() - Mouse.getY() * reso.getScaledHeight() / mc.displayHeight - 1;
-                if(Mouse.isButtonDown(0) && !mouseDown)
+                if(Mouse.isButtonDown(0) && !mouseDown || Keyboard.isKeyDown(Keyboard.KEY_T))
                 {
-                    if(i >= btnX && i <= btnX + 20 && j >= btnY && j <= btnY + 20)
+                    if(i >= btnX && i <= btnX + 20 && j >= btnY && j <= btnY + 20 || Keyboard.isKeyDown(Keyboard.KEY_T))
                     {
                         btnDummy.func_146113_a(mc.getSoundHandler());
                         int oriScale = mc.gameSettings.guiScale;
