@@ -324,6 +324,8 @@ public class GuiWorkspace extends GuiScreen
             modelSelector.onClick(mouseX, mouseY);
         }
 
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
         renderWorkspace(mouseX, mouseY, f);
 
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
