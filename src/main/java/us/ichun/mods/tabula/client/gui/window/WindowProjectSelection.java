@@ -130,6 +130,12 @@ public class WindowProjectSelection extends WindowTopDock
         {
             updateModelTree(projects.get(selectedProject));
         }
+        else
+        {
+            workspace.windowModelTree.modelList.trees.clear();
+            workspace.windowControls.selectedObject = null;
+            workspace.windowControls.refresh = true;
+        }
 
         resized();
     }
