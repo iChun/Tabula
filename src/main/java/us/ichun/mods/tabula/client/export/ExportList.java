@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public final class ExportList
 {
-    public static ArrayList<Exporter> exportTypes = new ArrayList<Exporter>() {{
+    public static final ArrayList<Exporter> exportTypes = new ArrayList<Exporter>() {{
         add(new ExportTextureMap());
         add(new ExportJava());
         add(new ExportProjectTexture());

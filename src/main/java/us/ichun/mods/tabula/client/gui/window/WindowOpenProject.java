@@ -1,14 +1,15 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
-import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.Tabula;
+import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
+import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
-import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
+import us.ichun.module.tabula.client.formats.ImportList;
+import us.ichun.module.tabula.common.project.ProjectInfo;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class WindowOpenProject extends Window
 
         for(File file : textures)
         {
-            if(!file.isDirectory() && (file.getName().endsWith(".tbl") || file.getName().endsWith(".tcn") || file.getName().endsWith(".tc2")))
+            if(!file.isDirectory() && ImportList.isFileSupported(file))
             {
                 files.add(file);
             }
@@ -75,7 +76,7 @@ public class WindowOpenProject extends Window
                     {
                         workspace.windowDragged = null;
                     }
-                    ProjectInfo project = ProjectInfo.openProject((File)tree.attachedObject);
+                    ProjectInfo project = ImportList.createProjectFromFile((File)tree.attachedObject);
                     if(project == null)
                     {
                         workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 180, 80, 180, 80, "window.open.failed").putInMiddleOfScreen());
