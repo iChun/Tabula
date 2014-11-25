@@ -14,24 +14,26 @@ import ichun.common.core.updateChecker.ModVersionChecker;
 import ichun.common.core.updateChecker.ModVersionInfo;
 import ichun.common.iChunUtil;
 import net.minecraft.client.model.ModelBase;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import us.ichun.mods.tabula.common.core.CommonProxy;
+import us.ichun.mods.tabula.common.core.EventHandler;
 import us.ichun.module.tabula.client.model.ModelList;
 
 import java.util.EnumMap;
 
 @Mod(modid = "Tabula", name = "Tabula",
         version = Tabula.version,
-        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".1.0,)",
+        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".1.2,)",
         acceptableRemoteVersions = "[" + iChunUtil.versionMC +".0.0," + iChunUtil.versionMC + ".1.0)"
 )
 public class Tabula
         implements IConfigUser
 {
-    public static final String version = iChunUtil.versionMC + ".0.1";
+    public static final String version = iChunUtil.versionMC + ".0.2";
 
     @Mod.Instance("Tabula")
     public static Tabula instance;
@@ -50,6 +52,8 @@ public class Tabula
     public void preLoad(FMLPreInitializationEvent event)
     {
         proxy.init();
+
+        MinecraftForge.EVENT_BUS.register(new EventHandler());
 
         ModVersionChecker.register_iChunMod(new ModVersionInfo("Tabula", iChunUtil.versionOfMC, version, false));
     }

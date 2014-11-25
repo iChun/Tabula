@@ -5,6 +5,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.ScaledResolution;
@@ -12,6 +13,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -22,11 +24,6 @@ import java.util.UUID;
 
 public class TickHandlerClient
 {
-    public TickHandlerClient()
-    {
-        btnDummy = new GuiButton(0, btnX, btnY, 20, 20, "T");
-    }
-
     @SubscribeEvent
     public void onRenderTick(TickEvent.RenderTickEvent event)
     {
@@ -36,38 +33,11 @@ public class TickHandlerClient
 
             if(mc.currentScreen instanceof GuiMainMenu)
             {
-                btnX = mc.currentScreen.width / 2 - 124;
-                btnY = mc.currentScreen.height / 4 + 48 + 24 * 2;
-                btnDummy.xPosition = btnX;
-                btnDummy.yPosition = btnY;
-
-                ScaledResolution reso = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
-                int i = Mouse.getX() * reso.getScaledWidth() / mc.displayWidth;
-                int j = reso.getScaledHeight() - Mouse.getY() * reso.getScaledHeight() / mc.displayHeight - 1;
-                if(Mouse.isButtonDown(0) && !mouseDown || Keyboard.isKeyDown(Keyboard.KEY_T))
+                if(Keyboard.isKeyDown(Keyboard.KEY_T) && !keyTDown)
                 {
-                    if(i >= btnX && i <= btnX + 20 && j >= btnY && j <= btnY + 20 || Keyboard.isKeyDown(Keyboard.KEY_T))
-                    {
-                        btnDummy.func_146113_a(mc.getSoundHandler());
-                        int oriScale = mc.gameSettings.guiScale;
-                        mc.gameSettings.guiScale = mc.gameSettings.guiScale == 1 ? 1 : 2;
-                        mainframe = new Mainframe();
-                        UUID uuid;
-                        try
-                        {
-                            uuid = UUIDTypeAdapter.fromString(mc.getSession().getPlayerID());
-                        }
-                        catch(IllegalArgumentException e)
-                        {
-                            uuid = UUIDTypeAdapter.fromString("deadbeef-dead-beef-dead-beefdeadbeef");
-                        }
-                        mainframe.addListener(uuid, true);
-                        FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale, false, true));
-                    }
+                    initializeMainframe();
                 }
-                btnDummy.drawButton(mc, i, j);
-
-                mouseDown = Mouse.isButtonDown(0);
+                keyTDown = Keyboard.isKeyDown(Keyboard.KEY_T);
             }
         }
     }
@@ -84,10 +54,28 @@ public class TickHandlerClient
         }
     }
 
+    public void initializeMainframe()
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+        mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
+
+        int oriScale = mc.gameSettings.guiScale;
+        mc.gameSettings.guiScale = mc.gameSettings.guiScale == 1 ? 1 : 2;
+        mainframe = new Mainframe();
+        UUID uuid;
+        try
+        {
+            uuid = UUIDTypeAdapter.fromString(mc.getSession().getPlayerID());
+        }
+        catch(IllegalArgumentException e)
+        {
+            uuid = UUIDTypeAdapter.fromString("deadbeef-dead-beef-dead-beefdeadbeef");
+        }
+        mainframe.addListener(uuid, true);
+        FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale, false, true));
+    }
+
     public Mainframe mainframe;
 
-    private int btnX = 0;
-    private int btnY = 0;
-    private boolean mouseDown;
-    private GuiButton btnDummy;
+    private boolean keyTDown;
 }
