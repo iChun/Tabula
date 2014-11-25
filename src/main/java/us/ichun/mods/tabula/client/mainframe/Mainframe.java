@@ -446,6 +446,19 @@ public class Mainframe
         }
     }
 
+    public void reidentifyChildren(ArrayList<CubeInfo> children, ProjectInfo info)
+    {
+        for(CubeInfo cube : children)
+        {
+            cube.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
+            if(info != null)
+            {
+                info.cubeCount++;
+            }
+            reidentifyChildren(cube.getChildren(), info);
+        }
+    }
+
     public void createNewCube(String ident, String json, boolean inPlace)
     {
         for(ProjectInfo info : projects)
@@ -465,6 +478,8 @@ public class Mainframe
 
                 info.cubeCount++;
                 info.cubes.add(cube);
+
+                reidentifyChildren(cube.getChildren(), info);
 
                 streamProject(info);
             }
@@ -707,7 +722,10 @@ public class Mainframe
                     if(cube != null && cube.parentIdentifier != null)
                     {
                         CubeInfo info1 = (CubeInfo)proj.getObjectByIdent(cube.parentIdentifier);
-                        info1.removeChild(cube);
+                        if(info1 != null) //null check it just in case something strange happens again.
+                        {
+                            info1.removeChild(cube);
+                        }
                     }
                 }
 
