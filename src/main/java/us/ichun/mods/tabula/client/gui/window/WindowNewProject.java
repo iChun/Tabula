@@ -1,14 +1,13 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
-import scala.Int;
-import us.ichun.mods.tabula.Tabula;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.Theme;
+import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementNumberInput;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
+import us.ichun.mods.tabula.common.Tabula;
 
 public class WindowNewProject extends Window
 {

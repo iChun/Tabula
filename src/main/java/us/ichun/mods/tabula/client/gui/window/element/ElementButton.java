@@ -3,8 +3,8 @@ package us.ichun.mods.tabula.client.gui.window.element;
 import ichun.client.render.RendererHelper;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Mouse;
-import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.client.gui.Theme;
+import us.ichun.mods.tabula.client.gui.window.Window;
 
 public class ElementButton extends Element
 {

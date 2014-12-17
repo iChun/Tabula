@@ -1,8 +1,8 @@
 package us.ichun.mods.tabula.client.gui.window.element;
 
 import org.lwjgl.opengl.GL11;
-import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.client.gui.Theme;
+import us.ichun.mods.tabula.client.gui.window.Window;
 
 import java.util.List;
 

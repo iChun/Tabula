@@ -2,12 +2,12 @@ package us.ichun.mods.tabula.client.gui.window;
 
 import ichun.common.core.util.MD5Checksum;
 import us.ichun.mods.tabula.client.core.ResourceHelper;
-import us.ichun.mods.tabula.Tabula;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
+import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 
 import javax.imageio.ImageIO;

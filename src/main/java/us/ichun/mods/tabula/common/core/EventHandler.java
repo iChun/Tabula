@@ -1,13 +1,13 @@
 package us.ichun.mods.tabula.common.core;
 
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import us.ichun.mods.tabula.Tabula;
+import us.ichun.mods.tabula.common.Tabula;
 
 import java.awt.*;
 
@@ -16,7 +16,7 @@ public class EventHandler
     public static final int TABULA_BUTTON_ID = "Tabula".hashCode();
 
     @SideOnly(Side.CLIENT)
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onInitGuiPost(GuiScreenEvent.InitGuiEvent.Post event)
     {
         if(event.gui instanceof GuiMainMenu)

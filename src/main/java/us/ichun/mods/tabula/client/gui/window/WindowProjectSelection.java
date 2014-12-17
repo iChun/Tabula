@@ -95,8 +95,8 @@ public class WindowProjectSelection extends WindowTopDock
                     {
                         selectedProject = 0;
                     }
-                    changeProject(selectedProject);
                 }
+                changeProject(selectedProject);
                 break;
             }
         }
@@ -267,11 +267,7 @@ public class WindowProjectSelection extends WindowTopDock
 
     public void changeProject(int i)
     {
-        if(selectedProject == i)
-        {
-            return;
-        }
-        if(selectedProject != -1)
+        if(selectedProject != -1 && selectedProject != i)
         {
             ProjectInfo info = projects.get(selectedProject);
             info.cameraFov = workspace.cameraFov;

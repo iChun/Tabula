@@ -3,8 +3,8 @@ package us.ichun.mods.tabula.client.gui.window;
 import ichun.client.render.RendererHelper;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.Theme;
+import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementMinimize;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTitle;
 

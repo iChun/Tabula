@@ -1,14 +1,11 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
-import us.ichun.mods.tabula.Tabula;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextWrapper;
-import us.ichun.mods.tabula.client.gui.window.element.ElementTextWrapperChat;
-
-import java.util.ArrayList;
+import us.ichun.mods.tabula.common.Tabula;
 
 public class WindowCredits extends Window
 {

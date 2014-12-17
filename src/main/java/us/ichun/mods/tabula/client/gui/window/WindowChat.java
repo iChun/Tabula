@@ -1,12 +1,12 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.client.Minecraft;
-import us.ichun.mods.tabula.Tabula;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextWrapper;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextWrapperChat;
+import us.ichun.mods.tabula.common.Tabula;
 
 public class WindowChat extends Window
 {

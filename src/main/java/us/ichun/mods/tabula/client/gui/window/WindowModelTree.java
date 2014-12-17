@@ -2,12 +2,12 @@ package us.ichun.mods.tabula.client.gui.window;
 
 import ichun.client.render.RendererHelper;
 import net.minecraft.util.ResourceLocation;
-import us.ichun.mods.tabula.Tabula;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButtonTextured;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
+import us.ichun.mods.tabula.common.Tabula;
 
 public class WindowModelTree extends Window
 {

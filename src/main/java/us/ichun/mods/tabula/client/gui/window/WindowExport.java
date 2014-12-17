@@ -1,15 +1,11 @@
 package us.ichun.mods.tabula.client.gui.window;
 
-import us.ichun.mods.tabula.Tabula;
 import us.ichun.mods.tabula.client.export.ExportList;
 import us.ichun.mods.tabula.client.export.types.Exporter;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
-import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
-import us.ichun.module.tabula.client.model.ModelInfo;
-import us.ichun.module.tabula.client.model.ModelList;
 
 public class WindowExport extends Window
 {

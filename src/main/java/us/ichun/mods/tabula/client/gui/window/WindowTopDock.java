@@ -1,13 +1,11 @@
 package us.ichun.mods.tabula.client.gui.window;
 
-import ichun.common.core.util.MD5Checksum;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
-import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButtonTextured;
+import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
 
 public class WindowTopDock extends Window
 {

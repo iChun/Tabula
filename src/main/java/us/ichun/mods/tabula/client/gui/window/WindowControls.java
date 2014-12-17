@@ -2,10 +2,10 @@ package us.ichun.mods.tabula.client.gui.window;
 
 import com.google.gson.Gson;
 import net.minecraft.util.StatCollector;
-import us.ichun.mods.tabula.Tabula;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.*;
+import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 

@@ -2,13 +2,10 @@ package us.ichun.mods.tabula.client.export.types;
 
 import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.module.tabula.common.project.ProjectInfo;
-import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class ExportProjectTexture extends Exporter
 {

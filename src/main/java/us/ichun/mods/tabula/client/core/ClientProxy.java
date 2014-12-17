@@ -22,9 +22,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
+import us.ichun.mods.tabula.common.core.CommonProxy;
 import us.ichun.module.tabula.client.model.ModelInfo;
 import us.ichun.module.tabula.client.model.ModelList;
-import us.ichun.mods.tabula.common.core.CommonProxy;
 
 import java.lang.reflect.Field;
 import java.util.*;

@@ -4,12 +4,12 @@ import ichun.common.core.util.MD5Checksum;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextInputSaveAs;
+import us.ichun.module.tabula.common.project.ProjectInfo;
 
 import java.io.File;
 

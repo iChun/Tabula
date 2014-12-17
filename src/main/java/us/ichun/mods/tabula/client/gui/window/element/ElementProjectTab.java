@@ -1,10 +1,10 @@
 package us.ichun.mods.tabula.client.gui.window.element;
 
 import ichun.client.render.RendererHelper;
-import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.client.gui.window.WindowProjectSelection;
+import us.ichun.module.tabula.common.project.ProjectInfo;
 
 public class ElementProjectTab extends Element
 {

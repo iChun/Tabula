@@ -1,4 +1,4 @@
-package us.ichun.mods.tabula;
+package us.ichun.mods.tabula.common;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;

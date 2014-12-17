@@ -1,12 +1,10 @@
 package us.ichun.mods.tabula.client.export.types;
 
-import net.minecraft.client.model.ModelRenderer;
 import org.apache.commons.io.FileUtils;
-import org.lwjgl.opengl.GL11;
-import us.ichun.mods.tabula.Tabula;
 import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.WindowExportJava;
+import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
@@ -91,7 +89,7 @@ public class ExportJava extends Exporter
                 sb.append("        this." + field + ".mirror = true;\n");
             }
             sb.append("        this." + field + ".setRotationPoint(" + cube.position[0] + "F, " + cube.position[1] + "F, " + cube.position[2] + "F);\n");
-            sb.append("        this." + field + ".addBox(" + cube.offset[0] + "F, " + cube.offset[1] + "F, " + cube.offset[2] + "F, " + cube.dimensions[0] + ", " + cube.dimensions[1] + ", " + cube.dimensions[2] + ");\n");
+            sb.append("        this." + field + ".addBox(" + cube.offset[0] + "F, " + cube.offset[1] + "F, " + cube.offset[2] + "F, " + cube.dimensions[0] + ", " + cube.dimensions[1] + ", " + cube.dimensions[2] + ", " + cube.mcScale + "F);\n");
             if(!(cube.rotation[0] == 0.0D && cube.rotation[1] == 0.0D && cube.rotation[2] == 0.0D))
             {
                 sb.append("        this.setRotateAngle(" + field + ", " + Math.toRadians(cube.rotation[0]) + "F, " + Math.toRadians(cube.rotation[1]) + "F, " + Math.toRadians(cube.rotation[2]) + "F);\n");
