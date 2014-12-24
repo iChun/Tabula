@@ -116,6 +116,10 @@ public class ElementNumberInput extends Element
                         }
                     }
                 }
+                else
+                {
+                    textFields.get(selectedTextField).setText("0");
+                }
                 parent.elementTriggered(this);
                 break;
             }
@@ -336,6 +340,10 @@ public class ElementNumberInput extends Element
             }
             else if(key == Keyboard.KEY_RETURN)
             {
+                if(textFields.get(selectedTextField).getText().isEmpty())
+                {
+                    textFields.get(selectedTextField).setText("0");
+                }
                 parent.elementTriggered(this);
             }
             String oldText = textFields.get(selectedTextField).getText();

@@ -150,7 +150,7 @@ public class GuiWorkspace extends GuiScreen
             windowChat = new WindowChat(this, -1000, -1000, 250, 180, 162, 50);
             levels.get(4).add(windowChat);
 
-//            Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject("New Project", "iChun? :O", 64, 32);
+            //            Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject("New Project", "iChun? :O", 64, 32);
         }
         resize = true;
         screenResize();
