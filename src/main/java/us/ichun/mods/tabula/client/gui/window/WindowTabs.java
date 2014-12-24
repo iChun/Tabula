@@ -57,7 +57,7 @@ public class WindowTabs extends Window
                 minWidth = window.minWidth;
                 if(width < minWidth)
                 {
-                    width = minWidth;
+                    oriWidth = width = minWidth;
                 }
             }
             if(window.minHeight > minHeight)
@@ -65,7 +65,7 @@ public class WindowTabs extends Window
                 minHeight = window.minHeight;
                 if(height < minHeight)
                 {
-                    height = minHeight;
+                    oriHeight = height = minHeight;
                 }
             }
             window.width = width;

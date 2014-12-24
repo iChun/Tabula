@@ -622,6 +622,10 @@ public class GuiWorkspace extends GuiScreen
                                 tabs.addWindow(windowDragged, true);
                                 levels.get(i).remove(j);
                                 levels.get(i).add(j, tabs);
+                                if(i < VARIABLE_LEVEL)
+                                {
+                                    redock(i, null);
+                                }
                                 removeWindow(windowDragged);
                                 windowDragged = null;
                                 tabbed = true;

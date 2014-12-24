@@ -47,8 +47,8 @@ public class Window
 
         posX = x;
         posY = y;
-        width = w;
-        height = h;
+        oriWidth = width = w;
+        oriHeight = height = h;
         minWidth = minW;
         minHeight = minH;
 
