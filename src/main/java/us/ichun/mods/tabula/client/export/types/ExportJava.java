@@ -71,6 +71,7 @@ public class ExportJava extends Exporter
         sb.append("        this.textureWidth = " + info.textureWidth + ";\n");
         sb.append("        this.textureHeight = " + info.textureHeight + ";\n");
         HashMap<CubeInfo, CubeInfo> parentMap = new HashMap<CubeInfo, CubeInfo>();
+        StringBuilder childSb = new StringBuilder();
         for(Map.Entry<CubeInfo, String> e : cubeFieldMap.entrySet())
         {
             CubeInfo cube = e.getKey();
@@ -100,12 +101,13 @@ public class ExportJava extends Exporter
             }
             if(parentMap.get(cube) != null)
             {
-                sb.append("        this." + cubeFieldMap.get(parentMap.get(cube)) + ".addChild(this." + field + ");\n");
+                childSb.append("        this." + cubeFieldMap.get(parentMap.get(cube)) + ".addChild(this." + field + ");\n");
             }
         }
+        sb.append(childSb.toString());
         for(Map.Entry<CubeInfo, CubeInfo> e : parentMap.entrySet())
         {
-            cubeFieldMap.remove(e.getKey());
+            cubeFieldMap.remove(e.getKey());//removing it so children don't get called to render later on.
         }
         sb.append("    }\n\n");
         sb.append("    @Override\n");
