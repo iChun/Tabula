@@ -154,18 +154,24 @@ public class ClientProxy extends CommonProxy
         {
             try
             {
+                ModelBase base = null;
+                ResourceLocation loc = null;
                 Field[] fields = e.getValue().getClass().getDeclaredFields();
                 for(Field f : fields)
                 {
                     f.setAccessible(true);
                     if(ModelBase.class.isAssignableFrom(f.getType()))
                     {
-                        ModelBase base = (ModelBase)f.get(e.getValue());
-                        if(base != null && e.getKey() != null)
-                        {
-                            ModelList.models.add(new ModelInfo(null, base, e.getKey()));
-                        }
+                        base = (ModelBase)f.get(e.getValue());
                     }
+                    if(loc == null && ResourceLocation.class.isAssignableFrom(f.getType()))
+                    {
+                        loc = (ResourceLocation)f.get(e.getValue());
+                    }
+                }
+                if(base != null && e.getKey() != null)
+                {
+                    ModelList.models.add(new ModelInfo(loc, base, e.getKey()));
                 }
             }
             catch(Exception e1)
@@ -187,18 +193,24 @@ public class ClientProxy extends CommonProxy
 
             try
             {
+                ModelBase base = null;
+                ResourceLocation loc = null;
                 Field[] fields = rend.getClass().getDeclaredFields();
                 for(Field f : fields)
                 {
                     f.setAccessible(true);
                     if(ModelBase.class.isAssignableFrom(f.getType()))
                     {
-                        ModelBase base = (ModelBase)f.get(rend);
-                        if(base != null && te != null)
-                        {
-                            ModelList.models.add(new ModelInfo(null, base, te));
-                        }
+                        base = (ModelBase)f.get(rend);
                     }
+                    if(loc == null && ResourceLocation.class.isAssignableFrom(f.getType()))
+                    {
+                        loc = (ResourceLocation)f.get(e.getValue());
+                    }
+                }
+                if(base != null && te != null)
+                {
+                    ModelList.models.add(new ModelInfo(loc, base, te));
                 }
             }
             catch(Exception e1)
@@ -215,18 +227,24 @@ public class ClientProxy extends CommonProxy
 
             try
             {
+                ModelBase base = null;
+                ResourceLocation loc = null;
                 Field[] fields = rend.getClass().getDeclaredFields();
                 for(Field f : fields)
                 {
                     f.setAccessible(true);
                     if(ModelBase.class.isAssignableFrom(f.getType()))
                     {
-                        ModelBase base = (ModelBase)f.get(rend);
-                        if(base != null && te != null)
-                        {
-                            ModelList.models.add(new ModelInfo(null, base, te));
-                        }
+                        base = (ModelBase)f.get(rend);
                     }
+                    if(loc == null && ResourceLocation.class.isAssignableFrom(f.getType()))
+                    {
+                        loc = (ResourceLocation)f.get(e.getValue());
+                    }
+                }
+                if(base != null && te != null)
+                {
+                    ModelList.models.add(new ModelInfo(loc, base, te));
                 }
             }
             catch(Exception e1)
@@ -244,18 +262,24 @@ public class ClientProxy extends CommonProxy
 
             try
             {
+                ModelBase base = null;
+                ResourceLocation loc = null;
                 Field[] fields = renderer.getClass().getDeclaredFields();
                 for(Field f : fields)
                 {
                     f.setAccessible(true);
                     if(ModelBase.class.isAssignableFrom(f.getType()))
                     {
-                        ModelBase base = (ModelBase)f.get(renderer);
-                        if(base != null && item != null)
-                        {
-                            ModelList.models.add(new ModelInfo(null, base, item.getClass()));
-                        }
+                        base = (ModelBase)f.get(renderer);
                     }
+                    if(loc == null && ResourceLocation.class.isAssignableFrom(f.getType()))
+                    {
+                        loc = (ResourceLocation)f.get(e.getValue());
+                    }
+                }
+                if(base != null && item != null)
+                {
+                    ModelList.models.add(new ModelInfo(loc, base, item.getClass()));
                 }
             }
             catch(Exception e1)
