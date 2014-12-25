@@ -89,7 +89,11 @@ public class Window
         }
         else
         {
-            if(isTab)
+            if(this instanceof WindowAnimate)
+            {
+                RendererHelper.startGlScissor(posX, posY + 1, getWidth(), getHeight());
+            }
+            else if(isTab)
             {
                 RendererHelper.startGlScissor(posX + 1, posY + 1 + 12, getWidth() - 2, getHeight() - 2 - 12);
             }
@@ -101,6 +105,10 @@ public class Window
             {
                 if(docked >= 0)
                 {
+                    if(this instanceof WindowAnimate)
+                    {
+                        RendererHelper.drawColourOnScreen(Theme.instance.windowBorder[0], Theme.instance.windowBorder[1], Theme.instance.windowBorder[2], 255, posX, posY + 1, getWidth(), getHeight() - 2, 0);
+                    }
                     RendererHelper.drawColourOnScreen(Theme.instance.windowBackground[0], Theme.instance.windowBackground[1], Theme.instance.windowBackground[2], 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
                 }
                 else
@@ -112,7 +120,14 @@ public class Window
         }
         if(hasTitle)
         {
-            RendererHelper.drawColourOnScreen(Theme.instance.windowBorder[0], Theme.instance.windowBorder[1], Theme.instance.windowBorder[2], 255, posX + 1, posY + 1, getWidth() - 2, 12, 0);
+            if(this instanceof WindowAnimate)
+            {
+                RendererHelper.drawColourOnScreen(Theme.instance.windowBorder[0], Theme.instance.windowBorder[1], Theme.instance.windowBorder[2], 255, posX, posY + 1, getWidth(), 12, 0);
+            }
+            else
+            {
+                RendererHelper.drawColourOnScreen(Theme.instance.windowBorder[0], Theme.instance.windowBorder[1], Theme.instance.windowBorder[2], 255, posX + 1, posY + 1, getWidth() - 2, 12, 0);
+            }
             String titleToRender = StatCollector.translateToLocal(titleLocale);
             while(titleToRender.length() > 1 && workspace.getFontRenderer().getStringWidth(titleToRender) > getWidth() - (BORDER_SIZE * 2) - workspace.getFontRenderer().getStringWidth("  _"))
             {
@@ -185,7 +200,7 @@ public class Window
         for(int k = elements.size() - 1; k >= 0; k--)
         {
             Element element = elements.get(k);
-            if(mouseX >= element.posX && mouseX <= element.posX + element.width && mouseY >= element.posY && mouseY <= element.posY + element.height && (minimized && element.ignoreMinimized || !minimized) && !(workspace.projectManager.projects.isEmpty() && !interactableWhileNoProjects()) && element.onClick(mouseX, mouseY, id))
+            if(mouseX >= element.posX && mouseX <= element.posX + element.width && mouseY >= element.posY && mouseY <= element.posY + element.height && (minimized && element.ignoreMinimized || !minimized) && !(workspace.projectManager.projects.isEmpty() && !interactableWhileNoProjects() && !(element instanceof ElementMinimize)) && element.onClick(mouseX, mouseY, id))
             {
                 if(id == 0)
                 {

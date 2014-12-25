@@ -81,6 +81,13 @@ window.about.line6=Function and UI are based off the original Techne by ZeuX and
 window.about.os1=If you have any issues or suggestions go to the following link
 window.about.os2=Project is open source and can be found at:
 
+window.animate.title=Animation
+window.animate.newAnim=New Animation
+window.animate.editAnim=Edit Animation
+window.animate.delAnim=Delete Animation
+window.animate.play=Play Animation
+window.animate.stop=Stop Animation
+
 export.title=Export Project
 export.failed=Export Failed!
 export.textureMap.name=Texture Map

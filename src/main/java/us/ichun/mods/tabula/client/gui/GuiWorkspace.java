@@ -75,6 +75,7 @@ public class GuiWorkspace extends GuiScreen
     public WindowTexture windowTexture;
     public WindowModelTree windowModelTree;
     public WindowChat windowChat;
+    public WindowAnimate windowAnimate;
 
     public Window windowDragged;
     public int dragType; //1 = title drag, 2 >= border drag.
@@ -139,9 +140,12 @@ public class GuiWorkspace extends GuiScreen
             windowControls = new WindowControls(this, width / 2 - 80, height / 2 - 125, 162, 270, 162, 270);
             windowTexture = new WindowTexture(this, width / 2 - 53, height / 2 - 100, 106, 100, 106, 88);
             windowModelTree = new WindowModelTree(this, width / 2 - 53, height / 2 - 125, 106, 250, 106, 250);
+            windowAnimate = new WindowAnimate(this, 0, 0, 100, 100, 100, 100);
             addToDock(0, windowControls);
             addToDock(1, windowTexture);
             addToDock(1, windowModelTree);
+            addToDock(2, windowAnimate);
+            windowAnimate.toggleMinimize();
 
             levels.get(3).add(new WindowTopDock(this, 0, 0, width, 20, 20, 20));
             projectManager = new WindowProjectSelection(this, 0, 0, width, 20, 20, 20);
@@ -579,74 +583,72 @@ public class GuiWorkspace extends GuiScreen
                 bringWindowToFront(windowDragged);
                 if(dragType == 1) // moving the window
                 {
-                    int moveX = windowDragged.clickX - (mouseX - windowDragged.posX);
-                    int moveY = windowDragged.clickY - (mouseY - windowDragged.posY);
-                    if(windowDragged.docked < 0)
+                    if(!(windowDragged instanceof WindowAnimate))
                     {
-                        windowDragged.posX -= moveX;
-                        windowDragged.posY -= moveY;
-                    }
-                    else
-                    {
-                        if(Math.sqrt(moveX * moveX + moveY + moveY) > 5)
+                        int moveX = windowDragged.clickX - (mouseX - windowDragged.posX);
+                        int moveY = windowDragged.clickY - (mouseY - windowDragged.posY);
+                        if(windowDragged.docked < 0)
                         {
-                            removeFromDock(windowDragged);
                             windowDragged.posX -= moveX;
                             windowDragged.posY -= moveY;
                         }
-                    }
-
-
-                    boolean tabbed = false;
-                    for(int i = levels.size() - 1; i >= 0 ; i--)
-                    {
-                        for(int j = levels.get(i).size() - 1; j >= 0; j--)
+                        else
                         {
-                            Window window = levels.get(i).get(j);
-                            //TODO if in dock....?
-                            if(tabbed || window instanceof WindowTopDock || window == windowDragged)
+                            if(Math.sqrt(moveX * moveX + moveY + moveY) > 5)
                             {
-                                continue;
-                            }
-                            if(mouseX - window.posX >= 0 && mouseX - window.posX <= window.getWidth() && mouseY - window.posY >= 0 && mouseY - window.posY <= 12)
-                            {
-                                WindowTabs tabs;
-                                if(window instanceof WindowTabs)
-                                {
-                                    tabs = (WindowTabs)window;
-                                }
-                                else
-                                {
-                                    tabs = new WindowTabs(this, window);
-                                }
-                                tabs.addWindow(windowDragged, true);
-                                levels.get(i).remove(j);
-                                levels.get(i).add(j, tabs);
-                                if(i < VARIABLE_LEVEL)
-                                {
-                                    redock(i, null);
-                                }
-                                removeWindow(windowDragged);
-                                windowDragged = null;
-                                tabbed = true;
+                                removeFromDock(windowDragged);
+                                windowDragged.posX -= moveX;
+                                windowDragged.posY -= moveY;
                             }
                         }
-                    }
 
-                    if(mouseX <= 10)
-                    {
-                        addToDock(0, windowDragged);
-                        windowDragged = null;
-                    }
-                    if(mouseX >= width - 10)
-                    {
-                        addToDock(1, windowDragged);
-                        windowDragged = null;
-                    }
-                    if(mouseY >= height - 10)
-                    {
-                        addToDock(2, windowDragged);
-                        windowDragged = null;
+
+                        boolean tabbed = false;
+                        for(int i = levels.size() - 1; i >= 0; i--)
+                        {
+                            for(int j = levels.get(i).size() - 1; j >= 0; j--)
+                            {
+                                Window window = levels.get(i).get(j);
+                                //TODO if in dock....?
+                                if(tabbed || window instanceof WindowTopDock || window instanceof WindowAnimate || window == windowDragged)
+                                {
+                                    continue;
+                                }
+                                if(mouseX - window.posX >= 0 && mouseX - window.posX <= window.getWidth() && mouseY - window.posY >= 0 && mouseY - window.posY <= 12)
+                                {
+                                    WindowTabs tabs;
+                                    if(window instanceof WindowTabs)
+                                    {
+                                        tabs = (WindowTabs)window;
+                                    }
+                                    else
+                                    {
+                                        tabs = new WindowTabs(this, window);
+                                    }
+                                    tabs.addWindow(windowDragged, true);
+                                    levels.get(i).remove(j);
+                                    levels.get(i).add(j, tabs);
+                                    if(i < VARIABLE_LEVEL)
+                                    {
+                                        redock(i, null);
+                                    }
+                                    removeWindow(windowDragged);
+                                    windowDragged = null;
+                                    tabbed = true;
+                                }
+                            }
+                        }
+
+                        if(mouseX <= 10)
+                        {
+                            addToDock(0, windowDragged);
+                            windowDragged = null;
+                        }
+                        if(mouseX >= width - 10)
+                        {
+                            addToDock(1, windowDragged);
+                            windowDragged = null;
+                        }
                     }
 
                     if(windowDragged != null)
@@ -944,7 +946,7 @@ public class GuiWorkspace extends GuiScreen
 
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
-        GL11.glTranslatef(width - (levels.get(1).isEmpty() ? 15F : 15F + levels.get(1).get(0).width), height - 15F, 3000F);
+        GL11.glTranslatef(width - (levels.get(1).isEmpty() ? 15F : 15F + levels.get(1).get(0).width), height - 15F - windowAnimate.getHeight(), 3000F);
         float scale = 15F;
         GL11.glScalef(scale, scale, scale);
         GL11.glScalef(-1.0F, 1.0F, 1.0F);
@@ -1207,6 +1209,8 @@ public class GuiWorkspace extends GuiScreen
         addWindowOnTop(window);
 
         window.resized();
+
+        redock(2, null);
     }
 
     public void redock(int dock, Window pref)
@@ -1270,6 +1274,24 @@ public class GuiWorkspace extends GuiScreen
                     }
                 }
                 window.width = docked.get(0).width;
+
+                redock(2, null);
+            }
+            else if(dock == 2)
+            {
+                int pX1 = -1;
+                int pX2 = width + 1;
+                if(!levels.get(0).isEmpty())
+                {
+                    pX1 = levels.get(0).get(0).width - 2;
+                }
+                if(!levels.get(1).isEmpty())
+                {
+                    pX2 = levels.get(1).get(0).posX + 1;
+                }
+                window.posX = pX1;
+                window.width = pX2 - pX1;
+                window.posY = height - window.getHeight() + 1;
             }
             window.resized();
         }
@@ -1293,7 +1315,23 @@ public class GuiWorkspace extends GuiScreen
                 {
                     window.posX = width - window.getWidth() + 1;
                 }
-                if(j == docked.size() - 1)
+                else if(i == 2)
+                {
+                    int pX1 = -1;
+                    int pX2 = width + 1;
+                    if(!levels.get(0).isEmpty())
+                    {
+                        pX1 = levels.get(0).get(0).width - 2;
+                    }
+                    if(!levels.get(1).isEmpty())
+                    {
+                        pX2 = levels.get(1).get(0).posX + 1;
+                    }
+                    window.posX = pX1;
+                    window.width = pX2 - pX1;
+                    window.posY = height - window.getHeight() + 1;
+                }
+                if(j == docked.size() - 1 && i != 2)
                 {
                     window.height = height - window.posY + 1;
                 }

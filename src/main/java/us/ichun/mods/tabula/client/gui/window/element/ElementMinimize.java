@@ -4,6 +4,7 @@ import ichun.client.render.RendererHelper;
 import org.lwjgl.opengl.GL11;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.Window;
+import us.ichun.mods.tabula.client.gui.window.WindowAnimate;
 
 public class ElementMinimize extends Element
 {
@@ -15,7 +16,7 @@ public class ElementMinimize extends Element
     @Override
     public void draw(int mouseX, int mouseY, boolean hover)
     {
-        if(parent.docked >= 0)
+        if(parent.docked >= 0 && parent.docked != 2)
         {
             return;
         }
@@ -29,7 +30,7 @@ public class ElementMinimize extends Element
         GL11.glPushMatrix();
         float scale = 2F;
         GL11.glScalef(scale, scale, scale);
-        if(parent.minimized)
+        if(parent.minimized && !(parent instanceof WindowAnimate) || !parent.minimized && parent instanceof WindowAnimate)
         {
             parent.workspace.getFontRenderer().drawString("\u25BC", (int)((float)(getPosX() + 2) / scale), (int)((float)(getPosY() - 2) / scale), Theme.getAsHex(Theme.instance.font), false); //down arrow
         }
@@ -50,7 +51,7 @@ public class ElementMinimize extends Element
     @Override
     public String tooltip()
     {
-        if(parent.docked < 0)
+        if(parent.docked < 0 || parent.docked == 2)
         {
             if(!parent.minimized)
             {
@@ -67,7 +68,7 @@ public class ElementMinimize extends Element
     @Override
     public boolean onClick(int mouseX, int mouseY, int id)
     {
-        if(id == 0 && parent.docked < 0)
+        if(id == 0 && (parent.docked < 0 || parent.docked == 2))
         {
             parent.toggleMinimize();
         }
