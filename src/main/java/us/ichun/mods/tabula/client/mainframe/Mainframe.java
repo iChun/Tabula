@@ -459,7 +459,7 @@ public class Mainframe
         }
     }
 
-    public void createNewCube(String ident, String json, boolean inPlace)
+    public void createNewCube(String ident, String json, boolean inPlace, boolean withChildren)
     {
         for(ProjectInfo info : projects)
         {
@@ -479,7 +479,14 @@ public class Mainframe
                 info.cubeCount++;
                 info.cubes.add(cube);
 
-                reidentifyChildren(cube.getChildren(), info);
+                if(withChildren)
+                {
+                    reidentifyChildren(cube.getChildren(), info);
+                }
+                else
+                {
+                    cube.getChildren().clear();
+                }
 
                 streamProject(info);
             }

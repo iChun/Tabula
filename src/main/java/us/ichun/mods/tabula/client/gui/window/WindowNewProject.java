@@ -73,7 +73,11 @@ public class WindowNewProject extends Window
             }
             if(projName.isEmpty())
             {
-                return;
+                projName = "NewProject";
+            }
+            if(authName.isEmpty())
+            {
+                authName = "Undefined";
             }
             if(workspace.remoteSession)
             {

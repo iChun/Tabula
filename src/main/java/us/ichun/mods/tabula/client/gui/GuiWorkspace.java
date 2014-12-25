@@ -525,7 +525,7 @@ public class GuiWorkspace extends GuiScreen
                 }
                 if(Keyboard.isKeyDown(Keyboard.KEY_V) && !keyVDown && cubeCopied != null)
                 {
-                    paste(GuiScreen.isShiftKeyDown());
+                    paste(GuiScreen.isShiftKeyDown(), true);
                 }
                 if(Keyboard.isKeyDown(Keyboard.KEY_Z) && !keyZDown || Keyboard.isKeyDown(Keyboard.KEY_Y) && !keyYDown)
                 {
@@ -1057,7 +1057,7 @@ public class GuiWorkspace extends GuiScreen
         }
     }
 
-    public void paste(boolean inPlace)
+    public void paste(boolean inPlace, boolean withChildren)
     {
         if(cubeCopied instanceof CubeInfo)
         {
@@ -1069,7 +1069,7 @@ public class GuiWorkspace extends GuiScreen
             }
             else
             {
-                Tabula.proxy.tickHandlerClient.mainframe.createNewCube(this.projectManager.projects.get(this.projectManager.selectedProject).identifier, s, inPlace);
+                Tabula.proxy.tickHandlerClient.mainframe.createNewCube(this.projectManager.projects.get(this.projectManager.selectedProject).identifier, s, inPlace, withChildren);
             }
         }
         else if(cubeCopied instanceof CubeGroup)

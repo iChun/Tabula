@@ -101,6 +101,7 @@ topdock.cut=Cut
 topdock.copy=Copy
 topdock.paste=Paste
 topdock.pasteInPlace=Paste In Place
+topdock.pasteWithoutChildren=Paste Without Children
 topdock.undo=Undo
 topdock.redo=Redo
 topdock.chat=Toggle Chat Window

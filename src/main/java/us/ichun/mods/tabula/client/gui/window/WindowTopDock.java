@@ -26,6 +26,7 @@ public class WindowTopDock extends Window
     public static final int ID_EXIT_TABULA = 14;
     public static final int ID_UNDO = 15;
     public static final int ID_REDO = 16;
+    public static final int ID_PASTE_WITHOUT_CHILDREN = 17;
 
     public static final int ID_WOOD = -1;
 
@@ -49,6 +50,7 @@ public class WindowTopDock extends Window
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_COPY, true, 0, 0, "topdock.copy", new ResourceLocation("tabula", "textures/icon/copy.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE, true, 0, 0, "topdock.paste", new ResourceLocation("tabula", "textures/icon/paste.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE_IN_PLACE, true, 0, 0, "topdock.pasteInPlace", new ResourceLocation("tabula", "textures/icon/pasteInPlace.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE_WITHOUT_CHILDREN, true, 0, 0, "topdock.pasteWithoutChildren", new ResourceLocation("tabula", "textures/icon/pasteWithoutChildren.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_UNDO, true, 0, 0, "topdock.undo", new ResourceLocation("tabula", "textures/icon/undo.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_REDO, true, 0, 0, "topdock.redo", new ResourceLocation("tabula", "textures/icon/redo.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CHAT, true, 0, 0, "topdock.chat", new ResourceLocation("tabula", "textures/icon/chat.png")));
@@ -125,11 +127,15 @@ public class WindowTopDock extends Window
         }
         else if(element.id == ID_PASTE)
         {
-            workspace.paste(GuiScreen.isShiftKeyDown());
+            workspace.paste(GuiScreen.isShiftKeyDown(), true);
         }
         else if(element.id == ID_PASTE_IN_PLACE)
         {
-            workspace.paste(true);
+            workspace.paste(true, true);
+        }
+        else if(element.id == ID_PASTE_WITHOUT_CHILDREN)
+        {
+            workspace.paste(GuiScreen.isShiftKeyDown(), false);
         }
         else if(element.id == ID_UNDO)
         {
