@@ -75,13 +75,13 @@ public class WindowTopDock extends Window
     {
         if(element.id == ID_NEW)
         {
-            workspace.addWindowOnTop(new WindowNewProject(workspace, workspace.width / 2 - 100, workspace.height / 2 - 80, 200, 160, 200, 160).putInMiddleOfScreen());
+            workspace.addWindowOnTop(new WindowNewProject(workspace, workspace.width / 2 - 100, workspace.height / 2 - 100, 200, 200, 200, 160).putInMiddleOfScreen());
         }
         else if(element.id == ID_EDIT)
         {
             if(!workspace.projectManager.projects.isEmpty())
             {
-                workspace.addWindowOnTop(new WindowEditProject(workspace, workspace.width / 2 - 100, workspace.height / 2 - 80, 200, 160, 200, 160).putInMiddleOfScreen());
+                workspace.addWindowOnTop(new WindowEditProject(workspace, workspace.width / 2 - 100, workspace.height / 2 - 100, 200, 200, 200, 160).putInMiddleOfScreen());
             }
         }
         else if(element.id == ID_OPEN)

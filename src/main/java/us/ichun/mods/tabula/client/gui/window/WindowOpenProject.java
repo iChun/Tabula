@@ -83,6 +83,8 @@ public class WindowOpenProject extends Window
                     }
                     else
                     {
+                        project.repair();
+
                         openingFile = (File)tree.attachedObject;
                         openingJson = project.getAsJson();
                         if(workspace.remoteSession)

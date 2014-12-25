@@ -128,6 +128,7 @@ public class ModelSelector {
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_NORMALIZE);
 
+        GL11.glScaled(1D / info.scale[0], 1D / info.scale[1], 1D / info.scale[2]);
         fakeRenderModel(info.model, 0.0625F);
 
         GL11.glEnable(GL11.GL_NORMALIZE);

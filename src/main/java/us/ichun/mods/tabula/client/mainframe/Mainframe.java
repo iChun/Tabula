@@ -23,8 +23,6 @@ public class Mainframe
     public ArrayList<UUID> listeners = new ArrayList<UUID>();
     public ArrayList<UUID> editors = new ArrayList<UUID>();
 
-    public static final int projVersion = 1; //TODO change this everytime loading changes.
-
     public boolean allowEditing;
 
     public ArrayList<ProjectInfo> projects = new ArrayList<ProjectInfo>(); //each workspace tab should be a project.
@@ -65,22 +63,24 @@ public class Mainframe
         }
     }
 
-    public void loadEmptyProject(String name, String author, int txWidth, int txHeight)
+    public void loadEmptyProject(String name, String author, int txWidth, int txHeight, double scaleX, double scaleY, double scaleZ)
     {
         ProjectInfo projectInfo = new ProjectInfo(name, author);
-        projectInfo.projVersion = projVersion;
+        projectInfo.projVersion = ProjectInfo.PROJ_VERSION;
 
         projectInfo.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
 
         projectInfo.textureWidth = txWidth;
         projectInfo.textureHeight = txHeight;
 
+        projectInfo.scale = new double[] { scaleX, scaleY, scaleZ };
+
         projects.add(projectInfo);
 
         streamProject(projectInfo);
     }
 
-    public void editProject(String ident, String name, String author, int txWidth, int txHeight)
+    public void editProject(String ident, String name, String author, int txWidth, int txHeight, double scaleX, double scaleY, double scaleZ)
     {
         for(ProjectInfo info : projects)
         {
@@ -90,6 +90,7 @@ public class Mainframe
                 info.authorName = author;
                 info.textureWidth = txWidth;
                 info.textureHeight = txHeight;
+                info.scale = new double[] { scaleX, scaleY, scaleZ };
                 streamProject(info);
             }
         }
@@ -198,12 +199,9 @@ public class Mainframe
     {
         ProjectInfo project = ((new Gson()).fromJson(projectString, ProjectInfo.class));
 
-        project.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
+        project.repair();
 
-        if(project.projVersion != projVersion)
-        {
-            repairProject(project);
-        }
+        project.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
 
         projects.add(project);
 
@@ -238,12 +236,9 @@ public class Mainframe
     {
         ProjectInfo project = ((new Gson()).fromJson(projectString, ProjectInfo.class));
 
-        project.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
+        project.repair();
 
-        if(project.projVersion != projVersion)
-        {
-            repairProject(project);
-        }
+        project.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
 
         projects.add(project);
 
@@ -298,7 +293,7 @@ public class Mainframe
         if(ident.isEmpty())
         {
             projectInfo = new ProjectInfo(model.modelParent.getClass().getSimpleName(), "Either Mojang or a mod author");
-            projectInfo.projVersion = projVersion; //TODO change this everytime loading changes.
+            projectInfo.projVersion = ProjectInfo.PROJ_VERSION;
 
             projectInfo.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
 
@@ -781,11 +776,6 @@ public class Mainframe
             }
             deleteObjectInCubeGroups(ident, proj.cubeGroups);
         }
-    }
-
-    //repairs projects which have been outdated or something. idk
-    public void repairProject(ProjectInfo project)
-    {
     }
 
     public void addListener(UUID id, boolean isEditor)

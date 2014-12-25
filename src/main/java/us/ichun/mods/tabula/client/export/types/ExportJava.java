@@ -36,13 +36,22 @@ public class ExportJava extends Exporter
         sb.append("import net.minecraft.client.model.ModelBase;\n");
         sb.append("import net.minecraft.client.model.ModelRenderer;\n");
         sb.append("import net.minecraft.entity.Entity;\n");
+        boolean addGl11 = false;
         for(CubeInfo cube : allCubes)
         {
             if(!(cube.scale[0] == 1.0D && cube.scale[1] == 1.0D && cube.scale[2] == 1.0D))
             {
-                sb.append("import org.lwjgl.opengl.GL11;\n");
+                addGl11 = true;
                 break;
             }
+        }
+        if(!(info.scale[0] == 1D && info.scale[1] == 1D && info.scale[2] == 1D))
+        {
+            addGl11 = true;
+        }
+        if(addGl11)
+        {
+            sb.append("import org.lwjgl.opengl.GL11;\n");
         }
         sb.append("\n");
         sb.append("/**\n");
@@ -50,6 +59,10 @@ public class ExportJava extends Exporter
         sb.append(" * Created using Tabula " + Tabula.version + "\n");
         sb.append(" */\n");
         sb.append("public class " + params[1] + " extends ModelBase {\n");
+        if(!(info.scale[0] == 1D && info.scale[1] == 1D && info.scale[2] == 1D))
+        {
+            sb.append("    public double[] modelScale = new double[] { " + info.scale[0] + "D, " + info.scale[1] + "D, " + info.scale[2] + "D };\n");
+        }
         for(int i = 0; i < allCubes.size(); i++)
         {
             CubeInfo cube =  allCubes.get(i);
@@ -112,6 +125,12 @@ public class ExportJava extends Exporter
         sb.append("    }\n\n");
         sb.append("    @Override\n");
         sb.append("    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) { \n");
+
+        if(!(info.scale[0] == 1D && info.scale[1] == 1D && info.scale[2] == 1D))
+        {
+            sb.append("        GL11.glPushMatrix();\n");
+            sb.append("        GL11.glScaled(1D / modelScale[0], 1D / modelScale[1], 1D / modelScale[2]);\n");
+        }
         for(Map.Entry<CubeInfo, String> e : cubeFieldMap.entrySet())
         {
             CubeInfo cube = e.getKey();
@@ -131,6 +150,11 @@ public class ExportJava extends Exporter
                 sb.append("        GL11.glPopMatrix();\n");
             }
         }
+        if(!(info.scale[0] == 1D && info.scale[1] == 1D && info.scale[2] == 1D))
+        {
+            sb.append("        GL11.glPopMatrix();\n");
+        }
+
         sb.append("    }\n\n");
         sb.append("    /**\n");
         sb.append("     * This is a helper function from Tabula to set the rotation of model parts\n");

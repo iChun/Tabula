@@ -876,6 +876,7 @@ public class GuiWorkspace extends GuiScreen
             }
             ArrayList<CubeInfo> hidden = getHiddenElements();
 
+            GL11.glScaled(1D / info.scale[0], 1D / info.scale[1], 1D / info.scale[2]);
             if(windowTexture.imageId != -1)
             {
                 GL11.glBindTexture(GL11.GL_TEXTURE_2D, windowTexture.imageId);

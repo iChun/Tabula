@@ -21,6 +21,11 @@ public class WindowNewProject extends Window
         nums.textFields.get(0).setText("64");
         nums.textFields.get(1).setText("32");
         elements.add(nums);
+        ElementNumberInput scale = new ElementNumberInput(this, 10, 135, 120, 12, 4, "window.newProject.projectScale", 3, true, (int)Short.MIN_VALUE, (int)Short.MAX_VALUE);
+        scale.textFields.get(0).setText("1.00");
+        scale.textFields.get(1).setText("1.00");
+        scale.textFields.get(2).setText("1.00");
+        elements.add(scale);
         elements.add(new ElementButton(this, width - 140, height - 30, 60, 16, 100, false, 1, 1, "element.button.ok"));
         elements.add(new ElementButton(this, width - 70, height - 30, 60, 16, 0, false, 1, 1, "element.button.cancel"));
     }
@@ -34,6 +39,7 @@ public class WindowNewProject extends Window
             workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.projName"), posX + 11, posY + 20, Theme.getAsHex(Theme.font), false);
             workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.authName"), posX + 11, posY + 55, Theme.getAsHex(Theme.font), false);
             workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.txDimensions"), posX + 11, posY + 90, Theme.getAsHex(Theme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.projectScale"), posX + 11, posY + 125, Theme.getAsHex(Theme.font), false);
         }
     }
 
@@ -44,12 +50,15 @@ public class WindowNewProject extends Window
         {
             workspace.removeWindow(this, true);
         }
-        if(element.id > 0 && element.id != 3)
+        if(element.id > 0 && element.id != 3 && element.id != 4)
         {
             String projName = "";
             String authName = "";
             int dimW = 0;
             int dimH = 0;
+            double scaleX = 1.0F;
+            double scaleY = 1.0F;
+            double scaleZ = 1.0F;
             for(int i = 0; i < elements.size(); i++)
             {
                 if(elements.get(i) instanceof ElementTextInput)
@@ -67,8 +76,17 @@ public class WindowNewProject extends Window
                 if(elements.get(i) instanceof ElementNumberInput)
                 {
                     ElementNumberInput nums = (ElementNumberInput)elements.get(i);
-                    dimW = Integer.parseInt(nums.textFields.get(0).getText());
-                    dimH = Integer.parseInt(nums.textFields.get(1).getText());
+                    if(nums.id == 3)
+                    {
+                        dimW = Integer.parseInt(nums.textFields.get(0).getText());
+                        dimH = Integer.parseInt(nums.textFields.get(1).getText());
+                    }
+                    else if(nums.id == 4)
+                    {
+                        scaleX = Double.parseDouble(nums.textFields.get(0).getText());
+                        scaleY = Double.parseDouble(nums.textFields.get(1).getText());
+                        scaleZ = Double.parseDouble(nums.textFields.get(2).getText());
+                    }
                 }
             }
             if(projName.isEmpty())
@@ -85,7 +103,7 @@ public class WindowNewProject extends Window
             }
             else
             {
-                Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject(projName, authName, dimW, dimH);
+                Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject(projName, authName, dimW, dimH, scaleX, scaleY, scaleZ);
             }
             workspace.removeWindow(this, true);
         }

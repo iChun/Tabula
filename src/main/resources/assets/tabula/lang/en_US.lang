@@ -22,6 +22,7 @@ window.newProject.title=New Project
 window.newProject.projName=Project Name
 window.newProject.authName=Author Name
 window.newProject.txDimensions=Texture width and height
+window.newProject.projectScale=Project Scale
 
 window.editProject.title=Edit Project
 
