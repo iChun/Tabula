@@ -85,7 +85,7 @@ public class Window
         if(this instanceof WindowTopDock)
         {
             RendererHelper.startGlScissor(posX, posY, getWidth(), getHeight());
-            RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, posX, posY, getWidth(), getHeight(), 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.windowBackground[0], Theme.instance.windowBackground[1], Theme.instance.windowBackground[2], 255, posX, posY, getWidth(), getHeight(), 0);
         }
         else
         {
@@ -101,18 +101,18 @@ public class Window
             {
                 if(docked >= 0)
                 {
-                    RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
+                    RendererHelper.drawColourOnScreen(Theme.instance.windowBackground[0], Theme.instance.windowBackground[1], Theme.instance.windowBackground[2], 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
                 }
                 else
                 {
-                    RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
-                    RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, posX + BORDER_SIZE, posY + BORDER_SIZE, getWidth() - (BORDER_SIZE * 2), getHeight() - (BORDER_SIZE * 2), 0);
+                    RendererHelper.drawColourOnScreen(Theme.instance.windowBorder[0], Theme.instance.windowBorder[1], Theme.instance.windowBorder[2], 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
+                    RendererHelper.drawColourOnScreen(Theme.instance.windowBackground[0], Theme.instance.windowBackground[1], Theme.instance.windowBackground[2], 255, posX + BORDER_SIZE, posY + BORDER_SIZE, getWidth() - (BORDER_SIZE * 2), getHeight() - (BORDER_SIZE * 2), 0);
                 }
             }
         }
         if(hasTitle)
         {
-            RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, posX + 1, posY + 1, getWidth() - 2, 12, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.windowBorder[0], Theme.instance.windowBorder[1], Theme.instance.windowBorder[2], 255, posX + 1, posY + 1, getWidth() - 2, 12, 0);
             String titleToRender = StatCollector.translateToLocal(titleLocale);
             while(titleToRender.length() > 1 && workspace.getFontRenderer().getStringWidth(titleToRender) > getWidth() - (BORDER_SIZE * 2) - workspace.getFontRenderer().getStringWidth("  _"))
             {
@@ -129,7 +129,7 @@ public class Window
                     titleToRender = titleToRender.substring(0, titleToRender.length() - 1) + "...";
                 }
             }
-            workspace.getFontRenderer().drawString(titleToRender, posX + 4, posY + 3, Theme.getAsHex(Theme.font), false);
+            workspace.getFontRenderer().drawString(titleToRender, posX + 4, posY + 3, Theme.instance.getAsHex(Theme.instance.font), false);
         }
 
         for(Element element : elements)

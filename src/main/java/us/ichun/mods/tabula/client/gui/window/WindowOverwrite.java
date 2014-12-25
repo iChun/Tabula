@@ -34,7 +34,7 @@ public class WindowOverwrite extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.saveAs.confirmOverwrite"), posX + 15, posY + 40, Theme.getAsHex(Theme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.saveAs.confirmOverwrite"), posX + 15, posY + 40, Theme.getAsHex(Theme.instance.font), false);
         }
     }
 

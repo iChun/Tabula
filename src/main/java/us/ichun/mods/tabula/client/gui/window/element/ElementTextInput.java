@@ -19,7 +19,7 @@ public class ElementTextInput extends Element
         textField = new GuiTextField(parent.workspace.getFontRenderer(), parent.posX + posX + 2, parent.posY + posY + 2, width - 9, parent.workspace.getFontRenderer().FONT_HEIGHT);
         textField.setMaxStringLength(maxLength);
         textField.setEnableBackgroundDrawing(false);
-        textField.setTextColor(Theme.getAsHex(Theme.font));
+        textField.setTextColor(Theme.getAsHex(Theme.instance.font));
         textField.setCanLoseFocus(false);
         tooltip = tip;
         spacing = parent.width - width - x;
@@ -34,7 +34,7 @@ public class ElementTextInput extends Element
     public void update()
     {
         textField.updateCursorCounter();
-        textField.setTextColor(Theme.getAsHex(Theme.font));
+        textField.setTextColor(Theme.getAsHex(Theme.instance.font));
     }
 
     @Override
@@ -50,14 +50,14 @@ public class ElementTextInput extends Element
     @Override
     public void draw(int mouseX, int mouseY, boolean hover)
     {
-        RendererHelper.drawColourOnScreen(Theme.elementInputBorder[0], Theme.elementInputBorder[1], Theme.elementInputBorder[2], 255, getPosX(), getPosY(), width, height, 0);
+        RendererHelper.drawColourOnScreen(Theme.instance.elementInputBorder[0], Theme.instance.elementInputBorder[1], Theme.instance.elementInputBorder[2], 255, getPosX(), getPosY(), width, height, 0);
         if(hover)
         {
-            RendererHelper.drawColourOnScreen(Theme.elementInputBackgroundHover[0], Theme.elementInputBackgroundHover[1], Theme.elementInputBackgroundHover[2], 255, getPosX() + 1, getPosY() + 1, width - 2, height - 2, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementInputBackgroundHover[0], Theme.instance.elementInputBackgroundHover[1], Theme.instance.elementInputBackgroundHover[2], 255, getPosX() + 1, getPosY() + 1, width - 2, height - 2, 0);
         }
         else
         {
-            RendererHelper.drawColourOnScreen(Theme.elementInputBackgroundInactive[0], Theme.elementInputBackgroundInactive[1], Theme.elementInputBackgroundInactive[2], 255, getPosX() + 1, getPosY() + 1, width - 2, height - 2, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementInputBackgroundInactive[0], Theme.instance.elementInputBackgroundInactive[1], Theme.instance.elementInputBackgroundInactive[2], 255, getPosX() + 1, getPosY() + 1, width - 2, height - 2, 0);
         }
 
         if(textField.getVisible())

@@ -35,7 +35,7 @@ public class ElementNumberInput extends Element
             GuiTextField textField = new GuiTextField(parent.workspace.getFontRenderer(), parent.posX + posX + 2 + ((width / fieldCount) * i), parent.posY + posY + 2, (width / fieldCount) - 18, parent.workspace.getFontRenderer().FONT_HEIGHT);
             textField.setMaxStringLength(20);
             textField.setEnableBackgroundDrawing(false);
-            textField.setTextColor(Theme.getAsHex(Theme.font));
+            textField.setTextColor(Theme.getAsHex(Theme.instance.font));
             textField.setCanLoseFocus(false);
 
             textFields.add(textField);
@@ -258,8 +258,8 @@ public class ElementNumberInput extends Element
     @Override
     public void draw(int mouseX, int mouseY, boolean hover)
     {
-        RendererHelper.drawColourOnScreen(Theme.elementInputBorder[0], Theme.elementInputBorder[1], Theme.elementInputBorder[2], 255, getPosX(), getPosY(), width - 2, height, 0);
-        RendererHelper.drawColourOnScreen(Theme.elementInputBackgroundInactive[0], Theme.elementInputBackgroundInactive[1], Theme.elementInputBackgroundInactive[2], 255, getPosX() + 1, getPosY() + 1, width - 2 - 2, height - 2, 0);
+        RendererHelper.drawColourOnScreen(Theme.instance.elementInputBorder[0], Theme.instance.elementInputBorder[1], Theme.instance.elementInputBorder[2], 255, getPosX(), getPosY(), width - 2, height, 0);
+        RendererHelper.drawColourOnScreen(Theme.instance.elementInputBackgroundInactive[0], Theme.instance.elementInputBackgroundInactive[1], Theme.instance.elementInputBackgroundInactive[2], 255, getPosX() + 1, getPosY() + 1, width - 2 - 2, height - 2, 0);
 
         for(int i = 0; i < textFields.size(); i++)
         {
@@ -268,11 +268,11 @@ public class ElementNumberInput extends Element
             int y1 = posY;
             int y2 = posY + height;
 
-            RendererHelper.drawColourOnScreen(Theme.elementInputBorder[0], Theme.elementInputBorder[1], Theme.elementInputBorder[2], 255, getPosX() + ((width / textFields.size()) * (i)), getPosY() + 1, 1, height - 2, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementInputBorder[0], Theme.instance.elementInputBorder[1], Theme.instance.elementInputBorder[2], 255, getPosX() + ((width / textFields.size()) * (i)), getPosY() + 1, 1, height - 2, 0);
 
             if(mouseX >= x1 && mouseX < x2 && mouseY >= y1 && mouseY < y2)
             {
-                RendererHelper.drawColourOnScreen(Theme.elementInputBackgroundHover[0], Theme.elementInputBackgroundHover[1], Theme.elementInputBackgroundHover[2], 255, getPosX() + ((width / textFields.size()) * (i)) + 1, getPosY() + 1, (x2 - x1) - 2, height - 2, 0);
+                RendererHelper.drawColourOnScreen(Theme.instance.elementInputBackgroundHover[0], Theme.instance.elementInputBackgroundHover[1], Theme.instance.elementInputBackgroundHover[2], 255, getPosX() + ((width / textFields.size()) * (i)) + 1, getPosY() + 1, (x2 - x1) - 2, height - 2, 0);
             }
 
             if(textFields.get(i).getVisible())
@@ -287,39 +287,39 @@ public class ElementNumberInput extends Element
             {
                 if(Mouse.isButtonDown(0))
                 {
-                    RendererHelper.drawColourOnScreen(Theme.elementInputUpDownClick[0], Theme.elementInputUpDownClick[1], Theme.elementInputUpDownClick[2], 255, getPosX() + ((width / textFields.size()) * (i + 1)) - 12, getPosY(), 12, 6, 0);
+                    RendererHelper.drawColourOnScreen(Theme.instance.elementInputUpDownClick[0], Theme.instance.elementInputUpDownClick[1], Theme.instance.elementInputUpDownClick[2], 255, getPosX() + ((width / textFields.size()) * (i + 1)) - 12, getPosY(), 12, 6, 0);
                 }
                 else
                 {
-                    RendererHelper.drawColourOnScreen(Theme.elementInputUpDownHover[0], Theme.elementInputUpDownHover[1], Theme.elementInputUpDownHover[2], 255, getPosX() + ((width / textFields.size()) * (i + 1)) - 12, getPosY(), 12, 6, 0);
+                    RendererHelper.drawColourOnScreen(Theme.instance.elementInputUpDownHover[0], Theme.instance.elementInputUpDownHover[1], Theme.instance.elementInputUpDownHover[2], 255, getPosX() + ((width / textFields.size()) * (i + 1)) - 12, getPosY(), 12, 6, 0);
                 }
             }
             else
             {
-                RendererHelper.drawColourOnScreen(Theme.elementInputBorder[0], Theme.elementInputBorder[1], Theme.elementInputBorder[2], 255, getPosX() + ((width / textFields.size()) * (i + 1)) - 12, getPosY(), 12, 6, 0);
+                RendererHelper.drawColourOnScreen(Theme.instance.elementInputBorder[0], Theme.instance.elementInputBorder[1], Theme.instance.elementInputBorder[2], 255, getPosX() + ((width / textFields.size()) * (i + 1)) - 12, getPosY(), 12, 6, 0);
             }
 
             if(mouseX >= x1 && mouseX < x2 && mouseY >= y1 + 7 && mouseY <= y1 + 12)
             {
                 if(Mouse.isButtonDown(0))
                 {
-                    RendererHelper.drawColourOnScreen(Theme.elementInputUpDownClick[0], Theme.elementInputUpDownClick[1], Theme.elementInputUpDownClick[2], 255, getPosX() + ((width / textFields.size()) * (i + 1)) - 12, getPosY() + 6, 12, 6, 0);
+                    RendererHelper.drawColourOnScreen(Theme.instance.elementInputUpDownClick[0], Theme.instance.elementInputUpDownClick[1], Theme.instance.elementInputUpDownClick[2], 255, getPosX() + ((width / textFields.size()) * (i + 1)) - 12, getPosY() + 6, 12, 6, 0);
                 }
                 else
                 {
-                    RendererHelper.drawColourOnScreen(Theme.elementInputUpDownHover[0], Theme.elementInputUpDownHover[1], Theme.elementInputUpDownHover[2], 255, getPosX() + ((width / textFields.size()) * (i + 1)) - 12, getPosY() + 6, 12, 6, 0);
+                    RendererHelper.drawColourOnScreen(Theme.instance.elementInputUpDownHover[0], Theme.instance.elementInputUpDownHover[1], Theme.instance.elementInputUpDownHover[2], 255, getPosX() + ((width / textFields.size()) * (i + 1)) - 12, getPosY() + 6, 12, 6, 0);
                 }
             }
             else
             {
-                RendererHelper.drawColourOnScreen(Theme.elementInputBorder[0], Theme.elementInputBorder[1], Theme.elementInputBorder[2], 255, getPosX() + ((width / textFields.size()) * (i + 1)) - 12, getPosY() + 6, 12, 6, 0);
+                RendererHelper.drawColourOnScreen(Theme.instance.elementInputBorder[0], Theme.instance.elementInputBorder[1], Theme.instance.elementInputBorder[2], 255, getPosX() + ((width / textFields.size()) * (i + 1)) - 12, getPosY() + 6, 12, 6, 0);
             }
 
             GL11.glPushMatrix();
             float scale = 1F;
             GL11.glScalef(scale, scale, scale);
-            parent.workspace.getFontRenderer().drawString("\u25B2", (int)((float)(getPosX() + ((width / textFields.size()) * (i + 1)) - 8) / scale), (int)((float)(getPosY() - 1) / scale), Theme.getAsHex(Theme.font), false);//up
-            parent.workspace.getFontRenderer().drawString("\u25BC", (int)((float)(getPosX() + ((width / textFields.size()) * (i + 1)) - 8) / scale), (int)((float)(getPosY() + 5) / scale), Theme.getAsHex(Theme.font), false);//down
+            parent.workspace.getFontRenderer().drawString("\u25B2", (int)((float)(getPosX() + ((width / textFields.size()) * (i + 1)) - 8) / scale), (int)((float)(getPosY() - 1) / scale), Theme.getAsHex(Theme.instance.font), false);//up
+            parent.workspace.getFontRenderer().drawString("\u25BC", (int)((float)(getPosX() + ((width / textFields.size()) * (i + 1)) - 8) / scale), (int)((float)(getPosY() + 5) / scale), Theme.getAsHex(Theme.instance.font), false);//down
             GL11.glPopMatrix();
         }
     }

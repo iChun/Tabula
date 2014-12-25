@@ -29,11 +29,11 @@ public class ElementTextWrapperChat extends ElementTextWrapper
                 {
                     String[] strings = ((String)list.get(j)).split(": ");
                     parent.workspace.getFontRenderer().drawString(strings[0], getPosX() + 4, getPosY() + 4, getRandomColourForName(strings[0]), false);
-                    parent.workspace.getFontRenderer().drawString(": " + strings[1], getPosX() + parent.workspace.getFontRenderer().getStringWidth(strings[0]) + 4, getPosY() + 4, Theme.getAsHex(Theme.font), false);
+                    parent.workspace.getFontRenderer().drawString(": " + strings[1], getPosX() + parent.workspace.getFontRenderer().getStringWidth(strings[0]) + 4, getPosY() + 4, Theme.getAsHex(Theme.instance.fontChat), false);
                 }
                 else
                 {
-                    parent.workspace.getFontRenderer().drawString((String)list.get(j), getPosX() + 12, getPosY() + 4, Theme.getAsHex(Theme.font), false);
+                    parent.workspace.getFontRenderer().drawString((String)list.get(j), getPosX() + 12, getPosY() + 4, Theme.getAsHex(Theme.instance.font), false);
                 }
                 GL11.glTranslatef(0F, parent.workspace.getFontRenderer().FONT_HEIGHT + 2, 0F);
             }

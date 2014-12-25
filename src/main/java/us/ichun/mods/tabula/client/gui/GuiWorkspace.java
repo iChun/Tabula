@@ -317,7 +317,7 @@ public class GuiWorkspace extends GuiScreen
         Project.gluPerspective(cameraFov, (float)(resolution.getScaledWidth_double() / resolution.getScaledHeight_double()), 1F, 10000F);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
-        GL11.glClearColor((float)Theme.workspaceBackground[0] / 255F, (float)Theme.workspaceBackground[1] / 255F, (float)Theme.workspaceBackground[2] / 255F, 255F);
+        GL11.glClearColor((float)Theme.instance.workspaceBackground[0] / 255F, (float)Theme.instance.workspaceBackground[1] / 255F, (float)Theme.instance.workspaceBackground[2] / 255F, 255F);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
         if (Mouse.isButtonDown(0) && !mouseLeftDown) {
@@ -491,9 +491,9 @@ public class GuiWorkspace extends GuiScreen
                 {
                     yOffset = -20;
                 }
-                RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, mouseX + xOffset, mouseY + yOffset, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2), 12, 0);
-                RendererHelper.drawColourOnScreen(Theme.windowBackground[0], Theme.windowBackground[1], Theme.windowBackground[2], 255, mouseX + xOffset + 1, mouseY + yOffset + 1, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2) - 2, 12 - 2, 0);
-                fontRendererObj.drawString(tooltip, mouseX + xOffset + (Window.BORDER_SIZE - 1), mouseY + yOffset + (Window.BORDER_SIZE - 1), Theme.getAsHex(Theme.font), false);
+                RendererHelper.drawColourOnScreen(Theme.instance.windowBorder[0], Theme.instance.windowBorder[1], Theme.instance.windowBorder[2], 255, mouseX + xOffset, mouseY + yOffset, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2), 12, 0);
+                RendererHelper.drawColourOnScreen(Theme.instance.windowBackground[0], Theme.instance.windowBackground[1], Theme.instance.windowBackground[2], 255, mouseX + xOffset + 1, mouseY + yOffset + 1, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2) - 2, 12 - 2, 0);
+                fontRendererObj.drawString(tooltip, mouseX + xOffset + (Window.BORDER_SIZE - 1), mouseY + yOffset + (Window.BORDER_SIZE - 1), Theme.instance.getAsHex(Theme.instance.font), false);
                 //            RendererHelper.drawColourOnScreen(34, 34, 34, 255, posX + BORDER_SIZE, posY + BORDER_SIZE, getWidth() - (BORDER_SIZE * 2), getHeight() - (BORDER_SIZE * 2), 0);
             }
         }
@@ -805,7 +805,13 @@ public class GuiWorkspace extends GuiScreen
 
         applyCamera();
 
-        Block block = Blocks.planks;
+        Block block = Block.getBlockFromName(Theme.instance.workspaceBlock.block);
+        int meta = Theme.instance.workspaceBlock.metadata;
+
+        if(block == null)
+        {
+            block = Blocks.planks;
+        }
         renderBlocks.setRenderBoundsFromBlock(block);
         renderBlocks.enableAO = false;
 
@@ -822,30 +828,35 @@ public class GuiWorkspace extends GuiScreen
 
         if(enableWood)
         {
-            tessellator.startDrawingQuads();
-            tessellator.setNormal(0.0F, -1.0F, 0.0F);
-            renderBlocks.renderFaceYNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 0, 1));
-            tessellator.draw();
-            tessellator.startDrawingQuads();
-            tessellator.setNormal(0.0F, 1.0F, 0.0F);
-            renderBlocks.renderFaceYPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 1, 1));
-            tessellator.draw();
-            tessellator.startDrawingQuads();
-            tessellator.setNormal(0.0F, 0.0F, -1.0F);
-            renderBlocks.renderFaceZNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 2, 1));
-            tessellator.draw();
-            tessellator.startDrawingQuads();
-            tessellator.setNormal(0.0F, 0.0F, 1.0F);
-            renderBlocks.renderFaceZPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 3, 1));
-            tessellator.draw();
-            tessellator.startDrawingQuads();
-            tessellator.setNormal(-1.0F, 0.0F, 0.0F);
-            renderBlocks.renderFaceXNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 4, 1));
-            tessellator.draw();
-            tessellator.startDrawingQuads();
-            tessellator.setNormal(1.0F, 0.0F, 0.0F);
-            renderBlocks.renderFaceXPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 5, 1));
-            tessellator.draw();
+            GL11.glPushMatrix();
+            GL11.glRotatef(-90F, 0.0F, 1.0F, 0.0F);
+            renderBlocks.renderBlockAsItem(block, meta, 1.0F);
+            GL11.glPopMatrix();
+
+//            tessellator.startDrawingQuads();
+//            tessellator.setNormal(0.0F, -1.0F, 0.0F);
+//            renderBlocks.renderFaceYNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 0, 1));
+//            tessellator.draw();
+//            tessellator.startDrawingQuads();
+//            tessellator.setNormal(0.0F, 1.0F, 0.0F);
+//            renderBlocks.renderFaceYPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 1, 1));
+//            tessellator.draw();
+//            tessellator.startDrawingQuads();
+//            tessellator.setNormal(0.0F, 0.0F, -1.0F);
+//            renderBlocks.renderFaceZNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 2, 1));
+//            tessellator.draw();
+//            tessellator.startDrawingQuads();
+//            tessellator.setNormal(0.0F, 0.0F, 1.0F);
+//            renderBlocks.renderFaceZPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 3, 1));
+//            tessellator.draw();
+//            tessellator.startDrawingQuads();
+//            tessellator.setNormal(-1.0F, 0.0F, 0.0F);
+//            renderBlocks.renderFaceXNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 4, 1));
+//            tessellator.draw();
+//            tessellator.startDrawingQuads();
+//            tessellator.setNormal(1.0F, 0.0F, 0.0F);
+//            renderBlocks.renderFaceXPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 5, 1));
+//            tessellator.draw();
         }
 
         GL11.glEnable(GL11.GL_BLEND);

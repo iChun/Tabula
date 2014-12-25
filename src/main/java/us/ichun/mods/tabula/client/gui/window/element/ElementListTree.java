@@ -92,10 +92,10 @@ public class ElementListTree extends Element
         {
             x2 -= 10;
 
-            RendererHelper.drawColourOnScreen(Theme.elementTreeScrollBarBorder[0], Theme.elementTreeScrollBarBorder[1], Theme.elementTreeScrollBarBorder[2], 255, x2 + 5, getPosY() + (height / 40), 2, height - ((height / 40) * 2), 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeScrollBarBorder[0], Theme.instance.elementTreeScrollBarBorder[1], Theme.instance.elementTreeScrollBarBorder[2], 255, x2 + 5, getPosY() + (height / 40), 2, height - ((height / 40) * 2), 0);
 
-            RendererHelper.drawColourOnScreen(Theme.elementTreeScrollBarBorder[0], Theme.elementTreeScrollBarBorder[1], Theme.elementTreeScrollBarBorder[2], 255, x2 + 1, getPosY() - 1 + ((height - (height / 11)) * sliderProg), 10, height / 10, 0);
-            RendererHelper.drawColourOnScreen(Theme.elementTreeScrollBar[0], Theme.elementTreeScrollBar[1], Theme.elementTreeScrollBar[2], 255, x2 + 2, getPosY() + ((height - (height / 11)) * sliderProg), 8, (height / 10) - 2, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeScrollBarBorder[0], Theme.instance.elementTreeScrollBarBorder[1], Theme.instance.elementTreeScrollBarBorder[2], 255, x2 + 1, getPosY() - 1 + ((height - (height / 11)) * sliderProg), 10, height / 10, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeScrollBar[0], Theme.instance.elementTreeScrollBar[1], Theme.instance.elementTreeScrollBar[2], 255, x2 + 2, getPosY() + ((height - (height / 11)) * sliderProg), 8, (height / 10) - 2, 0);
 
             int sbx1 = x2 + 1 - parent.posX;
             int sbx2 = sbx1 + 10;
@@ -155,10 +155,10 @@ public class ElementListTree extends Element
 
         if(parent.docked < 0)
         {
-            RendererHelper.drawColourOnScreen(Theme.elementTreeBorder[0], Theme.elementTreeBorder[1], Theme.elementTreeBorder[2], 255, x1 - 1, y1 - 1, (x2 - x1) + 1, 1, 0);
-            RendererHelper.drawColourOnScreen(Theme.elementTreeBorder[0], Theme.elementTreeBorder[1], Theme.elementTreeBorder[2], 255, x1 - 1, y1 - 1, 1, height + 2, 0);
-            RendererHelper.drawColourOnScreen(Theme.elementTreeBorder[0], Theme.elementTreeBorder[1], Theme.elementTreeBorder[2], 255, x1 - 1, y2 + 1, (x2 - x1) + 2, 1, 0);
-            RendererHelper.drawColourOnScreen(Theme.elementTreeBorder[0], Theme.elementTreeBorder[1], Theme.elementTreeBorder[2], 255, x2, y1 - 1, 1, height + 2, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeBorder[0], Theme.instance.elementTreeBorder[1], Theme.instance.elementTreeBorder[2], 255, x1 - 1, y1 - 1, (x2 - x1) + 1, 1, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeBorder[0], Theme.instance.elementTreeBorder[1], Theme.instance.elementTreeBorder[2], 255, x1 - 1, y1 - 1, 1, height + 2, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeBorder[0], Theme.instance.elementTreeBorder[1], Theme.instance.elementTreeBorder[2], 255, x1 - 1, y2 + 1, (x2 - x1) + 2, 1, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeBorder[0], Theme.instance.elementTreeBorder[1], Theme.instance.elementTreeBorder[2], 255, x2, y1 - 1, 1, height + 2, 0);
         }
 
         if(!Mouse.isButtonDown(0) && lmbDown)
@@ -364,18 +364,18 @@ public class ElementListTree extends Element
                     offX = mouseX - dragX;
                     offY = mouseY - dragY + (int)scrollHeight;
                 }
-                RendererHelper.drawColourOnScreen(Theme.elementTreeItemBorder[0], Theme.elementTreeItemBorder[1], Theme.elementTreeItemBorder[2], 255, getPosX() + offX, getPosY() + offY + treeHeight, width, theHeight, 0);
+                RendererHelper.drawColourOnScreen(Theme.instance.elementTreeItemBorder[0], Theme.instance.elementTreeItemBorder[1], Theme.instance.elementTreeItemBorder[2], 255, getPosX() + offX, getPosY() + offY + treeHeight, width, theHeight, 0);
                 if(selected)
                 {
-                    RendererHelper.drawColourOnScreen(Theme.elementTreeItemBgSelect[0], Theme.elementTreeItemBgSelect[1], Theme.elementTreeItemBgSelect[2], 255, getPosX() + offX + 1, getPosY() + offY + treeHeight + 1, width - 2, theHeight - 2, 0);
+                    RendererHelper.drawColourOnScreen(Theme.instance.elementTreeItemBgSelect[0], Theme.instance.elementTreeItemBgSelect[1], Theme.instance.elementTreeItemBgSelect[2], 255, getPosX() + offX + 1, getPosY() + offY + treeHeight + 1, width - 2, theHeight - 2, 0);
                 }
                 else if(realBorder)
                 {
-                    RendererHelper.drawColourOnScreen(Theme.elementTreeItemBgHover[0], Theme.elementTreeItemBgHover[1], Theme.elementTreeItemBgHover[2], 255, getPosX() + offX + 1, getPosY() + offY + treeHeight + 1, width - 2, theHeight - 2, 0);
+                    RendererHelper.drawColourOnScreen(Theme.instance.elementTreeItemBgHover[0], Theme.instance.elementTreeItemBgHover[1], Theme.instance.elementTreeItemBgHover[2], 255, getPosX() + offX + 1, getPosY() + offY + treeHeight + 1, width - 2, theHeight - 2, 0);
                 }
                 else
                 {
-                    RendererHelper.drawColourOnScreen(Theme.elementTreeItemBg[0], Theme.elementTreeItemBg[1], Theme.elementTreeItemBg[2], 255, getPosX() + offX + 1, getPosY() + offY + treeHeight + 1, width - 2, theHeight - 2, 0);
+                    RendererHelper.drawColourOnScreen(Theme.instance.elementTreeItemBg[0], Theme.instance.elementTreeItemBg[1], Theme.instance.elementTreeItemBg[2], 255, getPosX() + offX + 1, getPosY() + offY + treeHeight + 1, width - 2, theHeight - 2, 0);
                 }
 
                 if(realBorder && hasScroll)
@@ -421,7 +421,7 @@ public class ElementListTree extends Element
                     }
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                     RendererHelper.drawTextureOnScreen(txModel, getPosX() + offX + 1.5D + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, theHeight - 4, theHeight - 4, 0);
-                    parent.workspace.getFontRenderer().drawString(reString(info.name, width - 8), getPosX() + offX + 4 + 8 + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, hide ? Theme.getAsHex(Theme.fontDim) : Theme.getAsHex(Theme.font), false);
+                    parent.workspace.getFontRenderer().drawString(reString(info.name, width - 8), getPosX() + offX + 4 + 8 + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, hide ? Theme.getAsHex(Theme.instance.fontDim) : Theme.getAsHex(Theme.instance.font), false);
                     if(info.parentIdentifier == null && realBorder && rClicking)
                     {
                         info.hidden = !info.hidden;
@@ -472,7 +472,7 @@ public class ElementListTree extends Element
                     }
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                     RendererHelper.drawTextureOnScreen(txGroup, getPosX() + offX + 1.5D + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, theHeight - 4, theHeight - 4, 0);
-                    parent.workspace.getFontRenderer().drawString(reString(info.name, width - 8), getPosX() + offX + 4 + 8 + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, hide ? Theme.getAsHex(Theme.fontDim) : Theme.getAsHex(Theme.font), false);
+                    parent.workspace.getFontRenderer().drawString(reString(info.name, width - 8), getPosX() + offX + 4 + 8 + (attached * 5), getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, hide ? Theme.getAsHex(Theme.instance.fontDim) : Theme.getAsHex(Theme.instance.font), false);
                     if(realBorder && rClicking)
                     {
                         info.hidden = !info.hidden;
@@ -490,19 +490,19 @@ public class ElementListTree extends Element
                 else if(attachedObject instanceof ModelInfo)
                 {
                     ModelInfo info = (ModelInfo)attachedObject;
-                    parent.workspace.getFontRenderer().drawString(reString(info.modelParent.getClass().getSimpleName() + " - " + info.clz.getSimpleName(), width), getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.font), false);
+                    parent.workspace.getFontRenderer().drawString(reString(info.modelParent.getClass().getSimpleName() + " - " + info.clz.getSimpleName(), width), getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.instance.font), false);
                 }
                 else if(attachedObject instanceof Exporter)
                 {
                     Exporter info = (Exporter)attachedObject;
-                    parent.workspace.getFontRenderer().drawString(reString(StatCollector.translateToLocal(info.name), width), getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.font), false);
+                    parent.workspace.getFontRenderer().drawString(reString(StatCollector.translateToLocal(info.name), width), getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.instance.font), false);
                 }
                 else if(attachedObject instanceof File)
                 {
                     File info = (File)attachedObject;
-                    parent.workspace.getFontRenderer().drawString(info.getName(), getPosX() + offX + 4, getPosY() + offY + 3 + treeHeight, Theme.getAsHex(Theme.font), false);
-                    parent.workspace.getFontRenderer().drawString((new SimpleDateFormat()).format(new Date(info.lastModified())), getPosX() + offX + 4, getPosY() + offY + 14 + treeHeight, Theme.getAsHex(Theme.font), false);
-                    parent.workspace.getFontRenderer().drawString(MD5Checksum.readableFileSize(info.length()), getPosX() + offX + width - 4 - parent.workspace.getFontRenderer().getStringWidth(MD5Checksum.readableFileSize(info.length())), getPosY() + offY + 3 + treeHeight, Theme.getAsHex(Theme.font), false);
+                    parent.workspace.getFontRenderer().drawString(info.getName(), getPosX() + offX + 4, getPosY() + offY + 3 + treeHeight, Theme.getAsHex(Theme.instance.font), false);
+                    parent.workspace.getFontRenderer().drawString((new SimpleDateFormat()).format(new Date(info.lastModified())), getPosX() + offX + 4, getPosY() + offY + 14 + treeHeight, Theme.getAsHex(Theme.instance.font), false);
+                    parent.workspace.getFontRenderer().drawString(MD5Checksum.readableFileSize(info.length()), getPosX() + offX + width - 4 - parent.workspace.getFontRenderer().getStringWidth(MD5Checksum.readableFileSize(info.length())), getPosY() + offY + 3 + treeHeight, Theme.getAsHex(Theme.instance.font), false);
                 }
 
                 if(realBorder && clicking)

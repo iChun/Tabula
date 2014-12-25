@@ -30,7 +30,7 @@ public class WindowModelTree extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            RendererHelper.drawColourOnScreen(Theme.elementButtonBorder[0], Theme.elementButtonBorder[1], Theme.elementButtonBorder[2], 255, posX + BORDER_SIZE, posY + height - 21 - BORDER_SIZE, width - (BORDER_SIZE * 2), 1, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementButtonBorder[0], Theme.instance.elementButtonBorder[1], Theme.instance.elementButtonBorder[2], 255, posX + BORDER_SIZE, posY + height - 21 - BORDER_SIZE, width - (BORDER_SIZE * 2), 1, 0);
         }
     }
 

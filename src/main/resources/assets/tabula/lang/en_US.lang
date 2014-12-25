@@ -108,8 +108,8 @@ topdock.redo=Redo
 topdock.chat=Toggle Chat Window
 topdock.info=About this mod
 topdock.exitTabula=Exit Tabula
-topdock.wood=Wood
-topdock.woodFull=Toggle showing the planks
+topdock.wood=Block
+topdock.woodFull=Toggle showing the block
 
 system.joinedSession=%s has joined the session.
 system.addEditor=%1$s has added %2$s as an editor.

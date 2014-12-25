@@ -125,15 +125,15 @@ public class WindowTexture extends Window
 
             if(imageId == -1)
             {
-                workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.texture.noTexture"), posX + 4, posY + height - BORDER_SIZE - 12 - 20, Theme.getAsHex(Theme.font), false);
+                workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.texture.noTexture"), posX + 4, posY + height - BORDER_SIZE - 12 - 20, Theme.getAsHex(Theme.instance.font), false);
             }
             else if(project.textureFile != null)
             {
-                workspace.getFontRenderer().drawString(project.textureFile.getName(), posX + 4, posY + height - BORDER_SIZE - 12 - 20, Theme.getAsHex(Theme.font), false);
+                workspace.getFontRenderer().drawString(project.textureFile.getName(), posX + 4, posY + height - BORDER_SIZE - 12 - 20, Theme.getAsHex(Theme.instance.font), false);
             }
             else
             {
-                workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.texture.remoteTexture"), posX + 4, posY + height - BORDER_SIZE - 12 - 20, Theme.getAsHex(Theme.font), false);
+                workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.texture.remoteTexture"), posX + 4, posY + height - BORDER_SIZE - 12 - 20, Theme.getAsHex(Theme.instance.font), false);
             }
         }
     }

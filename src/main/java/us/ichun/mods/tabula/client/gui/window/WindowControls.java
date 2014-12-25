@@ -232,14 +232,14 @@ public class WindowControls extends Window
         {
             int offset = 26;
             int count = 0;
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.cubeName"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.dimensions"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.position"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.offset"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.mcScale"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.scale"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.txOffset"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.rotation"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.cubeName"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.dimensions"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.position"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.offset"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.mcScale"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.scale"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.txOffset"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.rotation"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
         }
     }
 

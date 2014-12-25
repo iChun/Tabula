@@ -14,7 +14,7 @@ public class WindowChat extends Window
     public int screenY;
     public int wasDocked;
 
-    public ElementTextWrapper chatHolder;
+    public ElementTextWrapperChat chatHolder;
 
     public WindowChat(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {

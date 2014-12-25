@@ -1,5 +1,7 @@
 package us.ichun.mods.tabula.client.core;
 
+import com.google.common.io.ByteStreams;
+import com.google.gson.Gson;
 import com.mojang.util.UUIDTypeAdapter;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -10,8 +12,12 @@ import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
+import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.mainframe.Mainframe;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.UUID;
 
 public class TickHandlerClient
@@ -64,6 +70,21 @@ public class TickHandlerClient
             uuid = UUIDTypeAdapter.fromString("deadbeef-dead-beef-dead-beefdeadbeef");
         }
         mainframe.addListener(uuid, true);
+
+        File defaultTheme = new File(ResourceHelper.getThemesDir(), "default.json");
+
+        try
+        {
+            InputStream con = new FileInputStream(defaultTheme);
+            String data = new String(ByteStreams.toByteArray(con));
+            con.close();
+
+            Theme.loadTheme((new Gson()).fromJson(data, Theme.class));
+        }
+        catch(Exception e)
+        {
+        }
+
         FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale, false, true));
     }
 

@@ -40,7 +40,7 @@ public class WindowProjectSelection extends WindowTopDock
             return;
         }
         super.draw(mouseX, mouseY);
-        RendererHelper.drawColourOnScreen(Theme.tabSideInactive[0], Theme.tabSideInactive[1], Theme.tabSideInactive[2], 255, posX, posY, width, 1, 0);
+        RendererHelper.drawColourOnScreen(Theme.instance.tabSideInactive[0], Theme.instance.tabSideInactive[1], Theme.instance.tabSideInactive[2], 255, posX, posY, width, 1, 0);
     }
 
     @Override

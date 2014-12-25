@@ -32,10 +32,10 @@ public class ElementHoriSlider extends Element
         double x2 = x1 + width - 8;
         double y1 = getPosY() + 5;
         double y2 = y1 + height - 10;
-        RendererHelper.drawColourOnScreen(Theme.elementTreeBorder[0], Theme.elementTreeBorder[1], Theme.elementTreeBorder[2], 255, x1, y1, (x2 - x1), (y2 - y1), 0);
+        RendererHelper.drawColourOnScreen(Theme.instance.elementTreeBorder[0], Theme.instance.elementTreeBorder[1], Theme.instance.elementTreeBorder[2], 255, x1, y1, (x2 - x1), (y2 - y1), 0);
 
-        RendererHelper.drawColourOnScreen(Theme.elementTreeBorder[0], Theme.elementTreeBorder[1], Theme.elementTreeBorder[2], 255, getPosX() + (x2 - x1) * sliderProg, getPosY(), 8, height, 0);
-        RendererHelper.drawColourOnScreen(Theme.elementTreeScrollBar[0], Theme.elementTreeScrollBar[1], Theme.elementTreeScrollBar[2], 255, getPosX() + (x2 - x1) * sliderProg + 1, getPosY() + 1, 6, height - 2, 0);
+        RendererHelper.drawColourOnScreen(Theme.instance.elementTreeBorder[0], Theme.instance.elementTreeBorder[1], Theme.instance.elementTreeBorder[2], 255, getPosX() + (x2 - x1) * sliderProg, getPosY(), 8, height, 0);
+        RendererHelper.drawColourOnScreen(Theme.instance.elementTreeScrollBar[0], Theme.instance.elementTreeScrollBar[1], Theme.instance.elementTreeScrollBar[2], 255, getPosX() + (x2 - x1) * sliderProg + 1, getPosY() + 1, 6, height - 2, 0);
 
         if(parent.workspace.elementDragged == this && Mouse.isButtonDown(0) && mouseX >= posX && mouseX <= posX + width && mouseY >= posY && mouseY <= posY + height)
         {

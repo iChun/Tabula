@@ -82,10 +82,10 @@ public class ElementTextWrapper extends Element
             int y1 = getPosY();
             int y2 = getPosY() + height;
 
-            RendererHelper.drawColourOnScreen(Theme.elementTreeBorder[0], Theme.elementTreeBorder[1], Theme.elementTreeBorder[2], 255, x1, y1, width, 1, 0);
-            RendererHelper.drawColourOnScreen(Theme.elementTreeBorder[0], Theme.elementTreeBorder[1], Theme.elementTreeBorder[2], 255, x1, y1, 1, height, 0);
-            RendererHelper.drawColourOnScreen(Theme.elementTreeBorder[0], Theme.elementTreeBorder[1], Theme.elementTreeBorder[2], 255, x1, y2- 1, width, 1, 0);
-            RendererHelper.drawColourOnScreen(Theme.elementTreeBorder[0], Theme.elementTreeBorder[1], Theme.elementTreeBorder[2], 255, x2 - 1, y1, 1, height, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeBorder[0], Theme.instance.elementTreeBorder[1], Theme.instance.elementTreeBorder[2], 255, x1, y1, width, 1, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeBorder[0], Theme.instance.elementTreeBorder[1], Theme.instance.elementTreeBorder[2], 255, x1, y1, 1, height, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeBorder[0], Theme.instance.elementTreeBorder[1], Theme.instance.elementTreeBorder[2], 255, x1, y2- 1, width, 1, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeBorder[0], Theme.instance.elementTreeBorder[1], Theme.instance.elementTreeBorder[2], 255, x2 - 1, y1, 1, height, 0);
         }
     }
 
@@ -101,11 +101,11 @@ public class ElementTextWrapper extends Element
             {
                 if(j == 0)
                 {
-                    parent.workspace.getFontRenderer().drawString((String)list.get(j), getPosX() + 4, getPosY() + 4, Theme.getAsHex(Theme.font), false);
+                    parent.workspace.getFontRenderer().drawString((String)list.get(j), getPosX() + 4, getPosY() + 4, Theme.getAsHex(Theme.instance.font), false);
                 }
                 else
                 {
-                    parent.workspace.getFontRenderer().drawString((String)list.get(j), getPosX() + 12, getPosY() + 4, Theme.getAsHex(Theme.font), false);
+                    parent.workspace.getFontRenderer().drawString((String)list.get(j), getPosX() + 12, getPosY() + 4, Theme.getAsHex(Theme.instance.font), false);
                 }
                 GL11.glTranslatef(0F, parent.workspace.getFontRenderer().FONT_HEIGHT + 2, 0F);
             }

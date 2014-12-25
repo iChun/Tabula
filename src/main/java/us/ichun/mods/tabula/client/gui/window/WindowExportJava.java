@@ -29,8 +29,8 @@ public class WindowExportJava extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("export.javaClass.package"), posX + 11, posY + 20, Theme.getAsHex(Theme.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("export.javaClass.name"), posX + 11, posY + 55, Theme.getAsHex(Theme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("export.javaClass.package"), posX + 11, posY + 20, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("export.javaClass.name"), posX + 11, posY + 55, Theme.getAsHex(Theme.instance.font), false);
         }
     }
 

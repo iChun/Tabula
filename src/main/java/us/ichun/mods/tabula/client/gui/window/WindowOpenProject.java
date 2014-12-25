@@ -54,7 +54,7 @@ public class WindowOpenProject extends Window
         super.draw(mouseX, mouseY);
         if(!minimized && openingFile != null)
         {
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.open.opening"), posX + 11, posY + height - 18, Theme.getAsHex(Theme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.open.opening"), posX + 11, posY + height - 18, Theme.getAsHex(Theme.instance.font), false);
         }
     }
 

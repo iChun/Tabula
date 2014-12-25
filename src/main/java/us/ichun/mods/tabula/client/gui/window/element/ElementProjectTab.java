@@ -24,15 +24,15 @@ public class ElementProjectTab extends Element
         WindowProjectSelection proj = (WindowProjectSelection)parent;
         if(id != proj.projects.size() - 1)
         {
-            RendererHelper.drawColourOnScreen(Theme.tabSideInactive[0], Theme.tabSideInactive[1], Theme.tabSideInactive[2], 255, getPosX() + width - 1, getPosY() + 1, 1, height, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.tabSideInactive[0], Theme.instance.tabSideInactive[1], Theme.instance.tabSideInactive[2], 255, getPosX() + width - 1, getPosY() + 1, 1, height, 0);
         }
         if(proj.selectedProject == id)
         {
-            RendererHelper.drawColourOnScreen(Theme.elementProjectTabActive[0], Theme.elementProjectTabActive[1], Theme.elementProjectTabActive[2], 255, getPosX(), getPosY(), width - 1, height, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementProjectTabActive[0], Theme.instance.elementProjectTabActive[1], Theme.instance.elementProjectTabActive[2], 255, getPosX(), getPosY(), width - 1, height, 0);
         }
         else if(hover)
         {
-            RendererHelper.drawColourOnScreen(Theme.elementProjectTabHover[0], Theme.elementProjectTabHover[1], Theme.elementProjectTabHover[2], 255, getPosX(), getPosY(), width - 1, height, 0);
+            RendererHelper.drawColourOnScreen(Theme.instance.elementProjectTabHover[0], Theme.instance.elementProjectTabHover[1], Theme.instance.elementProjectTabHover[2], 255, getPosX(), getPosY(), width - 1, height, 0);
         }
 
         String titleToRender = info.modelName;
@@ -51,10 +51,10 @@ public class ElementProjectTab extends Element
                 titleToRender = titleToRender.substring(0, titleToRender.length() - 1) + "... ";
             }
         }
-        parent.workspace.getFontRenderer().drawString(titleToRender, parent.posX + posX + 4, parent.posY + posY + 3, Theme.getAsHex(changed? Theme.elementProjectTabFontChanges : Theme.elementProjectTabFont), false);
+        parent.workspace.getFontRenderer().drawString(titleToRender, parent.posX + posX + 4, parent.posY + posY + 3, Theme.getAsHex(changed? Theme.instance.elementProjectTabFontChanges : Theme.instance.elementProjectTabFont), false);
         if(!parent.workspace.remoteSession)
         {
-            parent.workspace.getFontRenderer().drawString("X", parent.posX + posX + width - 8, parent.posY + posY + 3, Theme.getAsHex(Theme.elementProjectTabFont), false);
+            parent.workspace.getFontRenderer().drawString("X", parent.posX + posX + width - 8, parent.posY + posY + 3, Theme.getAsHex(Theme.instance.elementProjectTabFont), false);
         }
     }
 

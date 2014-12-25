@@ -24,7 +24,7 @@ public class WindowPopup extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal(message), posX + 11, posY + 20, Theme.getAsHex(Theme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal(message), posX + 11, posY + 20, Theme.getAsHex(Theme.instance.font), false);
         }
     }
 

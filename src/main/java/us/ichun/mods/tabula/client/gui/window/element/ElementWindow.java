@@ -45,7 +45,7 @@ public class ElementWindow extends Element
                 titleToRender = titleToRender.substring(0, titleToRender.length() - 1) + "... ";
             }
         }
-        parent.workspace.getFontRenderer().drawString(titleToRender, parent.posX + posX + 4, parent.posY + posY + 3, Theme.getAsHex(Theme.font), false);
+        parent.workspace.getFontRenderer().drawString(titleToRender, parent.posX + posX + 4, parent.posY + posY + 3, Theme.getAsHex(Theme.instance.font), false);
 
         mountedWindow.docked = parent.docked;
         mountedWindow.posX = parent.posX;
@@ -58,21 +58,21 @@ public class ElementWindow extends Element
             WindowTabs tab = (WindowTabs)parent;
             if(tab.minimized && id != tab.tabs.size() - 1)
             {
-                RendererHelper.drawColourOnScreen(Theme.tabSideInactive[0], Theme.tabSideInactive[1], Theme.tabSideInactive[2], 255, getPosX() + width + 1, getPosY() + 1, 1, height, 0);
+                RendererHelper.drawColourOnScreen(Theme.instance.tabSideInactive[0], Theme.instance.tabSideInactive[1], Theme.instance.tabSideInactive[2], 255, getPosX() + width + 1, getPosY() + 1, 1, height, 0);
             }
             if(tab.selectedTab == id && !tab.minimized)
             {
                 mountedWindow.isTab = true;
                 mountedWindow.draw(mouseX,mouseY);
                 mountedWindow.isTab = false;
-                RendererHelper.drawColourOnScreen(Theme.windowBorder[0], Theme.windowBorder[1], Theme.windowBorder[2], 255, getPosX(), getPosY() + 1 + height, width + 3, 2, 0);
+                RendererHelper.drawColourOnScreen(Theme.instance.windowBorder[0], Theme.instance.windowBorder[1], Theme.instance.windowBorder[2], 255, getPosX(), getPosY() + 1 + height, width + 3, 2, 0);
             }
             else if(hover)
             {
-                RendererHelper.drawColourOnScreen(Theme.tabBorder[0], Theme.tabBorder[1], Theme.tabBorder[2], 255, getPosX() + 2, getPosY() + 1, width, 1, 0);
-                RendererHelper.drawColourOnScreen(Theme.tabBorder[0], Theme.tabBorder[1], Theme.tabBorder[2], 255, getPosX() + 2, getPosY() + 1, 1, height, 0);
-                RendererHelper.drawColourOnScreen(Theme.tabBorder[0], Theme.tabBorder[1], Theme.tabBorder[2], 255, getPosX() + 2, getPosY() + 1 + height - 1, width, 1, 0);
-                RendererHelper.drawColourOnScreen(Theme.tabBorder[0], Theme.tabBorder[1], Theme.tabBorder[2], 255, getPosX() + width + 1, getPosY() + 1, 1, height, 0);
+                RendererHelper.drawColourOnScreen(Theme.instance.tabBorder[0], Theme.instance.tabBorder[1], Theme.instance.tabBorder[2], 255, getPosX() + 2, getPosY() + 1, width, 1, 0);
+                RendererHelper.drawColourOnScreen(Theme.instance.tabBorder[0], Theme.instance.tabBorder[1], Theme.instance.tabBorder[2], 255, getPosX() + 2, getPosY() + 1, 1, height, 0);
+                RendererHelper.drawColourOnScreen(Theme.instance.tabBorder[0], Theme.instance.tabBorder[1], Theme.instance.tabBorder[2], 255, getPosX() + 2, getPosY() + 1 + height - 1, width, 1, 0);
+                RendererHelper.drawColourOnScreen(Theme.instance.tabBorder[0], Theme.instance.tabBorder[1], Theme.instance.tabBorder[2], 255, getPosX() + width + 1, getPosY() + 1, 1, height, 0);
             }
         }
     }
