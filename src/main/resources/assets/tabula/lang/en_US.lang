@@ -12,6 +12,7 @@ window.controls.dimensions=Dimensions
 window.controls.position=Position
 window.controls.offset=Offset
 window.controls.rotation=Rotation
+window.controls.opacity=Opacity
 window.controls.mcScale=MC Scale
 window.controls.scale=Custom Scale
 window.controls.txOffset=Texture Offset
@@ -97,9 +98,12 @@ window.newAnim.animName=Animation Name
 window.newAnim.animLoop=Does the animation loop?
 window.editAnim.title=Edit Animation
 
+
 window.newAnimComp.title=New Animation Component
 window.newAnimComp.name=Component Name
 window.newAnimComp.length=Component length (in ticks)
+window.editAnimComp.title=Edit Animation Component
+window.editAnimComp.startPos=Component Start Tick
 
 window.selectTheme.title=Select Theme
 

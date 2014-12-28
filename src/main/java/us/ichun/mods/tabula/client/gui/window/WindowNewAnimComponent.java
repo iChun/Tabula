@@ -16,7 +16,7 @@ public class WindowNewAnimComponent extends Window
         super(parent, x, y, w, h, minW, minH, "window.newAnimComp.title", true);
 
         cubeIdent = info.identifier;
-        elements.add(new ElementTextInput(this, 10, 30, width - 20, 12, 1, "window.newAnimComp.name"));
+        elements.add(new ElementTextInput(this, 10, 30, width - 20, 12, 4, "window.newAnimComp.name"));
         elements.add(new ElementNumberInput(this, 10, 65, 40, 12, 1, "window.newAnimComp.length", 1, false, 1, (int)Short.MAX_VALUE, 1D));
 
         elements.add(new ElementButton(this, width - 140, height - 30, 60, 16, 100, false, 1, 1, "element.button.ok"));
@@ -41,7 +41,7 @@ public class WindowNewAnimComponent extends Window
         {
             workspace.removeWindow(this, true);
         }
-        if(element.id == 100)
+        if(element.id > 1)
         {
             if(!workspace.projectManager.projects.isEmpty() && !workspace.windowAnimate.animList.selectedIdentifier.isEmpty())
             {
@@ -52,7 +52,7 @@ public class WindowNewAnimComponent extends Window
                     if(elements.get(i) instanceof ElementTextInput)
                     {
                         ElementTextInput text = (ElementTextInput)elements.get(i);
-                        if(text.id == 1)
+                        if(text.id == 4)
                         {
                             animName = text.textField.getText();
                         }

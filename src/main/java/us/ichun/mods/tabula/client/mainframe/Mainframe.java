@@ -748,7 +748,7 @@ public class Mainframe
         }
     }
 
-    public void updateGroup(String projIdent, String groupIdent, String name, double[] pos, double[] offset, double[] scale, int[] txOffset, double[] rot, boolean mirror, double mcScale)
+    public void updateGroup(String projIdent, String groupIdent, String name, double[] pos, double[] offset, double[] scale, int[] txOffset, double[] rot, boolean mirror, double mcScale, double opacity)
     {
         for(ProjectInfo proj : projects)
         {
@@ -762,13 +762,13 @@ public class Mainframe
                     {
                         found = true;
                         info1.name = name;
-                        updateGroupPieces(info1, pos, offset, scale, txOffset, rot, mirror, mcScale);
+                        updateGroupPieces(info1, pos, offset, scale, txOffset, rot, mirror, mcScale, opacity);
                         break;
                     }
                 }
                 if(!found)
                 {
-                    updateGroupInCubeGroups(groupIdent, proj.cubeGroups, name, pos, offset, scale, txOffset, rot, mirror, mcScale);
+                    updateGroupInCubeGroups(groupIdent, proj.cubeGroups, name, pos, offset, scale, txOffset, rot, mirror, mcScale, opacity);
                 }
 
                 streamProject(proj);
@@ -776,7 +776,7 @@ public class Mainframe
         }
     }
 
-    public void updateGroupInCubeGroups(String groupIdent, ArrayList<CubeGroup> groups, String name, double[] pos, double[] offset, double[] scale, int[] txOffset, double[] rot, boolean mirror, double mcScale)
+    public void updateGroupInCubeGroups(String groupIdent, ArrayList<CubeGroup> groups, String name, double[] pos, double[] offset, double[] scale, int[] txOffset, double[] rot, boolean mirror, double mcScale, double opacity)
     {
         for(int j = 0; j < groups.size(); j++)
         {
@@ -787,19 +787,19 @@ public class Mainframe
                 if(info1.identifier.equals(groupIdent))
                 {
                     info1.name = name;
-                    updateGroupPieces(info1, pos, offset, scale, txOffset, rot, mirror, mcScale);
+                    updateGroupPieces(info1, pos, offset, scale, txOffset, rot, mirror, mcScale, opacity);
                     break;
                 }
             }
-            updateGroupInCubeGroups(groupIdent, proj.cubeGroups, name, pos, offset, scale, txOffset, rot, mirror, mcScale);
+            updateGroupInCubeGroups(groupIdent, proj.cubeGroups, name, pos, offset, scale, txOffset, rot, mirror, mcScale, opacity);
         }
     }
 
-    public void updateGroupPieces(CubeGroup group, double[] pos, double[] offset, double[] scale, int[] txOffset, double[] rot, boolean mirror, double mcScale)
+    public void updateGroupPieces(CubeGroup group, double[] pos, double[] offset, double[] scale, int[] txOffset, double[] rot, boolean mirror, double mcScale, double opacity)
     {
         for(CubeGroup group1 : group.cubeGroups)
         {
-            updateGroupPieces(group1, pos, offset, scale, txOffset, rot, mirror, mcScale);
+            updateGroupPieces(group1, pos, offset, scale, txOffset, rot, mirror, mcScale, opacity);
         }
         for(CubeInfo cube : group.cubes)
         {
@@ -814,6 +814,7 @@ public class Mainframe
             cube.txOffset[1] += txOffset[1];
             cube.txMirror = mirror;
             cube.mcScale += mcScale;
+            cube.opacity = opacity;
         }
     }
 

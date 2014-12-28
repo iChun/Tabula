@@ -26,6 +26,7 @@ public class WindowControls extends Window
         elements.add(new ElementNumberInput(this, 5, 27 + (offset * count++), width - 10, 12, 1, "window.controls.dimensions", 3, false, 0, Integer.MAX_VALUE));
         elements.add(new ElementNumberInput(this, 5, 27 + (offset * count++), width - 10, 12, 2, "window.controls.position", 3, true));
         elements.add(new ElementNumberInput(this, 5, 27 + (offset * count++), width - 10, 12, 3, "window.controls.offset", 3, true));
+        elements.add(new ElementNumberInput(this, 5, 27 + (offset * count++), width - 12, 12, 9, "window.controls.opacity", 1, true, 0, 100));// ID 9
         elements.add(new ElementNumberInput(this, 5, 27 + (offset * count++), width - 12, 12, 8, "window.controls.mcScale", 1, true));// ID 8
         elements.add(new ElementNumberInput(this, 5, 27 + (offset * count++), width - 10, 12, 4, "window.controls.scale", 3, true));
         elements.add(new ElementToggle(this, ((width - 10) / 3 * 2) + 7, 27 + (offset * count), width - 5 - (((width - 10) / 3 * 2) + 7) - 2, 12, 7, false, 1, 0, "window.controls.txMirror", "window.controls.txMirrorFull", false));
@@ -105,6 +106,10 @@ public class WindowControls extends Window
                     {
                         ((ElementNumberInput)e).textFields.get(0).setText(String.format(Locale.ENGLISH, "%.2f", info.parentIdentifier == null ? info.mcScale : 0D));
                     }
+                    else if(e.id == 9)
+                    {
+                        ((ElementNumberInput)e).textFields.get(0).setText(String.format(Locale.ENGLISH, "%.2f", info.parentIdentifier == null ? info.opacity : 100D));
+                    }
                     else if(e.id >= 50 && e.id <= 52)
                     {
                         for(int i = 0; i < 3; i++)
@@ -175,7 +180,11 @@ public class WindowControls extends Window
                     }
                     else if(e.id == 8)
                     {
-                        ((ElementNumberInput)e).textFields.get(0).setText(String.format(Locale.ENGLISH, "%.2f", 0F));
+                        ((ElementNumberInput)e).textFields.get(0).setText(String.format(Locale.ENGLISH, "%.2f", 0D));
+                    }
+                    else if(e.id == 9)
+                    {
+                        ((ElementNumberInput)e).textFields.get(0).setText(String.format(Locale.ENGLISH, "%.2f", 100D));
                     }
                     else if(e.id >= 50 && e.id <= 52)
                     {
@@ -198,7 +207,7 @@ public class WindowControls extends Window
                     {
                         ((ElementTextInput)e).textField.setText("");
                     }
-                    else if(e.id >= 1 && e.id <= 6 || e.id == 8)
+                    else if(e.id >= 1 && e.id <= 6 || e.id == 8 || e.id == 9)
                     {
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
@@ -236,6 +245,7 @@ public class WindowControls extends Window
             workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.dimensions"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
             workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.position"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
             workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.offset"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.opacity"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
             workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.mcScale"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
             workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.scale"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
             workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.txOffset"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
@@ -252,7 +262,7 @@ public class WindowControls extends Window
     @Override
     public void elementTriggered(Element element)
     {
-        if(element.id >= 0 && element.id <= 8)
+        if(element.id >= 0 && element.id <= 9)
         {
             if(selectedObject instanceof CubeInfo)
             {
@@ -322,6 +332,10 @@ public class WindowControls extends Window
                     {
                         info.mcScale = info.parentIdentifier == null ? Double.parseDouble(((ElementNumberInput)e).textFields.get(0).getText()) : 0D;
                     }
+                    else if(e.id == 9)
+                    {
+                        info.opacity = info.parentIdentifier == null ? Double.parseDouble(((ElementNumberInput)e).textFields.get(0).getText()) : 100D;
+                    }
                 }
 
                 Gson gson = new Gson();
@@ -346,6 +360,7 @@ public class WindowControls extends Window
                 double[] rot = new double[3];
                 boolean mirror = false;
                 double mcScale = 0.0D;
+                double opacity = 100D;
 
                 for(int k = 0; k < elements.size(); k++)
                 {
@@ -397,6 +412,10 @@ public class WindowControls extends Window
                     {
                         mcScale = Double.parseDouble(((ElementNumberInput)e).textFields.get(0).getText());
                     }
+                    else if(e.id == 9)
+                    {
+                        opacity = Double.parseDouble(((ElementNumberInput)e).textFields.get(0).getText());
+                    }
                 }
 
                 if(workspace.remoteSession)
@@ -405,7 +424,7 @@ public class WindowControls extends Window
                 }
                 else
                 {
-                    Tabula.proxy.tickHandlerClient.mainframe.updateGroup(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, info.identifier, name, pos, offset, scale, txOffset, rot, mirror, mcScale);
+                    Tabula.proxy.tickHandlerClient.mainframe.updateGroup(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, info.identifier, name, pos, offset, scale, txOffset, rot, mirror, mcScale, opacity);
                 }
             }
         }

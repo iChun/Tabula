@@ -20,7 +20,7 @@ public class WindowEditAnimComponent extends Window
         super(parent, x, y, w, h, minW, minH, "window.editAnimComp.title", true);
 
         comp = animComp;
-        ElementTextInput text = new ElementTextInput(this, 10, 30, width - 20, 12, 1, "window.newAnimComp.name");
+        ElementTextInput text = new ElementTextInput(this, 10, 30, width - 20, 12, 4, "window.newAnimComp.name");
         text.textField.setText(comp.name);
         elements.add(text);
         elements.add(new ElementNumberInput(this, 10, 65, 40, 12, 1, "window.newAnimComp.length", 1, false, 1, (int)Short.MAX_VALUE, comp.length));
@@ -49,7 +49,7 @@ public class WindowEditAnimComponent extends Window
         {
             workspace.removeWindow(this, true);
         }
-        if(element.id == 100)
+        if(element.id > 2)
         {
             if(!workspace.projectManager.projects.isEmpty() && !workspace.windowAnimate.animList.selectedIdentifier.isEmpty())
             {
@@ -61,7 +61,7 @@ public class WindowEditAnimComponent extends Window
                     if(elements.get(i) instanceof ElementTextInput)
                     {
                         ElementTextInput text = (ElementTextInput)elements.get(i);
-                        if(text.id == 1)
+                        if(text.id == 4)
                         {
                             animName = text.textField.getText();
                         }
