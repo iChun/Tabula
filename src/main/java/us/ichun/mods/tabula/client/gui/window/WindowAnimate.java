@@ -10,6 +10,16 @@ public class WindowAnimate extends Window
     }
 
     @Override
+    public void draw(int mouseX, int mouseY) //4 pixel border?
+    {
+        if(width <= 0 || height <= 0)
+        {
+            return;
+        }
+        super.draw(mouseX, mouseY);
+    }
+
+    @Override
     public boolean interactableWhileNoProjects()
     {
         return false;

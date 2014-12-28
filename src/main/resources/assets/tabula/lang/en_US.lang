@@ -87,6 +87,9 @@ window.animate.editAnim=Edit Animation
 window.animate.delAnim=Delete Animation
 window.animate.play=Play Animation
 window.animate.stop=Stop Animation
+window.animate.newComponent=New Component
+window.animate.editComponent=Edit Component
+window.animate.delComponent=Delete Component
 
 window.selectTheme.title=Select Theme
 
