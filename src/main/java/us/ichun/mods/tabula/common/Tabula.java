@@ -61,6 +61,7 @@ public class Tabula
         config = ConfigHandler.createConfig(new File(ResourceHelper.getConfigDir(), "config.cfg"), "tabula", "Tabula", logger, instance);
         config.createStringProperty("favTheme", true, false, "default");
         config.createIntBoolProperty("renderRotationPoint", true, false, true);
+        config.createIntBoolProperty("renderWorkspaceBlock", true, false, true);
 
         MinecraftForge.EVENT_BUS.register(new EventHandler());
 

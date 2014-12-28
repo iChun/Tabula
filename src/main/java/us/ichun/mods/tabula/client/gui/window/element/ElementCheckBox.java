@@ -10,7 +10,7 @@ public class ElementCheckBox extends ElementToggle
 {
     public ElementCheckBox(Window window, int x, int y, int w, int h, int ID, boolean igMin, int sideH, int sideV, String Tooltip, boolean state)
     {
-        super(window, x, y, w, h, ID, igMin, sideH, sideV, "", Tooltip, state);
+        super(window, x, y, 9, 9, ID, igMin, sideH, sideV, "", Tooltip, state);
     }
 
 
@@ -42,7 +42,7 @@ public class ElementCheckBox extends ElementToggle
         }
         if(toggledState)
         {
-            parent.workspace.getFontRenderer().drawString("X", getPosX() + (width / 2) - (parent.workspace.getFontRenderer().getStringWidth(StatCollector.translateToLocal(text)) / 2), getPosY() + height - (height / 2) - (parent.workspace.getFontRenderer().FONT_HEIGHT / 2), Theme.getAsHex(!toggledState ? Theme.instance.elementButtonToggleHover : Theme.instance.font), false);
+            parent.workspace.getFontRenderer().drawString("X", getPosX() + 2, getPosY() + height - (height / 2) - (parent.workspace.getFontRenderer().FONT_HEIGHT / 2), Theme.getAsHex(!toggledState ? Theme.instance.elementButtonToggleHover : Theme.instance.font), false);
         }
     }
 }

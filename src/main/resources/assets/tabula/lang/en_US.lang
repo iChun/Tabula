@@ -130,3 +130,11 @@ system.removeEditor=%1$s has removed %2$s as an editor.
 system.cannotRemoveHost=%s is host and cannot be removed as an editor.
 system.cannotReachHost=Host is unavailable. They might have crashed or disconnected. Consider saving the models for them before exiting.
 system.sessionEnded=Host has ended session.
+
+tabula.config.favTheme.name=Favorite Theme
+tabula.config.renderRotationPoint.name=Render Model Rotation Point
+tabula.config.renderWorkspaceBlock.name=Render Workspace Block
+
+tabula.config.favTheme.comment=Favorite Colour Theme for Tabula's Interface
+tabula.config.renderRotationPoint.comment=Should the rotation point of selected model parts be rendered
+tabula.config.renderWorkspaceBlock.comment=Should the block in the workspace be rendered

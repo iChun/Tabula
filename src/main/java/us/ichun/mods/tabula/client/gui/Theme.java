@@ -6,6 +6,8 @@ public class Theme
 {
     public static transient Theme instance = new Theme();
 
+    public transient String filename;
+
     public String name = "Default";
     public String author = "iChun";
 

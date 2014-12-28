@@ -45,6 +45,8 @@ public class WindowThemeSelect extends Window
 
                 Theme theme = (new Gson()).fromJson(data, Theme.class);
 
+                theme.filename = "default";
+
                 modelList.createTree(null, theme, 13, 0, false, false);
             }
             catch(Exception ignored){}
@@ -63,6 +65,8 @@ public class WindowThemeSelect extends Window
                     con.close();
 
                     Theme theme = (new Gson()).fromJson(data, Theme.class);
+
+                    theme.filename = file.getName().substring(0, file.getName().length() - 5); //remove ".json"
 
                     modelList.createTree(null, theme, 13, 0, false, false);
                 }

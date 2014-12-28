@@ -5,7 +5,9 @@ import net.minecraft.util.ResourceLocation;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButtonTextured;
+import us.ichun.mods.tabula.client.gui.window.element.ElementCheckBox;
 import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
+import us.ichun.mods.tabula.common.Tabula;
 
 public class WindowTopDock extends Window
 {
@@ -28,6 +30,7 @@ public class WindowTopDock extends Window
     public static final int ID_REDO = 16;
     public static final int ID_PASTE_WITHOUT_CHILDREN = 17;
     public static final int ID_THEMES = 18;
+    public static final int ID_SETTINGS = 19;
 
     public static final int ID_WOOD = -1;
 
@@ -36,7 +39,7 @@ public class WindowTopDock extends Window
         super(parent, x, y, w, h, minW, minH, "", false);
 
         //ADD Elements
-        elements.add(new ElementToggle(this, width - 44 - 20, 4, 40, 12, ID_WOOD, true, 1, 0, "topdock.wood", "topdock.woodFull", true));
+        elements.add(new ElementToggle(this, width - 44 - 20, 4, 40, 12, ID_WOOD, true, 1, 0, "topdock.wood", "topdock.woodFull", Tabula.config.getInt("renderWorkspaceBlock") == 1));
 
         int button = 0;
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_NEW, true, 0, 0, "topdock.new", new ResourceLocation("tabula", "textures/icon/new.png")));
@@ -56,6 +59,7 @@ public class WindowTopDock extends Window
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_REDO, true, 0, 0, "topdock.redo", new ResourceLocation("tabula", "textures/icon/redo.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CHAT, true, 0, 0, "topdock.chat", new ResourceLocation("tabula", "textures/icon/chat.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_THEMES, true, 0, 0, "topdock.themes", new ResourceLocation("tabula", "textures/icon/themes.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_SETTINGS, true, 0, 0, "topdock.settings", new ResourceLocation("tabula", "textures/icon/settings.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CREDITS, true, 0, 0, "topdock.info", new ResourceLocation("tabula", "textures/icon/info.png")));
         elements.add(new ElementButtonTextured(this, width - 20, 0, ID_EXIT_TABULA, true, 1, 0, "topdock.exitTabula", new ResourceLocation("tabula", "textures/icon/exitTabula.png")));
     }
@@ -155,6 +159,10 @@ public class WindowTopDock extends Window
         {
             workspace.addWindowOnTop(new WindowThemeSelect(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 260, 160, 240, 160).putInMiddleOfScreen());
         }
+        else if(element.id == ID_SETTINGS)
+        {
+            workspace.addWindowOnTop(new WindowSettings(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 260, 160, 240, 160).putInMiddleOfScreen());
+        }
         else if(element.id == ID_CREDITS)
         {
             workspace.addWindowOnTop(new WindowCredits(workspace, 0, 0, 300, 200, 300, 200).putInMiddleOfScreen());
@@ -162,6 +170,11 @@ public class WindowTopDock extends Window
         else if(element.id == ID_EXIT_TABULA)
         {
             workspace.wantToExit = true;
+        }
+        else if(element.id == ID_WOOD)
+        {
+            Tabula.config.get("renderWorkspaceBlock").set(((ElementToggle)element).toggledState ? 1 : 0);
+            Tabula.config.save();
         }
     }
 

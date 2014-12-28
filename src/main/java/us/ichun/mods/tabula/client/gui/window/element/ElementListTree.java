@@ -311,6 +311,11 @@ public class ElementListTree extends Element
         {
             Theme theme = (Theme)obj;
             Theme.loadTheme(theme);
+            if(theme.filename != null)
+            {
+                Tabula.config.get("favTheme").set(theme.filename);
+                Tabula.config.save();
+            }
         }
     }
 
