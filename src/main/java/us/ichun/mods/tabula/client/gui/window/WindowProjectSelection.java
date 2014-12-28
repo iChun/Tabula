@@ -144,7 +144,7 @@ public class WindowProjectSelection extends WindowTopDock
 
     public void updateProject(ProjectInfo info)
     {
-        boolean added = false;
+        boolean projExisted = false;
         for(int i = 0; i < projects.size(); i++)
         {
             ProjectInfo info1 = projects.get(i);
@@ -159,10 +159,21 @@ public class WindowProjectSelection extends WindowTopDock
                 {
                     ((ElementProjectTab)elements.get(i)).changed = true;
                 }
-                added = true;
+                for(Animation anim : info1.anims)
+                {
+                    for(Animation anim1 : info.anims)
+                    {
+                        if(anim1.identifier.equals(anim.identifier))
+                        {
+                            anim1.playTime = anim.playTime;
+                            anim1.playing = anim.playing;
+                        }
+                    }
+                }
+                projExisted = true;
             }
         }
-        if(!added)
+        if(!projExisted)
         {
             if(projects.isEmpty())
             {

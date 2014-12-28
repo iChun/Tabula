@@ -163,6 +163,16 @@ public class WindowAnimate extends Window
     }
 
     @Override
+    public int clickedOnBorder(int mouseX, int mouseY, int id)//only left clicks
+    {
+        if(id == 0 && !minimized)
+        {
+            return ((mouseY <= BORDER_SIZE + 1) ? 1 : 0) + 1; //you can only drag the top
+        }
+        return 0;
+    }
+
+    @Override
     public boolean interactableWhileNoProjects()
     {
         return false;
