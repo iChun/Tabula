@@ -7,6 +7,7 @@ import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.module.tabula.client.model.ModelInfo;
 import us.ichun.module.tabula.common.project.ProjectInfo;
+import us.ichun.module.tabula.common.project.components.Animation;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
@@ -349,6 +350,55 @@ public class Mainframe
                 childProtectiveServices(info, draggedOnto, dragged);
 
                 streamProject(info);
+            }
+        }
+    }
+
+    public void createNewAnimation(String ident, String name, boolean loops)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                info.createNewAnimation(name, loops);
+                streamProject(info);
+            }
+        }
+    }
+
+    public void editAnimation(String ident, String animIdent, String name, boolean loops)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                for(Animation anim : info.anims)
+                {
+                    if(anim.identifier.equals(animIdent))
+                    {
+                        anim.name = name;
+                        anim.loops = loops;
+                        streamProject(info);
+                    }
+                }
+            }
+        }
+    }
+
+    public void deleteAnimation(String ident, String animIdent)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                for(int i = info.anims.size() - 1; i >= 0; i--)
+                {
+                    if(info.anims.get(i).identifier.equals(animIdent))
+                    {
+                        info.anims.remove(i);
+                        streamProject(info);
+                    }
+                }
             }
         }
     }

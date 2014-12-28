@@ -8,7 +8,7 @@ import us.ichun.mods.tabula.client.gui.window.Window;
 
 public class ElementCheckBox extends ElementToggle
 {
-    public ElementCheckBox(Window window, int x, int y, int w, int h, int ID, boolean igMin, int sideH, int sideV, String Tooltip, boolean state)
+    public ElementCheckBox(Window window, int x, int y, int ID, boolean igMin, int sideH, int sideV, String Tooltip, boolean state)
     {
         super(window, x, y, 9, 9, ID, igMin, sideH, sideV, "", Tooltip, state);
     }

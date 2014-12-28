@@ -13,6 +13,7 @@ import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.module.tabula.client.model.ModelInfo;
+import us.ichun.module.tabula.common.project.components.Animation;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
@@ -86,7 +87,7 @@ public class ElementListTree extends Element
 
         RendererHelper.endGlScissor();
 
-        RendererHelper.startGlScissor(getPosX(), getPosY(), width + 2, height + 2);
+        RendererHelper.startGlScissor(getPosX(), getPosY() - 1, width + 2, height + 3);
 
         if(treeHeight1 > height)
         {
@@ -109,6 +110,8 @@ public class ElementListTree extends Element
                 sliderProg = 1.0F - MathHelper.clamp_double((double)(sby2 - mouseY) / (double)(sby2 - sby1), 0.0D, 1.0D);
             }
         }
+
+        RendererHelper.startGlScissor(getPosX(), getPosY(), width + 2, height + 2);
 
         GL11.glPushMatrix();
         GL11.glTranslated(0D, (double)-((treeHeight1 - height) * sliderProg), 0D);
@@ -317,6 +320,10 @@ public class ElementListTree extends Element
                 Tabula.config.save();
             }
         }
+        else if(obj instanceof Animation)
+        {
+            selectedIdentifier = ((Animation)obj).identifier;
+        }
     }
 
     public void triggerParent()
@@ -518,6 +525,11 @@ public class ElementListTree extends Element
                 {
                     Theme theme = (Theme)attachedObject;
                     parent.workspace.getFontRenderer().drawString(reString(theme.name + " - " + theme.author, width), getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.instance.font), false);
+                }
+                else if(attachedObject instanceof Animation)
+                {
+                    Animation anim = (Animation)attachedObject;
+                    parent.workspace.getFontRenderer().drawString(reString(anim.name, width), getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.instance.font), false);
                 }
 
                 if(realBorder && clicking)

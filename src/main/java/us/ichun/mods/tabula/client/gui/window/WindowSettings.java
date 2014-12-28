@@ -14,7 +14,7 @@ public class WindowSettings extends Window
 
         elements.add(new ElementButton(this, width / 2 - 30, height - 25, 60, 16, -1, false, 2, 1, "element.button.ok"));
 
-        elements.add(new ElementCheckBox(this, 11, 20, 0, 0, 0, false, 0, 0, "window.settings.renderRotationPoint", Tabula.config.getInt("renderRotationPoint") == 1));
+        elements.add(new ElementCheckBox(this, 11, 20, 0, false, 0, 0, "window.settings.renderRotationPoint", Tabula.config.getInt("renderRotationPoint") == 1));
     }
 
     @Override

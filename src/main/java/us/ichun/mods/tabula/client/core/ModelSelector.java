@@ -82,6 +82,14 @@ public class ModelSelector {
             }
             workspace.windowControls.refresh = true;
 
+            if(workspace.windowControls.selectedObject == null && id == -1)
+            {
+                for (ElementListTree.Tree tree : workspace.windowAnimate.animList.trees)
+                {
+                    tree.selected = false;
+                }
+                workspace.windowAnimate.animList.selectedIdentifier = "";
+            }
 
             //clear the depth buffer so the real rendering can properly override what has been rendered
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
@@ -171,7 +179,7 @@ public class ModelSelector {
                 id = fakeRenderModelPart(model, cubeInfo, hidden, id, f5, false);
             }
         }
-        
+
         return id;
     }
 
@@ -196,7 +204,7 @@ public class ModelSelector {
 
         model.render(f5);
     }
-    
+
     private void applyScale(CubeInfo info, float f5) {
         GL11.glTranslatef(info.modelCube.offsetX, info.modelCube.offsetY, info.modelCube.offsetZ);
         GL11.glTranslatef(info.modelCube.rotationPointX * f5, info.modelCube.rotationPointY * f5, info.modelCube.rotationPointZ * f5);
@@ -204,7 +212,7 @@ public class ModelSelector {
         GL11.glTranslatef(-info.modelCube.offsetX, -info.modelCube.offsetY, -info.modelCube.offsetZ);
         GL11.glTranslatef(-info.modelCube.rotationPointX * f5, -info.modelCube.rotationPointY * f5, -info.modelCube.rotationPointZ * f5);
     }
-    
+
     //Extracted from the ModelBaseDummy class
     private void applyParentTransformations(List<CubeInfo> parents, float f5) {
         for(int i = parents.size() - 1; i >= 0; i--) {
@@ -233,6 +241,6 @@ public class ModelSelector {
                 GL11.glRotatef(parent.modelCube.rotateAngleX * (180F / (float)Math.PI), 1.0F, 0.0F, 0.0F);
             }
 
-        }        
+        }
     }
 }

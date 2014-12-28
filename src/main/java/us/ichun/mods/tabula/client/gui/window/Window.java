@@ -2,6 +2,7 @@ package us.ichun.mods.tabula.client.gui.window;
 
 import ichun.client.render.RendererHelper;
 import net.minecraft.util.StatCollector;
+import org.lwjgl.opengl.GL11;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
@@ -184,6 +185,7 @@ public class Window
                         workspace.hoverTime = 0;
                     }
                 }
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 element.draw(mouseX, mouseY, boundary && !obstructed);
             }
         }

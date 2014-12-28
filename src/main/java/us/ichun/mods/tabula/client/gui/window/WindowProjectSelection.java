@@ -133,6 +133,7 @@ public class WindowProjectSelection extends WindowTopDock
         else
         {
             workspace.windowModelTree.modelList.trees.clear();
+            workspace.windowAnimate.animList.trees.clear();
             workspace.windowControls.selectedObject = null;
             workspace.windowControls.refresh = true;
         }
@@ -228,6 +229,14 @@ public class WindowProjectSelection extends WindowTopDock
             workspace.windowControls.selectedObject = null;
             workspace.windowControls.refresh = true;
         }
+
+        ElementListTree animList = workspace.windowAnimate.animList;
+        animList.trees.clear();
+
+        for(int i = 0; i < info.anims.size(); i++)
+        {
+            animList.createTree(null, info.anims.get(i), 13, 0, false, false);
+        }
     }
 
     public void createTreeForGroup(CubeGroup group, ElementListTree modelList, int attachLevel)
@@ -267,7 +276,7 @@ public class WindowProjectSelection extends WindowTopDock
 
     public void changeProject(int i)
     {
-        if(selectedProject != -1 && selectedProject != i)
+        if(selectedProject != -1)
         {
             ProjectInfo info = projects.get(selectedProject);
             info.cameraFov = workspace.cameraFov;

@@ -85,11 +85,17 @@ window.animate.title=Animation
 window.animate.newAnim=New Animation
 window.animate.editAnim=Edit Animation
 window.animate.delAnim=Delete Animation
-window.animate.play=Play Animation
-window.animate.stop=Stop Animation
+window.animate.playAnim=Play Animation
+window.animate.stopAnim=Stop Animation
 window.animate.newComponent=New Component
 window.animate.editComponent=Edit Component
 window.animate.delComponent=Delete Component
+
+window.newAnim.title=New Animation
+window.newAnim.animName=Animation Name
+window.newAnim.animLoop=Does the animation loop?
+
+window.editAnim.title=Edit Animation
 
 window.selectTheme.title=Select Theme
 

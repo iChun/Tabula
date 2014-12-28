@@ -145,7 +145,7 @@ public class GuiWorkspace extends GuiScreen
             addToDock(1, windowTexture);
             addToDock(1, windowModelTree);
             addToDock(2, windowAnimate);
-            windowAnimate.toggleMinimize();
+//            windowAnimate.toggleMinimize();
 
             levels.get(3).add(new WindowTopDock(this, 0, 0, width, 20, 20, 20));
             projectManager = new WindowProjectSelection(this, 0, 0, width, 20, 20, 20);
@@ -321,13 +321,14 @@ public class GuiWorkspace extends GuiScreen
         Project.gluPerspective(cameraFov, (float)(resolution.getScaledWidth_double() / resolution.getScaledHeight_double()), 1F, 10000F);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
-        GL11.glClearColor((float)Theme.instance.workspaceBackground[0] / 255F, (float)Theme.instance.workspaceBackground[1] / 255F, (float)Theme.instance.workspaceBackground[2] / 255F, 255F);
+        GL11.glClearColor(0F, 0F, 0F, 255F);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
         if (Mouse.isButtonDown(0) && !mouseLeftDown) {
             modelSelector.onClick(mouseX, mouseY);
         }
 
+        GL11.glClearColor((float)Theme.instance.workspaceBackground[0] / 255F, (float)Theme.instance.workspaceBackground[1] / 255F, (float)Theme.instance.workspaceBackground[2] / 255F, 255F);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         renderWorkspace(mouseX, mouseY, f);
