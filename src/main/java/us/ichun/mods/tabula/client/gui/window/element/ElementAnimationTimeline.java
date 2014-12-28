@@ -50,80 +50,81 @@ public class ElementAnimationTimeline extends Element
 
         int timeWidth = 0;
 
+        Animation currentAnim = null;
+
         for(ElementListTree.Tree tree : parent.workspace.windowAnimate.animList.trees)
         {
             if(tree.selected)
             {
-                Animation anim = (Animation)tree.attachedObject;
+                currentAnim = (Animation)tree.attachedObject;
 
-                final int spacingY = 13;
-                int offY = 0;
-                for(Map.Entry<String, ArrayList<AnimationComponent>> e : anim.sets.entrySet())
-                {
-                    offY += spacingY;
-
-                    for(AnimationComponent comp : e.getValue())
-                    {
-                        if(comp.startKey + comp.length > timeWidth)
-                        {
-                            timeWidth = comp.startKey + comp.length;
-                        }
-                        offY += spacingY;
-                    }
-                }
-
-                size = offY;
-                hasScrollVert = size > height - 20;
                 break;
             }
         }
+
+        if(currentAnim != null)
+        {
+            final int spacingY = 13;
+            int offY = 0;
+            for(Map.Entry<String, ArrayList<AnimationComponent>> e : currentAnim.sets.entrySet())
+            {
+                offY += spacingY;
+
+                for(AnimationComponent comp : e.getValue())
+                {
+                    if(comp.startKey + comp.length > timeWidth)
+                    {
+                        timeWidth = comp.startKey + comp.length;
+                    }
+                    offY += spacingY;
+                }
+            }
+
+            size = offY;
+            hasScrollVert = size > height - 20;
+        }
+
         boolean hasScrollHori = timeWidth + 20 > Math.floor((float)(width - 101) / (float)tickWidth);
 
         GL11.glPushMatrix();
         GL11.glTranslated(0D, (double)-((size - (height - 20)) * sliderProgVert), 0D);
 
         //draw animation elements
-        for(ElementListTree.Tree tree : parent.workspace.windowAnimate.animList.trees)
+        if(currentAnim != null)
         {
-            if(tree.selected)
+            final int spacingY = 13;
+
+            int idClicked = -1;
+            if(mouseX < posX + 100 && mouseX >= posX && mouseY >= posY && mouseY < posY + height)
             {
-                Animation anim = (Animation)tree.attachedObject;
+                idClicked = (int)(mouseY - posY + ((size - (height - 20)) * sliderProgVert)) / 13; //spacing = 13
+            }
 
-                final int spacingY = 13;
-
-                int idClicked = -1;
-                if(mouseX < posX + 100 && mouseX >= posX && mouseY >= posY && mouseY < posY + height)
+            int idHovered = 0;
+            int offY = 0;
+            for(Map.Entry<String, ArrayList<AnimationComponent>> e : currentAnim.sets.entrySet())
+            {
+                String cubeName = "<Unknown (not good)>";
+                for(ElementListTree.Tree model : parent.workspace.windowModelTree.modelList.trees)
                 {
-                    idClicked = (int)(mouseY - posY + ((size - (height - 20)) * sliderProgVert)) / 13; //spacing = 13
+                    if(model.attachedObject instanceof CubeInfo && ((CubeInfo)model.attachedObject).identifier.equals(e.getKey()))
+                    {
+                        cubeName = ((CubeInfo)model.attachedObject).name;
+                    }
                 }
 
-                int idHovered = 0;
-                int offY = 0;
-                for(Map.Entry<String, ArrayList<AnimationComponent>> e : anim.sets.entrySet())
-                {
-                    String cubeName = "<Unknown (not good)>";
-                    for(ElementListTree.Tree model : parent.workspace.windowModelTree.modelList.trees)
-                    {
-                        if(model.attachedObject instanceof CubeInfo && ((CubeInfo)model.attachedObject).identifier.equals(e.getKey()))
-                        {
-                            cubeName = ((CubeInfo)model.attachedObject).name;
-                        }
-                    }
+                drawCompElement(cubeName, offY, e.getKey().equals(selectedIdentifier), false, idClicked == idHovered);
 
-                    drawCompElement(cubeName, offY, e.getKey().equals(selectedIdentifier), false, idClicked == idHovered);
+                idHovered++;
+                offY += spacingY;
+
+                for(AnimationComponent comp : e.getValue())
+                {
+                    drawCompElement(" - " + comp.name, offY, comp.identifier.equals(selectedIdentifier), comp.hidden, idClicked == idHovered);
 
                     idHovered++;
                     offY += spacingY;
-
-                    for(AnimationComponent comp : e.getValue())
-                    {
-                        drawCompElement(" - " + comp.name, offY, comp.identifier.equals(selectedIdentifier), comp.hidden, idClicked == idHovered);
-
-                        idHovered++;
-                        offY += spacingY;
-                    }
                 }
-                break;
             }
         }
         GL11.glPopMatrix();
@@ -137,6 +138,10 @@ public class ElementAnimationTimeline extends Element
             {
                 double tickPos = (int)(mouseX - (posX + 100 - 1) + (hasScrollHori ? ((double)(((timeWidth + 20) * tickWidth) - (width - (hasScrollVert ? 111 : 101))) * sliderProgHori) : 0));
                 currentPos = (int)Math.max(0, tickPos / (double)tickWidth);
+                if(currentAnim != null && currentAnim.playing)
+                {
+                    currentAnim.playTime = currentPos;
+                }
             }
         }
 
@@ -199,56 +204,58 @@ public class ElementAnimationTimeline extends Element
         GL11.glTranslated(0D, (double)-((size - (height - 20)) * sliderProgVert), 0D);
 
         //Animation Component areas
-        for(ElementListTree.Tree tree : parent.workspace.windowAnimate.animList.trees)
+        if(currentAnim != null)
         {
-            if(tree.selected)
+            final int spacingY = 13;
+
+            int idClicked = -1;
+            if(mouseX < posX + 100 && mouseX >= posX && mouseY >= posY && mouseY < posY + height)
             {
-                Animation anim = (Animation)tree.attachedObject;
+                idClicked = (int)(mouseY - posY + ((size - (height - 20)) * sliderProgVert)) / 13; //spacing = 13
+            }
 
-                final int spacingY = 13;
-
-                int idClicked = -1;
-                if(mouseX < posX + 100 && mouseX >= posX && mouseY >= posY && mouseY < posY + height)
+            int idHovered = 0;
+            int offY = 0;
+            for(Map.Entry<String, ArrayList<AnimationComponent>> e : currentAnim.sets.entrySet())
+            {
+                idHovered++;
+                offY += spacingY;
+                for(AnimationComponent comp : e.getValue())
                 {
-                    idClicked = (int)(mouseY - posY + ((size - (height - 20)) * sliderProgVert)) / 13; //spacing = 13
-                }
+                    //draw stuff
+                    int[] lineClr = Theme.instance.elementTreeItemBg;
+                    if(comp.identifier.equals(selectedIdentifier))
+                    {
+                        lineClr = Theme.instance.elementTreeItemBgSelect;
+                    }
+                    else if(idClicked == idHovered)
+                    {
+                        lineClr = Theme.instance.elementTreeItemBgHover;
+                    }
 
-                int idHovered = 0;
-                int offY = 0;
-                for(Map.Entry<String, ArrayList<AnimationComponent>> e : anim.sets.entrySet())
-                {
+                    RendererHelper.drawColourOnScreen(lineClr[0], lineClr[1], lineClr[2], 255, getPosX() + 99D + (comp.startKey * tickWidth), getPosY() + offY + 4.5D, 4, 4, 0);
+                    RendererHelper.drawColourOnScreen(lineClr[0], lineClr[1], lineClr[2], 255, getPosX() + 99D + ((comp.startKey + comp.length) * tickWidth), getPosY() + offY + 4.5D, 4, 4, 0);
+
+                    RendererHelper.drawColourOnScreen(lineClr[0], lineClr[1], lineClr[2], 255, getPosX() + 99D + (comp.startKey * tickWidth), getPosY() + offY + 5.5D, ((comp.length) * tickWidth), 2, 0);
+
                     idHovered++;
                     offY += spacingY;
-                    for(AnimationComponent comp : e.getValue())
-                    {
-                        //draw stuff
-                        int[] lineClr = Theme.instance.elementTreeItemBg;
-                        if(comp.identifier.equals(selectedIdentifier))
-                        {
-                            lineClr = Theme.instance.elementTreeItemBgSelect;
-                        }
-                        else if(idClicked == idHovered)
-                        {
-                            lineClr = Theme.instance.elementTreeItemBgHover;
-                        }
-
-                        RendererHelper.drawColourOnScreen(lineClr[0], lineClr[1], lineClr[2], 255, getPosX() + 99D + (comp.startKey * tickWidth), getPosY() + offY + 4.5D, 4, 4, 0);
-                        RendererHelper.drawColourOnScreen(lineClr[0], lineClr[1], lineClr[2], 255, getPosX() + 99D + ((comp.startKey + comp.length) * tickWidth), getPosY() + offY + 4.5D, 4, 4, 0);
-
-                        RendererHelper.drawColourOnScreen(lineClr[0], lineClr[1], lineClr[2], 255, getPosX() + 99D + (comp.startKey * tickWidth), getPosY() + offY + 5.5D, ((comp.length) * tickWidth), 2, 0);
-
-                        idHovered++;
-                        offY += spacingY;
-                    }
                 }
-
-                break;
             }
         }
         GL11.glPopMatrix();
 
         RendererHelper.startGlScissor(getPosX() + 101, getPosY() - 1, width - (hasScrollVert ? 111 : 101), height + 3);
 
+        GL11.glPushMatrix();
+        if(currentAnim != null && currentAnim.playing)
+        {
+            currentPos = currentAnim.playTime;
+            if(currentPos < currentAnim.getLength())
+            {
+                GL11.glTranslatef(tickWidth + parent.workspace.renderTick, 0F, 0F);
+            }
+        }
         //Timeline cursor
         RendererHelper.drawColourOnScreen(Theme.instance.tabBorder[0], Theme.instance.tabBorder[1], Theme.instance.tabBorder[2], 255, getPosX() + 100.5D + (currentPos * tickWidth), getPosY(), 1, height - 19, 0);
         RendererHelper.drawColourOnScreen(Theme.instance.tabBorder[0], Theme.instance.tabBorder[1], Theme.instance.tabBorder[2], 255, getPosX() + 99 + (currentPos * tickWidth), getPosY() + height - 19, 4, 1.5D, 0);
@@ -262,6 +269,8 @@ public class ElementAnimationTimeline extends Element
             parent.workspace.getFontRenderer().drawString(Integer.toString(currentPos), (int)((getPosX() + 101 + (currentPos * tickWidth)) / scale) - parent.workspace.getFontRenderer().getStringWidth(Integer.toString(currentPos)) / 2, (int)((getPosY() + height - 16) / scale), Theme.getAsHex(Theme.instance.font), false);
             GL11.glPopMatrix();
         }
+
+        GL11.glPopMatrix();
 
         GL11.glPopMatrix();
 

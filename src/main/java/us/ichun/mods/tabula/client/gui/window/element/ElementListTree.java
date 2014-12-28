@@ -451,7 +451,7 @@ public class ElementListTree extends Element
                         }
                         else
                         {
-                            Tabula.proxy.tickHandlerClient.mainframe.updateCube(parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, s);
+                            Tabula.proxy.tickHandlerClient.mainframe.updateCube(parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, s, "", 0);
                         }
                     }
                 }

@@ -818,7 +818,7 @@ public class Mainframe
         }
     }
 
-    public void updateCube(String ident, String cubeInfo)
+    public void updateCube(String ident, String cubeInfo, String animIdent, int pos)
     {
         for(ProjectInfo proj : projects)
         {
@@ -826,40 +826,74 @@ public class Mainframe
             {
                 CubeInfo info = ((new Gson()).fromJson(cubeInfo, CubeInfo.class));
 
-                if(info.parentIdentifier != null)
+                boolean editCube = true;
+
+                if(!animIdent.isEmpty())
                 {
-                    CubeInfo info2 = (CubeInfo)proj.getObjectByIdent(info.parentIdentifier);
-                    if(info2 != null)
+                    for(Animation anim : proj.anims)
                     {
-                        for(int i = 0; i < info2.getChildren().size(); i++)
+                        if(anim.identifier.equalsIgnoreCase(animIdent))
                         {
-                            CubeInfo info1 = info2.getChildren().get(i);
-                            if(info1.identifier.equals(info.identifier))
+                            ArrayList<AnimationComponent> animationComponents = anim.sets.get(info.identifier);
+                            if(animationComponents != null)
                             {
-                                info2.getChildren().remove(i);
-                                info2.getChildren().add(i, info);
-                                break;
+                                //TODO apply animations to ori cube and then compare then revert?
+                                for(AnimationComponent comp : animationComponents)
+                                {
+                                    if(comp.startKey == pos)
+                                    {
+                                        CubeInfo ori = (CubeInfo)proj.getObjectByIdent(info.identifier);
+                                        editCube = false;
+                                    }
+                                    else if(comp.startKey + comp.length == pos)
+                                    {
+                                        CubeInfo ori = (CubeInfo)proj.getObjectByIdent(info.identifier);
+                                        editCube = false;
+                                    }
+                                }
                             }
-                        }
-                    }
-                }
-                else
-                {
-                    boolean found = false;
-                    for(int i = 0; i < proj.cubes.size(); i++)
-                    {
-                        CubeInfo info1 = proj.cubes.get(i);
-                        if(info1.identifier.equals(info.identifier))
-                        {
-                            found = true;
-                            proj.cubes.remove(i);
-                            proj.cubes.add(i, info);
                             break;
                         }
                     }
-                    if(!found)
+                }
+
+                if(editCube)
+                {
+                    if(info.parentIdentifier != null)
                     {
-                        replaceCubeInCubeGroups(info, proj.cubeGroups);
+                        CubeInfo info2 = (CubeInfo)proj.getObjectByIdent(info.parentIdentifier);
+                        if(info2 != null)
+                        {
+                            for(int i = 0; i < info2.getChildren().size(); i++)
+                            {
+                                CubeInfo info1 = info2.getChildren().get(i);
+                                if(info1.identifier.equals(info.identifier))
+                                {
+                                    info2.getChildren().remove(i);
+                                    info2.getChildren().add(i, info);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        boolean found = false;
+                        for(int i = 0; i < proj.cubes.size(); i++)
+                        {
+                            CubeInfo info1 = proj.cubes.get(i);
+                            if(info1.identifier.equals(info.identifier))
+                            {
+                                found = true;
+                                proj.cubes.remove(i);
+                                proj.cubes.add(i, info);
+                                break;
+                            }
+                        }
+                        if(!found)
+                        {
+                            replaceCubeInCubeGroups(info, proj.cubeGroups);
+                        }
                     }
                 }
 
@@ -898,6 +932,11 @@ public class Mainframe
                             info1.removeChild(cube);
                         }
                     }
+                }
+
+                for(Animation anim : proj.anims)
+                {
+                    anim.sets.remove(cubeIdent);
                 }
 
                 streamProject(proj);

@@ -29,6 +29,7 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.client.gui.window.element.ElementWindow;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.module.tabula.common.project.ProjectInfo;
+import us.ichun.module.tabula.common.project.components.Animation;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
@@ -37,6 +38,8 @@ import java.util.ArrayList;
 
 public class GuiWorkspace extends GuiScreen
 {
+    public float renderTick;
+
     public int oriScale;
     public final boolean remoteSession;
     public boolean isEditor;
@@ -249,6 +252,10 @@ public class GuiWorkspace extends GuiScreen
                 proj.lastAutosave = liveTime;
                 proj.autosaved = true;
             }
+            for(Animation anim : proj.anims)
+            {
+                anim.update();
+            }
         }
         if(wantToExit)
         {
@@ -293,8 +300,9 @@ public class GuiWorkspace extends GuiScreen
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float f)
+    public void drawScreen(int mouseX, int mouseY, float renderTick)
     {
+        this.renderTick = renderTick;
         //TODO a reset all windows button for people who "accidentally" drag the window out of the screen
         //TODO Do not close window if it is docked?
         Minecraft mc = Minecraft.getMinecraft();
@@ -331,7 +339,7 @@ public class GuiWorkspace extends GuiScreen
         GL11.glClearColor((float)Theme.instance.workspaceBackground[0] / 255F, (float)Theme.instance.workspaceBackground[1] / 255F, (float)Theme.instance.workspaceBackground[2] / 255F, 255F);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-        renderWorkspace(mouseX, mouseY, f);
+        renderWorkspace(mouseX, mouseY, renderTick);
 
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 

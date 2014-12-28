@@ -152,6 +152,38 @@ public class WindowAnimate extends Window
                     }
                 }
             }
+            else if(element.id == ID_PLAY_ANIM)
+            {
+                if(!animList.selectedIdentifier.isEmpty())
+                {
+                    for(ElementListTree.Tree tree : animList.trees)
+                    {
+                        if(tree.selected)
+                        {
+                            Animation anim = (Animation)tree.attachedObject;
+
+                            anim.play();
+                            break;
+                        }
+                    }
+                }
+            }
+            else if(element.id == ID_STOP_ANIM)
+            {
+                if(!animList.selectedIdentifier.isEmpty())
+                {
+                    for(ElementListTree.Tree tree : animList.trees)
+                    {
+                        if(tree.selected)
+                        {
+                            Animation anim = (Animation)tree.attachedObject;
+
+                            anim.stop();
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 
