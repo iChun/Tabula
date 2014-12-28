@@ -26,7 +26,7 @@ public class ElementNumberInput extends Element
     public int min;
     public int max;
 
-    public ElementNumberInput(Window window, int x, int y, int w, int h, int ID, String tip, int fieldCount, boolean allowDec, int minn, int maxx)
+    public ElementNumberInput(Window window, int x, int y, int w, int h, int ID, String tip, int fieldCount, boolean allowDec, int minn, int maxx, double...args)
     {
         super(window, x, y, w, h, ID, false); //12 for height?
 
@@ -37,6 +37,10 @@ public class ElementNumberInput extends Element
             textField.setEnableBackgroundDrawing(false);
             textField.setTextColor(Theme.getAsHex(Theme.instance.font));
             textField.setCanLoseFocus(false);
+            if(i < args.length)
+            {
+                textField.setText(allowDec ? Double.toString(args[i]) : Integer.toString((int)args[i]));
+            }
 
             textFields.add(textField);
         }
@@ -47,6 +51,11 @@ public class ElementNumberInput extends Element
 
         min = minn;
         max = maxx;
+    }
+
+    public ElementNumberInput(Window window, int x, int y, int w, int h, int ID, String tip, int fieldCount, boolean allowDec, int minn, int maxx)
+    {
+        this(window, x, y, w, h, ID, tip, fieldCount, allowDec, minn, maxx, new double[0]); //12 for height?
     }
 
     public ElementNumberInput(Window window, int x, int y, int w, int h, int ID, String tip, int fieldCount, boolean allowDec)

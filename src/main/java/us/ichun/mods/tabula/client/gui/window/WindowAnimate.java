@@ -10,6 +10,11 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementButtonTextured;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.module.tabula.common.project.components.Animation;
+import us.ichun.module.tabula.common.project.components.AnimationComponent;
+import us.ichun.module.tabula.common.project.components.CubeInfo;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 public class WindowAnimate extends Window
 {
@@ -30,6 +35,9 @@ public class WindowAnimate extends Window
     {
         super(parent, x, y, w, h, minW, minH, "window.animate.title", true);
 
+        timeline = new ElementAnimationTimeline(this, 101, BORDER_SIZE + 1 + 10, width - 102, height - (BORDER_SIZE + 1 + 10), -2);
+        elements.add(timeline);
+
         int button = 0;
         elements.add(new ElementButtonTextured(this, 20 * button++, 80, ID_NEW_ANIM, true, 0, 1, "window.animate.newAnim", new ResourceLocation("tabula", "textures/icon/newAnim.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 80, ID_EDIT_ANIM, true, 0, 1, "window.animate.editAnim", new ResourceLocation("tabula", "textures/icon/editAnim.png")));
@@ -43,9 +51,6 @@ public class WindowAnimate extends Window
 
         animList = new ElementListTree(this, BORDER_SIZE - 1, BORDER_SIZE + 1 + 10, 100 - (BORDER_SIZE * 2 + 2), height - BORDER_SIZE - 22 - 12, -1, false, false);
         elements.add(animList);
-
-        timeline = new ElementAnimationTimeline(this, 101, BORDER_SIZE + 1 + 10, width - 102, height - (BORDER_SIZE + 1 + 10), -2);
-        elements.add(timeline);
     }
 
     @Override
@@ -89,6 +94,62 @@ public class WindowAnimate extends Window
                 else
                 {
                     Tabula.proxy.tickHandlerClient.mainframe.deleteAnimation(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier);
+                }
+            }
+            else if(element.id == ID_NEW_COMP)
+            {
+                if(!animList.selectedIdentifier.isEmpty())
+                {
+                    Object obj = workspace.windowControls.selectedObject;
+                    if(obj instanceof CubeInfo)
+                    {
+                        CubeInfo info = (CubeInfo)obj;
+                        workspace.addWindowOnTop(new WindowNewAnimComponent(workspace, workspace.width / 2 - 100, workspace.height / 2 - 80, 200, 160, 200, 160, info).putInMiddleOfScreen());
+                    }
+                    else
+                    {
+                        workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 180, 80, 180, 80, "window.animate.selectCube").putInMiddleOfScreen());
+                    }
+                }
+            }
+            else if(element.id == ID_EDIT_COMP)
+            {
+                if(!animList.selectedIdentifier.isEmpty())
+                {
+                    for(ElementListTree.Tree tree : animList.trees)
+                    {
+                        if(tree.selected)
+                        {
+                            Animation anim = (Animation)tree.attachedObject;
+
+                            for(Map.Entry<String, ArrayList<AnimationComponent>> e : anim.sets.entrySet())
+                            {
+                                for(AnimationComponent comp : e.getValue())
+                                {
+                                    if(comp.identifier.equalsIgnoreCase(timeline.selectedIdentifier))
+                                    {
+                                        workspace.addWindowOnTop(new WindowEditAnimComponent(workspace, workspace.width / 2 - 100, workspace.height / 2 - 80, 200, 160, 200, 160, comp).putInMiddleOfScreen());
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            else if(element.id == ID_DEL_COMP)
+            {
+                if(!animList.selectedIdentifier.isEmpty() && !timeline.selectedIdentifier.isEmpty())
+                {
+                    if(workspace.remoteSession)
+                    {
+                        //TODO remote session
+                    }
+                    else
+                    {
+                        Tabula.proxy.tickHandlerClient.mainframe.deleteAnimComponent(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier);
+                    }
                 }
             }
         }

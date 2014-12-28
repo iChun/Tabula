@@ -89,6 +89,7 @@ public class ModelSelector {
                     tree.selected = false;
                 }
                 workspace.windowAnimate.animList.selectedIdentifier = "";
+                workspace.windowAnimate.timeline.selectedIdentifier = "";
             }
 
             //clear the depth buffer so the real rendering can properly override what has been rendered

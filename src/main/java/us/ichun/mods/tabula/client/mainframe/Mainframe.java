@@ -8,11 +8,14 @@ import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.module.tabula.client.model.ModelInfo;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.module.tabula.common.project.components.Animation;
+import us.ichun.module.tabula.common.project.components.AnimationComponent;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.UUID;
 
 //This is the class that holds all the info of the workspace and handles UI input from everyone.
@@ -397,6 +400,121 @@ public class Mainframe
                     {
                         info.anims.remove(i);
                         streamProject(info);
+                    }
+                }
+            }
+        }
+    }
+
+    public void createNewAnimComponent(String ident, String animIdent, String cubeIdent, String name, int animLength, int startPos)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                for(Animation anim : info.anims)
+                {
+                    if(anim.identifier.equals(animIdent))
+                    {
+                        anim.createAnimComponent(cubeIdent, name, animLength, startPos);
+                        streamProject(info);
+                    }
+                }
+            }
+        }
+    }
+
+    public void editAnimComponent(String ident, String animIdent, String compIdent, String name, int animLength, int startPos)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                for(Animation anim : info.anims)
+                {
+                    if(anim.identifier.equals(animIdent))
+                    {
+                        for(Map.Entry<String, ArrayList<AnimationComponent>> e : anim.sets.entrySet())
+                        {
+                            for(AnimationComponent comp : e.getValue())
+                            {
+                                if(comp.identifier.equals(compIdent))
+                                {
+                                    comp.name = name;
+                                    comp.length = animLength;
+                                    comp.startKey = startPos;
+                                    streamProject(info);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void deleteAnimComponent(String ident, String animIdent, String compIdent)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                for(Animation anim : info.anims)
+                {
+                    if(anim.identifier.equals(animIdent))
+                    {
+                        Iterator<Map.Entry<String, ArrayList<AnimationComponent>>> ite = anim.sets.entrySet().iterator();
+                        while(ite.hasNext())
+                        {
+                            Map.Entry<String, ArrayList<AnimationComponent>> e = ite.next();
+                            if(e.getKey().equals(compIdent))
+                            {
+                                ite.remove();
+                                streamProject(info);
+                            }
+                            else
+                            {
+                                for(int i = e.getValue().size() - 1; i >= 0; i--)
+                                {
+                                    if(e.getValue().get(i).identifier.equals(compIdent))
+                                    {
+                                        e.getValue().remove(i);
+                                        if(e.getValue().isEmpty())
+                                        {
+                                            ite.remove();
+                                        }
+                                        streamProject(info);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void toggleAnimComponentVisibility(String ident, String animIdent, String compIdent)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                for(Animation anim : info.anims)
+                {
+                    if(anim.identifier.equals(animIdent))
+                    {
+                        for(Map.Entry<String, ArrayList<AnimationComponent>> e : anim.sets.entrySet())
+                        {
+                            for(AnimationComponent comp : e.getValue())
+                            {
+                                if(comp.identifier.equals(compIdent))
+                                {
+                                    comp.hidden = !comp.hidden;
+                                    streamProject(info);
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -90,12 +90,16 @@ window.animate.stopAnim=Stop Animation
 window.animate.newComponent=New Component
 window.animate.editComponent=Edit Component
 window.animate.delComponent=Delete Component
+window.animate.selectCube=Select a Cube to animate first!
 
 window.newAnim.title=New Animation
 window.newAnim.animName=Animation Name
 window.newAnim.animLoop=Does the animation loop?
-
 window.editAnim.title=Edit Animation
+
+window.newAnimComp.title=New Animation Component
+window.newAnimComp.name=Component Name
+window.newAnimComp.length=Component length (in ticks)
 
 window.selectTheme.title=Select Theme
 

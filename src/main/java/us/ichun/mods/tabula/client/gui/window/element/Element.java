@@ -27,6 +27,11 @@ public abstract class Element
 
     public abstract void draw(int mouseX, int mouseY, boolean hover);
 
+    public boolean mouseInBoundary(int mouseX, int mouseY)
+    {
+        return mouseX >= this.posX && mouseX <= this.posX + this.width && mouseY >= this.posY && mouseY <= this.posY + this.height;
+    }
+
     public boolean onClick(int mouseX, int mouseY, int id)
     {
         return false;//return true for elements that has input eg typing

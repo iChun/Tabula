@@ -17,14 +17,9 @@ public class WindowNewProject extends Window
 
         elements.add(new ElementTextInput(this, 10, 30, width - 20, 12, 1, "window.newProject.projName"));
         elements.add(new ElementTextInput(this, 10, 65, width - 20, 12, 2, "window.newProject.authName"));
-        ElementNumberInput nums = new ElementNumberInput(this, 10, 100, 80, 12, 3, "window.newProject.txDimensions", 2, false, 0, (int)Short.MAX_VALUE);
-        nums.textFields.get(0).setText("64");
-        nums.textFields.get(1).setText("32");
+        ElementNumberInput nums = new ElementNumberInput(this, 10, 100, 80, 12, 3, "window.newProject.txDimensions", 2, false, 0, (int)Short.MAX_VALUE, 64D, 32D);
         elements.add(nums);
-        ElementNumberInput scale = new ElementNumberInput(this, 10, 135, 120, 12, 4, "window.newProject.projectScale", 3, true, (int)Short.MIN_VALUE, (int)Short.MAX_VALUE);
-        scale.textFields.get(0).setText("1.00");
-        scale.textFields.get(1).setText("1.00");
-        scale.textFields.get(2).setText("1.00");
+        ElementNumberInput scale = new ElementNumberInput(this, 10, 135, 120, 12, 4, "window.newProject.projectScale", 3, true, (int)Short.MIN_VALUE, (int)Short.MAX_VALUE, 1D, 1D, 1D);
         elements.add(scale);
         elements.add(new ElementButton(this, width - 140, height - 30, 60, 16, 100, false, 1, 1, "element.button.ok"));
         elements.add(new ElementButton(this, width - 70, height - 30, 60, 16, 0, false, 1, 1, "element.button.cancel"));

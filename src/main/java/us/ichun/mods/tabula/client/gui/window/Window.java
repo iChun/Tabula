@@ -152,7 +152,7 @@ public class Window
         {
             if(element.ignoreMinimized && minimized || !minimized)
             {
-                boolean boundary = mouseX >= element.posX && mouseX <= element.posX + element.width && mouseY >= element.posY && mouseY <= element.posY + element.height;
+                boolean boundary = element.mouseInBoundary(mouseX, mouseY);
                 boolean obstructed = false;
                 if(boundary)
                 {
@@ -202,7 +202,7 @@ public class Window
         for(int k = elements.size() - 1; k >= 0; k--)
         {
             Element element = elements.get(k);
-            if(mouseX >= element.posX && mouseX <= element.posX + element.width && mouseY >= element.posY && mouseY <= element.posY + element.height && (minimized && element.ignoreMinimized || !minimized) && !(workspace.projectManager.projects.isEmpty() && !interactableWhileNoProjects() && !(element instanceof ElementMinimize)) && element.onClick(mouseX, mouseY, id))
+            if(element.mouseInBoundary(mouseX, mouseY) && (minimized && element.ignoreMinimized || !minimized) && !(workspace.projectManager.projects.isEmpty() && !interactableWhileNoProjects() && !(element instanceof ElementMinimize)) && element.onClick(mouseX, mouseY, id))
             {
                 if(id == 0)
                 {

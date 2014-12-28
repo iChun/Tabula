@@ -7,6 +7,7 @@ import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementProjectTab;
 import us.ichun.module.tabula.common.project.ProjectInfo;
+import us.ichun.module.tabula.common.project.components.Animation;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
@@ -237,6 +238,25 @@ public class WindowProjectSelection extends WindowTopDock
         {
             animList.createTree(null, info.anims.get(i), 13, 0, false, false);
         }
+
+        if(!animList.selectedIdentifier.isEmpty())
+        {
+            boolean found = false;
+            for(int k = 0; k < animList.trees.size(); k++)
+            {
+                if(animList.trees.get(k).attachedObject instanceof Animation && ((Animation)animList.trees.get(k).attachedObject).identifier.equals(animList.selectedIdentifier))
+                {
+                    found = true;
+                    animList.trees.get(k).selected = true;
+                    animList.clickElement(animList.trees.get(k).attachedObject);
+                }
+            }
+            if(!found)
+            {
+                animList.selectedIdentifier = "";
+            }
+        }
+
     }
 
     public void createTreeForGroup(CubeGroup group, ElementListTree modelList, int attachLevel)

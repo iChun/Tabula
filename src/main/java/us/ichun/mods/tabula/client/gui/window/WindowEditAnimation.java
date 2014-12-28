@@ -16,7 +16,7 @@ public class WindowEditAnimation extends Window
 
     public WindowEditAnimation(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH, Animation anim)
     {
-        super(parent, x, y, w, h, minW, minH, "window.newAnim.title", true);
+        super(parent, x, y, w, h, minW, minH, "window.editAnim.title", true);
 
         ident = anim.identifier;
         ElementTextInput text = new ElementTextInput(this, 10, 30, width - 20, 12, 1, "window.newAnim.animName");
