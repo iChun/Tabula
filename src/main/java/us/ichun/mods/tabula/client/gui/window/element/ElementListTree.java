@@ -307,6 +307,11 @@ public class ElementListTree extends Element
             parent.workspace.windowControls.selectedObject = info;
             parent.workspace.windowControls.refresh = true;
         }
+        else if(obj instanceof Theme)
+        {
+            Theme theme = (Theme)obj;
+            Theme.loadTheme(theme);
+        }
     }
 
     public void triggerParent()
@@ -503,6 +508,11 @@ public class ElementListTree extends Element
                     parent.workspace.getFontRenderer().drawString(info.getName(), getPosX() + offX + 4, getPosY() + offY + 3 + treeHeight, Theme.getAsHex(Theme.instance.font), false);
                     parent.workspace.getFontRenderer().drawString((new SimpleDateFormat()).format(new Date(info.lastModified())), getPosX() + offX + 4, getPosY() + offY + 14 + treeHeight, Theme.getAsHex(Theme.instance.font), false);
                     parent.workspace.getFontRenderer().drawString(MD5Checksum.readableFileSize(info.length()), getPosX() + offX + width - 4 - parent.workspace.getFontRenderer().getStringWidth(MD5Checksum.readableFileSize(info.length())), getPosY() + offY + 3 + treeHeight, Theme.getAsHex(Theme.instance.font), false);
+                }
+                else if(attachedObject instanceof Theme)
+                {
+                    Theme theme = (Theme)attachedObject;
+                    parent.workspace.getFontRenderer().drawString(reString(theme.name + " - " + theme.author, width), getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.instance.font), false);
                 }
 
                 if(realBorder && clicking)

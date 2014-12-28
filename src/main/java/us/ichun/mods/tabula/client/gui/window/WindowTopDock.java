@@ -27,6 +27,7 @@ public class WindowTopDock extends Window
     public static final int ID_UNDO = 15;
     public static final int ID_REDO = 16;
     public static final int ID_PASTE_WITHOUT_CHILDREN = 17;
+    public static final int ID_THEMES = 18;
 
     public static final int ID_WOOD = -1;
 
@@ -54,6 +55,7 @@ public class WindowTopDock extends Window
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_UNDO, true, 0, 0, "topdock.undo", new ResourceLocation("tabula", "textures/icon/undo.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_REDO, true, 0, 0, "topdock.redo", new ResourceLocation("tabula", "textures/icon/redo.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CHAT, true, 0, 0, "topdock.chat", new ResourceLocation("tabula", "textures/icon/chat.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_THEMES, true, 0, 0, "topdock.themes", new ResourceLocation("tabula", "textures/icon/themes.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CREDITS, true, 0, 0, "topdock.info", new ResourceLocation("tabula", "textures/icon/info.png")));
         elements.add(new ElementButtonTextured(this, width - 20, 0, ID_EXIT_TABULA, true, 1, 0, "topdock.exitTabula", new ResourceLocation("tabula", "textures/icon/exitTabula.png")));
     }
@@ -148,6 +150,10 @@ public class WindowTopDock extends Window
         else if(element.id == ID_CHAT)
         {
             workspace.windowChat.toggleVisibility();
+        }
+        else if(element.id == ID_THEMES)
+        {
+            workspace.addWindowOnTop(new WindowThemeSelect(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 260, 160, 240, 160).putInMiddleOfScreen());
         }
         else if(element.id == ID_CREDITS)
         {

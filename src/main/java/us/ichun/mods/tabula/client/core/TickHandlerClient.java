@@ -14,6 +14,7 @@ import org.lwjgl.input.Keyboard;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.mainframe.Mainframe;
+import us.ichun.mods.tabula.common.Tabula;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -83,6 +84,35 @@ public class TickHandlerClient
         }
         catch(Exception e)
         {
+            Tabula.console("Error reading default theme!", true);
+            e.printStackTrace();
+        }
+
+        String fav = Tabula.config.getString("favTheme");
+        if(!(fav.isEmpty() || fav.equalsIgnoreCase("default")))
+        {
+            File userTheme = new File(ResourceHelper.getThemesDir(), fav + ".json");
+
+            if(userTheme.exists())
+            {
+                try
+                {
+                    InputStream con = new FileInputStream(userTheme);
+                    String data = new String(ByteStreams.toByteArray(con));
+                    con.close();
+
+                    Theme.loadTheme((new Gson()).fromJson(data, Theme.class));
+                }
+                catch(Exception e)
+                {
+                    Tabula.console("Error reading preferred theme!", true);
+                    e.printStackTrace();
+                }
+            }
+            else
+            {
+                Tabula.console("Preferred theme file does not exist!", true);
+            }
         }
 
         FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale, false, true));

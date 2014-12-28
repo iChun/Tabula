@@ -88,6 +88,8 @@ window.animate.delAnim=Delete Animation
 window.animate.play=Play Animation
 window.animate.stop=Stop Animation
 
+window.selectTheme.title=Select Theme
+
 export.title=Export Project
 export.failed=Export Failed!
 export.textureMap.name=Texture Map
@@ -113,6 +115,7 @@ topdock.pasteWithoutChildren=Paste Without Children
 topdock.undo=Undo
 topdock.redo=Redo
 topdock.chat=Toggle Chat Window
+topdock.themes=Theme Selector
 topdock.info=About this mod
 topdock.exitTabula=Exit Tabula
 topdock.wood=Block

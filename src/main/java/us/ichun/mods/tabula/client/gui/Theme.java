@@ -7,6 +7,7 @@ public class Theme
     public static transient Theme instance = new Theme();
 
     public String name = "Default";
+    public String author = "iChun";
 
     public int[] workspaceBackground                 = new int[] { 204, 204, 204 };
     public int[] windowBorder                        = new int[] { 150, 150, 150 };
@@ -24,7 +25,7 @@ public class Theme
     public int[] elementButtonBackgroundHover         = new int[] { 70, 70, 70 };
     public int[] elementButtonBorder                  = new int[] { 140, 140, 140 };
     public int[] elementButtonClick                   = new int[] { 100, 100, 100 };
-    public int[] elementButtonToggle                  = new int[] { 30, 30, 30 };
+    public int[] elementButtonToggle                  = new int[] { 120, 120, 120 };
     public int[] elementButtonToggleHover             = new int[] { 170, 170, 170 };
 
     public int[] elementProjectTabActive             = new int[] { 60, 60, 60 };
@@ -53,9 +54,14 @@ public class Theme
         public int metadata = 1;
     }
 
-    public static void loadTheme(Theme theme)
+    public static void loadTheme(Theme themeToLoad)
     {
-        if(theme == null)
+        loadTheme(instance, themeToLoad);
+    }
+
+    public static void loadTheme(Theme theme, Theme themeToLoad)
+    {
+        if(theme == null || themeToLoad == null)
         {
             return;
         }
@@ -65,16 +71,23 @@ public class Theme
         {
             for(Field f : fields)
             {
-                Object obj = f.get(theme);
+                Object obj = f.get(themeToLoad);
                 if(obj != null)
                 {
-                    f.set(instance, obj);
+                    f.set(theme, obj);
                 }
             }
         }
         catch(Exception e)
         {
         }
+    }
+
+    public static Theme copyInstance()
+    {
+        Theme theme = new Theme();
+        loadTheme(theme, instance);
+        return theme;
     }
 
     public static void changeColour(int[] set, int r, int g, int b)

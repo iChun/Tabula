@@ -889,21 +889,23 @@ public class GuiWorkspace extends GuiScreen
             }
             ArrayList<CubeInfo> hidden = getHiddenElements();
 
+            boolean renderRotationPoint = Tabula.config.getInt("renderRotationPoint") == 1;
+
             GL11.glScaled(1D / info.scale[0], 1D / info.scale[1], 1D / info.scale[2]);
             if(windowTexture.imageId != -1)
             {
                 GL11.glBindTexture(GL11.GL_TEXTURE_2D, windowTexture.imageId);
 
-                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 0);
-                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 1);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 0, renderRotationPoint);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 1, renderRotationPoint);
             }
             else
             {
                 GL11.glDisable(GL11.GL_TEXTURE_2D);
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 0);
-                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 1);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 0, renderRotationPoint);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 1, renderRotationPoint);
 
                 GL11.glEnable(GL11.GL_TEXTURE_2D);
             }

@@ -9,6 +9,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.relauncher.Side;
 import ichun.common.core.config.Config;
+import ichun.common.core.config.ConfigHandler;
 import ichun.common.core.config.IConfigUser;
 import ichun.common.core.updateChecker.ModVersionChecker;
 import ichun.common.core.updateChecker.ModVersionInfo;
@@ -19,15 +20,17 @@ import net.minecraftforge.common.config.Property;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.common.core.CommonProxy;
 import us.ichun.mods.tabula.common.core.EventHandler;
 import us.ichun.module.tabula.client.model.ModelList;
 
+import java.io.File;
 import java.util.EnumMap;
 
 @Mod(modid = "Tabula", name = "Tabula",
         version = Tabula.version,
-        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".1.4,)",
+        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".1.3,)",
         acceptableRemoteVersions = "[" + iChunUtil.versionMC +".1.0," + iChunUtil.versionMC + ".2.0)"
 )
 public class Tabula
@@ -45,6 +48,8 @@ public class Tabula
 
     private static final Logger logger = LogManager.getLogger("Tabula");
 
+    public static Config config;
+
     @Override
     public boolean onConfigChange(Config cfg, Property prop) { return true; }
 
@@ -52,6 +57,10 @@ public class Tabula
     public void preLoad(FMLPreInitializationEvent event)
     {
         proxy.init();
+
+        config = ConfigHandler.createConfig(new File(ResourceHelper.getConfigDir(), "config.cfg"), "tabula", "Tabula", logger, instance);
+        config.createStringProperty("favTheme", true, false, "default");
+        config.createIntBoolProperty("renderRotationPoint", true, false, true);
 
         MinecraftForge.EVENT_BUS.register(new EventHandler());
 
