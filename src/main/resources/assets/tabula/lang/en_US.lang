@@ -90,6 +90,9 @@ window.animate.stop=Stop Animation
 
 window.selectTheme.title=Select Theme
 
+window.settings.title=Settings
+window.settings.renderRotationPoint=Render Model Rotation Point
+
 export.title=Export Project
 export.failed=Export Failed!
 export.textureMap.name=Texture Map
