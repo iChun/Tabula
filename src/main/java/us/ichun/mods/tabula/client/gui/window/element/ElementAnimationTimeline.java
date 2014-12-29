@@ -255,13 +255,20 @@ public class ElementAnimationTimeline extends Element
         RendererHelper.startGlScissor(getPosX() + 101, getPosY() - 1, width - (hasScrollVert ? 111 : 101), height + 3);
 
         GL11.glPushMatrix();
-        if(currentAnim != null && currentAnim.playing)
+        if(currentAnim != null)
         {
-            setCurrentPos(currentAnim.playTime);
-            focusOnTicker();
-            if(currentPos < currentAnim.getLength())
+            if(currentAnim.playing)
             {
-                GL11.glTranslatef(tickWidth + parent.workspace.renderTick, 0F, 0F);
+                setCurrentPos(currentAnim.playTime);
+                focusOnTicker();
+                if(currentPos < currentAnim.getLength())
+                {
+                    GL11.glTranslatef(tickWidth + parent.workspace.renderTick, 0F, 0F);
+                }
+            }
+            else
+            {
+                currentAnim.playTime = currentPos;
             }
         }
         //Timeline cursor

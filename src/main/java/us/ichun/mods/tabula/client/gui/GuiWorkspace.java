@@ -1606,7 +1606,7 @@ public class GuiWorkspace extends GuiScreen
                                 {
                                     if(!comp.hidden)
                                     {
-                                        comp.animate(cube, windowAnimate.timeline.getCurrentPos() - (anim.playing ? renderTick : 0));
+                                        comp.animate(cube, anim.playTime + (anim.playing ? renderTick : 0));
                                     }
                                 }
                             }
@@ -1643,7 +1643,7 @@ public class GuiWorkspace extends GuiScreen
                                 {
                                     if(!comp.hidden)
                                     {
-                                        comp.reset(cube, windowAnimate.timeline.getCurrentPos() - (anim.playing ? renderTick : 0));
+                                        comp.reset(cube, anim.playTime + (anim.playing ? renderTick : 0));
                                     }
                                 }
                             }
