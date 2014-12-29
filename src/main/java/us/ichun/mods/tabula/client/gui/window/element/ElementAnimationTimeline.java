@@ -3,6 +3,7 @@ package us.ichun.mods.tabula.client.gui.window.element;
 import ichun.client.render.RendererHelper;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import us.ichun.mods.tabula.client.gui.Theme;
@@ -13,14 +14,18 @@ import us.ichun.module.tabula.common.project.components.AnimationComponent;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 
 public class ElementAnimationTimeline extends Element
 {
 
+    public int mX;
+    public int mY;
+
     public int tickWidth = 5;
 
-    public int currentPos;
+    private int currentPos;
 
     public String selectedIdentifier;
 
@@ -37,6 +42,8 @@ public class ElementAnimationTimeline extends Element
     @Override
     public void draw(int mouseX, int mouseY, boolean hover)
     {
+        this.mX = mouseX;
+        this.mY = mouseY;
         //        RendererHelper.drawColourOnScreen(Theme.instance.elementTreeBorder[0], Theme.instance.elementTreeBorder[1], Theme.instance.elementTreeBorder[2], 255, getPosX() + 1, getPosY() + 1, width - 2, height - 2, 0);
         RendererHelper.drawColourOnScreen(Theme.instance.elementTreeBorder[0], Theme.instance.elementTreeBorder[1], Theme.instance.elementTreeBorder[2], 255, getPosX() + 100, getPosY(), 1, height, 0);
 
@@ -198,7 +205,7 @@ public class ElementAnimationTimeline extends Element
             timeOffX += tickWidth;
         }
 
-        RendererHelper.startGlScissor(getPosX() + 101, getPosY() - 1, width - (hasScrollVert ? 111 : 101), height - 19);
+        RendererHelper.startGlScissor(getPosX() + 101, getPosY(), width - (hasScrollVert ? 111 : 101), height - 20);
 
         GL11.glPushMatrix();
         GL11.glTranslated(0D, (double)-((size - (height - 20)) * sliderProgVert), 0D);
@@ -250,7 +257,8 @@ public class ElementAnimationTimeline extends Element
         GL11.glPushMatrix();
         if(currentAnim != null && currentAnim.playing)
         {
-            currentPos = currentAnim.playTime;
+            setCurrentPos(currentAnim.playTime);
+            focusOnTicker();
             if(currentPos < currentAnim.getLength())
             {
                 GL11.glTranslatef(tickWidth + parent.workspace.renderTick, 0F, 0F);
@@ -338,6 +346,52 @@ public class ElementAnimationTimeline extends Element
         else
         {
             parent.workspace.getFontRenderer().drawString(reString(name, 100), getPosX() + 4, getPosY() + offY + 2, Theme.getAsHex(Theme.instance.font), false);
+        }
+    }
+
+    public void focusOnTicker()
+    {
+        int totalWidth = 0;
+        boolean hasScrollVert = false;
+        for(ElementListTree.Tree tree : parent.workspace.windowAnimate.animList.trees)
+        {
+            if(tree.selected)
+            {
+                Animation currentAnim = (Animation)tree.attachedObject;
+
+                final int spacingY = 13;
+                int offY = 0;
+                for(Map.Entry<String, ArrayList<AnimationComponent>> e : currentAnim.sets.entrySet())
+                {
+                    offY += spacingY;
+
+                    for(AnimationComponent comp : e.getValue())
+                    {
+                        offY += spacingY;
+                    }
+                }
+
+                totalWidth = (currentAnim.getLength() + 20) * tickWidth;
+                hasScrollVert = offY > height - 20;
+
+                break;
+            }
+        }
+
+        int elementWidth = width - (hasScrollVert ? 111 : 101);
+        int tickerPos = currentPos * tickWidth;
+
+        if(tickerPos < elementWidth)
+        {
+            sliderProgHori = 0.0D;
+        }
+        else
+        {
+            int hiddenWidth = totalWidth - elementWidth;
+            if(tickerPos > elementWidth + sliderProgHori * hiddenWidth || tickerPos < hiddenWidth * sliderProgHori)
+            {
+                sliderProgHori = MathHelper.clamp_double((tickerPos - (elementWidth / 3D)) / (double)hiddenWidth, 0.0D, 1.0D);
+            }
         }
     }
 
@@ -478,6 +532,16 @@ public class ElementAnimationTimeline extends Element
         return false;
     }
 
+    public void setCurrentPos(int i)
+    {
+        currentPos = i;
+    }
+
+    public int getCurrentPos()
+    {
+        return currentPos;
+    }
+
     public String reString(String s, int width)
     {
         while(s.length() > 1 && parent.workspace.getFontRenderer().getStringWidth(s) > width - 3)
@@ -496,6 +560,96 @@ public class ElementAnimationTimeline extends Element
             }
         }
         return s;
+    }
+
+    @Override
+    public String tooltip()
+    {
+        int timeWidth = 0;
+
+
+        for(ElementListTree.Tree tree : parent.workspace.windowAnimate.animList.trees)
+        {
+            if(tree.selected)
+            {
+                Animation currentAnim = (Animation)tree.attachedObject;
+
+                final int spacingY = 13;
+                int offY = 0;
+                for(Map.Entry<String, ArrayList<AnimationComponent>> e : currentAnim.sets.entrySet())
+                {
+                    offY += spacingY;
+
+                    for(AnimationComponent comp : e.getValue())
+                    {
+                        if(comp.startKey + comp.length > timeWidth)
+                        {
+                            timeWidth = comp.startKey + comp.length;
+                        }
+                        offY += spacingY;
+                    }
+                }
+
+                boolean hasScrollVert = offY > height - 20;
+                boolean hasScrollHori = timeWidth + 20 > Math.floor((float)(width - 101) / (float)tickWidth);
+
+                if(mX > posX + 100 && mX < posX + (hasScrollVert ? width - 10 : width) && mY < posY + height - 10)
+                {
+                    double tickPos = (int)(mX - (posX + 100 - 1) + (hasScrollHori ? ((double)(((timeWidth + 20) * tickWidth) - (width - (hasScrollVert ? 111 : 101))) * sliderProgHori) : 0));
+                    int mousePos = (int)Math.max(0, tickPos / (double)tickWidth);
+
+                    int idClicked = (int)(mY - posY + ((offY - (height - 20)) * sliderProgVert)) / 13;
+
+                    int idHovered = 0;
+
+                    for(Map.Entry<String, ArrayList<AnimationComponent>> e : currentAnim.sets.entrySet())
+                    {
+                        idHovered++;
+
+                        for(AnimationComponent comp : e.getValue())
+                        {
+                            if(idClicked == idHovered)
+                            {
+                                if(comp.startKey == mousePos)
+                                {
+                                    StringBuilder sb = new StringBuilder();
+                                    sb.append(StatCollector.translateToLocal("window.editAnimCompProg.animInfo") + "\n");
+                                    sb.append(StatCollector.translateToLocal("window.controls.position") + ": ");
+                                    sb.append(String.format(Locale.ENGLISH, "%.2f", comp.posOffset[0]) + ", " + String.format(Locale.ENGLISH, "%.2f", comp.posOffset[1]) + ", " + String.format(Locale.ENGLISH, "%.2f", comp.posOffset[2]) + "\n");
+                                    sb.append(StatCollector.translateToLocal("window.controls.rotation") + ": ");
+                                    sb.append(String.format(Locale.ENGLISH, "%.2f", comp.rotOffset[0]) + ", " + String.format(Locale.ENGLISH, "%.2f", comp.rotOffset[1]) + ", " + String.format(Locale.ENGLISH, "%.2f", comp.rotOffset[2]) + "\n");
+                                    sb.append(StatCollector.translateToLocal("window.controls.scale") + ": ");
+                                    sb.append(String.format(Locale.ENGLISH, "%.2f", comp.scaleOffset[0]) + ", " + String.format(Locale.ENGLISH, "%.2f", comp.scaleOffset[1]) + ", " + String.format(Locale.ENGLISH, "%.2f", comp.scaleOffset[2]) + "\n");
+                                    sb.append(StatCollector.translateToLocal("window.controls.opacity") + ": ");
+                                    sb.append(String.format(Locale.ENGLISH, "%.2f", comp.opacityOffset));
+                                    return sb.toString();
+                                }
+                                else if(comp.startKey + comp.length == mousePos)
+                                {
+                                    StringBuilder sb = new StringBuilder();
+                                    sb.append(StatCollector.translateToLocal("window.editAnimCompProg.animInfo") + "\n");
+                                    sb.append(StatCollector.translateToLocal("window.controls.position") + ": ");
+                                    sb.append(String.format(Locale.ENGLISH, "%.2f", comp.posChange[0]) + ", " + String.format(Locale.ENGLISH, "%.2f", comp.posChange[1]) + ", " + String.format(Locale.ENGLISH, "%.2f", comp.posChange[2]) + "\n");
+                                    sb.append(StatCollector.translateToLocal("window.controls.rotation") + ": ");
+                                    sb.append(String.format(Locale.ENGLISH, "%.2f", comp.rotChange[0]) + ", " + String.format(Locale.ENGLISH, "%.2f", comp.rotChange[1]) + ", " + String.format(Locale.ENGLISH, "%.2f", comp.rotChange[2]) + "\n");
+                                    sb.append(StatCollector.translateToLocal("window.controls.scale") + ": ");
+                                    sb.append(String.format(Locale.ENGLISH, "%.2f", comp.scaleChange[0]) + ", " + String.format(Locale.ENGLISH, "%.2f", comp.scaleChange[1]) + ", " + String.format(Locale.ENGLISH, "%.2f", comp.scaleChange[2]) + "\n");
+                                    sb.append(StatCollector.translateToLocal("window.controls.opacity") + ": ");
+                                    sb.append(String.format(Locale.ENGLISH, "%.2f", comp.opacityChange));
+                                    return sb.toString();
+                                }
+                            }
+                            idHovered++;
+                        }
+                    }
+
+                }
+
+                break;
+            }
+        }
+
+        return null;
     }
 
     @Override

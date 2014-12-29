@@ -346,7 +346,7 @@ public class WindowControls extends Window
                 }
                 else
                 {
-                    Tabula.proxy.tickHandlerClient.mainframe.updateCube(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, s, workspace.windowAnimate.animList.selectedIdentifier, workspace.windowAnimate.timeline.currentPos);
+                    Tabula.proxy.tickHandlerClient.mainframe.updateCube(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, s, workspace.windowAnimate.animList.selectedIdentifier, workspace.windowAnimate.timeline.selectedIdentifier, workspace.windowAnimate.timeline.getCurrentPos());
                 }
             }
             else if(selectedObject instanceof CubeGroup)

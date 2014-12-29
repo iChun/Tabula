@@ -10,11 +10,15 @@ import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.module.tabula.client.model.ModelBaseDummy;
 import us.ichun.module.tabula.common.project.ProjectInfo;
+import us.ichun.module.tabula.common.project.components.Animation;
+import us.ichun.module.tabula.common.project.components.AnimationComponent;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -90,6 +94,7 @@ public class ModelSelector {
                 }
                 workspace.windowAnimate.animList.selectedIdentifier = "";
                 workspace.windowAnimate.timeline.selectedIdentifier = "";
+                workspace.windowAnimate.timeline.setCurrentPos(0);
             }
 
             //clear the depth buffer so the real rendering can properly override what has been rendered
@@ -138,7 +143,7 @@ public class ModelSelector {
         GL11.glDisable(GL11.GL_NORMALIZE);
 
         GL11.glScaled(1D / info.scale[0], 1D / info.scale[1], 1D / info.scale[2]);
-        fakeRenderModel(info.model, 0.0625F);
+        fakeRenderModel(info, 0.0625F);
 
         GL11.glEnable(GL11.GL_NORMALIZE);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -147,12 +152,17 @@ public class ModelSelector {
         GL11.glPopMatrix();
     }
 
-    private void fakeRenderModel(ModelBaseDummy model, float f5) {
+    private void fakeRenderModel(ProjectInfo info, float f5) {
         List<CubeInfo> hidden = workspace.getHiddenElements();
+
+        workspace.applyModelAnimations();
+
         int id = 1; //leave one id for the background
-        for (int i = 0; i < model.cubes.size(); i++) {
-            id = fakeRenderModelPart(model, model.cubes.get(i), hidden, id, f5, true);
+        for (int i = 0; i < info.model.cubes.size(); i++) {
+            id = fakeRenderModelPart(info.model, info.model.cubes.get(i), hidden, id, f5, true);
         }
+
+        workspace.resetModelAnimations();
     }
 
     private int fakeRenderModelPart(ModelBaseDummy model, CubeInfo info, List<CubeInfo> hidden, int id, float f5, boolean top) {

@@ -326,6 +326,18 @@ public class ElementListTree extends Element
         }
     }
 
+    public Object getObjectByIdentifier(String s)
+    {
+        for(Tree tree : trees)
+        {
+            if(tree.attachedObject instanceof CubeInfo && ((CubeInfo)tree.attachedObject).identifier.equals(s) || tree.attachedObject instanceof CubeGroup && ((CubeGroup)tree.attachedObject).identifier.equals(s) || tree.attachedObject instanceof Animation && ((Animation)tree.attachedObject).identifier.equals(s))
+            {
+                return tree.attachedObject;
+            }
+        }
+        return null;
+    }
+
     public void triggerParent()
     {
         parent.elementTriggered(this);
@@ -451,7 +463,7 @@ public class ElementListTree extends Element
                         }
                         else
                         {
-                            Tabula.proxy.tickHandlerClient.mainframe.updateCube(parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, s, "", 0);
+                            Tabula.proxy.tickHandlerClient.mainframe.updateCube(parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, s, "", "", 0);
                         }
                     }
                 }

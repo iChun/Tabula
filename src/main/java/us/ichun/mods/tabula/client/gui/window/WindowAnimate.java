@@ -28,6 +28,9 @@ public class WindowAnimate extends Window
     public static final int ID_EDIT_COMP = 6;
     public static final int ID_DEL_COMP = 7;
 
+    public static final int ID_SPLIT_COMP = 8;
+    public static final int ID_EDIT_PROGRESSION_COMP = 9;
+
     public ElementListTree animList;
     public ElementAnimationTimeline timeline;
 
@@ -48,6 +51,8 @@ public class WindowAnimate extends Window
         elements.add(new ElementButtonTextured(this, 20 * button++ + 1, 80, ID_NEW_COMP, true, 0, 1, "window.animate.newComponent", new ResourceLocation("tabula", "textures/icon/newComponent.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++ + 1, 80, ID_EDIT_COMP, true, 0, 1, "window.animate.editComponent", new ResourceLocation("tabula", "textures/icon/editComponent.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++ + 1, 80, ID_DEL_COMP, true, 0, 1, "window.animate.delComponent", new ResourceLocation("tabula", "textures/icon/delComponent.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++ + 1, 80, ID_SPLIT_COMP, true, 0, 1, "window.animate.splitComponent", new ResourceLocation("tabula", "textures/icon/splitComponent.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++ + 1, 80, ID_EDIT_PROGRESSION_COMP, true, 0, 1, "window.animate.editProgComponent", new ResourceLocation("tabula", "textures/icon/editProgComponent.png")));
 
         animList = new ElementListTree(this, BORDER_SIZE - 1, BORDER_SIZE + 1 + 10, 100 - (BORDER_SIZE * 2 + 2), height - BORDER_SIZE - 22 - 12, -1, false, false);
         elements.add(animList);
@@ -179,6 +184,37 @@ public class WindowAnimate extends Window
                             Animation anim = (Animation)tree.attachedObject;
 
                             anim.stop();
+                            break;
+                        }
+                    }
+                }
+            }
+            else if(element.id == ID_EDIT_PROGRESSION_COMP)
+            {
+                if(!animList.selectedIdentifier.isEmpty() && !timeline.selectedIdentifier.isEmpty())
+                {
+                    for(ElementListTree.Tree tree : animList.trees)
+                    {
+                        if(tree.selected)
+                        {
+                            Animation anim = (Animation)tree.attachedObject;
+
+                            for(Map.Entry<String, ArrayList<AnimationComponent>> e : anim.sets.entrySet())
+                            {
+                                for(AnimationComponent comp : e.getValue())
+                                {
+                                    if(comp.identifier.equalsIgnoreCase(timeline.selectedIdentifier))
+                                    {
+                                        int w1 = workspace.width - 300;
+                                        if(!workspace.levels.get(1).isEmpty())
+                                        {
+                                            w1 = workspace.levels.get(1).get(0).posX - 300 + 2;
+                                        }
+                                        workspace.addWindowOnTop(new WindowEditAnimComponentProgression(workspace, w1, 31, 300, 340, 300, 340, animList.selectedIdentifier, e.getKey(), timeline.selectedIdentifier));
+                                        break;
+                                    }
+                                }
+                            }
                             break;
                         }
                     }

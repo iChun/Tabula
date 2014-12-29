@@ -334,6 +334,8 @@ public class WindowProjectSelection extends WindowTopDock
         }
         else
         {
+            workspace.windowAnimate.animList.selectedIdentifier = "";
+            workspace.windowAnimate.timeline.selectedIdentifier = "";
             workspace.cameraZoom = 1.0F;
             workspace.cameraYaw = 0.0F;
             workspace.cameraPitch = 0.0F;

@@ -73,7 +73,7 @@ public class WindowNewAnimComponent extends Window
                 }
                 else
                 {
-                    Tabula.proxy.tickHandlerClient.mainframe.createNewAnimComponent(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, workspace.windowAnimate.animList.selectedIdentifier, cubeIdent, animName, length, workspace.windowAnimate.timeline.currentPos);
+                    Tabula.proxy.tickHandlerClient.mainframe.createNewAnimComponent(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, workspace.windowAnimate.animList.selectedIdentifier, cubeIdent, animName, length, workspace.windowAnimate.timeline.getCurrentPos());
                 }
                 workspace.removeWindow(this, true);
             }

@@ -13,10 +13,7 @@ import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 //This is the class that holds all the info of the workspace and handles UI input from everyone.
 //The player hosting this doesn't edit this directly, he has his own workspace and whatever he does to the workspace there changes things here, which are sent back to him.
@@ -521,6 +518,72 @@ public class Mainframe
         }
     }
 
+    public void resetAnimCompProgCoord(String ident, String animIdent, String compIdent)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                for(Animation anim : info.anims)
+                {
+                    if(anim.identifier.equals(animIdent))
+                    {
+                        for(Map.Entry<String, ArrayList<AnimationComponent>> e : anim.sets.entrySet())
+                        {
+                            for(AnimationComponent comp : e.getValue())
+                            {
+                                if(comp.identifier.equals(compIdent))
+                                {
+                                    comp.progressionCoords = null;
+                                    comp.progressionCurve = null;
+                                    streamProject(info);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void moveAnimCompProgCoord(String ident, String animIdent, String compIdent, double oldX, double oldY, double newX, double newY)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                for(Animation anim : info.anims)
+                {
+                    if(anim.identifier.equals(animIdent))
+                    {
+                        for(Map.Entry<String, ArrayList<AnimationComponent>> e : anim.sets.entrySet())
+                        {
+                            for(AnimationComponent comp : e.getValue())
+                            {
+                                if(comp.identifier.equals(compIdent))
+                                {
+                                    if(oldX < 0 || oldY < 0)
+                                    {
+                                        comp.addProgressionCoords(newX, newY);
+                                    }
+                                    else if(newX < 0 || newY < 0)
+                                    {
+                                        comp.removeProgressionCoords(oldX, oldY);
+                                    }
+                                    else
+                                    {
+                                        comp.moveProgressionCoords(oldX, oldY, newX, newY);
+                                    }
+                                    streamProject(info);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public void childProtectiveServices(ProjectInfo info, Object newParent, Object dragged)
     {
         if(info.cubes.contains(dragged))
@@ -818,7 +881,7 @@ public class Mainframe
         }
     }
 
-    public void updateCube(String ident, String cubeInfo, String animIdent, int pos)
+    public void updateCube(String ident, String cubeInfo, String animIdent, String compIdent, int pos)
     {
         for(ProjectInfo proj : projects)
         {
@@ -826,7 +889,7 @@ public class Mainframe
             {
                 CubeInfo info = ((new Gson()).fromJson(cubeInfo, CubeInfo.class));
 
-                boolean editCube = true;
+                boolean editCube = compIdent.isEmpty();
 
                 if(!animIdent.isEmpty())
                 {
@@ -837,18 +900,73 @@ public class Mainframe
                             ArrayList<AnimationComponent> animationComponents = anim.sets.get(info.identifier);
                             if(animationComponents != null)
                             {
-                                //TODO apply animations to ori cube and then compare then revert?
-                                for(AnimationComponent comp : animationComponents)
+                                Collections.sort(animationComponents);
+
+                                CubeInfo ori = (CubeInfo)proj.getObjectByIdent(info.identifier);
+
+                                if(ori != null)
                                 {
-                                    if(comp.startKey == pos)
+                                    AnimationComponent selected = null;
+                                    for(AnimationComponent comp : animationComponents)
                                     {
-                                        CubeInfo ori = (CubeInfo)proj.getObjectByIdent(info.identifier);
-                                        editCube = false;
+                                        if(!comp.hidden)
+                                        {
+                                            comp.animate(ori, pos);
+                                            comp.animate(info, pos);
+                                            if(comp.identifier.equals(compIdent))
+                                            {
+                                                selected = comp;
+                                            }
+                                        }
                                     }
-                                    else if(comp.startKey + comp.length == pos)
+
+                                    double[] posChange = new double[3];
+                                    double[] rotChange = new double[3];
+                                    double[] scaleChange = new double[3];
+                                    double opacityChange = 0.0D;
+
+                                    if(selected != null && (selected.startKey == pos || selected.startKey + selected.length == pos))
                                     {
-                                        CubeInfo ori = (CubeInfo)proj.getObjectByIdent(info.identifier);
-                                        editCube = false;
+                                        for(int i = 0; i < 3; i++)
+                                        {
+                                            posChange[i] = info.position[i] - ori.position[i];
+                                            rotChange[i] = info.rotation[i] - ori.rotation[i];
+                                            scaleChange[i] = info.scale[i] - ori.scale[i];
+                                        }
+                                        opacityChange = info.opacity - ori.opacity;
+                                    }
+
+                                    for(AnimationComponent comp : animationComponents)
+                                    {
+                                        if(!comp.hidden)
+                                        {
+                                            comp.reset(ori, pos);
+                                            comp.reset(info, pos);
+                                        }
+                                    }
+
+                                    if(selected != null)
+                                    {
+                                        if(selected.startKey == pos)
+                                        {
+                                            for(int i = 0; i < 3; i++)
+                                            {
+                                                selected.posOffset[i] += posChange[i];
+                                                selected.rotOffset[i] += rotChange[i];
+                                                selected.scaleOffset[i] += scaleChange[i];
+                                            }
+                                            selected.opacityOffset += opacityChange;
+                                        }
+                                        else if(selected.startKey + selected.length == pos)
+                                        {
+                                            for(int i = 0; i < 3; i++)
+                                            {
+                                                selected.posChange[i] += posChange[i];
+                                                selected.rotChange[i] += rotChange[i];
+                                                selected.scaleChange[i] += scaleChange[i];
+                                            }
+                                            selected.opacityChange += opacityChange;
+                                        }
                                     }
                                 }
                             }

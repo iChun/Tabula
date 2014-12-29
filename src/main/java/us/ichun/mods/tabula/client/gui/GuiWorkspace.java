@@ -1,5 +1,6 @@
 package us.ichun.mods.tabula.client.gui;
 
+import com.google.common.base.Splitter;
 import com.google.gson.Gson;
 import ichun.client.render.RendererHelper;
 import ichun.common.core.util.MD5Checksum;
@@ -30,11 +31,15 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementWindow;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.module.tabula.common.project.components.Animation;
+import us.ichun.module.tabula.common.project.components.AnimationComponent;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class GuiWorkspace extends GuiScreen
 {
@@ -70,6 +75,8 @@ public class GuiWorkspace extends GuiScreen
     public boolean keySDown;
     public boolean keyNDown;
     public boolean keyODown;
+    public boolean keyHomeDown;
+    public boolean keyEndDown;
 
     public Object cubeCopied;
 
@@ -148,7 +155,7 @@ public class GuiWorkspace extends GuiScreen
             addToDock(1, windowTexture);
             addToDock(1, windowModelTree);
             addToDock(2, windowAnimate);
-//            windowAnimate.toggleMinimize();
+            //            windowAnimate.toggleMinimize();
 
             levels.get(3).add(new WindowTopDock(this, 0, 0, width, 20, 20, 20));
             projectManager = new WindowProjectSelection(this, 0, 0, width, 20, 20, 20);
@@ -489,24 +496,44 @@ public class GuiWorkspace extends GuiScreen
                 elementHovered.onClick(mouseX - elementHovered.parent.posX, mouseY - elementHovered.parent.posY, 2);
                 elementSelected = elementHovered;
             }
-            if(hoverTime > 20 && elementHovered.tooltip() != null) //1s to draw tooltip
+            String tooltip = elementHovered.tooltip();
+            if(hoverTime > 20 && tooltip != null) //1s to draw tooltip
             {
                 GL11.glTranslatef(0F, 0F, 20F * levels.size());
-                String tooltip = StatCollector.translateToLocal(elementHovered.tooltip());
+                List<String> tips = Splitter.on("\n").splitToList(tooltip);
+                tips = new ArrayList<String>(tips);
+                if(tips.size() == 1)
+                {
+                    tips.add(StatCollector.translateToLocal(tips.get(0)));
+                    tips.remove(0);
+                }
                 int xOffset = 5;
                 int yOffset = 20;
-                int size = fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2);
+                int longest = 0;
+                for(String tip : tips)
+                {
+                    int length = fontRendererObj.getStringWidth(tip);
+                    if(length > longest)
+                    {
+                        longest = length;
+                    }
+                }
+                int size = longest + ((Window.BORDER_SIZE - 1) * 2);
+                int ySize = 1 + (tips.size() * (fontRendererObj.FONT_HEIGHT + 1));
                 if(width - mouseX < size)
                 {
                     xOffset -= size - (width - mouseX) + 20;
                 }
-                if(height - (mouseY + 12 + yOffset) < 0)
+                if(height - (mouseY + ySize + yOffset) < 0)
                 {
                     yOffset = -20;
                 }
-                RendererHelper.drawColourOnScreen(Theme.instance.windowBorder[0], Theme.instance.windowBorder[1], Theme.instance.windowBorder[2], 255, mouseX + xOffset, mouseY + yOffset, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2), 12, 0);
-                RendererHelper.drawColourOnScreen(Theme.instance.windowBackground[0], Theme.instance.windowBackground[1], Theme.instance.windowBackground[2], 255, mouseX + xOffset + 1, mouseY + yOffset + 1, fontRendererObj.getStringWidth(tooltip) + ((Window.BORDER_SIZE - 1) * 2) - 2, 12 - 2, 0);
-                fontRendererObj.drawString(tooltip, mouseX + xOffset + (Window.BORDER_SIZE - 1), mouseY + yOffset + (Window.BORDER_SIZE - 1), Theme.instance.getAsHex(Theme.instance.font), false);
+                RendererHelper.drawColourOnScreen(Theme.instance.windowBorder[0], Theme.instance.windowBorder[1], Theme.instance.windowBorder[2], 255, mouseX + xOffset, mouseY + yOffset, longest + ((Window.BORDER_SIZE - 1) * 2), ySize, 0);
+                RendererHelper.drawColourOnScreen(Theme.instance.windowBackground[0], Theme.instance.windowBackground[1], Theme.instance.windowBackground[2], 255, mouseX + xOffset + 1, mouseY + yOffset + 1, longest + ((Window.BORDER_SIZE - 1) * 2) - 2, ySize - 2, 0);
+                for(int i = 0; i < tips.size(); i++)
+                {
+                    fontRendererObj.drawString(tips.get(i), mouseX + xOffset + (Window.BORDER_SIZE - 1), mouseY + yOffset + (Window.BORDER_SIZE - 1) + (i * (fontRendererObj.FONT_HEIGHT + 1)), Theme.instance.getAsHex(Theme.instance.font), false);
+                }
                 //            RendererHelper.drawColourOnScreen(34, 34, 34, 255, posX + BORDER_SIZE, posY + BORDER_SIZE, getWidth() - (BORDER_SIZE * 2), getHeight() - (BORDER_SIZE * 2), 0);
             }
         }
@@ -564,6 +591,24 @@ public class GuiWorkspace extends GuiScreen
                     this.addWindowOnTop(new WindowOpenProject(this, this.width / 2 - 130, this.height / 2 - 160, 260, 320, 240, 160).putInMiddleOfScreen());
                 }
             }
+            if(Keyboard.isKeyDown(Keyboard.KEY_HOME) && !keyHomeDown)
+            {
+                windowAnimate.timeline.setCurrentPos(0);
+                windowAnimate.timeline.focusOnTicker();
+            }
+            if(Keyboard.isKeyDown(Keyboard.KEY_END) && !keyEndDown)
+            {
+                windowAnimate.timeline.setCurrentPos(0);
+                if(!windowAnimate.animList.selectedIdentifier.isEmpty())
+                {
+                    Animation anim = (Animation)windowAnimate.animList.getObjectByIdentifier(windowAnimate.animList.selectedIdentifier);
+                    if(anim != null)
+                    {
+                        windowAnimate.timeline.setCurrentPos(anim.getLength());
+                    }
+                }
+                windowAnimate.timeline.focusOnTicker();
+            }
         }
 
         GL11.glPopMatrix();
@@ -580,6 +625,8 @@ public class GuiWorkspace extends GuiScreen
         keySDown = Keyboard.isKeyDown(Keyboard.KEY_S);
         keyNDown = Keyboard.isKeyDown(Keyboard.KEY_N);
         keyODown = Keyboard.isKeyDown(Keyboard.KEY_O);
+        keyHomeDown = Keyboard.isKeyDown(Keyboard.KEY_HOME);
+        keyEndDown = Keyboard.isKeyDown(Keyboard.KEY_END);
 
         if(windowDragged != null)
         {
@@ -844,30 +891,30 @@ public class GuiWorkspace extends GuiScreen
             renderBlocks.renderBlockAsItem(block, meta, 1.0F);
             GL11.glPopMatrix();
 
-//            tessellator.startDrawingQuads();
-//            tessellator.setNormal(0.0F, -1.0F, 0.0F);
-//            renderBlocks.renderFaceYNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 0, 1));
-//            tessellator.draw();
-//            tessellator.startDrawingQuads();
-//            tessellator.setNormal(0.0F, 1.0F, 0.0F);
-//            renderBlocks.renderFaceYPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 1, 1));
-//            tessellator.draw();
-//            tessellator.startDrawingQuads();
-//            tessellator.setNormal(0.0F, 0.0F, -1.0F);
-//            renderBlocks.renderFaceZNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 2, 1));
-//            tessellator.draw();
-//            tessellator.startDrawingQuads();
-//            tessellator.setNormal(0.0F, 0.0F, 1.0F);
-//            renderBlocks.renderFaceZPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 3, 1));
-//            tessellator.draw();
-//            tessellator.startDrawingQuads();
-//            tessellator.setNormal(-1.0F, 0.0F, 0.0F);
-//            renderBlocks.renderFaceXNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 4, 1));
-//            tessellator.draw();
-//            tessellator.startDrawingQuads();
-//            tessellator.setNormal(1.0F, 0.0F, 0.0F);
-//            renderBlocks.renderFaceXPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 5, 1));
-//            tessellator.draw();
+            //            tessellator.startDrawingQuads();
+            //            tessellator.setNormal(0.0F, -1.0F, 0.0F);
+            //            renderBlocks.renderFaceYNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 0, 1));
+            //            tessellator.draw();
+            //            tessellator.startDrawingQuads();
+            //            tessellator.setNormal(0.0F, 1.0F, 0.0F);
+            //            renderBlocks.renderFaceYPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 1, 1));
+            //            tessellator.draw();
+            //            tessellator.startDrawingQuads();
+            //            tessellator.setNormal(0.0F, 0.0F, -1.0F);
+            //            renderBlocks.renderFaceZNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 2, 1));
+            //            tessellator.draw();
+            //            tessellator.startDrawingQuads();
+            //            tessellator.setNormal(0.0F, 0.0F, 1.0F);
+            //            renderBlocks.renderFaceZPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 3, 1));
+            //            tessellator.draw();
+            //            tessellator.startDrawingQuads();
+            //            tessellator.setNormal(-1.0F, 0.0F, 0.0F);
+            //            renderBlocks.renderFaceXNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 4, 1));
+            //            tessellator.draw();
+            //            tessellator.startDrawingQuads();
+            //            tessellator.setNormal(1.0F, 0.0F, 0.0F);
+            //            renderBlocks.renderFaceXPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 5, 1));
+            //            tessellator.draw();
         }
 
         GL11.glEnable(GL11.GL_BLEND);
@@ -900,6 +947,8 @@ public class GuiWorkspace extends GuiScreen
 
             boolean renderRotationPoint = Tabula.config.getInt("renderRotationPoint") == 1;
 
+            applyModelAnimations();
+
             GL11.glScaled(1D / info.scale[0], 1D / info.scale[1], 1D / info.scale[2]);
             if(windowTexture.imageId != -1)
             {
@@ -920,6 +969,8 @@ public class GuiWorkspace extends GuiScreen
             }
             GL11.glEnable(GL11.GL_CULL_FACE);
             GL11.glPopMatrix();
+
+            resetModelAnimations();
         }
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
@@ -1525,6 +1576,80 @@ public class GuiWorkspace extends GuiScreen
                         levels.remove(i);
                     }
                     levels.add(topLevel);
+                }
+            }
+        }
+    }
+
+    public void applyModelAnimations()
+    {
+        if(projectManager.selectedProject != -1)
+        {
+            ProjectInfo info = projectManager.projects.get(projectManager.selectedProject);
+
+            ArrayList<CubeInfo> allCubes = info.getAllCubes();
+
+            for(Animation anim : info.anims)
+            {
+                if(anim.identifier.equalsIgnoreCase(windowAnimate.animList.selectedIdentifier))
+                {
+                    for(Map.Entry<String, ArrayList<AnimationComponent>> e : anim.sets.entrySet())
+                    {
+                        for(CubeInfo cube : allCubes)
+                        {
+                            if(cube.identifier.equals(e.getKey()))
+                            {
+                                ArrayList<AnimationComponent> components = e.getValue();
+                                Collections.sort(components);
+
+                                for(AnimationComponent comp : components)
+                                {
+                                    if(!comp.hidden)
+                                    {
+                                        comp.animate(cube, windowAnimate.timeline.getCurrentPos() - (anim.playing ? renderTick : 0));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    public void resetModelAnimations()
+    {
+        if(projectManager.selectedProject != -1)
+        {
+            ProjectInfo info = projectManager.projects.get(projectManager.selectedProject);
+
+            ArrayList<CubeInfo> allCubes = info.getAllCubes();
+
+            for(Animation anim : info.anims)
+            {
+                if(anim.identifier.equalsIgnoreCase(windowAnimate.animList.selectedIdentifier))
+                {
+                    for(Map.Entry<String, ArrayList<AnimationComponent>> e : anim.sets.entrySet())
+                    {
+                        for(CubeInfo cube : allCubes)
+                        {
+                            if(cube.identifier.equals(e.getKey()))
+                            {
+                                ArrayList<AnimationComponent> components = e.getValue();
+                                Collections.sort(components);
+
+                                for(AnimationComponent comp : components)
+                                {
+                                    if(!comp.hidden)
+                                    {
+                                        comp.reset(cube, windowAnimate.timeline.getCurrentPos() - (anim.playing ? renderTick : 0));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
                 }
             }
         }

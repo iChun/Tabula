@@ -91,6 +91,8 @@ window.animate.stopAnim=Stop Animation
 window.animate.newComponent=New Component
 window.animate.editComponent=Edit Component
 window.animate.delComponent=Delete Component
+window.animate.splitComponent=Split Component. This resets the Component Progression
+window.animate.editProgComponent=Edit Component Progression
 window.animate.selectCube=Select a Cube to animate first!
 
 window.newAnim.title=New Animation
@@ -98,12 +100,19 @@ window.newAnim.animName=Animation Name
 window.newAnim.animLoop=Does the animation loop?
 window.editAnim.title=Edit Animation
 
-
 window.newAnimComp.title=New Animation Component
 window.newAnimComp.name=Component Name
 window.newAnimComp.length=Component length (in ticks)
 window.editAnimComp.title=Edit Animation Component
 window.editAnimComp.startPos=Component Start Tick
+
+window.editAnimCompProg.title=Edit Animation Component Progression
+window.editAnimCompProg.prog=Animation Progression
+window.editAnimCompProg.reset=Reset
+window.editAnimCompProg.play=Play Anim
+window.editAnimCompProg.playDesc=Play the animation while you are editing the progression?
+window.editAnimCompProg.invalid=Invalid progression curve!
+window.editAnimCompProg.animInfo=Animation Keyframe Info: 
 
 window.selectTheme.title=Select Theme
 
@@ -136,6 +145,7 @@ topdock.undo=Undo
 topdock.redo=Redo
 topdock.chat=Toggle Chat Window
 topdock.themes=Theme Selector
+topdock.settings=Settings
 topdock.info=About this mod
 topdock.exitTabula=Exit Tabula
 topdock.wood=Block
