@@ -39,7 +39,7 @@ public class ExportJava extends Exporter
         boolean addGl11 = false;
         for(CubeInfo cube : allCubes)
         {
-            if(!(cube.scale[0] == 1.0D && cube.scale[1] == 1.0D && cube.scale[2] == 1.0D))
+            if(!(cube.scale[0] == 1.0D && cube.scale[1] == 1.0D && cube.scale[2] == 1.0D) || cube.opacity != 100D)
             {
                 addGl11 = true;
                 break;
@@ -144,7 +144,17 @@ public class ExportJava extends Exporter
                 sb.append("        GL11.glTranslatef(-this." + field + ".offsetX, -this." + field + ".offsetY, -this." + field + ".offsetZ);\n");
                 sb.append("        GL11.glTranslatef(-this." + field + ".rotationPointX * f5, -this." + field + ".rotationPointY * f5, -this." + field + ".rotationPointZ * f5);\n");
             }
+            if(cube.opacity != 100D)
+            {
+                sb.append("        GL11.glEnable(GL11.GL_BLEND);\n");
+                sb.append("        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);\n");
+                sb.append("        GL11.glColor4f(1.0F, 1.0F, 1.0F, " + (cube.opacity / 100D) + "F);\n");
+            }
             sb.append("        this." + field + ".render(f5);\n");
+            if(cube.opacity != 100D)
+            {
+                sb.append("        GL11.glDisable(GL11.GL_BLEND);\n");
+            }
             if(!(cube.scale[0] == 1.0D && cube.scale[1] == 1.0D && cube.scale[2] == 1.0D))
             {
                 sb.append("        GL11.glPopMatrix();\n");
