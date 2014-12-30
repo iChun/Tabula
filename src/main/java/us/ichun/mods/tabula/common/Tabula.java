@@ -14,6 +14,7 @@ import ichun.common.core.config.IConfigUser;
 import ichun.common.core.updateChecker.ModVersionChecker;
 import ichun.common.core.updateChecker.ModVersionInfo;
 import ichun.common.iChunUtil;
+import net.minecraft.block.Block;
 import net.minecraft.client.model.ModelBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
@@ -49,6 +50,8 @@ public class Tabula
     private static final Logger logger = LogManager.getLogger("Tabula");
 
     public static Config config;
+
+    public static Block blockTabulaRasa;
 
     @Override
     public boolean onConfigChange(Config cfg, Property prop) { return true; }

@@ -22,8 +22,8 @@ public class Mainframe
 {
     public static final int IDENTIFIER_LENGTH = ProjectInfo.IDENTIFIER_LENGTH;
 
-    public ArrayList<UUID> listeners = new ArrayList<UUID>();
-    public ArrayList<UUID> editors = new ArrayList<UUID>();
+    public ArrayList<String> listeners = new ArrayList<String>();
+    public ArrayList<String> editors = new ArrayList<String>();
 
     public boolean allowEditing;
 
@@ -112,10 +112,11 @@ public class Mainframe
 
     public void sendChat(String name, String message)
     {
-        for(UUID id : listeners)
+        for(String id : listeners)
         {
             //TODO stream to other listeners
-            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+//            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            if(id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
                 ProjectHelper.receiveChat(name + ": " + message);
             }
@@ -124,10 +125,11 @@ public class Mainframe
 
     public void streamProjectClosure(String ident)
     {
-        for(UUID id : listeners)
+        for(String id : listeners)
         {
             //TODO stream to other listeners
-            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+//            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            if(id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
                 ProjectHelper.removeProjectFromManager(ident);
             }
@@ -138,10 +140,11 @@ public class Mainframe
     {
         project.lastState = age;//Update lastState because of an action.
         allowEditing = false;
-        for(UUID id : listeners)
+        for(String id : listeners)
         {
             //TODO stream to other listeners
-            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+//            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            if(id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
                 ProjectHelper.addProjectToManager(ProjectHelper.createProjectFromJsonHost(project.identifier, project.getAsJson()));
             }
@@ -152,10 +155,11 @@ public class Mainframe
     public void streamProjectTexture(String ident, BufferedImage bufferedImage)
     {
         allowEditing = false;
-        for(UUID id : listeners)
+        for(String id : listeners)
         {
             //TODO stream to other listeners
-            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+//            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            if(id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
                 ProjectHelper.updateProjectTexture(ident, bufferedImage);
             }
@@ -1171,7 +1175,7 @@ public class Mainframe
         }
     }
 
-    public void addListener(UUID id, boolean isEditor)
+    public void addListener(String id, boolean isEditor)
     {
         if(!listeners.contains(id))
         {
@@ -1181,7 +1185,6 @@ public class Mainframe
         {
             editors.add(id);
         }
-        //TODO get name from the UUID...? how?
     }
 
     //TODO do a "maybe the host has crashed" inform to the clients

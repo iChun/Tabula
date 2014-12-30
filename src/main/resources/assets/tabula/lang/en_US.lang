@@ -165,3 +165,5 @@ tabula.config.prop.renderWorkspaceBlock.name=Render Workspace Block
 tabula.config.prop.favTheme.comment=Favorite Colour Theme for Tabula's Interface
 tabula.config.prop.renderRotationPoint.comment=Should the rotation point of selected model parts be rendered
 tabula.config.prop.renderWorkspaceBlock.comment=Should the block in the workspace be rendered
+
+tile.tabula.block.tabularasa.name=Wax Tablet

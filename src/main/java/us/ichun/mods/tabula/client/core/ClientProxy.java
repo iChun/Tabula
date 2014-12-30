@@ -1,5 +1,6 @@
 package us.ichun.mods.tabula.client.core;
 
+import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
@@ -18,10 +19,12 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
+import us.ichun.mods.tabula.client.render.TileRendererTabulaRasa;
 import us.ichun.mods.tabula.common.core.CommonProxy;
 import us.ichun.module.tabula.client.model.ModelInfo;
 import us.ichun.module.tabula.client.model.ModelList;
@@ -296,5 +299,12 @@ public class ClientProxy extends CommonProxy
                 ModelList.modelBlacklist.remove(i);
             }
         }
+    }
+
+    @Override
+    public void registerTileEntity(Class<? extends TileEntity> clz, String id)
+    {
+        super.registerTileEntity(clz, id);
+        ClientRegistry.bindTileEntitySpecialRenderer(clz, new TileRendererTabulaRasa());
     }
 }
