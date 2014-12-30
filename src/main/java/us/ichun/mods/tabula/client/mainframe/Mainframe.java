@@ -2,6 +2,7 @@ package us.ichun.mods.tabula.client.mainframe;
 
 import com.google.gson.Gson;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.MathHelper;
 import org.apache.commons.lang3.RandomStringUtils;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
@@ -491,6 +492,74 @@ public class Mainframe
         }
     }
 
+    public void splitAnimComponent(String ident, String animIdent, String compIdent, int currentPos)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                for(Animation anim : info.anims)
+                {
+                    if(anim.identifier.equals(animIdent))
+                    {
+                        String groupIdent = null;
+                        AnimationComponent comp = null;
+                        for(Map.Entry<String, ArrayList<AnimationComponent>> e : anim.sets.entrySet())
+                        {
+                            for(AnimationComponent c : e.getValue())
+                            {
+                                if(c.identifier.equalsIgnoreCase(compIdent))
+                                {
+                                    comp = c;
+                                    groupIdent = e.getKey();
+                                    break;
+                                }
+                            }
+                        }
+                        if(groupIdent != null && currentPos > comp.startKey && currentPos < comp.startKey + comp.length )
+                        {
+                            AnimationComponent split1 = new AnimationComponent(comp.name + "_1", currentPos - comp.startKey, comp.startKey);
+                            AnimationComponent split2 = new AnimationComponent(comp.name + "_2", (comp.startKey + comp.length) - currentPos, currentPos);
+
+                            split1.posOffset = comp.posOffset;
+                            split1.rotOffset = comp.rotOffset;
+                            split1.scaleOffset = comp.scaleOffset;
+                            split1.opacityOffset = comp.opacityOffset;
+
+                            float prog = MathHelper.clamp_float((currentPos - comp.startKey) / (float)comp.length, 0F, 1F);
+                            float mag = prog;
+                            if(comp.getProgressionCurve() != null)
+                            {
+                                mag = MathHelper.clamp_float((float)comp.getProgressionCurve().value(prog), 0.0F, 1.0F);
+                            }
+                            for(int i = 0; i < 3; i++)
+                            {
+                                split1.posChange[i] = comp.posChange[i] * mag;
+                                split1.rotChange[i] = comp.rotChange[i] * mag;
+                                split1.scaleChange[i] = comp.scaleChange[i] * mag;
+                            }
+                            split1.opacityChange = comp.opacityChange * mag;
+
+                            for(int i = 0; i < 3; i++)
+                            {
+                                split2.posChange[i] = comp.posChange[i] - split1.posChange[i];
+                                split2.rotChange[i] = comp.rotChange[i] - split1.rotChange[i];
+                                split2.scaleChange[i] = comp.scaleChange[i] - split1.scaleChange[i];
+                            }
+                            split2.opacityChange = comp.opacityChange - split1.opacityChange;
+
+                            anim.sets.get(groupIdent).remove(comp);
+                            anim.sets.get(groupIdent).add(split1);
+                            anim.sets.get(groupIdent).add(split2);
+
+                            streamProject(info);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public void toggleAnimComponentVisibility(String ident, String animIdent, String compIdent)
     {
         for(ProjectInfo info : projects)
@@ -912,7 +981,6 @@ public class Mainframe
                                         if(!comp.hidden)
                                         {
                                             comp.animate(ori, pos);
-                                            comp.animate(info, pos);
                                             if(comp.identifier.equals(compIdent))
                                             {
                                                 selected = comp;
@@ -941,7 +1009,6 @@ public class Mainframe
                                         if(!comp.hidden)
                                         {
                                             comp.reset(ori, pos);
-                                            comp.reset(info, pos);
                                         }
                                     }
 

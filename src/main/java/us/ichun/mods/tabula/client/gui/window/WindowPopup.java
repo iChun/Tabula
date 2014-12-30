@@ -33,4 +33,10 @@ public class WindowPopup extends Window
     {
         workspace.removeWindow(this, true);
     }
+
+    @Override
+    public boolean allowMultipleInstances()
+    {
+        return true;
     }
+}

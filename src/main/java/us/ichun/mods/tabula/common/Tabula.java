@@ -63,6 +63,8 @@ public class Tabula
         config.createIntBoolProperty("renderRotationPoint", true, false, true);
         config.createIntBoolProperty("renderWorkspaceBlock", true, false, true);
 
+        config.createIntBoolProperty("animationWarning", "Animation Warning Shown", "Temp setting, so ignore this comment", true, false, false);
+
         MinecraftForge.EVENT_BUS.register(new EventHandler());
 
         ModVersionChecker.register_iChunMod(new ModVersionInfo("Tabula", iChunUtil.versionOfMC, version, false));

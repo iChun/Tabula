@@ -155,7 +155,7 @@ public class GuiWorkspace extends GuiScreen
             addToDock(1, windowTexture);
             addToDock(1, windowModelTree);
             addToDock(2, windowAnimate);
-            //            windowAnimate.toggleMinimize();
+            windowAnimate.toggleMinimize();
 
             levels.get(3).add(new WindowTopDock(this, 0, 0, width, 20, 20, 20));
             projectManager = new WindowProjectSelection(this, 0, 0, width, 20, 20, 20);
@@ -591,12 +591,12 @@ public class GuiWorkspace extends GuiScreen
                     this.addWindowOnTop(new WindowOpenProject(this, this.width / 2 - 130, this.height / 2 - 160, 260, 320, 240, 160).putInMiddleOfScreen());
                 }
             }
-            if(Keyboard.isKeyDown(Keyboard.KEY_HOME) && !keyHomeDown)
+            if(Keyboard.isKeyDown(Keyboard.KEY_HOME) && !keyHomeDown || !Keyboard.isKeyDown(Keyboard.KEY_HOME) && keyHomeDown)
             {
                 windowAnimate.timeline.setCurrentPos(0);
                 windowAnimate.timeline.focusOnTicker();
             }
-            if(Keyboard.isKeyDown(Keyboard.KEY_END) && !keyEndDown)
+            if(Keyboard.isKeyDown(Keyboard.KEY_END) && !keyEndDown || !Keyboard.isKeyDown(Keyboard.KEY_END) && keyEndDown)
             {
                 windowAnimate.timeline.setCurrentPos(0);
                 if(!windowAnimate.animList.selectedIdentifier.isEmpty())

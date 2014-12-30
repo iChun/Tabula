@@ -6,6 +6,7 @@ import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.*;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
@@ -47,6 +48,12 @@ public class WindowControls extends Window
             if(selectedObject instanceof CubeInfo)
             {
                 CubeInfo info = (CubeInfo)selectedObject;
+
+                if(!workspace.windowAnimate.timeline.selectedIdentifier.isEmpty())
+                {
+                    workspace.applyModelAnimations();
+                }
+
                 for(int k = 0; k < elements.size(); k++)
                 {
                     Element e = elements.get(k);
@@ -120,6 +127,10 @@ public class WindowControls extends Window
                             }
                         }
                     }
+                }
+                if(!workspace.windowAnimate.timeline.selectedIdentifier.isEmpty())
+                {
+                    workspace.resetModelAnimations();
                 }
             }
             else if(selectedObject instanceof CubeGroup)

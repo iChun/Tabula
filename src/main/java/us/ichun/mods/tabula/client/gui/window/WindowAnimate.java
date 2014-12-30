@@ -189,6 +189,39 @@ public class WindowAnimate extends Window
                     }
                 }
             }
+            else if(element.id == ID_SPLIT_COMP)
+            {
+                if(!animList.selectedIdentifier.isEmpty() && !timeline.selectedIdentifier.isEmpty())
+                {
+                    for(ElementListTree.Tree tree : animList.trees)
+                    {
+                        if(tree.selected)
+                        {
+                            Animation anim = (Animation)tree.attachedObject;
+
+                            for(Map.Entry<String, ArrayList<AnimationComponent>> e : anim.sets.entrySet())
+                            {
+                                for(AnimationComponent comp : e.getValue())
+                                {
+                                    if(comp.identifier.equalsIgnoreCase(timeline.selectedIdentifier))
+                                    {
+                                        if(workspace.remoteSession)
+                                        {
+                                            //TODO remote session
+                                        }
+                                        else
+                                        {
+                                            Tabula.proxy.tickHandlerClient.mainframe.splitAnimComponent(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier, timeline.getCurrentPos());
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
             else if(element.id == ID_EDIT_PROGRESSION_COMP)
             {
                 if(!animList.selectedIdentifier.isEmpty() && !timeline.selectedIdentifier.isEmpty())
@@ -238,6 +271,22 @@ public class WindowAnimate extends Window
             return ((mouseY <= BORDER_SIZE + 1) ? 1 : 0) + 1; //you can only drag the top
         }
         return 0;
+    }
+
+    @Override
+    public void toggleMinimize()
+    {
+        super.toggleMinimize();
+        if(!minimized && Tabula.config.getInt("animationWarning") != 1)
+        {
+            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "You can find the link from the About button -iChun").putInMiddleOfScreen());
+            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "Let me know how anims work/suggestions on the GitHub.").putInMiddleOfScreen());
+            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "Anims are saved and do work however.").putInMiddleOfScreen());
+            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "The exporter does not currently export animations").putInMiddleOfScreen());
+            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "I'm currently looking for feedback on the animation UI").putInMiddleOfScreen());
+            Tabula.config.get("animationWarning").set(1);
+            Tabula.config.save();
+        }
     }
 
     @Override

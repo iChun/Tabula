@@ -144,7 +144,7 @@ public class ElementAnimationTimeline extends Element
             if(mouseX > posX + 100 && mouseX < posX + (hasScrollVert ? width - 10 : width) && mouseY < posY + height - 10)
             {
                 double tickPos = (int)(mouseX - (posX + 100 - 1) + (hasScrollHori ? ((double)(((timeWidth + 20) * tickWidth) - (width - (hasScrollVert ? 111 : 101))) * sliderProgHori) : 0));
-                currentPos = (int)Math.max(0, tickPos / (double)tickWidth);
+                setCurrentPos((int)Math.max(0, tickPos / (double)tickWidth));
                 if(currentAnim != null && currentAnim.playing)
                 {
                     currentAnim.playTime = currentPos;
@@ -542,6 +542,7 @@ public class ElementAnimationTimeline extends Element
     public void setCurrentPos(int i)
     {
         currentPos = i;
+        parent.workspace.windowControls.refresh = true;
     }
 
     public int getCurrentPos()
