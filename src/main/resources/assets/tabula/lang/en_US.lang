@@ -94,6 +94,7 @@ window.animate.delComponent=Delete Component
 window.animate.splitComponent=Split Component. This resets the Component Progression
 window.animate.editProgComponent=Edit Component Progression
 window.animate.selectCube=Select a Cube to animate first!
+window.animate.selectAnim=Select an Animation first!
 
 window.newAnim.title=New Animation
 window.newAnim.animName=Animation Name
@@ -152,9 +153,12 @@ topdock.wood=Block
 topdock.woodFull=Toggle showing the block
 
 system.joinedSession=%s has joined the session.
+system.leftSession=%s has left the session.
 system.addEditor=%1$s has added %2$s as an editor.
 system.removeEditor=%1$s has removed %2$s as an editor.
 system.cannotRemoveHost=%s is host and cannot be removed as an editor.
+system.hosting=You are hosting this Tabula session.
+system.hostingOther=%s is hosting this Tabula session.
 system.cannotReachHost=Host is unavailable. They might have crashed or disconnected. Consider saving the models for them before exiting.
 system.sessionEnded=Host has ended session.
 

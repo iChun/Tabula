@@ -325,14 +325,6 @@ public class WindowControls extends Window
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
                             info.rotation[l] = Double.parseDouble(((ElementNumberInput)e).textFields.get(l).getText());
-                            while(info.rotation[l] < -180D)
-                            {
-                                info.rotation[l] += 360D;
-                            }
-                            while(info.rotation[l] > 180D)
-                            {
-                                info.rotation[l] -= 360D;
-                            }
                         }
                     }
                     else if(e.id == 7)

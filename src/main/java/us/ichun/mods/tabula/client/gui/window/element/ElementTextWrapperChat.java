@@ -33,7 +33,7 @@ public class ElementTextWrapperChat extends ElementTextWrapper
                 }
                 else
                 {
-                    parent.workspace.getFontRenderer().drawString((String)list.get(j), getPosX() + 12, getPosY() + 4, Theme.getAsHex(Theme.instance.font), false);
+                    parent.workspace.getFontRenderer().drawString((String)list.get(j), getPosX() + 12, getPosY() + 4, Theme.getAsHex(Theme.instance.fontChat), false);
                 }
                 GL11.glTranslatef(0F, parent.workspace.getFontRenderer().FONT_HEIGHT + 2, 0F);
             }

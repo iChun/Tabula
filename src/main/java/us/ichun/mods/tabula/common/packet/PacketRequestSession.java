@@ -3,9 +3,12 @@ package us.ichun.mods.tabula.common.packet;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import ichun.common.core.network.AbstractPacket;
+import ichun.common.core.network.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
+import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
 
 public class PacketRequestSession extends AbstractPacket
@@ -50,10 +53,21 @@ public class PacketRequestSession extends AbstractPacket
             {
                 //Start new session with this player
                 tr.host = player.getCommandSenderName();
+                PacketHandler.sendToPlayer(Tabula.channels, new PacketBeginSession(tr.host, x, y, z), player);
             }
             else if(!tr.host.equals(player.getCommandSenderName()))
             {
+                EntityPlayerMP host = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(tr.host);
                 //Connect to existing session
+                if(host != null)
+                {
+                    if(!tr.listeners.contains(player.getCommandSenderName()))
+                    {
+                        tr.listeners.add(player.getCommandSenderName());
+                    }
+                    PacketHandler.sendToPlayer(Tabula.channels, new PacketAddListener(tr.host, player.getCommandSenderName()), host);
+                    PacketHandler.sendToPlayer(Tabula.channels, new PacketBeginSession(tr.host, x, y, z), player);
+                }
             }
         }
     }

@@ -4,6 +4,8 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import ichun.common.core.EntityHelperBase;
+import ichun.common.core.network.PacketHandler;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.NetworkManager;
@@ -11,6 +13,8 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketEndSession;
 
 import java.util.ArrayList;
 
@@ -31,18 +35,23 @@ public class TileEntityTabulaRasa extends TileEntity
     {
         if(!worldObj.isRemote && worldObj.getWorldTime() % 24L == 0 && !host.isEmpty() && FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(host) == null)
         {
-            terminateSession();
+            terminateSession(true);
         }
     }
 
-    public void terminateSession()
+    public void terminateSession(boolean crashed)
     {
-        host = "";
-
         for(String listener : listeners)
         {
-            //TODO terminate session
+            EntityPlayerMP player = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(listener);
+            if(player != null)
+            {
+                PacketHandler.sendToPlayer(Tabula.channels, new PacketEndSession(host, xCoord, yCoord, zCoord, crashed), player);
+            }
         }
+
+        host = "";
+        listeners.clear();
     }
 
     @SideOnly(Side.CLIENT)
@@ -67,6 +76,7 @@ public class TileEntityTabulaRasa extends TileEntity
     {
         super.writeToNBT(tag);
         tag.setInteger("side", side);
+        tag.setString("host", host);
     }
 
     @Override
@@ -74,6 +84,7 @@ public class TileEntityTabulaRasa extends TileEntity
     {
         super.readFromNBT(tag);
         side = tag.getInteger("side");
+        host = tag.getString("host");
     }
 
     @SideOnly(Side.CLIENT)

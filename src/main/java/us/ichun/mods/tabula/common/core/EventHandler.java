@@ -73,7 +73,7 @@ public class EventHandler
     {
         if(event.gui instanceof GuiMainMenu && event.button.id == TABULA_BUTTON_ID)
         {
-            Tabula.proxy.tickHandlerClient.initializeMainframe();
+            Tabula.proxy.tickHandlerClient.initializeMainframe(null, -1, -1, -1);
             event.setCanceled(true);
         }
     }

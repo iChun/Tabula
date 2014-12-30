@@ -3,6 +3,7 @@ package us.ichun.mods.tabula.client.gui;
 import com.google.common.base.Splitter;
 import com.google.gson.Gson;
 import ichun.client.render.RendererHelper;
+import ichun.common.core.network.PacketHandler;
 import ichun.common.core.util.MD5Checksum;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -28,7 +29,10 @@ import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.client.gui.window.element.ElementWindow;
+import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketEndSession;
+import us.ichun.mods.tabula.common.packet.PacketRemoveListener;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.module.tabula.common.project.components.Animation;
 import us.ichun.module.tabula.common.project.components.AnimationComponent;
@@ -48,6 +52,10 @@ public class GuiWorkspace extends GuiScreen
     public int oriScale;
     public final boolean remoteSession;
     public boolean isEditor;
+    public String host;
+    public int hostX;
+    public int hostY;
+    public int hostZ;
 
     public ResourceLocation grid16 = new ResourceLocation("tabula", "textures/workspace/grid16.png");
     public ResourceLocation orientationBase = new ResourceLocation("tabula", "textures/workspace/orientationBase.png");
@@ -130,11 +138,15 @@ public class GuiWorkspace extends GuiScreen
 
     private ModelSelector modelSelector = new ModelSelector(this, 256);
 
-    public GuiWorkspace(int scale, boolean remote, boolean editing)
+    public GuiWorkspace(int scale, boolean remote, boolean editing, String name, int i, int j, int k)
     {
         oriScale = scale;
         remoteSession = remote;
         isEditor = editing;
+        host = name;
+        hostX = i;
+        hostY = j;
+        hostZ = k;
 
         renderBlocks = new RenderBlocks();
     }
@@ -147,7 +159,7 @@ public class GuiWorkspace extends GuiScreen
         {
             init = true;
 
-            windowControls = new WindowControls(this, width / 2 - 80, height / 2 - 125, 162, 270, 162, 270);
+            windowControls = new WindowControls(this, width / 2 - 80, height / 2 - 125, 162, 290, 162, 290);
             windowTexture = new WindowTexture(this, width / 2 - 53, height / 2 - 100, 106, 100, 106, 88);
             windowModelTree = new WindowModelTree(this, width / 2 - 53, height / 2 - 125, 106, 250, 106, 250);
             windowAnimate = new WindowAnimate(this, 0, 0, 100, 100, 100, 100);
@@ -164,6 +176,18 @@ public class GuiWorkspace extends GuiScreen
             windowChat = new WindowChat(this, -1000, -1000, 250, 180, 162, 50);
             levels.get(4).add(windowChat);
 
+            if(host != null)
+            {
+                if(host.equals(Minecraft.getMinecraft().getSession().getUsername()))
+                {
+                    ProjectHelper.addSystemMessage(StatCollector.translateToLocal("system.hosting"));
+                }
+                else
+                {
+                    ProjectHelper.addSystemMessage(StatCollector.translateToLocalFormatted("system.hostingOther", host));
+                }
+                windowChat.toggleVisibility();
+            }
             //            Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject("New Project", "iChun? :O", 64, 32);
         }
         resize = true;
@@ -302,6 +326,11 @@ public class GuiWorkspace extends GuiScreen
                         this.mc.setIngameFocus();
                     }
                 }
+            }
+            else
+            {
+                this.mc.displayGuiScreen((GuiScreen)null);
+                this.mc.setIngameFocus();
             }
         }
     }
@@ -1704,8 +1733,22 @@ public class GuiWorkspace extends GuiScreen
         Minecraft.getMinecraft().gameSettings.guiScale = oriScale;
         if(!remoteSession)
         {
+            if(host != null)
+            {
+                PacketHandler.sendToServer(Tabula.channels, new PacketEndSession(host, hostX, hostY, hostZ, false));
+            }
             Tabula.proxy.tickHandlerClient.mainframe.shutdown();
         }
+        else
+        {
+            PacketHandler.sendToServer(Tabula.channels, new PacketRemoveListener(host, Minecraft.getMinecraft().getSession().getUsername()));
+        }
+    }
+
+    @Override
+    public boolean doesGuiPauseGame()
+    {
+        return false;
     }
 
     public FontRenderer getFontRenderer()

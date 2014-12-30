@@ -119,4 +119,10 @@ public class ProjectHelper
         }
     }
 
+    @SideOnly(Side.CLIENT)
+    public static void addSystemMessage(String message)
+    {
+        receiveChat("System: " + message);
+    }
+
 }

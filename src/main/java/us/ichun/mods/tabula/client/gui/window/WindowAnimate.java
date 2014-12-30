@@ -116,6 +116,10 @@ public class WindowAnimate extends Window
                         workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 180, 80, 180, 80, "window.animate.selectCube").putInMiddleOfScreen());
                     }
                 }
+                else
+                {
+                    workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 180, 80, 180, 80, "window.animate.selectAnim").putInMiddleOfScreen());
+                }
             }
             else if(element.id == ID_EDIT_COMP)
             {

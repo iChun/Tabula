@@ -1,11 +1,14 @@
 package us.ichun.mods.tabula.client.mainframe;
 
 import com.google.gson.Gson;
+import ichun.common.core.network.PacketHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.StatCollector;
 import org.apache.commons.lang3.RandomStringUtils;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketChatMessage;
 import us.ichun.module.tabula.client.model.ModelInfo;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.module.tabula.common.project.components.Animation;
@@ -119,6 +122,10 @@ public class Mainframe
             if(id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
                 ProjectHelper.receiveChat(name + ": " + message);
+            }
+            else
+            {
+                PacketHandler.sendToServer(Tabula.channels, new PacketChatMessage(Minecraft.getMinecraft().getSession().getUsername(), id, name + ": " + message));
             }
         }
     }
@@ -1180,10 +1187,23 @@ public class Mainframe
         if(!listeners.contains(id))
         {
             listeners.add(id);
+            if(!id.equals(Minecraft.getMinecraft().getSession().getUsername()))
+            {
+                sendChat("System", StatCollector.translateToLocalFormatted("system.joinedSession", id));
+            }
         }
         if(isEditor && !editors.contains(id))
         {
             editors.add(id);
+        }
+    }
+
+    public void removeListener(String id)
+    {
+        if(listeners.contains(id))
+        {
+            listeners.remove(id);
+            sendChat("System", StatCollector.translateToLocalFormatted("system.leftSession", id));
         }
     }
 

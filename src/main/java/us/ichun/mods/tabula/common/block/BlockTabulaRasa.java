@@ -2,6 +2,7 @@ package us.ichun.mods.tabula.common.block;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ichun.common.core.network.PacketHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -15,6 +16,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketRequestSession;
 import us.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
 
 public class BlockTabulaRasa extends Block
@@ -64,13 +66,25 @@ public class BlockTabulaRasa extends Block
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitVecX, float hitVecY, float hitVecZ)
     {
+        if(world.isRemote)
+        {
+            PacketHandler.sendToServer(Tabula.channels, new PacketRequestSession(x, y, z));
+        }
         return true;
     }
 
     @Override
     public float getBlockHardness(World world, int i, int j, int k)
     {
-        //TODO unbreakable if there is a tabula session.
+        TileEntity te = world.getTileEntity(i, j, k);
+        if(te instanceof TileEntityTabulaRasa)
+        {
+            TileEntityTabulaRasa tr = (TileEntityTabulaRasa)te;
+            if(!tr.host.isEmpty())
+            {
+                return -1.0F;
+            }
+        }
         return this.blockHardness;
     }
 
@@ -89,7 +103,15 @@ public class BlockTabulaRasa extends Block
     @Override
     public void onNeighborBlockChange(World world, int i, int j, int k, Block block)
     {
-        //TODO check for active session before breaking
+        TileEntity te = world.getTileEntity(i, j, k);
+        if(te instanceof TileEntityTabulaRasa)
+        {
+            TileEntityTabulaRasa tr = (TileEntityTabulaRasa)te;
+            if(!tr.host.isEmpty())
+            {
+                return;
+            }
+        }
         if(!world.isSideSolid(i, j - 1, k, ForgeDirection.UP, false))
         {
             world.setBlockToAir(i, j, k);

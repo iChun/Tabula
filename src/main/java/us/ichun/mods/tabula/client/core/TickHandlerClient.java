@@ -34,7 +34,7 @@ public class TickHandlerClient
             {
                 if(Keyboard.isKeyDown(Keyboard.KEY_T) && !keyTDown)
                 {
-                    initializeMainframe();
+                    initializeMainframe(null, -1, -1, -1);
                 }
                 keyTDown = Keyboard.isKeyDown(Keyboard.KEY_T);
             }
@@ -53,7 +53,7 @@ public class TickHandlerClient
         }
     }
 
-    public void initializeMainframe()
+    public void initializeMainframe(String name, int i, int j, int k)
     {
         Minecraft mc = Minecraft.getMinecraft();
         mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
@@ -70,7 +70,7 @@ public class TickHandlerClient
         {
             uuid = UUIDTypeAdapter.fromString("deadbeef-dead-beef-dead-beefdeadbeef");
         }
-        mainframe.addListener(uuid, true);
+        mainframe.addListener(mc.getSession().getUsername(), true);
 
         File defaultTheme = new File(ResourceHelper.getThemesDir(), "default.json");
 
@@ -115,7 +115,7 @@ public class TickHandlerClient
             }
         }
 
-        FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale, false, true));
+        FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale, false, true, name, i, j, k));
     }
 
     public Mainframe mainframe;

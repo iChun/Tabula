@@ -12,7 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import us.ichun.mods.tabula.client.core.TickHandlerClient;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.block.BlockTabulaRasa;
-import us.ichun.mods.tabula.common.packet.PacketRequestSession;
+import us.ichun.mods.tabula.common.packet.*;
 import us.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
 
 public class CommonProxy
@@ -29,7 +29,7 @@ public class CommonProxy
 
         registerTileEntity(TileEntityTabulaRasa.class, "Tabula_TabulaRasa");
 
-        Tabula.channels = ChannelHandler.getChannelHandlers("Tabula", PacketRequestSession.class);
+        Tabula.channels = ChannelHandler.getChannelHandlers("Tabula", PacketRequestSession.class, PacketBeginSession.class, PacketEndSession.class, PacketAddListener.class, PacketRemoveListener.class, PacketChat.class, PacketChatMessage.class);
     }
 
     public void postInit(){}
