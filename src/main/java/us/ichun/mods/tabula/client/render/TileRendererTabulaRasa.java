@@ -1,11 +1,20 @@
 package us.ichun.mods.tabula.client.render;
 
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+import us.ichun.mods.tabula.client.gui.GuiWorkspace;
+import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
+import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.client.model.ModelWaxTablet;
 import us.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
+import us.ichun.module.tabula.common.project.ProjectInfo;
+import us.ichun.module.tabula.common.project.components.CubeGroup;
+import us.ichun.module.tabula.common.project.components.CubeInfo;
+
+import java.util.ArrayList;
 
 public class TileRendererTabulaRasa extends TileEntitySpecialRenderer
 {
@@ -28,6 +37,75 @@ public class TileRendererTabulaRasa extends TileEntitySpecialRenderer
 
         bindTexture(txModel);
         model.render(0.0625F);
+
+        if(!tr.host.isEmpty() && !tr.currentProj.isEmpty())
+        {
+            ProjectInfo info = ProjectHelper.projects.get(tr.currentProj);
+            if(info != null)
+            {
+                if(info.model == null)
+                {
+                    info.initClient();
+                }
+
+                ArrayList<CubeInfo> hidden = new ArrayList<CubeInfo>();
+                for(CubeGroup group1 : info.cubeGroups)
+                {
+                    GuiWorkspace.addElementsForHiding(group1, hidden);
+                }
+
+                GL11.glPushMatrix();
+
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+                GL11.glDisable(GL11.GL_CULL_FACE);
+
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+                float scale = 0.3F;
+
+                float size = info.getMaximumSize();
+                if(size != 0)
+                {
+                    scale = 0.3F * 12F / size;
+                }
+
+                GL11.glRotatef((tr.getWorldObj().getWorldTime() + f) / 2F, 0.0F, 1.0F, 0.0F);
+
+                GL11.glScalef(scale, scale, scale);
+
+                GL11.glTranslatef(0.0F, -2.4F + (-0.2F * (float)Math.sin((tr.getWorldObj().getWorldTime() + f) / 10F)), 0.0F);
+
+                GL11.glScaled(1D / info.scale[0], 1D / info.scale[1], 1D / info.scale[2]);
+
+                if(info.bufferedTexture != null)
+                {
+                    Integer id = ProjectHelper.projectTextureIDs.get(info.bufferedTexture);
+                    if(id == null)
+                    {
+                        id = TextureUtil.uploadTextureImage(TextureUtil.glGenTextures(), info.bufferedTexture);
+                        ProjectHelper.projectTextureIDs.put(info.bufferedTexture, id);
+                    }
+
+                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
+
+                    info.model.render(0.0625F, new ArrayList<CubeInfo>(), hidden, 1.0F, true, 1, false);
+                }
+                else
+                {
+                    GL11.glDisable(GL11.GL_TEXTURE_2D);
+                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+                    info.model.render(0.0625F, new ArrayList<CubeInfo>(), hidden, 1.0F, false, 1, false);
+
+                    GL11.glEnable(GL11.GL_TEXTURE_2D);
+                }
+
+                GL11.glEnable(GL11.GL_CULL_FACE);
+                GL11.glPopMatrix();
+            }
+        }
 
         GL11.glPopMatrix();
     }

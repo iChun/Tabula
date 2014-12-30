@@ -189,7 +189,14 @@ public class WindowTexture extends Window
                         catch(IOException e)
                         {
                         }
-                        Tabula.proxy.tickHandlerClient.mainframe.loadTexture(info.identifier, image, false);
+                        if(workspace.remoteSession)
+                        {
+
+                        }
+                        else
+                        {
+                            Tabula.proxy.tickHandlerClient.mainframe.loadTexture(info.identifier, image, false);
+                        }
                     }
                 }
             }

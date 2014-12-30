@@ -11,10 +11,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
-import us.ichun.mods.tabula.common.packet.PacketChatMessage;
-import us.ichun.mods.tabula.common.packet.PacketIsEditor;
-import us.ichun.mods.tabula.common.packet.PacketProjectFragment;
-import us.ichun.mods.tabula.common.packet.PacketRequestHeartbeat;
+import us.ichun.mods.tabula.common.packet.*;
 import us.ichun.module.tabula.client.model.ModelInfo;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.module.tabula.common.project.components.Animation;
@@ -22,8 +19,11 @@ import us.ichun.module.tabula.common.project.components.AnimationComponent;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 //This is the class that holds all the info of the workspace and handles UI input from everyone.
@@ -84,7 +84,7 @@ public class Mainframe
                 {
                     PacketHandler.sendToServer(Tabula.channels, new PacketRequestHeartbeat(Minecraft.getMinecraft().getSession().getUsername(), e.getKey()));
                 }
-                if(e.getValue() > 25)
+                if(e.getValue() > 150)
                 {
                     ite.remove();
                     sendChat("System", StatCollector.translateToLocalFormatted("system.timeout", e.getKey()));
@@ -134,6 +134,8 @@ public class Mainframe
             if(info.identifier.equals(ident))
             {
                 streamProjectClosure(ident);
+
+                projects.remove(i);
             }
         }
     }
@@ -158,11 +160,14 @@ public class Mainframe
     {
         for(String id : listeners.keySet())
         {
-            //TODO stream to other listeners
 //            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             if(id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
                 ProjectHelper.removeProjectFromManager(ident);
+            }
+            else
+            {
+                PacketHandler.sendToServer(Tabula.channels, new PacketCloseProject(Minecraft.getMinecraft().getSession().getUsername(), id, ident));
             }
         }
     }
@@ -180,15 +185,25 @@ public class Mainframe
             }
             else
             {
-                streamProjectToListener(id, project);
+                boolean isCurrent = false;
+                Minecraft mc = Minecraft.getMinecraft();
+                if(mc.currentScreen instanceof GuiWorkspace)
+                {
+                    GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
+                    if(!workspace.projectManager.projects.isEmpty())
+                    {
+                        isCurrent = project.identifier.equals(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier);
+                    }
+                }
+                streamProjectToListener(id, project, isCurrent);
             }
         }
         allowEditing = true;
     }
 
-    public void streamProjectToListener(String id, ProjectInfo proj)
+    public void streamProjectToListener(String id, ProjectInfo proj, boolean currentProj)
     {
-        sendData(id, proj.identifier, proj.getAsJson().getBytes(), false);
+        sendData(id, proj.identifier, proj.getAsJson().getBytes(), false, currentProj);
     }
 
     public void streamProjectTexture(String ident, BufferedImage bufferedImage)
@@ -203,13 +218,23 @@ public class Mainframe
             }
             else
             {
-                streamProjectTextureToListener(id, ident, bufferedImage);
+                boolean isCurrent = false;
+                Minecraft mc = Minecraft.getMinecraft();
+                if(mc.currentScreen instanceof GuiWorkspace)
+                {
+                    GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
+                    if(!workspace.projectManager.projects.isEmpty())
+                    {
+                        isCurrent = ident.equals(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier);
+                    }
+                }
+                streamProjectTextureToListener(id, ident, bufferedImage, isCurrent);
             }
         }
         allowEditing = true;
     }
 
-    public void streamProjectTextureToListener(String id, String ident, BufferedImage img)
+    public void streamProjectTextureToListener(String id, String ident, BufferedImage img, boolean currentProj)
     {
         if(img == null)
         {
@@ -226,15 +251,21 @@ public class Mainframe
                 z = workspace.hostZ;
             }
 
-            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, true, Minecraft.getMinecraft().getSession().getUsername(), id, ident, false, 1, -1, 0, new byte[0]));
+            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, false, Minecraft.getMinecraft().getSession().getUsername(), id, ident, true, currentProj, 1, -1, 0, new byte[0]));
         }
         else
         {
-            sendData(id, ident, ((DataBufferByte)img.getData().getDataBuffer()).getData(), true);
+            try
+            {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(img, "png", baos);
+                sendData(id, ident, baos.toByteArray(), true, currentProj);
+            }
+            catch(IOException ignored){}
         }
     }
 
-    public void sendData(String id, String projectIdent, byte[] data, boolean isTexture)
+    public void sendData(String id, String projectIdent, byte[] data, boolean isTexture, boolean isCurrentProject)
     {
         final int maxFile = 31000; //smaller packet cause I'm worried about too much info carried over from the bloat vs hat info.
 
@@ -251,6 +282,7 @@ public class Mainframe
             while(index < fileBytes.length) //from index 0 to 31999
             {
                 fileBytes[index] = data[index + offset];
+                index++;
             }
 
             int x = -1;
@@ -266,9 +298,8 @@ public class Mainframe
                 z = workspace.hostZ;
             }
 
-            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, isTexture, Minecraft.getMinecraft().getSession().getUsername(), id, projectIdent, false, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
+            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, false, Minecraft.getMinecraft().getSession().getUsername(), id, projectIdent, isTexture, isCurrentProject, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
 
-            index++;
             packetCount++;
             fileSize -= 32000;
             offset += index;
@@ -1293,8 +1324,8 @@ public class Mainframe
                 sendChat("System", StatCollector.translateToLocalFormatted("system.joinedSession", id));
                 for(ProjectInfo proj : projects)
                 {
-                    streamProjectToListener(id, proj);
-                    streamProjectTextureToListener(id, proj.identifier, proj.bufferedTexture);
+                    streamProjectToListener(id, proj, false);
+                    streamProjectTextureToListener(id, proj.identifier, proj.bufferedTexture, false);
                 }
             }
         }

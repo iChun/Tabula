@@ -13,7 +13,7 @@ public class WindowRemoveEditor extends Window
 
     public WindowRemoveEditor(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
-        super(parent, x, y, w, h, minW, minH, "export.title", true);
+        super(parent, x, y, w, h, minW, minH, "topdock.removeEditor", true);
 
         elements.add(new ElementButton(this, width - 140, height - 22, 60, 16, 1, false, 1, 1, "element.button.ok"));
         elements.add(new ElementButton(this, width - 70, height - 22, 60, 16, 0, false, 1, 1, "element.button.cancel"));

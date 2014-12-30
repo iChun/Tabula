@@ -110,7 +110,7 @@ public class ElementProjectTab extends Element
         if(id == 0 || id == 2)
         {
             ((WindowProjectSelection)parent).changeProject(this.id);
-            if(mouseX + parent.posX > getPosX() + width - 9 || id == 2)
+            if(!parent.workspace.remoteSession && (mouseX + parent.posX > getPosX() + width - 9 || id == 2))
             {
                 parent.workspace.closeProject(((WindowProjectSelection)parent).projects.get(this.id));
             }

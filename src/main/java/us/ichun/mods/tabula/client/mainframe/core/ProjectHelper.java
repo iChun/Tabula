@@ -30,6 +30,7 @@ public class ProjectHelper
 
     public static HashMap<String, ProjectInfo> projects = new HashMap<String, ProjectInfo>();
     public static HashMap<String, BufferedImage> projectTextures = new HashMap<String, BufferedImage>();
+    public static HashMap<BufferedImage, Integer> projectTextureIDs = new HashMap<BufferedImage, Integer>();
 
     public static ProjectInfo createProjectFromJson(String ident, String s)
     {
@@ -70,8 +71,6 @@ public class ProjectHelper
                 }
             }
         }
-//        System.out.println(s);
-
         return info;
     }
 
@@ -122,10 +121,15 @@ public class ProjectHelper
         }
     }
 
-    public static void receiveProjectData(String projectIdentifier, boolean isTexture, byte packetTotal, byte packetNumber, byte[] data)
+    public static boolean receiveProjectData(String projectIdentifier, boolean isTexture, byte packetTotal, byte packetNumber, byte[] data) // return true if only the project data is different?
     {
+        boolean flag = false;
         if(packetNumber == -1)
         {
+            if(projectTextures.get(projectIdentifier) != null)
+            {
+                flag = true;
+            }
             projectTextures.remove(projectIdentifier);
             Tabula.proxy.updateProject(projectIdentifier, true);
         }
@@ -183,14 +187,32 @@ public class ProjectHelper
                     {
                         InputStream is = new ByteArrayInputStream(bytes);
                         BufferedImage img = ImageIO.read(is);
+                        if(projectTextures.get(projectIdentifier) == null || !areBufferedImagesEqual(projectTextures.get(projectIdentifier), img))
+                        {
+                            flag = true; //TODO destroy old buffed image id
+                        }
                         projectTextures.put(projectIdentifier, img);
+                        if(projects.get(projectIdentifier) != null)
+                        {
+                            projects.get(projectIdentifier).bufferedTexture = img;
+                        }
                         Tabula.proxy.updateProject(projectIdentifier, true);
                     }
                     else
                     {
                         String json = new String(bytes, "UTF-8");
                         ProjectInfo proj = createProjectFromJson(projectIdentifier, json);
+                        if(projects.get(projectIdentifier) == null)
+                        {
+                            flag = true;
+                        }
+                        else if(!projects.get(projectIdentifier).getAsJson().equals(proj.getAsJson()))
+                        {
+                            flag = true;
+                            Tabula.proxy.destroyProject(projects.get(projectIdentifier));
+                        }
                         projects.put(projectIdentifier, proj);
+                        proj.bufferedTexture = projectTextures.get(projectIdentifier);
                         Tabula.proxy.updateProject(projectIdentifier, false);
                     }
                 }
@@ -201,6 +223,7 @@ public class ProjectHelper
                 map.remove(projectIdentifier);
             }
         }
+        return flag;
     }
 
     @SideOnly(Side.CLIENT)
@@ -224,4 +247,17 @@ public class ProjectHelper
         receiveChat("System: " + message);
     }
 
+    public static boolean areBufferedImagesEqual(BufferedImage img1, BufferedImage img2) {
+        if (img1.getWidth() == img2.getWidth() && img1.getHeight() == img2.getHeight()) {
+            for (int x = 0; x < img1.getWidth(); x++) {
+                for (int y = 0; y < img1.getHeight(); y++) {
+                    if (img1.getRGB(x, y) != img2.getRGB(x, y))
+                        return false;
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
 }

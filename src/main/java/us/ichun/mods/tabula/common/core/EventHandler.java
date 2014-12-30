@@ -85,12 +85,15 @@ public class EventHandler
     @SubscribeEvent
     public void onClientConnect(FMLNetworkEvent.ClientConnectedToServerEvent event)
     {
-        System.out.println("JUST DOUBLE CHECKING");
         ProjectHelper.projectParts.clear();
         ProjectHelper.projectTextureParts.clear();
 
+        for(ProjectInfo proj : ProjectHelper.projects.values())
+        {
+            Tabula.proxy.destroyProject(proj);
+        }
+
         ProjectHelper.projects.clear();
         ProjectHelper.projectTextures.clear();
-
     }
 }

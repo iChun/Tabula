@@ -157,6 +157,7 @@ topdock.woodFull=Toggle showing the block
 system.joinedSession=%s has joined the session.
 system.leftSession=%s has left the session.
 system.timeout=%s timed out.
+system.openProject=%1$s opened %2$s.
 system.isEditor=%s is allowed to edit models.
 system.addEditor=%1$s has added %2$s as an editor.
 system.removeEditor=%1$s has removed %2$s as an editor.

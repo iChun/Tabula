@@ -3,11 +3,9 @@ package us.ichun.mods.tabula.common.packet;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import ichun.common.core.network.AbstractPacket;
 import ichun.common.core.network.PacketHandler;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
@@ -25,6 +23,7 @@ public class PacketProjectFragment extends AbstractPacket
     public String listener;
     public String projectIdentifier;
     public boolean isTexture;
+    public boolean isCurrentProject;
     public byte packetTotal;
     public byte packetNumber;
     public int fileSize;
@@ -32,7 +31,7 @@ public class PacketProjectFragment extends AbstractPacket
 
     public PacketProjectFragment(){}
 
-    public PacketProjectFragment(int i, int j, int k, boolean toHoster, String hoster, String listen, String name, boolean isTex, int pktTotal, int pktNum, int fSize, byte[] dataArray)
+    public PacketProjectFragment(int i, int j, int k, boolean toHoster, String hoster, String listen, String name, boolean isTex, boolean isCur, int pktTotal, int pktNum, int fSize, byte[] dataArray)
     {
         x = i;
         y = j;
@@ -42,6 +41,7 @@ public class PacketProjectFragment extends AbstractPacket
         listener = listen;
         projectIdentifier = name;
         isTexture = isTex;
+        isCurrentProject = isCur;
         packetTotal = (byte)pktTotal;
         packetNumber = (byte)pktNum;
         fileSize = fSize;
@@ -59,6 +59,7 @@ public class PacketProjectFragment extends AbstractPacket
         ByteBufUtils.writeUTF8String(buffer, listener);
         ByteBufUtils.writeUTF8String(buffer, projectIdentifier);
         buffer.writeBoolean(isTexture);
+        buffer.writeBoolean(isCurrentProject);
         buffer.writeByte(packetTotal);
         buffer.writeByte(packetNumber);
         buffer.writeInt(fileSize);
@@ -76,6 +77,7 @@ public class PacketProjectFragment extends AbstractPacket
         listener = ByteBufUtils.readUTF8String(buffer);
         projectIdentifier = ByteBufUtils.readUTF8String(buffer);
         isTexture = buffer.readBoolean();
+        isCurrentProject = buffer.readBoolean();
         packetTotal = buffer.readByte();
         packetNumber = buffer.readByte();
         fileSize = buffer.readInt();
@@ -92,22 +94,34 @@ public class PacketProjectFragment extends AbstractPacket
         {
             if(!toHost)
             {
-//                if(x != -1 && y != -1 && z != -1)
-                //                {
-                //                    TileEntity te = player.worldObj.getTileEntity(x, y, z);
-                //                    if(te instanceof TileEntityTabulaRasa)
-                //                    {
-                //                        TileEntityTabulaRasa tr = (TileEntityTabulaRasa)te;
-                //                        //TODO something...? should i mark that the TE needs updating?
-                //                    }
-                //                }
-                ProjectHelper.receiveProjectData(projectIdentifier, isTexture, packetTotal, packetNumber, data);
+                boolean changed = ProjectHelper.receiveProjectData(projectIdentifier, isTexture, packetTotal, packetNumber, data);
 
                 EntityPlayerMP listening = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(listener);
                 if(listening != null)
                 {
                     PacketHandler.sendToPlayer(Tabula.channels, this, listening);
                 }
+
+                if(x != -1 && y != -1 && z != -1 && isCurrentProject && changed)
+                {
+                    TileEntity te = player.worldObj.getTileEntity(x, y, z);
+                    if(te instanceof TileEntityTabulaRasa)
+                    {
+                        TileEntityTabulaRasa tr = (TileEntityTabulaRasa)te;
+                        tr.currentProj = projectIdentifier;
+                        if(isTexture)
+                        {
+                            tr.needTextureUpdate = true;
+                        }
+                        else
+                        {
+                            tr.needProjectUpdate = true;
+                        }
+                        tr.updateTimeout = 3;
+                        tr.getWorldObj().markBlockForUpdate(tr.xCoord, tr.yCoord, tr.zCoord);
+                    }
+                }
+
             }
             else
             {

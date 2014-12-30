@@ -3,22 +3,22 @@ package us.ichun.mods.tabula.common.tileentity;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import ichun.common.core.EntityHelperBase;
 import ichun.common.core.network.PacketHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketEndSession;
 import us.ichun.mods.tabula.common.packet.PacketPingAlive;
+import us.ichun.mods.tabula.common.packet.PacketRequestProject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class TileEntityTabulaRasa extends TileEntity
 {
@@ -27,29 +27,74 @@ public class TileEntityTabulaRasa extends TileEntity
     public ArrayList<String> listeners;
     public int pingTime;
 
+    public int updateTimeout;
+    public String currentProj;
+    public boolean needTextureUpdate;
+    public boolean needProjectUpdate;
+
     public TileEntityTabulaRasa()
     {
         host = "";
         listeners = new ArrayList<String>();
+        currentProj = "";
     }
 
     @Override
     public void updateEntity()
     {
-        if(!worldObj.isRemote && !host.isEmpty())
+        if(!host.isEmpty())
         {
-            pingTime++;
-            if(pingTime > 50 || FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(host) == null)
+            if(!worldObj.isRemote)
             {
-                terminateSession(true);
-            }
-            else if(pingTime == 25)
-            {
-                //send ping packet
-                PacketHandler.sendToPlayer(Tabula.channels, new PacketPingAlive(host, xCoord, yCoord, zCoord), FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(host));
-            }
+                pingTime++;
+                if(pingTime > 50 || FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(host) == null)
+                {
+                    terminateSession(true);
+                }
+                else if(pingTime == 25)
+                {
+                    //send ping packet
+                    PacketHandler.sendToPlayer(Tabula.channels, new PacketPingAlive(host, xCoord, yCoord, zCoord), FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(host));
+                }
 
-            //TODO make the TE request project data
+                if(updateTimeout > 0)
+                {
+                    updateTimeout--;
+                    if(updateTimeout == 0)
+                    {
+                        needProjectUpdate = needTextureUpdate = false;
+                    }
+                }
+            }
+            else
+            {
+                clientCheck();
+            }
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void clientCheck()
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+        if(mc.currentScreen instanceof GuiWorkspace)
+        {
+            GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
+            if(workspace.host.equals(host))
+            {
+                return;
+            }
+        }
+
+        if(needProjectUpdate)
+        {
+            needProjectUpdate = false;
+            PacketHandler.sendToServer(Tabula.channels, new PacketRequestProject(host, Minecraft.getMinecraft().getSession().getUsername(), currentProj, false));
+        }
+        if(needTextureUpdate)
+        {
+            needTextureUpdate = false;
+            PacketHandler.sendToServer(Tabula.channels, new PacketRequestProject(host, Minecraft.getMinecraft().getSession().getUsername(), currentProj, true));
         }
     }
 
@@ -66,7 +111,10 @@ public class TileEntityTabulaRasa extends TileEntity
 
         pingTime = 0;
         host = "";
+        currentProj = "";
         listeners.clear();
+
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     @SideOnly(Side.CLIENT)
@@ -92,6 +140,9 @@ public class TileEntityTabulaRasa extends TileEntity
         super.writeToNBT(tag);
         tag.setInteger("side", side);
         tag.setString("host", host);
+        tag.setString("currentProj", currentProj);
+        tag.setBoolean("needProjectUpdate", needProjectUpdate);
+        tag.setBoolean("needTextureUpdate", needTextureUpdate);
     }
 
     @Override
@@ -100,6 +151,9 @@ public class TileEntityTabulaRasa extends TileEntity
         super.readFromNBT(tag);
         side = tag.getInteger("side");
         host = tag.getString("host");
+        currentProj = tag.getString("currentProj");
+        needProjectUpdate = tag.getBoolean("needProjectUpdate");
+        needTextureUpdate = tag.getBoolean("needTextureUpdate");
     }
 
     @SideOnly(Side.CLIENT)

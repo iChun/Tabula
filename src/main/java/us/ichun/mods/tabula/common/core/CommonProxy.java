@@ -14,6 +14,7 @@ import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.block.BlockTabulaRasa;
 import us.ichun.mods.tabula.common.packet.*;
 import us.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
+import us.ichun.module.tabula.common.project.ProjectInfo;
 
 public class CommonProxy
 {
@@ -29,7 +30,9 @@ public class CommonProxy
 
         registerTileEntity(TileEntityTabulaRasa.class, "Tabula_TabulaRasa");
 
-        Tabula.channels = ChannelHandler.getChannelHandlers("Tabula", PacketRequestSession.class, PacketBeginSession.class, PacketEndSession.class, PacketAddListener.class, PacketRemoveListener.class, PacketChat.class, PacketChatMessage.class, PacketPingAlive.class, PacketIsEditor.class, PacketRequestHeartbeat.class, PacketHeartbeat.class);
+        Tabula.channels = ChannelHandler.getChannelHandlers("Tabula", PacketRequestSession.class, PacketBeginSession.class, PacketEndSession.class, PacketAddListener.class, PacketRemoveListener.class,
+                PacketChat.class, PacketChatMessage.class, PacketPingAlive.class, PacketIsEditor.class, PacketRequestHeartbeat.class,
+                PacketHeartbeat.class, PacketProjectFragment.class, PacketCloseProject.class, PacketRequestProject.class, PacketSetCurrentProject.class);
     }
 
     public void postInit(){}
@@ -40,4 +43,6 @@ public class CommonProxy
     }
 
     public void updateProject(String ident, boolean isTexture){}
+
+    public void destroyProject(ProjectInfo proj){}
 }

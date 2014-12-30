@@ -1,11 +1,14 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import ichun.client.render.RendererHelper;
+import ichun.common.core.network.PacketHandler;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementProjectTab;
+import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketSetCurrentProject;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.module.tabula.common.project.components.Animation;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
@@ -331,6 +334,11 @@ public class WindowProjectSelection extends WindowTopDock
             ((ElementProjectTab)elements.get(i)).changed = false;
 
             updateModelTree(info);
+
+            if(!workspace.remoteSession && workspace.host != null)
+            {
+                PacketHandler.sendToServer(Tabula.channels, new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, info.identifier));
+            }
         }
         else
         {

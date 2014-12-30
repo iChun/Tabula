@@ -1093,6 +1093,7 @@ public class GuiWorkspace extends GuiScreen
         GL11.glPopMatrix();
     }
 
+    //only group parts. not actual individual cubes
     public ArrayList<CubeInfo> getHiddenElements() {
         ArrayList<CubeInfo> hidden = new ArrayList<CubeInfo>();
         for(ElementListTree.Tree tree : windowModelTree.modelList.trees)
@@ -1106,7 +1107,7 @@ public class GuiWorkspace extends GuiScreen
         return hidden;
     }
 
-    private void addElementsForSelection(CubeGroup group, ArrayList<CubeInfo> selected)
+    private static void addElementsForSelection(CubeGroup group, ArrayList<CubeInfo> selected)
     {
         for(CubeGroup group1 : group.cubeGroups)
         {
@@ -1118,7 +1119,7 @@ public class GuiWorkspace extends GuiScreen
         }
     }
 
-    private void addElementsForHiding(CubeGroup group, ArrayList<CubeInfo> selected)
+    public static void addElementsForHiding(CubeGroup group, ArrayList<CubeInfo> selected)
     {
         if(group.hidden)
         {
@@ -1137,7 +1138,7 @@ public class GuiWorkspace extends GuiScreen
         }
     }
 
-    private void addElementsForSelection(CubeInfo cube, ArrayList<CubeInfo> selected)
+    private static void addElementsForSelection(CubeInfo cube, ArrayList<CubeInfo> selected)
     {
         selected.add(cube);
         for(CubeInfo child : cube.getChildren())

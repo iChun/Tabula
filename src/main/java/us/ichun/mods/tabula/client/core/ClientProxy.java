@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderEntity;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.EntityList;
@@ -24,10 +25,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
+import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.client.render.TileRendererTabulaRasa;
 import us.ichun.mods.tabula.common.core.CommonProxy;
 import us.ichun.module.tabula.client.model.ModelInfo;
 import us.ichun.module.tabula.client.model.ModelList;
+import us.ichun.module.tabula.common.project.ProjectInfo;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -311,7 +314,28 @@ public class ClientProxy extends CommonProxy
     @Override
     public void updateProject(String ident, boolean isTexture)
     {
-        //UPDATE GUI
-        //CHECK IF THE PLAYER IS THE HOST BEFORE UPDATING SHIT
+        if(tickHandlerClient.mainframe == null)
+        {
+            if(isTexture)
+            {
+                ProjectHelper.updateProjectTexture(ident, ProjectHelper.projectTextures.get(ident));
+            }
+            else
+            {
+                ProjectHelper.addProjectToManager(ProjectHelper.createProjectFromJsonHost(ident, ProjectHelper.projects.get(ident).getAsJson()));
+            }
+        }
+    }
+
+    @Override
+    public void destroyProject(ProjectInfo proj)
+    {
+        Integer id = ProjectHelper.projectTextureIDs.get(proj.bufferedTexture);
+        if(id != null)
+        {
+            TextureUtil.deleteTexture(id);
+            ProjectHelper.projectTextureIDs.remove(proj.bufferedTexture);
+        }
+        proj.destroy();
     }
 }
