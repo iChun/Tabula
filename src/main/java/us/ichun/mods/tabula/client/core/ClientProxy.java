@@ -307,4 +307,11 @@ public class ClientProxy extends CommonProxy
         super.registerTileEntity(clz, id);
         ClientRegistry.bindTileEntitySpecialRenderer(clz, new TileRendererTabulaRasa());
     }
+
+    @Override
+    public void updateProject(String ident, boolean isTexture)
+    {
+        //UPDATE GUI
+        //CHECK IF THE PLAYER IS THE HOST BEFORE UPDATING SHIT
+    }
 }

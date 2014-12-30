@@ -10,19 +10,22 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.common.Tabula;
 
-public class PacketAddListener extends AbstractPacket
+public class PacketIsEditor extends AbstractPacket
 {
     public String host;
     public String listener;
+    public boolean editor;
 
-    public PacketAddListener(){}
+    public PacketIsEditor(){}
 
-    public PacketAddListener(String host, String listener)
+    public PacketIsEditor(String host, String listener, boolean edit)
     {
         this.host = host;
         this.listener = listener;
+        this.editor = edit;
     }
 
     @Override
@@ -30,6 +33,7 @@ public class PacketAddListener extends AbstractPacket
     {
         ByteBufUtils.writeUTF8String(buffer, host);
         ByteBufUtils.writeUTF8String(buffer, listener);
+        buffer.writeBoolean(editor);
     }
 
     @Override
@@ -37,6 +41,7 @@ public class PacketAddListener extends AbstractPacket
     {
         host = ByteBufUtils.readUTF8String(buffer);
         listener = ByteBufUtils.readUTF8String(buffer);
+        editor = buffer.readBoolean();
     }
 
     @Override
@@ -44,10 +49,10 @@ public class PacketAddListener extends AbstractPacket
     {
         if(side.isServer())
         {
-            EntityPlayerMP hoster = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(host);
-            if(hoster != null)
+            EntityPlayerMP listening = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(listener);
+            if(listening != null)
             {
-                PacketHandler.sendToPlayer(Tabula.channels, this, hoster);
+                PacketHandler.sendToPlayer(Tabula.channels, this, listening);
             }
         }
         else
@@ -59,9 +64,10 @@ public class PacketAddListener extends AbstractPacket
     @SideOnly(Side.CLIENT)
     public void handleClient()
     {
-        if(Tabula.proxy.tickHandlerClient.mainframe != null && Minecraft.getMinecraft().getSession().getUsername().equals(host))
+        Minecraft mc = Minecraft.getMinecraft();
+        if(mc.currentScreen instanceof GuiWorkspace)
         {
-            Tabula.proxy.tickHandlerClient.mainframe.addListener(listener, Tabula.proxy.tickHandlerClient.mainframe.isEditor(listener));
+            ((GuiWorkspace)mc.currentScreen).isEditor = editor;
         }
     }
 }

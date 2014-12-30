@@ -15,14 +15,17 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketEndSession;
+import us.ichun.mods.tabula.common.packet.PacketPingAlive;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TileEntityTabulaRasa extends TileEntity
 {
     public int side;
     public String host;
     public ArrayList<String> listeners;
+    public int pingTime;
 
     public TileEntityTabulaRasa()
     {
@@ -33,9 +36,20 @@ public class TileEntityTabulaRasa extends TileEntity
     @Override
     public void updateEntity()
     {
-        if(!worldObj.isRemote && worldObj.getWorldTime() % 24L == 0 && !host.isEmpty() && FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(host) == null)
+        if(!worldObj.isRemote && !host.isEmpty())
         {
-            terminateSession(true);
+            pingTime++;
+            if(pingTime > 50 || FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(host) == null)
+            {
+                terminateSession(true);
+            }
+            else if(pingTime == 25)
+            {
+                //send ping packet
+                PacketHandler.sendToPlayer(Tabula.channels, new PacketPingAlive(host, xCoord, yCoord, zCoord), FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(host));
+            }
+
+            //TODO make the TE request project data
         }
     }
 
@@ -50,6 +64,7 @@ public class TileEntityTabulaRasa extends TileEntity
             }
         }
 
+        pingTime = 0;
         host = "";
         listeners.clear();
     }

@@ -543,6 +543,10 @@ public class ElementListTree extends Element
                     Animation anim = (Animation)attachedObject;
                     parent.workspace.getFontRenderer().drawString(reString(anim.name, width), getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.instance.font), false);
                 }
+                else if(attachedObject instanceof String)
+                {
+                    parent.workspace.getFontRenderer().drawString(reString((String)attachedObject, width), getPosX() + offX + 4, getPosY() + offY + ((theHeight - parent.workspace.getFontRenderer().FONT_HEIGHT) / 2) + treeHeight, Theme.getAsHex(Theme.instance.font), false);
+                }
 
                 if(realBorder && clicking)
                 {

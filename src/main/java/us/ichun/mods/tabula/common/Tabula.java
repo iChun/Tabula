@@ -1,5 +1,6 @@
 package us.ichun.mods.tabula.common;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -65,10 +66,16 @@ public class Tabula
         config.createStringProperty("favTheme", true, false, "default");
         config.createIntBoolProperty("renderRotationPoint", true, false, true);
         config.createIntBoolProperty("renderWorkspaceBlock", true, false, true);
+        config.setCurrentCategory("multiplayer");
+        config.createIntBoolProperty("chatSound", true, false, true);
+        config.createIntBoolProperty("allowEveryoneToEdit", true, false, true);
+        config.createStringProperty("editors", true, false, "");
 
         config.createIntBoolProperty("animationWarning", "Animation Warning Shown", "Temp setting, so ignore this comment", true, false, false);
 
-        MinecraftForge.EVENT_BUS.register(new EventHandler());
+        EventHandler handler = new EventHandler();
+        FMLCommonHandler.instance().bus().register(handler);
+        MinecraftForge.EVENT_BUS.register(handler);
 
         ModVersionChecker.register_iChunMod(new ModVersionInfo("Tabula", iChunUtil.versionOfMC, version, false));
     }

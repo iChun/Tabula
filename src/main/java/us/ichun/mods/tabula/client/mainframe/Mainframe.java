@@ -3,12 +3,18 @@ package us.ichun.mods.tabula.client.mainframe;
 import com.google.gson.Gson;
 import ichun.common.core.network.PacketHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.apache.commons.lang3.RandomStringUtils;
+import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketChatMessage;
+import us.ichun.mods.tabula.common.packet.PacketIsEditor;
+import us.ichun.mods.tabula.common.packet.PacketProjectFragment;
+import us.ichun.mods.tabula.common.packet.PacketRequestHeartbeat;
 import us.ichun.module.tabula.client.model.ModelInfo;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.module.tabula.common.project.components.Animation;
@@ -17,6 +23,7 @@ import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.util.*;
 
 //This is the class that holds all the info of the workspace and handles UI input from everyone.
@@ -25,7 +32,7 @@ public class Mainframe
 {
     public static final int IDENTIFIER_LENGTH = ProjectInfo.IDENTIFIER_LENGTH;
 
-    public ArrayList<String> listeners = new ArrayList<String>();
+    public HashMap<String, Integer> listeners = new HashMap<String, Integer>();
     public ArrayList<String> editors = new ArrayList<String>();
 
     public boolean allowEditing;
@@ -64,6 +71,24 @@ public class Mainframe
                     proj.switchState = -1;
                 }
                 proj.lastState = age;//state has been checked and updated;
+            }
+        }
+        Iterator<Map.Entry<String, Integer>> ite = listeners.entrySet().iterator();
+        while(ite.hasNext())
+        {
+            Map.Entry<String, Integer> e = ite.next();
+            if(!e.getKey().equals(Minecraft.getMinecraft().getSession().getUsername()))
+            {
+                e.setValue(e.getValue() + 1);
+                if(e.getValue() == 25)
+                {
+                    PacketHandler.sendToServer(Tabula.channels, new PacketRequestHeartbeat(Minecraft.getMinecraft().getSession().getUsername(), e.getKey()));
+                }
+                if(e.getValue() > 25)
+                {
+                    ite.remove();
+                    sendChat("System", StatCollector.translateToLocalFormatted("system.timeout", e.getKey()));
+                }
             }
         }
     }
@@ -115,9 +140,8 @@ public class Mainframe
 
     public void sendChat(String name, String message)
     {
-        for(String id : listeners)
+        for(String id : listeners.keySet())
         {
-            //TODO stream to other listeners
 //            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             if(id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
@@ -132,7 +156,7 @@ public class Mainframe
 
     public void streamProjectClosure(String ident)
     {
-        for(String id : listeners)
+        for(String id : listeners.keySet())
         {
             //TODO stream to other listeners
 //            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
@@ -147,31 +171,108 @@ public class Mainframe
     {
         project.lastState = age;//Update lastState because of an action.
         allowEditing = false;
-        for(String id : listeners)
+        for(String id : listeners.keySet())
         {
-            //TODO stream to other listeners
 //            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             if(id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
                 ProjectHelper.addProjectToManager(ProjectHelper.createProjectFromJsonHost(project.identifier, project.getAsJson()));
             }
+            else
+            {
+                streamProjectToListener(id, project);
+            }
         }
         allowEditing = true;
+    }
+
+    public void streamProjectToListener(String id, ProjectInfo proj)
+    {
+        sendData(id, proj.identifier, proj.getAsJson().getBytes(), false);
     }
 
     public void streamProjectTexture(String ident, BufferedImage bufferedImage)
     {
         allowEditing = false;
-        for(String id : listeners)
+        for(String id : listeners.keySet())
         {
-            //TODO stream to other listeners
 //            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             if(id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
                 ProjectHelper.updateProjectTexture(ident, bufferedImage);
             }
+            else
+            {
+                streamProjectTextureToListener(id, ident, bufferedImage);
+            }
         }
         allowEditing = true;
+    }
+
+    public void streamProjectTextureToListener(String id, String ident, BufferedImage img)
+    {
+        if(img == null)
+        {
+            int x = -1;
+            int y = -1;
+            int z = -1;
+
+            Minecraft mc = Minecraft.getMinecraft();
+            if(mc.currentScreen instanceof GuiWorkspace)
+            {
+                GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
+                x = workspace.hostX;
+                y = workspace.hostY;
+                z = workspace.hostZ;
+            }
+
+            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, true, Minecraft.getMinecraft().getSession().getUsername(), id, ident, false, 1, -1, 0, new byte[0]));
+        }
+        else
+        {
+            sendData(id, ident, ((DataBufferByte)img.getData().getDataBuffer()).getData(), true);
+        }
+    }
+
+    public void sendData(String id, String projectIdent, byte[] data, boolean isTexture)
+    {
+        final int maxFile = 31000; //smaller packet cause I'm worried about too much info carried over from the bloat vs hat info.
+
+        int fileSize = data.length;
+
+        int packetsToSend = (int)Math.ceil((float)fileSize / (float)maxFile);
+
+        int packetCount = 0;
+        int offset = 0;
+        while(fileSize > 0)
+        {
+            byte[] fileBytes = new byte[fileSize > maxFile ? maxFile : fileSize];
+            int index = 0;
+            while(index < fileBytes.length) //from index 0 to 31999
+            {
+                fileBytes[index] = data[index + offset];
+            }
+
+            int x = -1;
+            int y = -1;
+            int z = -1;
+
+            Minecraft mc = Minecraft.getMinecraft();
+            if(mc.currentScreen instanceof GuiWorkspace)
+            {
+                GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
+                x = workspace.hostX;
+                y = workspace.hostY;
+                z = workspace.hostZ;
+            }
+
+            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, isTexture, Minecraft.getMinecraft().getSession().getUsername(), id, projectIdent, false, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
+
+            index++;
+            packetCount++;
+            fileSize -= 32000;
+            offset += index;
+        }
     }
 
     public void switchState(String projIdent, boolean undo)//undo/redo
@@ -1184,33 +1285,138 @@ public class Mainframe
 
     public void addListener(String id, boolean isEditor)
     {
-        if(!listeners.contains(id))
+        if(!listeners.containsKey(id))
         {
-            listeners.add(id);
+            listeners.put(id, 0);
             if(!id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
                 sendChat("System", StatCollector.translateToLocalFormatted("system.joinedSession", id));
+                for(ProjectInfo proj : projects)
+                {
+                    streamProjectToListener(id, proj);
+                    streamProjectTextureToListener(id, proj.identifier, proj.bufferedTexture);
+                }
             }
         }
         if(isEditor && !editors.contains(id))
         {
             editors.add(id);
+            if(!id.equals(Minecraft.getMinecraft().getSession().getUsername()))
+            {
+                sendChat("System", StatCollector.translateToLocalFormatted("system.isEditor", id));
+                PacketHandler.sendToServer(Tabula.channels, new PacketIsEditor(Minecraft.getMinecraft().getSession().getUsername(), id, true));
+            }
         }
     }
 
     public void removeListener(String id)
     {
-        if(listeners.contains(id))
+        if(listeners.containsKey(id))
         {
             listeners.remove(id);
             sendChat("System", StatCollector.translateToLocalFormatted("system.leftSession", id));
         }
     }
 
-    //TODO do a "maybe the host has crashed" inform to the clients
+    public void addEditor(String id)
+    {
+        if(!editors.contains(id))
+        {
+            editors.add(id);
+            sendChat("System", StatCollector.translateToLocalFormatted("system.addEditor", Minecraft.getMinecraft().getSession().getUsername(), id));
+            PacketHandler.sendToServer(Tabula.channels, new PacketIsEditor(Minecraft.getMinecraft().getSession().getUsername(), id, true));
+
+            String[] editors = Tabula.config.getString("editors").split(", *");
+            ArrayList<String> editorArray = new ArrayList<String>();
+            for(String s : editors)
+            {
+                if(!s.isEmpty() && !editorArray.contains(s))
+                {
+                    editorArray.add(s);
+                }
+            }
+
+            if(!editorArray.contains(id))
+            {
+                editorArray.add(id);
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < editorArray.size(); i++)
+            {
+                sb.append(sb);
+                if(i != editorArray.size() - 1)
+                {
+                    sb.append(", ");
+                }
+            }
+
+            Tabula.config.get("editors").set(sb.toString());
+            Tabula.config.save();
+        }
+        else
+        {
+            ProjectHelper.receiveChat("System: " + StatCollector.translateToLocalFormatted("system.alreadyEditor", id));
+        }
+    }
+
+    public void removeEditor(String id)
+    {
+        if(editors.contains(id))
+        {
+            editors.remove(id);
+            sendChat("System", StatCollector.translateToLocalFormatted("system.removeEditor", Minecraft.getMinecraft().getSession().getUsername(), id));
+            PacketHandler.sendToServer(Tabula.channels, new PacketIsEditor(Minecraft.getMinecraft().getSession().getUsername(), id, false));
+
+            String[] editors = Tabula.config.getString("editors").split(", *");
+            ArrayList<String> editorArray = new ArrayList<String>();
+            for(String s : editors)
+            {
+                if(!s.isEmpty() && !editorArray.contains(s))
+                {
+                    editorArray.add(s);
+                }
+            }
+
+            if(editorArray.contains(id))
+            {
+                editorArray.remove(id);
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < editorArray.size(); i++)
+            {
+                sb.append(sb);
+                if(i != editorArray.size() - 1)
+                {
+                    sb.append(", ");
+                }
+            }
+
+            Tabula.config.get("editors").set(sb.toString());
+            Tabula.config.save();
+        }
+        else
+        {
+            ProjectHelper.receiveChat("System: " + StatCollector.translateToLocalFormatted("system.notEditor", id));
+        }
+    }
+
+    public boolean isEditor(String id)
+    {
+        String[] editors = Tabula.config.getString("editors").split(", *");
+        for(String editor : editors)
+        {
+            if(!editor.isEmpty())
+            {
+                return editor.equals(id);
+            }
+        }
+        return Tabula.config.getInt("allowEveryoneToEdit") == 1 || id.equals(Minecraft.getMinecraft().getSession().getUsername());
+    }
+
     public void shutdown()
     {
-        //TODO tell listeners that you're shutting down;
         if(Tabula.proxy.tickHandlerClient.mainframe == this)
         {
             Tabula.proxy.tickHandlerClient.mainframe = null;

@@ -52,6 +52,7 @@ public class GuiWorkspace extends GuiScreen
     public int oriScale;
     public final boolean remoteSession;
     public boolean isEditor;
+    public boolean sessionEnded;
     public String host;
     public int hostX;
     public int hostY;
@@ -85,6 +86,7 @@ public class GuiWorkspace extends GuiScreen
     public boolean keyODown;
     public boolean keyHomeDown;
     public boolean keyEndDown;
+    public boolean keyTabDown;
 
     public Object cubeCopied;
 
@@ -619,6 +621,18 @@ public class GuiWorkspace extends GuiScreen
                 {
                     this.addWindowOnTop(new WindowOpenProject(this, this.width / 2 - 130, this.height / 2 - 160, 260, 320, 240, 160).putInMiddleOfScreen());
                 }
+                if(Keyboard.isKeyDown(Keyboard.KEY_TAB) && !keyTabDown)
+                {
+                    if(!projectManager.projects.isEmpty())
+                    {
+                        projectManager.selectedProject++;
+                        if(projectManager.selectedProject >= projectManager.projects.size())
+                        {
+                            projectManager.selectedProject = 0;
+                        }
+                        projectManager.changeProject(projectManager.selectedProject);
+                    }
+                }
             }
             if(Keyboard.isKeyDown(Keyboard.KEY_HOME) && !keyHomeDown || !Keyboard.isKeyDown(Keyboard.KEY_HOME) && keyHomeDown)
             {
@@ -656,6 +670,7 @@ public class GuiWorkspace extends GuiScreen
         keyODown = Keyboard.isKeyDown(Keyboard.KEY_O);
         keyHomeDown = Keyboard.isKeyDown(Keyboard.KEY_HOME);
         keyEndDown = Keyboard.isKeyDown(Keyboard.KEY_END);
+        keyTabDown = Keyboard.isKeyDown(Keyboard.KEY_TAB);
 
         if(windowDragged != null)
         {

@@ -12,14 +12,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import us.ichun.mods.tabula.common.Tabula;
 
-public class PacketAddListener extends AbstractPacket
+public class PacketRequestHeartbeat extends AbstractPacket
 {
     public String host;
     public String listener;
 
-    public PacketAddListener(){}
+    public PacketRequestHeartbeat(){}
 
-    public PacketAddListener(String host, String listener)
+    public PacketRequestHeartbeat(String host, String listener)
     {
         this.host = host;
         this.listener = listener;
@@ -44,24 +44,15 @@ public class PacketAddListener extends AbstractPacket
     {
         if(side.isServer())
         {
-            EntityPlayerMP hoster = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(host);
-            if(hoster != null)
+            EntityPlayerMP listening = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(listener);
+            if(listening != null)
             {
-                PacketHandler.sendToPlayer(Tabula.channels, this, hoster);
+                PacketHandler.sendToPlayer(Tabula.channels, this, listening);
             }
         }
         else
         {
-            handleClient();
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void handleClient()
-    {
-        if(Tabula.proxy.tickHandlerClient.mainframe != null && Minecraft.getMinecraft().getSession().getUsername().equals(host))
-        {
-            Tabula.proxy.tickHandlerClient.mainframe.addListener(listener, Tabula.proxy.tickHandlerClient.mainframe.isEditor(listener));
+            PacketHandler.sendToServer(Tabula.channels, new PacketHeartbeat(host, listener));
         }
     }
 }

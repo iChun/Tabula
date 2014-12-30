@@ -31,6 +31,8 @@ public class WindowTopDock extends Window
     public static final int ID_PASTE_WITHOUT_CHILDREN = 17;
     public static final int ID_THEMES = 18;
     public static final int ID_SETTINGS = 19;
+    public static final int ID_ADD_EDITOR = 20;
+    public static final int ID_REMOVE_EDITOR = 21;
 
     public static final int ID_WOOD = -1;
 
@@ -57,7 +59,15 @@ public class WindowTopDock extends Window
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE_WITHOUT_CHILDREN, true, 0, 0, "topdock.pasteWithoutChildren", new ResourceLocation("tabula", "textures/icon/pasteWithoutChildren.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_UNDO, true, 0, 0, "topdock.undo", new ResourceLocation("tabula", "textures/icon/undo.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_REDO, true, 0, 0, "topdock.redo", new ResourceLocation("tabula", "textures/icon/redo.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CHAT, true, 0, 0, "topdock.chat", new ResourceLocation("tabula", "textures/icon/chat.png")));
+        if(workspace.host != null)
+        {
+            elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CHAT, true, 0, 0, "topdock.chat", new ResourceLocation("tabula", "textures/icon/chat.png")));
+            if(!workspace.remoteSession)
+            {
+                elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_ADD_EDITOR, true, 0, 0, "topdock.addEditor", new ResourceLocation("tabula", "textures/icon/addEditor.png")));
+                elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_REMOVE_EDITOR, true, 0, 0, "topdock.removeEditor", new ResourceLocation("tabula", "textures/icon/removeEditor.png")));
+            }
+        }
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_THEMES, true, 0, 0, "topdock.themes", new ResourceLocation("tabula", "textures/icon/themes.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_SETTINGS, true, 0, 0, "topdock.settings", new ResourceLocation("tabula", "textures/icon/settings.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CREDITS, true, 0, 0, "topdock.info", new ResourceLocation("tabula", "textures/icon/info.png")));
@@ -154,6 +164,14 @@ public class WindowTopDock extends Window
         else if(element.id == ID_CHAT)
         {
             workspace.windowChat.toggleVisibility();
+        }
+        else if(element.id == ID_ADD_EDITOR)
+        {
+            workspace.addWindowOnTop(new WindowAddEditor(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 260, 160, 240, 160).putInMiddleOfScreen());
+        }
+        else if(element.id == ID_REMOVE_EDITOR)
+        {
+            workspace.addWindowOnTop(new WindowRemoveEditor(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 260, 160, 240, 160).putInMiddleOfScreen());
         }
         else if(element.id == ID_THEMES)
         {

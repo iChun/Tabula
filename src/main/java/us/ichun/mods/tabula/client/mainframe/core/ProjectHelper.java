@@ -7,15 +7,30 @@ import ichun.common.core.util.MD5Checksum;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.ArrayUtils;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.client.gui.window.WindowOpenProject;
+import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class ProjectHelper
 {
+    public static HashMap<String, ArrayList<byte[]>> projectParts = new HashMap<String, ArrayList<byte[]>>();
+    public static HashMap<String, ArrayList<byte[]>> projectTextureParts = new HashMap<String, ArrayList<byte[]>>();
+
+    public static HashMap<String, ProjectInfo> projects = new HashMap<String, ProjectInfo>();
+    public static HashMap<String, BufferedImage> projectTextures = new HashMap<String, BufferedImage>();
+
     public static ProjectInfo createProjectFromJson(String ident, String s)
     {
         Gson gson = new Gson();
@@ -107,6 +122,87 @@ public class ProjectHelper
         }
     }
 
+    public static void receiveProjectData(String projectIdentifier, boolean isTexture, byte packetTotal, byte packetNumber, byte[] data)
+    {
+        if(packetNumber == -1)
+        {
+            projectTextures.remove(projectIdentifier);
+            Tabula.proxy.updateProject(projectIdentifier, true);
+        }
+        else
+        {
+            HashMap<String, ArrayList<byte[]>> map = isTexture ? projectTextureParts : projectParts;
+            ArrayList<byte[]> byteArray = map.get(projectIdentifier);
+            if(byteArray == null)
+            {
+                byteArray = new ArrayList<byte[]>();
+
+                map.put(projectIdentifier, byteArray);
+
+                for(int i = 0; i < packetTotal; i++)
+                {
+                    byteArray.add(new byte[0]);
+                }
+            }
+
+            byteArray.set(packetNumber, data);
+
+            boolean hasAllInfo = true;
+
+            for(int i = 0; i < byteArray.size(); i++)
+            {
+                byte[] byteList = byteArray.get(i);
+                if(byteList.length == 0)
+                {
+                    hasAllInfo = false;
+                }
+            }
+
+            if(hasAllInfo)
+            {
+                int size = 0;
+
+                for(int i = 0; i < byteArray.size(); i++)
+                {
+                    size += byteArray.get(i).length;
+                }
+
+                byte[] bytes = new byte[size];
+
+                int index = 0;
+
+                for(int i = 0; i < byteArray.size(); i++)
+                {
+                    System.arraycopy(byteArray.get(i), 0, bytes, index, byteArray.get(i).length);
+                    index += byteArray.get(i).length;
+                }
+
+                try
+                {
+                    if(isTexture)
+                    {
+                        InputStream is = new ByteArrayInputStream(bytes);
+                        BufferedImage img = ImageIO.read(is);
+                        projectTextures.put(projectIdentifier, img);
+                        Tabula.proxy.updateProject(projectIdentifier, true);
+                    }
+                    else
+                    {
+                        String json = new String(bytes, "UTF-8");
+                        ProjectInfo proj = createProjectFromJson(projectIdentifier, json);
+                        projects.put(projectIdentifier, proj);
+                        Tabula.proxy.updateProject(projectIdentifier, false);
+                    }
+                }
+                catch(IOException ignored)
+                {
+                }
+
+                map.remove(projectIdentifier);
+            }
+        }
+    }
+
     @SideOnly(Side.CLIENT)
     public static void receiveChat(String message)
     {
@@ -115,7 +211,10 @@ public class ProjectHelper
         {
             GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
             workspace.windowChat.chatHolder.text.add(message);
-            mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("random.successful_hit"), 1.0F));
+            if(Tabula.config.getInt("chatSound") == 1)
+            {
+                mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("random.successful_hit"), 1.0F));
+            }
         }
     }
 
