@@ -151,6 +151,10 @@ public class GuiWorkspace extends GuiScreen
         hostZ = k;
 
         renderBlocks = new RenderBlocks();
+
+        levels.get(3).add(new WindowTopDock(this, 0, 0, width, 20, 20, 20));
+        projectManager = new WindowProjectSelection(this, 0, 0, width, 20, 20, 20);
+        levels.get(3).add(projectManager);
     }
 
     @Override
@@ -170,10 +174,6 @@ public class GuiWorkspace extends GuiScreen
             addToDock(1, windowModelTree);
             addToDock(2, windowAnimate);
             windowAnimate.toggleMinimize();
-
-            levels.get(3).add(new WindowTopDock(this, 0, 0, width, 20, 20, 20));
-            projectManager = new WindowProjectSelection(this, 0, 0, width, 20, 20, 20);
-            levels.get(3).add(projectManager);
 
             windowChat = new WindowChat(this, -1000, -1000, 250, 180, 162, 50);
             levels.get(4).add(windowChat);

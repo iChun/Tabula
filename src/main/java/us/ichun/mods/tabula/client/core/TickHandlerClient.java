@@ -9,17 +9,21 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.mainframe.Mainframe;
+import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.module.tabula.common.project.ProjectInfo;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.UUID;
+import java.util.*;
 
 public class TickHandlerClient
 {
@@ -50,6 +54,31 @@ public class TickHandlerClient
             {
                 mainframe.tick();
             }
+            for(int i = ProjectHelper.texturesToClear.size() - 1; i >= 0; i--)
+            {
+                Integer id = ProjectHelper.projectTextureIDs.get(ProjectHelper.texturesToClear.get(i));
+                if(id != null)
+                {
+                    TextureUtil.deleteTexture(id);
+                }
+                ProjectHelper.texturesToClear.remove(i);
+            }
+            for(int i = ProjectHelper.projectsToDestroy.size() - 1; i >= 0; i--)
+            {
+                ProjectHelper.projectsToDestroy.get(i).destroy();
+                ProjectHelper.projectsToDestroy.remove(i);
+            }
+            Iterator<Map.Entry<String, ProjectInfo>> ite = projectsToUpdate.entrySet().iterator();
+            for(Map.Entry<String, ProjectInfo> e : projectsToUpdate.entrySet())
+            {
+                ProjectHelper.addProjectToManager(ProjectHelper.createProjectFromJsonHost(e.getKey(), e.getValue().getAsJson()));
+            }
+            for(Map.Entry<String, BufferedImage> e : projectImagesToUpdate.entrySet())
+            {
+                ProjectHelper.updateProjectTexture(e.getKey(), e.getValue());
+            }
+            projectsToUpdate.clear();
+            projectImagesToUpdate.clear();
         }
     }
 
@@ -117,6 +146,9 @@ public class TickHandlerClient
 
         FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale, false, true, name, i, j, k));
     }
+
+    public HashMap<String, ProjectInfo> projectsToUpdate = new HashMap<String, ProjectInfo>();
+    public HashMap<String, BufferedImage> projectImagesToUpdate = new HashMap<String, BufferedImage>();
 
     public Mainframe mainframe;
 

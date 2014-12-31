@@ -7,6 +7,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
@@ -90,10 +91,16 @@ public class EventHandler
 
         for(ProjectInfo proj : ProjectHelper.projects.values())
         {
-            Tabula.proxy.destroyProject(proj);
+            proj.destroy();
+        }
+
+        for(Integer id : ProjectHelper.projectTextureIDs.values())
+        {
+            TextureUtil.deleteTexture(id);
         }
 
         ProjectHelper.projects.clear();
         ProjectHelper.projectTextures.clear();
+        ProjectHelper.projectTextureIDs.clear();
     }
 }

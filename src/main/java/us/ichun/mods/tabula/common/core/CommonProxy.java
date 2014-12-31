@@ -43,6 +43,4 @@ public class CommonProxy
     }
 
     public void updateProject(String ident, boolean isTexture){}
-
-    public void destroyProject(ProjectInfo proj){}
 }

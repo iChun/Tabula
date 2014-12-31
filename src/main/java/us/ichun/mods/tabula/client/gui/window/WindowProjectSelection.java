@@ -190,7 +190,7 @@ public class WindowProjectSelection extends WindowTopDock
             info.lastAutosave = workspace.liveTime;
             projects.add(info);
             elements.add(new ElementProjectTab(this, 0, 0, 10, 10, elements.size(), info));
-            changeProject(elements.size() - 1);
+            changeProject(projects.size() - 1);
         }
 
         updateModelTree(info);
@@ -349,6 +349,11 @@ public class WindowProjectSelection extends WindowTopDock
             workspace.cameraPitch = 0.0F;
             workspace.cameraOffsetX = 0.0F;
             workspace.cameraOffsetY = 0.0F;
+
+            if(!workspace.remoteSession && workspace.host != null)
+            {
+                PacketHandler.sendToServer(Tabula.channels, new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, ""));
+            }
         }
 
         workspace.windowModelTree.modelList.sliderProg = 0.0F;

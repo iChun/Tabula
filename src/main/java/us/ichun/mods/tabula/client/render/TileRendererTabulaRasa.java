@@ -41,7 +41,7 @@ public class TileRendererTabulaRasa extends TileEntitySpecialRenderer
         if(!tr.host.isEmpty() && !tr.currentProj.isEmpty())
         {
             ProjectInfo info = ProjectHelper.projects.get(tr.currentProj);
-            if(info != null)
+            if(info != null && !info.destroyed)
             {
                 if(info.model == null)
                 {
@@ -68,7 +68,7 @@ public class TileRendererTabulaRasa extends TileEntitySpecialRenderer
                 float size = info.getMaximumSize();
                 if(size != 0)
                 {
-                    scale = 0.3F * 12F / size;
+                    scale = 0.3F * 16F / size;
                 }
 
                 GL11.glRotatef((tr.getWorldObj().getWorldTime() + f) / 2F, 0.0F, 1.0F, 0.0F);

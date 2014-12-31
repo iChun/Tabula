@@ -198,6 +198,19 @@ public class Mainframe
                 streamProjectToListener(id, project, isCurrent);
             }
         }
+
+        if(listeners.size() == 1)
+        {
+            Minecraft mc = Minecraft.getMinecraft();
+            if(mc.currentScreen instanceof GuiWorkspace)
+            {
+                GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
+                    if(!workspace.remoteSession && workspace.host != null)
+                    {
+                        PacketHandler.sendToServer(Tabula.channels, new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, project.identifier));
+                    }
+            }
+        }
         allowEditing = true;
     }
 
@@ -229,6 +242,18 @@ public class Mainframe
                     }
                 }
                 streamProjectTextureToListener(id, ident, bufferedImage, isCurrent);
+            }
+        }
+        if(listeners.size() == 1)
+        {
+            Minecraft mc = Minecraft.getMinecraft();
+            if(mc.currentScreen instanceof GuiWorkspace)
+            {
+                GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
+                if(!workspace.remoteSession && workspace.host != null)
+                {
+                    PacketHandler.sendToServer(Tabula.channels, new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, ident));
+                }
             }
         }
         allowEditing = true;

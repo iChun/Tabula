@@ -47,7 +47,7 @@ public class TileEntityTabulaRasa extends TileEntity
             if(!worldObj.isRemote)
             {
                 pingTime++;
-                if(pingTime > 50 || FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(host) == null)
+                if(pingTime > 150 || FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(host) == null)
                 {
                     terminateSession(true);
                 }
@@ -89,12 +89,18 @@ public class TileEntityTabulaRasa extends TileEntity
         if(needProjectUpdate)
         {
             needProjectUpdate = false;
-            PacketHandler.sendToServer(Tabula.channels, new PacketRequestProject(host, Minecraft.getMinecraft().getSession().getUsername(), currentProj, false));
+            if(!currentProj.isEmpty())
+            {
+                PacketHandler.sendToServer(Tabula.channels, new PacketRequestProject(host, Minecraft.getMinecraft().getSession().getUsername(), currentProj, false));
+            }
         }
         if(needTextureUpdate)
         {
             needTextureUpdate = false;
-            PacketHandler.sendToServer(Tabula.channels, new PacketRequestProject(host, Minecraft.getMinecraft().getSession().getUsername(), currentProj, true));
+            if(!currentProj.isEmpty())
+            {
+                PacketHandler.sendToServer(Tabula.channels, new PacketRequestProject(host, Minecraft.getMinecraft().getSession().getUsername(), currentProj, true));
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import ichun.common.core.util.MD5Checksum;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
@@ -31,6 +32,9 @@ public class ProjectHelper
     public static HashMap<String, ProjectInfo> projects = new HashMap<String, ProjectInfo>();
     public static HashMap<String, BufferedImage> projectTextures = new HashMap<String, BufferedImage>();
     public static HashMap<BufferedImage, Integer> projectTextureIDs = new HashMap<BufferedImage, Integer>();
+
+    public static ArrayList<BufferedImage> texturesToClear = new ArrayList<BufferedImage>();
+    public static ArrayList<ProjectInfo> projectsToDestroy = new ArrayList<ProjectInfo>();
 
     public static ProjectInfo createProjectFromJson(String ident, String s)
     {
@@ -129,6 +133,11 @@ public class ProjectHelper
             if(projectTextures.get(projectIdentifier) != null)
             {
                 flag = true;
+                Integer id = ProjectHelper.projectTextureIDs.get(projectTextures.get(projectIdentifier));
+                if(id != null && !ProjectHelper.texturesToClear.contains(projectTextures.get(projectIdentifier)))
+                {
+                    ProjectHelper.texturesToClear.add(projectTextures.get(projectIdentifier));
+                }
             }
             projectTextures.remove(projectIdentifier);
             Tabula.proxy.updateProject(projectIdentifier, true);
@@ -187,9 +196,18 @@ public class ProjectHelper
                     {
                         InputStream is = new ByteArrayInputStream(bytes);
                         BufferedImage img = ImageIO.read(is);
-                        if(projectTextures.get(projectIdentifier) == null || !areBufferedImagesEqual(projectTextures.get(projectIdentifier), img))
+                        if(projectTextures.get(projectIdentifier) == null)
                         {
-                            flag = true; //TODO destroy old buffed image id
+                            flag = true;
+                        }
+                        else if(!areBufferedImagesEqual(projectTextures.get(projectIdentifier), img))
+                        {
+                            flag = true;
+                            Integer id = ProjectHelper.projectTextureIDs.get(projectTextures.get(projectIdentifier));
+                            if(id != null && !ProjectHelper.texturesToClear.contains(projectTextures.get(projectIdentifier)))
+                            {
+                                ProjectHelper.texturesToClear.add(projectTextures.get(projectIdentifier));
+                            }
                         }
                         projectTextures.put(projectIdentifier, img);
                         if(projects.get(projectIdentifier) != null)
@@ -209,7 +227,10 @@ public class ProjectHelper
                         else if(!projects.get(projectIdentifier).getAsJson().equals(proj.getAsJson()))
                         {
                             flag = true;
-                            Tabula.proxy.destroyProject(projects.get(projectIdentifier));
+                            if(!ProjectHelper.projectsToDestroy.contains(projects.get(projectIdentifier)))
+                            {
+                                ProjectHelper.projectsToDestroy.add(projects.get(projectIdentifier));
+                            }
                         }
                         projects.put(projectIdentifier, proj);
                         proj.bufferedTexture = projectTextures.get(projectIdentifier);

@@ -66,6 +66,7 @@ public class Tabula
         config.createStringProperty("favTheme", true, false, "default");
         config.createIntBoolProperty("renderRotationPoint", true, false, true);
         config.createIntBoolProperty("renderWorkspaceBlock", true, false, true);
+        config.createIntBoolProperty("animateImports", true, false, true);
         config.setCurrentCategory("multiplayer");
         config.createIntBoolProperty("chatSound", true, false, true);
         config.createIntBoolProperty("allowEveryoneToEdit", true, false, true);

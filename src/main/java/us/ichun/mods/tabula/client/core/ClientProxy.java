@@ -27,11 +27,15 @@ import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.client.render.TileRendererTabulaRasa;
+import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.core.CommonProxy;
 import us.ichun.module.tabula.client.model.ModelInfo;
 import us.ichun.module.tabula.client.model.ModelList;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -129,12 +133,39 @@ public class ClientProxy extends CommonProxy
                 }
                 else if(rend.mainModel != null && clz != null)
                 {
-                    //TODO config to set rotation or not?
                     EntityLivingBase instance;
-                    try { instance = (EntityLivingBase)clz.getConstructor(World.class).newInstance(new Object[] { null }); } catch(Exception e){ instance = null; }
-                    try { rend.mainModel.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, instance); } catch(Exception e){}
-                    try { rend.mainModel.render(instance, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F); } catch(Exception e){}
-                    try { rend.mainModel.setLivingAnimations(instance, 0.0F, 0.0F, 0.0F); } catch(Exception e){}
+                    try
+                    {
+                        instance = (EntityLivingBase)clz.getConstructor(World.class).newInstance(new Object[] { null });
+                    }
+                    catch(Exception e)
+                    {
+                        instance = null;
+                    }
+                    if(Tabula.config.getInt("animateImports") == 1)
+                    {
+                        try
+                        {
+                            rend.mainModel.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, instance);
+                        }
+                        catch(Exception e)
+                        {
+                        }
+                        try
+                        {
+                            rend.mainModel.render(instance, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
+                        }
+                        catch(Exception e)
+                        {
+                        }
+                        try
+                        {
+                            rend.mainModel.setLivingAnimations(instance, 0.0F, 0.0F, 0.0F);
+                        }
+                        catch(Exception e)
+                        {
+                        }
+                    }
                     ResourceLocation loc = null;
                     if(clz != EntityHorse.class) //horse gives some kind of error that can't be silenced
                     {
@@ -318,24 +349,12 @@ public class ClientProxy extends CommonProxy
         {
             if(isTexture)
             {
-                ProjectHelper.updateProjectTexture(ident, ProjectHelper.projectTextures.get(ident));
+                Tabula.proxy.tickHandlerClient.projectImagesToUpdate.put(ident, ProjectHelper.projectTextures.get(ident));
             }
             else
             {
-                ProjectHelper.addProjectToManager(ProjectHelper.createProjectFromJsonHost(ident, ProjectHelper.projects.get(ident).getAsJson()));
+                Tabula.proxy.tickHandlerClient.projectsToUpdate.put(ident, ProjectHelper.projects.get(ident));
             }
         }
-    }
-
-    @Override
-    public void destroyProject(ProjectInfo proj)
-    {
-        Integer id = ProjectHelper.projectTextureIDs.get(proj.bufferedTexture);
-        if(id != null)
-        {
-            TextureUtil.deleteTexture(id);
-            ProjectHelper.projectTextureIDs.remove(proj.bufferedTexture);
-        }
-        proj.destroy();
     }
 }
