@@ -1,10 +1,12 @@
 package us.ichun.mods.tabula.client.gui.window;
 
+import ichun.common.core.network.PacketHandler;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.*;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 public class WindowNewAnimComponent extends Window
@@ -67,13 +69,13 @@ public class WindowNewAnimComponent extends Window
                 {
                     animName = "NewComponent";
                 }
-                if(workspace.remoteSession)
-                {
-                    //TODO remote session
-                }
-                else
+                if(!workspace.remoteSession)
                 {
                     Tabula.proxy.tickHandlerClient.mainframe.createNewAnimComponent(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, workspace.windowAnimate.animList.selectedIdentifier, cubeIdent, animName, length, workspace.windowAnimate.timeline.getCurrentPos());
+                }
+                else if(!workspace.sessionEnded && workspace.isEditor)
+                {
+                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "createNewAnimComponent", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, workspace.windowAnimate.animList.selectedIdentifier, cubeIdent, animName, length, workspace.windowAnimate.timeline.getCurrentPos()));
                 }
                 workspace.removeWindow(this, true);
             }

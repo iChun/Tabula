@@ -4,10 +4,12 @@ import ichun.common.core.network.PacketHandler;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.*;
+import us.ichun.mods.tabula.client.gui.window.element.Element;
+import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
+import us.ichun.mods.tabula.client.gui.window.element.ElementCheckBox;
+import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.tabula.common.Tabula;
-import us.ichun.mods.tabula.common.packet.PacketCreateNewAnimation;
-import us.ichun.mods.tabula.common.packet.PacketLoadEmptyProject;
+import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 
 public class WindowNewAnimation extends Window
 {
@@ -70,7 +72,7 @@ public class WindowNewAnimation extends Window
                 }
                 else if(!workspace.sessionEnded && workspace.isEditor)
                 {
-                    PacketHandler.sendToServer(Tabula.channels, new PacketCreateNewAnimation(workspace.host, workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animName, loop));
+                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "createNewAnimation", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animName, loop));
                 }
                 workspace.removeWindow(this, true);
             }

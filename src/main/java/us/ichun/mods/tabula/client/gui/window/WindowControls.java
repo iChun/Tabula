@@ -2,15 +2,12 @@ package us.ichun.mods.tabula.client.gui.window;
 
 import com.google.gson.Gson;
 import ichun.common.core.network.PacketHandler;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.*;
 import us.ichun.mods.tabula.common.Tabula;
-import us.ichun.mods.tabula.common.packet.PacketChat;
-import us.ichun.mods.tabula.common.packet.PacketUpdateCube;
-import us.ichun.module.tabula.common.project.ProjectInfo;
+import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
@@ -353,7 +350,7 @@ public class WindowControls extends Window
                 }
                 else if(!workspace.sessionEnded && workspace.isEditor)
                 {
-                    PacketHandler.sendToServer(Tabula.channels, new PacketUpdateCube(workspace.host, workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, s, workspace.windowAnimate.animList.selectedIdentifier, workspace.windowAnimate.timeline.selectedIdentifier, workspace.windowAnimate.timeline.getCurrentPos()));
+                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "updateCube", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, s, workspace.windowAnimate.animList.selectedIdentifier, workspace.windowAnimate.timeline.selectedIdentifier, workspace.windowAnimate.timeline.getCurrentPos()));
                 }
             }
             else if(selectedObject instanceof CubeGroup)

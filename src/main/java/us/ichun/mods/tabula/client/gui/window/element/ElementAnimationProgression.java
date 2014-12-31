@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.client.gui.window.element;
 
 import ichun.client.render.RendererHelper;
+import ichun.common.core.network.PacketHandler;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -8,6 +9,7 @@ import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.client.gui.window.WindowEditAnimComponentProgression;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 import us.ichun.module.tabula.common.math.PolynomialFunctionLagrangeForm;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.module.tabula.common.project.components.Animation;
@@ -131,13 +133,13 @@ public class ElementAnimationProgression extends Element
                 }
 
                 coordDragged = new Coords(MathHelper.clamp_double(clickPosX, 0D, width), MathHelper.clamp_double(clickPosY, 0D, height));
-                if(parent.workspace.remoteSession)
-                {
-                    //TODO this
-                }
-                else
+                if(!parent.workspace.remoteSession)
                 {
                     Tabula.proxy.tickHandlerClient.mainframe.moveAnimCompProgCoord(info.identifier, anim.identifier, comp.identifier, oldCoord == null ? -1 : oldCoord.x / (double)width, oldCoord == null ? -1 : oldCoord.y / (double)height, coordDragged.x / (double)width, coordDragged.y / (double)height);
+                }
+                else if(!parent.workspace.sessionEnded && parent.workspace.isEditor)
+                {
+                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(parent.workspace.host, "moveAnimCompProgCoord", info.identifier, anim.identifier, comp.identifier, oldCoord == null ? -1 : oldCoord.x / (double)width, oldCoord == null ? -1 : oldCoord.y / (double)height, coordDragged.x / (double)width, coordDragged.y / (double)height));
                 }
             }
         }
@@ -147,13 +149,13 @@ public class ElementAnimationProgression extends Element
             if(clickPosX < -10 || clickPosY < -10 || clickPosX > width + 10 || clickPosY > height + 10)
             {
                 //remove coord
-                if(parent.workspace.remoteSession)
-                {
-                    //TODO this
-                }
-                else
+                if(!parent.workspace.remoteSession)
                 {
                     Tabula.proxy.tickHandlerClient.mainframe.moveAnimCompProgCoord(info.identifier, anim.identifier, comp.identifier, coordDragged.x / (double)width, coordDragged.y / (double)height, -1, -1);
+                }
+                else if(!parent.workspace.sessionEnded && parent.workspace.isEditor)
+                {
+                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(parent.workspace.host, "moveAnimCompProgCoord", info.identifier, anim.identifier, comp.identifier, coordDragged.x / (double)width, coordDragged.y / (double)height, -1, -1));
                 }
                 coordDragged = null;
             }
@@ -162,13 +164,13 @@ public class ElementAnimationProgression extends Element
                 Coords oldCoord = coordDragged;
                 coordDragged = new Coords(MathHelper.clamp_double(clickPosX, 0D, width), MathHelper.clamp_double(clickPosY, 0D, height));
 
-                if(parent.workspace.remoteSession)
-                {
-                    //TODO this
-                }
-                else
+                if(!parent.workspace.remoteSession)
                 {
                     Tabula.proxy.tickHandlerClient.mainframe.moveAnimCompProgCoord(info.identifier, anim.identifier, comp.identifier, oldCoord.x / (double)width, oldCoord.y / (double)height, coordDragged.x / (double)width, coordDragged.y / (double)height);
+                }
+                else if(!parent.workspace.sessionEnded && parent.workspace.isEditor)
+                {
+                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(parent.workspace.host, "moveAnimCompProgCoord", info.identifier, anim.identifier, comp.identifier, oldCoord.x / (double)width, oldCoord.y / (double)height, coordDragged.x / (double)width, coordDragged.y / (double)height));
                 }
             }
         }

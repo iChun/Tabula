@@ -9,8 +9,7 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementNumberInput;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.tabula.common.Tabula;
-import us.ichun.mods.tabula.common.packet.PacketDeleteObject;
-import us.ichun.mods.tabula.common.packet.PacketLoadEmptyProject;
+import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 
 public class WindowNewProject extends Window
 {
@@ -95,13 +94,13 @@ public class WindowNewProject extends Window
             {
                 authName = "Undefined";
             }
-            if(workspace.remoteSession)
+            if(!workspace.remoteSession)
             {
                 Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject(projName, authName, dimW, dimH, scaleX, scaleY, scaleZ);
             }
             else if(!workspace.sessionEnded && workspace.isEditor)
             {
-                PacketHandler.sendToServer(Tabula.channels, new PacketLoadEmptyProject(workspace.host, projName, authName, dimW, dimH, scaleX, scaleY, scaleZ));
+                PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "loadEmptyProject", projName, authName, dimW, dimH, scaleX, scaleY, scaleZ));
             }
             workspace.removeWindow(this, true);
         }

@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import ichun.client.render.RendererHelper;
+import ichun.common.core.network.PacketHandler;
 import net.minecraft.util.ResourceLocation;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
@@ -9,6 +10,7 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementAnimationTimeline;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButtonTextured;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 import us.ichun.module.tabula.common.project.components.Animation;
 import us.ichun.module.tabula.common.project.components.AnimationComponent;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
@@ -92,13 +94,13 @@ public class WindowAnimate extends Window
             }
             else if(element.id == ID_DEL_ANIM)
             {
-                if(workspace.remoteSession)
-                {
-                    //TODO this, clearly
-                }
-                else
+                if(!workspace.remoteSession)
                 {
                     Tabula.proxy.tickHandlerClient.mainframe.deleteAnimation(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier);
+                }
+                else if(!workspace.sessionEnded && workspace.isEditor)
+                {
+                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "deleteAnimation", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier));
                 }
             }
             else if(element.id == ID_NEW_COMP)
@@ -151,13 +153,13 @@ public class WindowAnimate extends Window
             {
                 if(!animList.selectedIdentifier.isEmpty() && !timeline.selectedIdentifier.isEmpty())
                 {
-                    if(workspace.remoteSession)
-                    {
-                        //TODO remote session
-                    }
-                    else
+                    if(!workspace.remoteSession)
                     {
                         Tabula.proxy.tickHandlerClient.mainframe.deleteAnimComponent(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier);
+                    }
+                    else if(!workspace.sessionEnded && workspace.isEditor)
+                    {
+                        PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "deleteAnimComponent", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier));
                     }
                 }
             }
@@ -209,13 +211,13 @@ public class WindowAnimate extends Window
                                 {
                                     if(comp.identifier.equalsIgnoreCase(timeline.selectedIdentifier))
                                     {
-                                        if(workspace.remoteSession)
-                                        {
-                                            //TODO remote session
-                                        }
-                                        else
+                                        if(!workspace.remoteSession)
                                         {
                                             Tabula.proxy.tickHandlerClient.mainframe.splitAnimComponent(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier, timeline.getCurrentPos());
+                                        }
+                                        else if(!workspace.sessionEnded && workspace.isEditor)
+                                        {
+                                            PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "splitAnimComponent", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier, timeline.getCurrentPos()));
                                         }
                                         break;
                                     }

@@ -2,6 +2,7 @@ package us.ichun.mods.tabula.client.gui.window.element;
 
 import com.google.gson.Gson;
 import ichun.client.render.RendererHelper;
+import ichun.common.core.network.PacketHandler;
 import ichun.common.core.util.MD5Checksum;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
@@ -12,6 +13,7 @@ import us.ichun.mods.tabula.client.export.types.Exporter;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 import us.ichun.module.tabula.client.model.ModelInfo;
 import us.ichun.module.tabula.common.project.components.Animation;
 import us.ichun.module.tabula.common.project.components.CubeGroup;
@@ -242,13 +244,13 @@ public class ElementListTree extends Element
             draggedIdent = ((CubeGroup)dragged).identifier;
         }
 
-        if(parent.workspace.remoteSession)
-        {
-            //TODO this
-        }
-        else
+        if(!parent.workspace.remoteSession)
         {
             Tabula.proxy.tickHandlerClient.mainframe.dragOnto(parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, draggedOnIdent, draggedIdent);
+        }
+        else if(!parent.workspace.sessionEnded && parent.workspace.isEditor)
+        {
+            PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(parent.workspace.host, "dragOnto", parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, draggedOnIdent, draggedIdent));
         }
         sliderProg = 0.0F;
     }
@@ -372,7 +374,6 @@ public class ElementListTree extends Element
 
         public int getHeight()
         {
-            //TODO get parents and see if they're expanded
             return theHeight;
         }
 
@@ -457,13 +458,13 @@ public class ElementListTree extends Element
 
                         Gson gson = new Gson();
                         String s = gson.toJson(info);
-                        if(parent.workspace.remoteSession)
-                        {
-                            //TODO This
-                        }
-                        else
+                        if(!parent.workspace.remoteSession)
                         {
                             Tabula.proxy.tickHandlerClient.mainframe.updateCube(parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, s, "", "", 0);
+                        }
+                        else if(!parent.workspace.sessionEnded && parent.workspace.isEditor)
+                        {
+                            PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(parent.workspace.host, "updateCube", parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, s, "", "", 0));
                         }
                     }
                 }
@@ -506,13 +507,13 @@ public class ElementListTree extends Element
                     {
                         info.hidden = !info.hidden;
 
-                        if(parent.workspace.remoteSession)
-                        {
-                            //TODO This
-                        }
-                        else
+                        if(!parent.workspace.remoteSession)
                         {
                             Tabula.proxy.tickHandlerClient.mainframe.setGroupVisibility(parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, info.identifier, info.hidden);
+                        }
+                        else if(!parent.workspace.sessionEnded && parent.workspace.isEditor)
+                        {
+                            PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(parent.workspace.host, "setGroupVisibility", parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, info.identifier, info.hidden));
                         }
                     }
                 }

@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.client.gui.window.element;
 
 import ichun.client.render.RendererHelper;
+import ichun.common.core.network.PacketHandler;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
@@ -9,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 import us.ichun.module.tabula.common.project.components.Animation;
 import us.ichun.module.tabula.common.project.components.AnimationComponent;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
@@ -185,7 +187,7 @@ public class ElementAnimationTimeline extends Element
 
         int tick = 0;
         int timeOffX = 0;
-        while(getPosX() + 100 + timeOffX < parent.posX + parent.width || timeOffX < (timeWidth + 20) * tickWidth) //TODO scroll stuff
+        while(getPosX() + 100 + timeOffX < parent.posX + parent.width || timeOffX < (timeWidth + 20) * tickWidth)
         {
             if(tick % 5 == 0)
             {
@@ -459,13 +461,13 @@ public class ElementAnimationTimeline extends Element
                                 }
                                 else if(id == 1)
                                 {
-                                    if(parent.workspace.remoteSession)
-                                    {
-                                        //TODO this
-                                    }
-                                    else
+                                    if(!parent.workspace.remoteSession)
                                     {
                                         Tabula.proxy.tickHandlerClient.mainframe.toggleAnimComponentVisibility(parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, anim.identifier, comp.identifier);
+                                    }
+                                    else if(!parent.workspace.sessionEnded && parent.workspace.isEditor)
+                                    {
+                                        PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(parent.workspace.host, "toggleAnimComponentVisibility", parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, anim.identifier, comp.identifier));
                                     }
                                 }
                             }

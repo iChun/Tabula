@@ -8,10 +8,8 @@ import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementNumberInput;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
-import us.ichun.mods.tabula.client.mainframe.Mainframe;
 import us.ichun.mods.tabula.common.Tabula;
-import us.ichun.mods.tabula.common.packet.PacketEditProject;
-import us.ichun.mods.tabula.common.packet.PacketLoadEmptyProject;
+import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 
 import java.util.Locale;
@@ -114,8 +112,7 @@ public class WindowEditProject extends Window
                 }
                 else if(!workspace.sessionEnded && workspace.isEditor)
                 {
-                    Mainframe.class.getM
-                    PacketHandler.sendToServer(Tabula.channels, new PacketEditProject(workspace.host, workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, projName, authName, dimW, dimH, scaleX, scaleY, scaleZ));
+                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "editProject", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, projName, authName, dimW, dimH, scaleX, scaleY, scaleZ));
                 }
                 workspace.removeWindow(this, true);
             }

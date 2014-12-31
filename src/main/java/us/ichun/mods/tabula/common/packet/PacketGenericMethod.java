@@ -148,7 +148,11 @@ public class PacketGenericMethod extends AbstractPacket
             {
                 Mainframe.class.getDeclaredMethod(methodName, clzs).invoke(Tabula.proxy.tickHandlerClient.mainframe, args);
             }
-            catch(Exception ignored){}
+            catch(Exception e)
+            {
+                Tabula.console("This shouldn't be happening. Inform the mod author. Error method: " + methodName, true);
+                e.printStackTrace();
+            }
         }
     }
 }
