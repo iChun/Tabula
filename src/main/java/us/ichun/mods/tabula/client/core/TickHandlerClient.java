@@ -42,18 +42,7 @@ public class TickHandlerClient
                 }
                 keyTDown = Keyboard.isKeyDown(Keyboard.KEY_T);
             }
-        }
-    }
 
-    @SubscribeEvent
-    public void onClientTick(TickEvent.ClientTickEvent event)
-    {
-        if(event.phase == TickEvent.Phase.END)
-        {
-            if(mainframe != null)
-            {
-                mainframe.tick();
-            }
             for(int i = ProjectHelper.texturesToClear.size() - 1; i >= 0; i--)
             {
                 Integer id = ProjectHelper.projectTextureIDs.get(ProjectHelper.texturesToClear.get(i));
@@ -68,7 +57,6 @@ public class TickHandlerClient
                 ProjectHelper.projectsToDestroy.get(i).destroy();
                 ProjectHelper.projectsToDestroy.remove(i);
             }
-            Iterator<Map.Entry<String, ProjectInfo>> ite = projectsToUpdate.entrySet().iterator();
             for(Map.Entry<String, ProjectInfo> e : projectsToUpdate.entrySet())
             {
                 ProjectHelper.addProjectToManager(ProjectHelper.createProjectFromJsonHost(e.getKey(), e.getValue().getAsJson()));
@@ -79,6 +67,18 @@ public class TickHandlerClient
             }
             projectsToUpdate.clear();
             projectImagesToUpdate.clear();
+        }
+    }
+
+    @SubscribeEvent
+    public void onClientTick(TickEvent.ClientTickEvent event)
+    {
+        if(event.phase == TickEvent.Phase.END)
+        {
+            if(mainframe != null)
+            {
+                mainframe.tick();
+            }
         }
     }
 

@@ -1,0 +1,154 @@
+package us.ichun.mods.tabula.common.packet;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.network.ByteBufUtils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import ichun.common.core.network.AbstractPacket;
+import ichun.common.core.network.PacketHandler;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import us.ichun.mods.tabula.client.mainframe.Mainframe;
+import us.ichun.mods.tabula.common.Tabula;
+
+public class PacketGenericMethod extends AbstractPacket
+{
+    public String host;
+    public String methodName;
+    public Object[] args;
+
+    public PacketGenericMethod(){}
+
+    public PacketGenericMethod(String host, String methodName, Object...args)
+    {
+        this.host = host;
+        this.methodName = methodName;
+        this.args = args;
+    }
+
+    @Override
+    public void writeTo(ByteBuf buffer, Side side)
+    {
+        ByteBufUtils.writeUTF8String(buffer, host);
+        ByteBufUtils.writeUTF8String(buffer, methodName);
+        buffer.writeInt(args.length);
+        for(int i = 0; i < args.length; i++)
+        {
+            Object arg = args[i];
+            if(arg instanceof Boolean)
+            {
+                buffer.writeByte(0);
+                buffer.writeBoolean((Boolean)arg);
+            }
+            else if(arg instanceof Integer)
+            {
+                buffer.writeByte(1);
+                buffer.writeInt((Integer)arg);
+            }
+            else if(arg instanceof Float)
+            {
+                buffer.writeByte(2);
+                buffer.writeFloat((Float)arg);
+            }
+            else if(arg instanceof Double)
+            {
+                buffer.writeByte(3);
+                buffer.writeDouble((Double)arg);
+            }
+            else if(arg instanceof String)
+            {
+                buffer.writeByte(4);
+                ByteBufUtils.writeUTF8String(buffer, (String)arg);
+            }
+        }
+    }
+
+    @Override
+    public void readFrom(ByteBuf buffer, Side side)
+    {
+        host = ByteBufUtils.readUTF8String(buffer);
+        methodName = ByteBufUtils.readUTF8String(buffer);
+        args = new Object[buffer.readInt()];
+        for(int i = 0; i < args.length; i++)
+        {
+            byte type = buffer.readByte();
+            if(type == 0)
+            {
+                args[i] = buffer.readBoolean();
+            }
+            else if(type == 1)
+            {
+                args[i] = buffer.readInt();
+            }
+            else if(type == 2)
+            {
+                args[i] = buffer.readFloat();
+            }
+            else if(type == 3)
+            {
+                args[i] = buffer.readDouble();
+            }
+            else if(type == 4)
+            {
+                args[i] = ByteBufUtils.readUTF8String(buffer);
+            }
+        }
+    }
+
+    @Override
+    public void execute(Side side, EntityPlayer player)
+    {
+        if(side.isServer())
+        {
+            EntityPlayerMP hoster = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(host);
+            if(hoster != null)
+            {
+                PacketHandler.sendToPlayer(Tabula.channels, this, hoster);
+            }
+        }
+        else
+        {
+            handleClient();
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void handleClient()
+    {
+        if(Tabula.proxy.tickHandlerClient.mainframe != null && Minecraft.getMinecraft().getSession().getUsername().equals(host))
+        {
+            Class[] clzs = new Class[args.length];
+            for(int i = 0; i < args.length; i++)
+            {
+                Object arg = args[i];
+                if(arg instanceof Boolean)
+                {
+                    clzs[i] = boolean.class;
+                }
+                else if(arg instanceof Integer)
+                {
+                    clzs[i] = int.class;
+                }
+                else if(arg instanceof Float)
+                {
+                    clzs[i] = float.class;
+                }
+                else if(arg instanceof Double)
+                {
+                    clzs[i] = double.class;
+                }
+                else if(arg instanceof String)
+                {
+                    clzs[i] = String.class;
+                }
+            }
+            try
+            {
+                Mainframe.class.getDeclaredMethod(methodName, clzs).invoke(Tabula.proxy.tickHandlerClient.mainframe, args);
+            }
+            catch(Exception ignored){}
+        }
+    }
+}

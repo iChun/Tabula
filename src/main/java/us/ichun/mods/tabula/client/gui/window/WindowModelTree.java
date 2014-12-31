@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import ichun.client.render.RendererHelper;
+import ichun.common.core.network.PacketHandler;
 import net.minecraft.util.ResourceLocation;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
@@ -8,6 +9,9 @@ import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButtonTextured;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketCreateCube;
+import us.ichun.mods.tabula.common.packet.PacketCreateGroup;
+import us.ichun.mods.tabula.common.packet.PacketDeleteObject;
 
 public class WindowModelTree extends Window
 {
@@ -45,35 +49,35 @@ public class WindowModelTree extends Window
     {
         if(element.id == 0) //newcube
         {
-            if(workspace.remoteSession)
-            {
-
-            }
-            else
+            if(!workspace.remoteSession)
             {
                 Tabula.proxy.tickHandlerClient.mainframe.createNewCube(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier);
+            }
+            else if(!workspace.sessionEnded && workspace.isEditor)
+            {
+                PacketHandler.sendToServer(Tabula.channels, new PacketCreateCube(workspace.host, workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier));
             }
         }
         else if(element.id == 1) //newgroup
         {
-            if(workspace.remoteSession)
-            {
-
-            }
-            else
+            if(!workspace.remoteSession)
             {
                 Tabula.proxy.tickHandlerClient.mainframe.createNewGroup(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier);
+            }
+            else if(!workspace.sessionEnded && workspace.isEditor)
+            {
+                PacketHandler.sendToServer(Tabula.channels, new PacketCreateGroup(workspace.host, workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier));
             }
         }
         else if(element.id == 2 && !modelList.selectedIdentifier.isEmpty())
         {
-            if(workspace.remoteSession)
-            {
-
-            }
-            else
+            if(!workspace.remoteSession)
             {
                 Tabula.proxy.tickHandlerClient.mainframe.deleteObject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, modelList.selectedIdentifier);
+            }
+            else if(!workspace.sessionEnded && workspace.isEditor)
+            {
+                PacketHandler.sendToServer(Tabula.channels, new PacketDeleteObject(workspace.host, workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, modelList.selectedIdentifier));
             }
         }
         else

@@ -1,10 +1,13 @@
 package us.ichun.mods.tabula.client.gui.window;
 
+import ichun.common.core.network.PacketHandler;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.*;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketCreateNewAnimation;
+import us.ichun.mods.tabula.common.packet.PacketLoadEmptyProject;
 
 public class WindowNewAnimation extends Window
 {
@@ -61,13 +64,13 @@ public class WindowNewAnimation extends Window
                 {
                     animName = "NewAnimation";
                 }
-                if(workspace.remoteSession)
-                {
-                    //TODO remote session
-                }
-                else
+                if(!workspace.remoteSession)
                 {
                     Tabula.proxy.tickHandlerClient.mainframe.createNewAnimation(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animName, loop);
+                }
+                else if(!workspace.sessionEnded && workspace.isEditor)
+                {
+                    PacketHandler.sendToServer(Tabula.channels, new PacketCreateNewAnimation(workspace.host, workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animName, loop));
                 }
                 workspace.removeWindow(this, true);
             }

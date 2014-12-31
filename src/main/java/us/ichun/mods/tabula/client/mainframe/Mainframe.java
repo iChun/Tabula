@@ -3,9 +3,7 @@ package us.ichun.mods.tabula.client.mainframe;
 import com.google.gson.Gson;
 import ichun.common.core.network.PacketHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.apache.commons.lang3.RandomStringUtils;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
@@ -21,7 +19,6 @@ import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
@@ -144,7 +141,7 @@ public class Mainframe
     {
         for(String id : listeners.keySet())
         {
-//            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            //            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             if(id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
                 ProjectHelper.receiveChat(name + ": " + message);
@@ -160,7 +157,7 @@ public class Mainframe
     {
         for(String id : listeners.keySet())
         {
-//            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            //            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             if(id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
                 ProjectHelper.removeProjectFromManager(ident);
@@ -178,7 +175,7 @@ public class Mainframe
         allowEditing = false;
         for(String id : listeners.keySet())
         {
-//            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            //            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             if(id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
                 ProjectHelper.addProjectToManager(ProjectHelper.createProjectFromJsonHost(project.identifier, project.getAsJson()));
@@ -205,10 +202,10 @@ public class Mainframe
             if(mc.currentScreen instanceof GuiWorkspace)
             {
                 GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
-                    if(!workspace.remoteSession && workspace.host != null)
-                    {
-                        PacketHandler.sendToServer(Tabula.channels, new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, project.identifier));
-                    }
+                if(!workspace.remoteSession && workspace.host != null)
+                {
+                    PacketHandler.sendToServer(Tabula.channels, new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, project.identifier));
+                }
             }
         }
         allowEditing = true;
@@ -224,7 +221,7 @@ public class Mainframe
         allowEditing = false;
         for(String id : listeners.keySet())
         {
-//            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
+            //            if(id.toString().replaceAll("-", "").equals("deadbeefdeadbeefdeadbeefdeadbeef") || id.toString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID().replaceAll("-", "")))
             if(id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
                 ProjectHelper.updateProjectTexture(ident, bufferedImage);

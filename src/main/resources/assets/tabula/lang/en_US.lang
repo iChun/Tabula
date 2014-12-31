@@ -20,8 +20,8 @@ window.controls.txMirror=Mirror
 window.controls.txMirrorFull=Mirror Texture
 
 window.newProject.title=New Project
-window.newProject.projName=Project Name
-window.newProject.authName=Author Name
+window.newProject.projIdent=Project Name
+window.newProject.animName=Author Name
 window.newProject.txDimensions=Texture width and height
 window.newProject.projectScale=Project Scale
 

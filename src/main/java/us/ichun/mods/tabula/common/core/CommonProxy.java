@@ -32,7 +32,9 @@ public class CommonProxy
 
         Tabula.channels = ChannelHandler.getChannelHandlers("Tabula", PacketRequestSession.class, PacketBeginSession.class, PacketEndSession.class, PacketAddListener.class, PacketRemoveListener.class,
                 PacketChat.class, PacketChatMessage.class, PacketPingAlive.class, PacketIsEditor.class, PacketRequestHeartbeat.class,
-                PacketHeartbeat.class, PacketProjectFragment.class, PacketCloseProject.class, PacketRequestProject.class, PacketSetCurrentProject.class);
+                PacketHeartbeat.class, PacketProjectFragment.class, PacketCloseProject.class, PacketRequestProject.class, PacketSetCurrentProject.class,
+                PacketUpdateCube.class, PacketCreateCube.class, PacketCreateGroup.class, PacketDeleteObject.class, PacketLoadEmptyProject.class,
+                PacketCreateNewAnimation.class);
     }
 
     public void postInit(){}

@@ -19,8 +19,8 @@ window.controls.txMirror=Spiegeln
 window.controls.txMirrorFull=Textur spiegeln
 
 window.newProject.title=Neues Projekt
-window.newProject.projName=Projektname
-window.newProject.authName=Autorenname
+window.newProject.projIdent=Projektname
+window.newProject.animName=Autorenname
 window.newProject.txDimensions=Texturen-Breite und -Höhe
 
 window.editProject.title=Projekt bearbeiten

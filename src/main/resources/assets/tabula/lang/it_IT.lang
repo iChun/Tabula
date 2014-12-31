@@ -19,8 +19,8 @@ window.controls.txMirror=Specchio
 window.controls.txMirrorFull=Texture a specchio
 
 window.newProject.title=Nuovo progetto
-window.newProject.projName=Nome del progetto
-window.newProject.authName=Nome dell'autore
+window.newProject.projIdent=Nome del progetto
+window.newProject.animName=Nome dell'autore
 window.newProject.txDimensions=Altezza e larghezza delle texture
 
 window.editProject.title=Edit Project

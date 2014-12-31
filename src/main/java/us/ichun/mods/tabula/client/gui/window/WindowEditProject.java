@@ -1,5 +1,6 @@
 package us.ichun.mods.tabula.client.gui.window;
 
+import ichun.common.core.network.PacketHandler;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
@@ -7,7 +8,10 @@ import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementNumberInput;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
+import us.ichun.mods.tabula.client.mainframe.Mainframe;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketEditProject;
+import us.ichun.mods.tabula.common.packet.PacketLoadEmptyProject;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 
 import java.util.Locale;
@@ -20,10 +24,10 @@ public class WindowEditProject extends Window
 
         ProjectInfo project = workspace.projectManager.projects.get(workspace.projectManager.selectedProject);
 
-        ElementTextInput text1 = new ElementTextInput(this, 10, 30, width - 20, 12, 1, "window.newProject.projName");
+        ElementTextInput text1 = new ElementTextInput(this, 10, 30, width - 20, 12, 1, "window.newProject.projIdent");
         text1.textField.setText(project.modelName);
         elements.add(text1);
-        ElementTextInput text2 = new ElementTextInput(this, 10, 65, width - 20, 12, 2, "window.newProject.authName");
+        ElementTextInput text2 = new ElementTextInput(this, 10, 65, width - 20, 12, 2, "window.newProject.animName");
         text2.textField.setText(project.authorName);
         elements.add(text2);
         ElementNumberInput nums = new ElementNumberInput(this, 10, 100, 80, 12, 3, "window.newProject.txDimensions", 2, false, 0, (int)Short.MAX_VALUE);
@@ -45,8 +49,8 @@ public class WindowEditProject extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.projName"), posX + 11, posY + 20, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.authName"), posX + 11, posY + 55, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.projIdent"), posX + 11, posY + 20, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.animName"), posX + 11, posY + 55, Theme.getAsHex(Theme.instance.font), false);
             workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.txDimensions"), posX + 11, posY + 90, Theme.getAsHex(Theme.instance.font), false);
             workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.projectScale"), posX + 11, posY + 125, Theme.getAsHex(Theme.instance.font), false);
         }
@@ -104,13 +108,14 @@ public class WindowEditProject extends Window
                 {
                     return;
                 }
-                if(workspace.remoteSession)
-                {
-                    //TODO remote session
-                }
-                else
+                if(!workspace.remoteSession)
                 {
                     Tabula.proxy.tickHandlerClient.mainframe.editProject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, projName, authName, dimW, dimH, scaleX, scaleY, scaleZ);
+                }
+                else if(!workspace.sessionEnded && workspace.isEditor)
+                {
+                    Mainframe.class.getM
+                    PacketHandler.sendToServer(Tabula.channels, new PacketEditProject(workspace.host, workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, projName, authName, dimW, dimH, scaleX, scaleY, scaleZ));
                 }
                 workspace.removeWindow(this, true);
             }
