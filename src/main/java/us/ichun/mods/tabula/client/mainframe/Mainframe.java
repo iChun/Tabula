@@ -2,6 +2,7 @@ package us.ichun.mods.tabula.client.mainframe;
 
 import com.google.gson.Gson;
 import ichun.common.core.network.PacketHandler;
+import ichun.common.core.util.IOUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
@@ -399,21 +400,52 @@ public class Mainframe
         }
     }
 
-    public void openProject(String projectString, BufferedImage image)
+    public void overrideProject(String projectIdent, String projectJson, BufferedImage image)
     {
-        ProjectInfo project = ((new Gson()).fromJson(projectString, ProjectInfo.class));
+        ProjectInfo project = ((new Gson()).fromJson(projectJson, ProjectInfo.class));
 
         project.repair();
 
-        project.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
+        BufferedImage oriImage = null;
 
-        projects.add(project);
+        boolean flag = true;
+        if(!projectIdent.isEmpty())
+        {
+            for(int i = 0; i < projects.size(); i++)
+            {
+                ProjectInfo proj = projects.get(i);
+                if(proj.identifier.equals(projectIdent))
+                {
+                    oriImage = proj.bufferedTexture;
+                    int txW = project.textureWidth;
+                    int txH = project.textureHeight;
+                    project.inherit(proj);
+                    project.textureWidth = txW;
+                    project.textureHeight = txH;
+                    project.bufferedTexture = image;
+                    projects.remove(i);
+                    projects.add(i, project);
+                    flag = false;
+                    break;
+                }
+            }
+        }
 
-        project.bufferedTexture = image;
+        if(flag)
+        {
+            project.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
+
+            projects.add(project);
+
+            project.bufferedTexture = image;
+        }
 
         streamProject(project);
 
-        streamProjectTexture(project.identifier, project.bufferedTexture);
+        if(!IOUtil.areBufferedImagesEqual(oriImage, project.bufferedTexture))
+        {
+            streamProjectTexture(project.identifier, project.bufferedTexture);
+        }
     }
 
     public void loadTexture(String ident, BufferedImage image, boolean updateDims)
@@ -454,7 +486,7 @@ public class Mainframe
         }
     }
 
-    public void importModel(String ident, ModelInfo model, boolean texture)
+    private void importModel(String ident, ModelInfo model, boolean texture)
     {
         ProjectInfo projectInfo = null;
         if(ident.isEmpty())

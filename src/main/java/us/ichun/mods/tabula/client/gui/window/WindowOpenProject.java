@@ -93,7 +93,7 @@ public class WindowOpenProject extends Window
                         }
                         else
                         {
-                            Tabula.proxy.tickHandlerClient.mainframe.openProject(openingJson, project.bufferedTexture);
+                            Tabula.proxy.tickHandlerClient.mainframe.overrideProject("", openingJson, project.bufferedTexture);
                         }
                     }
                     break;

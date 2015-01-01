@@ -3,6 +3,7 @@ package us.ichun.mods.tabula.client.mainframe.core;
 import com.google.gson.Gson;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ichun.common.core.util.IOUtil;
 import ichun.common.core.util.MD5Checksum;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -200,7 +201,7 @@ public class ProjectHelper
                         {
                             flag = true;
                         }
-                        else if(!areBufferedImagesEqual(projectTextures.get(projectIdentifier), img))
+                        else if(!IOUtil.areBufferedImagesEqual(projectTextures.get(projectIdentifier), img))
                         {
                             flag = true;
                             Integer id = ProjectHelper.projectTextureIDs.get(projectTextures.get(projectIdentifier));
@@ -266,19 +267,5 @@ public class ProjectHelper
     public static void addSystemMessage(String message)
     {
         receiveChat("System: " + message);
-    }
-
-    public static boolean areBufferedImagesEqual(BufferedImage img1, BufferedImage img2) {
-        if (img1.getWidth() == img2.getWidth() && img1.getHeight() == img2.getHeight()) {
-            for (int x = 0; x < img1.getWidth(); x++) {
-                for (int y = 0; y < img1.getHeight(); y++) {
-                    if (img1.getRGB(x, y) != img2.getRGB(x, y))
-                        return false;
-                }
-            }
-        } else {
-            return false;
-        }
-        return true;
     }
 }

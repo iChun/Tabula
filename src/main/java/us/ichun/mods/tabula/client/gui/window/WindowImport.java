@@ -8,6 +8,7 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.module.tabula.client.model.ModelInfo;
 import us.ichun.module.tabula.client.model.ModelList;
+import us.ichun.module.tabula.common.project.ProjectInfo;
 
 public class WindowImport extends Window
 {
@@ -66,13 +67,27 @@ public class WindowImport extends Window
                 ElementListTree.Tree tree = modelList.trees.get(i);
                 if(tree.selected)
                 {
+                    ProjectInfo proj;
+                    if(workspace.projectManager.selectedProject == -1 || newProj)
+                    {
+                        proj = new ProjectInfo(((ModelInfo)tree.attachedObject).modelParent.getClass().getSimpleName(), "Either Mojang or a mod author");
+                        proj.projVersion = ProjectInfo.PROJ_VERSION;
+                        proj.identifier = "";
+                    }
+                    else
+                    {
+                        proj = workspace.projectManager.projects.get(workspace.projectManager.selectedProject);
+                    }
+
+                    proj.importModel(((ModelInfo)tree.attachedObject), texture);
+
                     if(workspace.remoteSession)
                     {
                         //TODO this
                     }
                     else
                     {
-                        Tabula.proxy.tickHandlerClient.mainframe.importModel(workspace.projectManager.selectedProject == -1 || newProj ? "" : workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, (ModelInfo)tree.attachedObject, texture);
+                        Tabula.proxy.tickHandlerClient.mainframe.overrideProject(proj.identifier, proj.getAsJson(), proj.bufferedTexture);
                     }
                     found = true;
                     break;
