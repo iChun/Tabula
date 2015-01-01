@@ -32,6 +32,8 @@ public class TileEntityTabulaRasa extends TileEntity
     public boolean needTextureUpdate;
     public boolean needProjectUpdate;
 
+    public int age;
+
     public TileEntityTabulaRasa()
     {
         host = "";
@@ -42,6 +44,7 @@ public class TileEntityTabulaRasa extends TileEntity
     @Override
     public void updateEntity()
     {
+        age++;
         if(!host.isEmpty())
         {
             if(!worldObj.isRemote)

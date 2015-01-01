@@ -11,7 +11,7 @@ public class WindowCredits extends Window
 {
     public ElementTextWrapper textHolder;
     private String[] creds = new String[]{
-            Tabula.version, "iChun", "mr_hazard", "heldplayer, Vswe, bombmask", "Kihira, Dizkonnekted, Dunkleosteus, Zorn_Taov"
+            Tabula.version, "iChun", "mr_hazard", "heldplayer, Vswe, bombmask", "Kihira, Dizkonnekted, Dunkleosteus, Zorn_Taov, OndraSter, K-4U, Horfius, GlitchPulse"
     };
 
     public WindowCredits(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)

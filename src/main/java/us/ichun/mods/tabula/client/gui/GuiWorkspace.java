@@ -136,6 +136,8 @@ public class GuiWorkspace extends GuiScreen
 
     public boolean wantToExit;
 
+    public boolean openNextNewProject;
+
     public static final int VARIABLE_LEVEL = 4;
     public static final int TOP_DOCK_HEIGHT = 19;
 
@@ -1750,11 +1752,14 @@ public class GuiWorkspace extends GuiScreen
         Minecraft.getMinecraft().gameSettings.guiScale = oriScale;
         if(!remoteSession)
         {
-            if(host != null)
+            if(host != null && !sessionEnded)
             {
                 PacketHandler.sendToServer(Tabula.channels, new PacketEndSession(host, hostX, hostY, hostZ, false));
             }
-            Tabula.proxy.tickHandlerClient.mainframe.shutdown();
+            if(init)
+            {
+                Tabula.proxy.tickHandlerClient.mainframe.shutdown();
+            }
         }
         else
         {

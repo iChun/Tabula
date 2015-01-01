@@ -147,6 +147,7 @@ public class WindowProjectSelection extends WindowTopDock
 
     public void updateProject(ProjectInfo info)
     {
+        boolean updateModels = false;
         boolean projExisted = false;
         for(int i = 0; i < projects.size(); i++)
         {
@@ -161,6 +162,10 @@ public class WindowProjectSelection extends WindowTopDock
                 if(i != selectedProject)
                 {
                     ((ElementProjectTab)elements.get(i)).changed = true;
+                }
+                else
+                {
+                    updateModels = true;
                 }
                 for(Animation anim : info1.anims)
                 {
@@ -190,10 +195,17 @@ public class WindowProjectSelection extends WindowTopDock
             info.lastAutosave = workspace.liveTime;
             projects.add(info);
             elements.add(new ElementProjectTab(this, 0, 0, 10, 10, elements.size(), info));
-            changeProject(projects.size() - 1);
+            if(projects.size() == 1 || workspace.openNextNewProject)
+            {
+                workspace.openNextNewProject = false;
+                changeProject(projects.size() - 1);
+            }
         }
 
-        updateModelTree(info);
+        if(updateModels)
+        {
+            updateModelTree(info);
+        }
 
         info.initClient();
 

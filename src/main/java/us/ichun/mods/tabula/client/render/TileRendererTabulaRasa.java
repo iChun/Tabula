@@ -71,11 +71,11 @@ public class TileRendererTabulaRasa extends TileEntitySpecialRenderer
                     scale = 0.3F * 16F / size;
                 }
 
-                GL11.glRotatef((tr.getWorldObj().getWorldTime() + f) / 2F, 0.0F, 1.0F, 0.0F);
+                GL11.glRotatef((tr.age + f) / 2F, 0.0F, 1.0F, 0.0F);
+
+                GL11.glTranslatef(0.0F, -0.6F + (-0.075F * (float)Math.sin((tr.age + f) / 10F)), 0.0F);
 
                 GL11.glScalef(scale, scale, scale);
-
-                GL11.glTranslatef(0.0F, -2.4F + (-0.2F * (float)Math.sin((tr.getWorldObj().getWorldTime() + f) / 10F)), 0.0F);
 
                 GL11.glScaled(1D / info.scale[0], 1D / info.scale[1], 1D / info.scale[2]);
 

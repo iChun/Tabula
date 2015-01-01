@@ -1380,8 +1380,9 @@ public class Mainframe
             if(!id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
                 sendChat("System", StatCollector.translateToLocalFormatted("system.joinedSession", id));
-                for(ProjectInfo proj : projects)
+                for(int i = 0; i < projects.size(); i++)
                 {
+                    ProjectInfo proj = projects.get(i);
                     streamProjectToListener(id, proj, false);
                     streamProjectTextureToListener(id, proj.identifier, proj.bufferedTexture, false);
                 }
@@ -1393,8 +1394,11 @@ public class Mainframe
             if(!id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
                 sendChat("System", StatCollector.translateToLocalFormatted("system.isEditor", id));
-                PacketHandler.sendToServer(Tabula.channels, new PacketIsEditor(Minecraft.getMinecraft().getSession().getUsername(), id, true));
             }
+        }
+        if(editors.contains(id) && !id.equals(Minecraft.getMinecraft().getSession().getUsername()))
+        {
+            PacketHandler.sendToServer(Tabula.channels, new PacketIsEditor(Minecraft.getMinecraft().getSession().getUsername(), id, true));
         }
     }
 
@@ -1571,9 +1575,9 @@ public class Mainframe
                     if(bytes.length > projectSize)
                     {
                         byte[] imgBytes = new byte[bytes.length - projectSize];
-                        System.arraycopy(bytes, 0, imgBytes, projectSize, bytes.length);
+                        System.arraycopy(bytes, projectSize, imgBytes, 0, imgBytes.length);
 
-                        InputStream is = new ByteArrayInputStream(bytes);
+                        InputStream is = new ByteArrayInputStream(imgBytes);
                         projImage = ImageIO.read(is);
                     }
 

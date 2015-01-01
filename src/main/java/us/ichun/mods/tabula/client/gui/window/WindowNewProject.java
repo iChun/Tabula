@@ -94,6 +94,7 @@ public class WindowNewProject extends Window
             {
                 authName = "Undefined";
             }
+            workspace.openNextNewProject = true;
             if(!workspace.remoteSession)
             {
                 Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject(projName, authName, dimW, dimH, scaleX, scaleY, scaleZ);

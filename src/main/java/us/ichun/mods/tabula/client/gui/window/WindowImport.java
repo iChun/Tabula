@@ -76,6 +76,7 @@ public class WindowImport extends Window
                         proj = new ProjectInfo(((ModelInfo)tree.attachedObject).modelParent.getClass().getSimpleName(), "Either Mojang or a mod author");
                         proj.projVersion = ProjectInfo.PROJ_VERSION;
                         proj.identifier = "";
+                        workspace.openNextNewProject = true;
                     }
                     else
                     {

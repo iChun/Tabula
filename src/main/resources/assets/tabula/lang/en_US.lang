@@ -166,8 +166,8 @@ system.notEditor=%s is not an editor.
 system.cannotRemoveHost=%s is host and cannot be removed as an editor.
 system.hosting=You are hosting this Tabula session.
 system.hostingOther=%s is hosting this Tabula session.
-system.cannotReachHost=Host is unavailable. They might have crashed or disconnected. Consider saving the models for them before exiting.
-system.sessionEnded=Host has ended session.
+system.cannotReachHost=%s (host) is unavailable. They might have crashed or disconnected. Consider saving the models for them before exiting.
+system.sessionEnded=%s (host) has ended session.
 
 tabula.config.prop.favTheme.name=Favorite Theme
 tabula.config.prop.renderRotationPoint.name=Render Model Rotation Point

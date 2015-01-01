@@ -88,6 +88,7 @@ public class WindowOpenProject extends Window
 
                         openingFile = (File)tree.attachedObject;
                         openingJson = project.getAsJson();
+                        workspace.openNextNewProject = true;
                         if(!workspace.remoteSession)
                         {
                             Tabula.proxy.tickHandlerClient.mainframe.overrideProject("", openingJson, project.bufferedTexture);

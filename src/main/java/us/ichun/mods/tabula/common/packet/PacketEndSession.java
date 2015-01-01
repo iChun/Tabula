@@ -79,9 +79,9 @@ public class PacketEndSession extends AbstractPacket
     @SideOnly(Side.CLIENT)
     public void handleClient()
     {
-        ProjectHelper.addSystemMessage(StatCollector.translateToLocal(crashed ? "system.cannotReachHost" : "system.sessionEnded"));
+        ProjectHelper.addSystemMessage(StatCollector.translateToLocalFormatted(crashed ? "system.cannotReachHost" : "system.sessionEnded", host));
         Minecraft mc = Minecraft.getMinecraft();
-        if(mc.currentScreen instanceof GuiWorkspace)
+        if(mc.currentScreen instanceof GuiWorkspace && ((GuiWorkspace)mc.currentScreen).host.equals(host))
         {
             ((GuiWorkspace)mc.currentScreen).sessionEnded = true;
         }
