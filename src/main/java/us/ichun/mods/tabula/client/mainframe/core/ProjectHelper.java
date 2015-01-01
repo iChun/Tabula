@@ -3,26 +3,26 @@ package us.ichun.mods.tabula.client.mainframe.core;
 import com.google.gson.Gson;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ichun.common.core.network.PacketHandler;
 import ichun.common.core.util.IOUtil;
 import ichun.common.core.util.MD5Checksum;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.lang3.ArrayUtils;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.client.gui.window.WindowOpenProject;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketProjectFragmentFromClient;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class ProjectHelper
@@ -241,6 +241,11 @@ public class ProjectHelper
                 catch(IOException ignored)
                 {
                 }
+                catch(Exception e)
+                {
+                    Tabula.console("Error reading project sent through server!", true);
+                    e.printStackTrace();
+                }
 
                 map.remove(projectIdentifier);
             }
@@ -267,5 +272,52 @@ public class ProjectHelper
     public static void addSystemMessage(String message)
     {
         receiveChat("System: " + message);
+    }
+
+    public static void sendProjectToServer(String host, String ident, ProjectInfo proj)
+    {
+        byte[] projBytes = proj.getAsJson().getBytes();
+        byte[] imgBytes = new byte[0];
+        if(proj.bufferedTexture != null)
+        {
+            try
+            {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(proj.bufferedTexture, "png", baos);
+                imgBytes = baos.toByteArray();
+            }
+            catch(IOException ignored){}
+        }
+
+        byte[] collective = new byte[projBytes.length + imgBytes.length];
+
+        System.arraycopy(projBytes, 0, collective, 0, projBytes.length);
+        System.arraycopy(imgBytes, 0, collective, projBytes.length, imgBytes.length);
+
+        final int maxFile = 31000; //smaller packet cause I'm worried about too much info carried over from the bloat vs hat info.
+
+        int fileSize = collective.length;
+
+        int packetsToSend = (int)Math.ceil((float)fileSize / (float)maxFile);
+
+        int packetCount = 0;
+        int offset = 0;
+        while(fileSize > 0)
+        {
+            byte[] fileBytes = new byte[fileSize > maxFile ? maxFile : fileSize];
+            int index = 0;
+            while(index < fileBytes.length) //from index 0 to 31999
+            {
+                fileBytes[index] = collective[index + offset];
+                index++;
+            }
+
+            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragmentFromClient(host, ident, projBytes.length, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
+
+            packetCount++;
+            fileSize -= 32000;
+            offset += index;
+        }
+
     }
 }

@@ -7,6 +7,7 @@ import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
+import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.module.tabula.client.formats.ImportList;
 import us.ichun.module.tabula.common.project.ProjectInfo;
@@ -65,7 +66,7 @@ public class WindowOpenProject extends Window
         {
             workspace.removeWindow(this, true);
         }
-        if((element.id == 1 || element.id == 3) && openingFile == null)
+        if((element.id == 1 || element.id == 3) && openingFile == null && workspace.isEditor)
         {
             for(int i = 0; i < modelList.trees.size(); i++)
             {
@@ -87,13 +88,13 @@ public class WindowOpenProject extends Window
 
                         openingFile = (File)tree.attachedObject;
                         openingJson = project.getAsJson();
-                        if(workspace.remoteSession)
-                        {
-                            //TODO this
-                        }
-                        else
+                        if(!workspace.remoteSession)
                         {
                             Tabula.proxy.tickHandlerClient.mainframe.overrideProject("", openingJson, project.bufferedTexture);
+                        }
+                        else if(!workspace.sessionEnded)
+                        {
+                            ProjectHelper.sendProjectToServer(workspace.host, "", project);
                         }
                     }
                     break;

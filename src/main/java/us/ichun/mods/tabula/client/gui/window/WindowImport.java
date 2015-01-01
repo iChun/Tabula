@@ -1,11 +1,14 @@
 package us.ichun.mods.tabula.client.gui.window;
 
+import ichun.common.core.network.PacketHandler;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
+import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketProjectFragmentFromClient;
 import us.ichun.module.tabula.client.model.ModelInfo;
 import us.ichun.module.tabula.client.model.ModelList;
 import us.ichun.module.tabula.common.project.ProjectInfo;
@@ -81,13 +84,13 @@ public class WindowImport extends Window
 
                     proj.importModel(((ModelInfo)tree.attachedObject), texture);
 
-                    if(workspace.remoteSession)
-                    {
-                        //TODO this
-                    }
-                    else
+                    if(!workspace.remoteSession)
                     {
                         Tabula.proxy.tickHandlerClient.mainframe.overrideProject(proj.identifier, proj.getAsJson(), proj.bufferedTexture);
+                    }
+                    else if(!workspace.sessionEnded && workspace.isEditor)
+                    {
+                        ProjectHelper.sendProjectToServer(workspace.host, proj.identifier, proj);
                     }
                     found = true;
                     break;

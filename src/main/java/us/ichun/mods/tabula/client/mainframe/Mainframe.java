@@ -20,8 +20,10 @@ import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 //This is the class that holds all the info of the workspace and handles UI input from everyone.
@@ -36,6 +38,8 @@ public class Mainframe
     public boolean allowEditing;
 
     public ArrayList<ProjectInfo> projects = new ArrayList<ProjectInfo>(); //each workspace tab should be a project.
+
+    public HashMap<String, ArrayList<byte[]>> projectParts = new HashMap<String, ArrayList<byte[]>>();
 
     public void Mainframe()
     {
@@ -400,7 +404,7 @@ public class Mainframe
         }
     }
 
-    public void overrideProject(String projectIdent, String projectJson, BufferedImage image)
+    public void overrideProject(String projectIdent, String projectJson, BufferedImage image) // replaces an entire project with this, or creates a new one.
     {
         ProjectInfo project = ((new Gson()).fromJson(projectJson, ProjectInfo.class));
 
@@ -1506,5 +1510,85 @@ public class Mainframe
         {
             Tabula.proxy.tickHandlerClient.mainframe = null;
         }
+    }
+
+    public void receiveProjectData(String projectIdentifier, int projectSize, byte packetTotal, byte packetNumber, byte[] data) // return true if only the project data is different?
+    {
+            ArrayList<byte[]> byteArray = projectParts.get(projectIdentifier);
+            if(byteArray == null)
+            {
+                byteArray = new ArrayList<byte[]>();
+
+                projectParts.put(projectIdentifier, byteArray);
+
+                for(int i = 0; i < packetTotal; i++)
+                {
+                    byteArray.add(new byte[0]);
+                }
+            }
+
+            byteArray.set(packetNumber, data);
+
+            boolean hasAllInfo = true;
+
+            for(int i = 0; i < byteArray.size(); i++)
+            {
+                byte[] byteList = byteArray.get(i);
+                if(byteList.length == 0)
+                {
+                    hasAllInfo = false;
+                }
+            }
+
+            if(hasAllInfo)
+            {
+                int size = 0;
+
+                for(int i = 0; i < byteArray.size(); i++)
+                {
+                    size += byteArray.get(i).length;
+                }
+
+                byte[] bytes = new byte[size];
+
+                int index = 0;
+
+                for(int i = 0; i < byteArray.size(); i++)
+                {
+                    System.arraycopy(byteArray.get(i), 0, bytes, index, byteArray.get(i).length);
+                    index += byteArray.get(i).length;
+                }
+
+                try
+                {
+                    byte[] projBytes = new byte[projectSize];
+                    System.arraycopy(bytes, 0, projBytes, 0, projectSize);
+
+                    String json = new String(projBytes, "UTF-8");
+                    ProjectInfo proj = ProjectHelper.createProjectFromJson(projectIdentifier, json);
+
+                    BufferedImage projImage = null;
+                    if(bytes.length > projectSize)
+                    {
+                        byte[] imgBytes = new byte[bytes.length - projectSize];
+                        System.arraycopy(bytes, 0, imgBytes, projectSize, bytes.length);
+
+                        InputStream is = new ByteArrayInputStream(bytes);
+                        projImage = ImageIO.read(is);
+                    }
+
+                    overrideProject(projectIdentifier, proj.getAsJson(), projImage);
+                }
+                catch(IOException ignored)
+                {
+                }
+                catch(Exception e)
+                {
+                    Tabula.console("Error reading project sent from client!", true);
+                    e.printStackTrace();
+                }
+
+                projectParts.remove(projectIdentifier);
+            }
     }
 }
