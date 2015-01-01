@@ -13,6 +13,7 @@ import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.client.gui.window.WindowOpenProject;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketProjectFragment;
 import us.ichun.mods.tabula.common.packet.PacketProjectFragmentFromClient;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 
@@ -126,7 +127,7 @@ public class ProjectHelper
         }
     }
 
-    public static boolean receiveProjectData(String projectIdentifier, boolean isTexture, byte packetTotal, byte packetNumber, byte[] data) // return true if only the project data is different?
+    public static boolean receiveProjectData(boolean fromClient, String projectIdentifier, boolean isTexture, boolean updateDims, byte packetTotal, byte packetNumber, byte[] data) // return true if only the project data is different?
     {
         boolean flag = false;
         if(packetNumber == -1)
@@ -141,7 +142,7 @@ public class ProjectHelper
                 }
             }
             projectTextures.remove(projectIdentifier);
-            Tabula.proxy.updateProject(projectIdentifier, true);
+            Tabula.proxy.updateProject(fromClient, projectIdentifier, true, updateDims);
         }
         else
         {
@@ -215,7 +216,7 @@ public class ProjectHelper
                         {
                             projects.get(projectIdentifier).bufferedTexture = img;
                         }
-                        Tabula.proxy.updateProject(projectIdentifier, true);
+                        Tabula.proxy.updateProject(fromClient, projectIdentifier, true, updateDims);
                     }
                     else
                     {
@@ -235,7 +236,7 @@ public class ProjectHelper
                         }
                         projects.put(projectIdentifier, proj);
                         proj.bufferedTexture = projectTextures.get(projectIdentifier);
-                        Tabula.proxy.updateProject(projectIdentifier, false);
+                        Tabula.proxy.updateProject(fromClient, projectIdentifier, false, updateDims);
                     }
                 }
                 catch(IOException ignored)
@@ -318,6 +319,56 @@ public class ProjectHelper
             fileSize -= 32000;
             offset += index;
         }
+    }
 
+    public static void sendTextureToServer(String host, String projectIdent, boolean updateDims, BufferedImage image)
+    {
+        byte[] data = null;
+
+        try
+        {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", baos);
+            data = baos.toByteArray();
+        }
+        catch(IOException e){return;}
+
+        final int maxFile = 31000; //smaller packet cause I'm worried about too much info carried over from the bloat vs hat info.
+
+        int fileSize = data.length;
+
+        int packetsToSend = (int)Math.ceil((float)fileSize / (float)maxFile);
+
+        int packetCount = 0;
+        int offset = 0;
+        while(fileSize > 0)
+        {
+            byte[] fileBytes = new byte[fileSize > maxFile ? maxFile : fileSize];
+            int index = 0;
+            while(index < fileBytes.length) //from index 0 to 31999
+            {
+                fileBytes[index] = data[index + offset];
+                index++;
+            }
+
+            int x = -1;
+            int y = -1;
+            int z = -1;
+
+            Minecraft mc = Minecraft.getMinecraft();
+            if(mc.currentScreen instanceof GuiWorkspace)
+            {
+                GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
+                x = workspace.hostX;
+                y = workspace.hostY;
+                z = workspace.hostZ;
+            }
+
+            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, false, host, Minecraft.getMinecraft().getSession().getUsername(), projectIdent, true, updateDims, false, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
+
+            packetCount++;
+            fileSize -= 32000;
+            offset += index;
+        }
     }
 }

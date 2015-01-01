@@ -278,7 +278,7 @@ public class Mainframe
                 z = workspace.hostZ;
             }
 
-            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, false, Minecraft.getMinecraft().getSession().getUsername(), id, ident, true, currentProj, 1, -1, 0, new byte[0]));
+            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, false, Minecraft.getMinecraft().getSession().getUsername(), id, ident, true, false, currentProj, 1, -1, 0, new byte[0]));
         }
         else
         {
@@ -325,7 +325,7 @@ public class Mainframe
                 z = workspace.hostZ;
             }
 
-            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, false, Minecraft.getMinecraft().getSession().getUsername(), id, projectIdent, isTexture, isCurrentProject, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
+            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, false, Minecraft.getMinecraft().getSession().getUsername(), id, projectIdent, isTexture, false, isCurrentProject, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
 
             packetCount++;
             fileSize -= 32000;

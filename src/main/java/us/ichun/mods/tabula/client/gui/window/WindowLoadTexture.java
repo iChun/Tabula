@@ -7,6 +7,7 @@ import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
+import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 
@@ -78,26 +79,27 @@ public class WindowLoadTexture extends Window
                     ElementListTree.Tree tree = modelList.trees.get(i);
                     if(tree.selected)
                     {
-                        if(workspace.remoteSession)
-                        {
-                            //TODO this
-                        }
-                        else
-                        {
-                            info.textureFile = (File)tree.attachedObject;
-                            info.ignoreNextImage = true;
-                            info.textureFileMd5 = MD5Checksum.getMD5Checksum(info.textureFile);
-                            workspace.windowTexture.listenTime = 0;
+                        info.textureFile = (File)tree.attachedObject;
+                        info.ignoreNextImage = true;
+                        info.textureFileMd5 = MD5Checksum.getMD5Checksum(info.textureFile);
+                        workspace.windowTexture.listenTime = 0;
 
-                            BufferedImage image = null;
-                            try
-                            {
-                                image = ImageIO.read(info.textureFile);
-                            }
-                            catch(IOException e)
-                            {
-                            }
+                        BufferedImage image = null;
+                        try
+                        {
+                            image = ImageIO.read(info.textureFile);
+                        }
+                        catch(IOException e)
+                        {
+                        }
+
+                        if(!workspace.remoteSession)
+                        {
                             Tabula.proxy.tickHandlerClient.mainframe.loadTexture(info.identifier, image, texture);
+                        }
+                        else if(!workspace.sessionEnded && workspace.isEditor)
+                        {
+                            ProjectHelper.sendTextureToServer(workspace.host, info.identifier, texture, image);
                         }
                         found = true;
                         break;

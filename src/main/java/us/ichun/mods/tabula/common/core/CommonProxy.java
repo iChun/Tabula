@@ -33,7 +33,7 @@ public class CommonProxy
         Tabula.channels = ChannelHandler.getChannelHandlers("Tabula", PacketRequestSession.class, PacketBeginSession.class, PacketEndSession.class, PacketAddListener.class, PacketRemoveListener.class,
                 PacketChat.class, PacketChatMessage.class, PacketPingAlive.class, PacketIsEditor.class, PacketRequestHeartbeat.class,
                 PacketHeartbeat.class, PacketProjectFragment.class, PacketCloseProject.class, PacketRequestProject.class, PacketSetCurrentProject.class,
-                PacketGenericMethod.class, PacketProjectFragmentFromClient.class);
+                PacketGenericMethod.class, PacketProjectFragmentFromClient.class, PacketClearTexture.class);
     }
 
     public void postInit(){}
@@ -43,5 +43,5 @@ public class CommonProxy
         GameRegistry.registerTileEntity(clz, id);
     }
 
-    public void updateProject(String ident, boolean isTexture){}
+    public void updateProject(boolean fromClient, String ident, boolean isTexture, boolean updateDims){}
 }

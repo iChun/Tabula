@@ -343,7 +343,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void updateProject(String ident, boolean isTexture)
+    public void updateProject(boolean fromClient, String ident, boolean isTexture, boolean updateDims)
     {
         if(tickHandlerClient.mainframe == null)
         {
@@ -355,6 +355,10 @@ public class ClientProxy extends CommonProxy
             {
                 Tabula.proxy.tickHandlerClient.projectsToUpdate.put(ident, ProjectHelper.projects.get(ident));
             }
+        }
+        else if(fromClient && isTexture)
+        {
+            Tabula.proxy.tickHandlerClient.mainframe.loadTexture(ident, ProjectHelper.projectTextures.get(ident), updateDims);
         }
     }
 }

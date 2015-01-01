@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import ichun.client.render.RendererHelper;
+import ichun.common.core.network.PacketHandler;
 import ichun.common.core.util.MD5Checksum;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureUtil;
@@ -13,7 +14,9 @@ import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButtonTextured;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
+import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketClearTexture;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.module.tabula.common.project.components.CubeInfo;
 
@@ -189,13 +192,14 @@ public class WindowTexture extends Window
                         catch(IOException e)
                         {
                         }
-                        if(workspace.remoteSession)
-                        {
 
-                        }
-                        else
+                        if(!workspace.remoteSession)
                         {
                             Tabula.proxy.tickHandlerClient.mainframe.loadTexture(info.identifier, image, false);
+                        }
+                        else if(!workspace.sessionEnded && workspace.isEditor)
+                        {
+                            ProjectHelper.sendTextureToServer(workspace.host, info.identifier, false, image);
                         }
                     }
                 }
@@ -217,13 +221,13 @@ public class WindowTexture extends Window
                 ProjectInfo info = workspace.projectManager.projects.get(workspace.projectManager.selectedProject);
                 if(info.bufferedTexture != null)
                 {
-                    if(workspace.remoteSession)
-                    {
-
-                    }
-                    else
+                    if(!workspace.remoteSession)
                     {
                         Tabula.proxy.tickHandlerClient.mainframe.clearTexture(info.identifier);
+                    }
+                    else if(!workspace.sessionEnded && workspace.isEditor)
+                    {
+                        PacketHandler.sendToServer(Tabula.channels, new PacketClearTexture(workspace.host, info.identifier));
                     }
                 }
             }

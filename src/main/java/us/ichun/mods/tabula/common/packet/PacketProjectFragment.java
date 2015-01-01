@@ -23,6 +23,7 @@ public class PacketProjectFragment extends AbstractPacket
     public String listener;
     public String projectIdentifier;
     public boolean isTexture;
+    public boolean updateDims;
     public boolean isCurrentProject;
     public byte packetTotal;
     public byte packetNumber;
@@ -31,7 +32,7 @@ public class PacketProjectFragment extends AbstractPacket
 
     public PacketProjectFragment(){}
 
-    public PacketProjectFragment(int i, int j, int k, boolean toHoster, String hoster, String listen, String name, boolean isTex, boolean isCur, int pktTotal, int pktNum, int fSize, byte[] dataArray)
+    public PacketProjectFragment(int i, int j, int k, boolean toHoster, String hoster, String listen, String name, boolean isTex, boolean dims, boolean isCur, int pktTotal, int pktNum, int fSize, byte[] dataArray)
     {
         x = i;
         y = j;
@@ -41,6 +42,7 @@ public class PacketProjectFragment extends AbstractPacket
         listener = listen;
         projectIdentifier = name;
         isTexture = isTex;
+        updateDims = dims;
         isCurrentProject = isCur;
         packetTotal = (byte)pktTotal;
         packetNumber = (byte)pktNum;
@@ -59,6 +61,7 @@ public class PacketProjectFragment extends AbstractPacket
         ByteBufUtils.writeUTF8String(buffer, listener);
         ByteBufUtils.writeUTF8String(buffer, projectIdentifier);
         buffer.writeBoolean(isTexture);
+        buffer.writeBoolean(updateDims);
         buffer.writeBoolean(isCurrentProject);
         buffer.writeByte(packetTotal);
         buffer.writeByte(packetNumber);
@@ -77,6 +80,7 @@ public class PacketProjectFragment extends AbstractPacket
         listener = ByteBufUtils.readUTF8String(buffer);
         projectIdentifier = ByteBufUtils.readUTF8String(buffer);
         isTexture = buffer.readBoolean();
+        updateDims = buffer.readBoolean();
         isCurrentProject = buffer.readBoolean();
         packetTotal = buffer.readByte();
         packetNumber = buffer.readByte();
@@ -94,7 +98,7 @@ public class PacketProjectFragment extends AbstractPacket
         {
             if(!toHost)
             {
-                boolean changed = ProjectHelper.receiveProjectData(projectIdentifier, isTexture, packetTotal, packetNumber, data);
+                boolean changed = ProjectHelper.receiveProjectData(false, projectIdentifier, isTexture, updateDims, packetTotal, packetNumber, data);
 
                 EntityPlayerMP listening = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(listener);
                 if(listening != null)
@@ -134,7 +138,7 @@ public class PacketProjectFragment extends AbstractPacket
         }
         else
         {
-            ProjectHelper.receiveProjectData(projectIdentifier, isTexture, packetTotal, packetNumber, data);
+            ProjectHelper.receiveProjectData(!host.equals(listener), projectIdentifier, isTexture, updateDims, packetTotal, packetNumber, data);
         }
     }
 }
