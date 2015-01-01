@@ -422,13 +422,13 @@ public class WindowControls extends Window
                     }
                 }
 
-                if(workspace.remoteSession)
-                {
-
-                }
-                else
+                if(!workspace.remoteSession)
                 {
                     Tabula.proxy.tickHandlerClient.mainframe.updateGroup(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, info.identifier, name, pos, offset, scale, txOffset, rot, mirror, mcScale, opacity);
+                }
+                else if(!workspace.sessionEnded && workspace.isEditor)
+                {
+                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "updateGroup", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, info.identifier, name, pos, offset, scale, txOffset, rot, mirror, mcScale, opacity));
                 }
             }
         }

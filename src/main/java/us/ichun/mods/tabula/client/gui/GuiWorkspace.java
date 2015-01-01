@@ -32,6 +32,7 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementWindow;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketEndSession;
+import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 import us.ichun.mods.tabula.common.packet.PacketRemoveListener;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.module.tabula.common.project.components.Animation;
@@ -1184,24 +1185,24 @@ public class GuiWorkspace extends GuiScreen
         {
             Gson gson = new Gson();
             String s = gson.toJson(cubeCopied);
-            if(this.remoteSession)
-            {
-
-            }
-            else
+            if(!remoteSession)
             {
                 Tabula.proxy.tickHandlerClient.mainframe.createNewCube(this.projectManager.projects.get(this.projectManager.selectedProject).identifier, s, inPlace, withChildren);
+            }
+            else if(!sessionEnded && isEditor)
+            {
+                PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(host, "createNewCube", this.projectManager.projects.get(this.projectManager.selectedProject).identifier, s, inPlace, withChildren));
             }
         }
         else if(cubeCopied instanceof CubeGroup)
         {
-            if(this.remoteSession)
+            if(!remoteSession)
             {
-
+                Tabula.proxy.tickHandlerClient.mainframe.copyGroupTo(this.projectManager.projects.get(this.projectManager.selectedProject).identifier, ((CubeGroup)cubeCopied).identifier, inPlace);
             }
             else
             {
-                Tabula.proxy.tickHandlerClient.mainframe.copyGroupTo(this.projectManager.projects.get(this.projectManager.selectedProject).identifier, ((CubeGroup)cubeCopied).identifier, inPlace);
+                PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(host, "copyGroupTo", this.projectManager.projects.get(this.projectManager.selectedProject).identifier, ((CubeGroup)cubeCopied).identifier, inPlace));
             }
         }
     }
@@ -1244,13 +1245,13 @@ public class GuiWorkspace extends GuiScreen
     {
         if(!projectManager.projects.isEmpty())
         {
-            if(remoteSession)
-            {
-                //TODO This
-            }
-            else
+            if(!remoteSession)
             {
                 Tabula.proxy.tickHandlerClient.mainframe.switchState(projectManager.projects.get(projectManager.selectedProject).identifier, undo);
+            }
+            else if(!sessionEnded && isEditor)
+            {
+                PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(host, "switchState", projectManager.projects.get(projectManager.selectedProject).identifier, undo));
             }
         }
     }

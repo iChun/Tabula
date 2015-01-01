@@ -62,6 +62,10 @@ public class PacketGenericMethod extends AbstractPacket
                 buffer.writeByte(4);
                 ByteBufUtils.writeUTF8String(buffer, (String)arg);
             }
+            else
+            {
+                throw new RuntimeException("Unsupported Arg Type!");
+            }
         }
     }
 
