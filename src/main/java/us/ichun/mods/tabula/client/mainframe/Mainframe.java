@@ -1512,7 +1512,7 @@ public class Mainframe
         }
     }
 
-    public void receiveProjectData(String projectIdentifier, int projectSize, byte packetTotal, byte packetNumber, byte[] data) // return true if only the project data is different?
+    public void receiveProjectData(String projectIdentifier, boolean isImport, int projectSize, byte packetTotal, byte packetNumber, byte[] data) // return true if only the project data is different?
     {
             ArrayList<byte[]> byteArray = projectParts.get(projectIdentifier);
             if(byteArray == null)
@@ -1577,7 +1577,14 @@ public class Mainframe
                         projImage = ImageIO.read(is);
                     }
 
-                    overrideProject(projectIdentifier, proj.getAsJson(), projImage);
+                    if(isImport)
+                    {
+                        importProject(projectIdentifier, proj.getAsJson(), projImage);
+                    }
+                    else
+                    {
+                        overrideProject(projectIdentifier, proj.getAsJson(), projImage);
+                    }
                 }
                 catch(IOException ignored)
                 {

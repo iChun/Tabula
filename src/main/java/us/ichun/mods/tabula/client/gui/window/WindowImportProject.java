@@ -6,6 +6,7 @@ import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
+import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.module.tabula.client.formats.ImportList;
 import us.ichun.module.tabula.common.project.ProjectInfo;
@@ -91,15 +92,15 @@ public class WindowImportProject extends Window
                         else
                         {
                             openingFile = (File)tree.attachedObject;
-                            if(workspace.remoteSession)
-                            {
-                                //TODO this
-                            }
-                            else
+                            if(!workspace.remoteSession)
                             {
                                 Tabula.proxy.tickHandlerClient.mainframe.importProject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, project.getAsJson(), texture ? project.bufferedTexture : null);
-                                workspace.removeWindow(this, true);
                             }
+                            else if(!workspace.sessionEnded && workspace.isEditor)
+                            {
+                                ProjectHelper.sendProjectToServer(workspace.host, workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, project, true);
+                            }
+                            workspace.removeWindow(this, true);
                         }
                         break;
                     }

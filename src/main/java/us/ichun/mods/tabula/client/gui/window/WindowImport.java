@@ -90,7 +90,7 @@ public class WindowImport extends Window
                     }
                     else if(!workspace.sessionEnded && workspace.isEditor)
                     {
-                        ProjectHelper.sendProjectToServer(workspace.host, proj.identifier, proj);
+                        ProjectHelper.sendProjectToServer(workspace.host, proj.identifier, proj, false);
                     }
                     found = true;
                     break;

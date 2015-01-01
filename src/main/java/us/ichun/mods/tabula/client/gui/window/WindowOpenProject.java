@@ -94,7 +94,7 @@ public class WindowOpenProject extends Window
                         }
                         else if(!workspace.sessionEnded)
                         {
-                            ProjectHelper.sendProjectToServer(workspace.host, "", project);
+                            ProjectHelper.sendProjectToServer(workspace.host, "", project, false);
                         }
                     }
                     break;

@@ -19,6 +19,7 @@ public class PacketProjectFragmentFromClient extends AbstractPacket
 {
     public String host;
     public String projectIdentifier;
+    public boolean isImport;
     public int projSize;
     public byte packetTotal;
     public byte packetNumber;
@@ -27,10 +28,11 @@ public class PacketProjectFragmentFromClient extends AbstractPacket
 
     public PacketProjectFragmentFromClient(){}
 
-    public PacketProjectFragmentFromClient(String hoster, String name, int projectSize, int pktTotal, int pktNum, int fSize, byte[] dataArray)
+    public PacketProjectFragmentFromClient(String hoster, String name, boolean isImporting, int projectSize, int pktTotal, int pktNum, int fSize, byte[] dataArray)
     {
         host = hoster;
         projectIdentifier = name;
+        isImport = isImporting;
         projSize = projectSize;
         packetTotal = (byte)pktTotal;
         packetNumber = (byte)pktNum;
@@ -43,6 +45,7 @@ public class PacketProjectFragmentFromClient extends AbstractPacket
     {
         ByteBufUtils.writeUTF8String(buffer, host);
         ByteBufUtils.writeUTF8String(buffer, projectIdentifier);
+        buffer.writeBoolean(isImport);
         buffer.writeInt(projSize);
         buffer.writeByte(packetTotal);
         buffer.writeByte(packetNumber);
@@ -55,6 +58,7 @@ public class PacketProjectFragmentFromClient extends AbstractPacket
     {
         host = ByteBufUtils.readUTF8String(buffer);
         projectIdentifier = ByteBufUtils.readUTF8String(buffer);
+        isImport = buffer.readBoolean();
         projSize = buffer.readInt();
         packetTotal = buffer.readByte();
         packetNumber = buffer.readByte();
@@ -87,7 +91,7 @@ public class PacketProjectFragmentFromClient extends AbstractPacket
     {
         if(Tabula.proxy.tickHandlerClient.mainframe != null && Minecraft.getMinecraft().getSession().getUsername().equals(host))
         {
-            Tabula.proxy.tickHandlerClient.mainframe.receiveProjectData(projectIdentifier, projSize, packetTotal, packetNumber, data);
+            Tabula.proxy.tickHandlerClient.mainframe.receiveProjectData(projectIdentifier, isImport, projSize, packetTotal, packetNumber, data);
         }
     }
 }

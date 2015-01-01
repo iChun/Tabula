@@ -274,7 +274,7 @@ public class ProjectHelper
         receiveChat("System: " + message);
     }
 
-    public static void sendProjectToServer(String host, String ident, ProjectInfo proj)
+    public static void sendProjectToServer(String host, String ident, ProjectInfo proj, boolean isImport)
     {
         byte[] projBytes = proj.getAsJson().getBytes();
         byte[] imgBytes = new byte[0];
@@ -312,7 +312,7 @@ public class ProjectHelper
                 index++;
             }
 
-            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragmentFromClient(host, ident, projBytes.length, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
+            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragmentFromClient(host, ident, isImport, projBytes.length, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
 
             packetCount++;
             fileSize -= 32000;
