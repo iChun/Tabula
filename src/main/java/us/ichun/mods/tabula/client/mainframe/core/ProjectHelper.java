@@ -364,7 +364,7 @@ public class ProjectHelper
                 z = workspace.hostZ;
             }
 
-            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, false, host, Minecraft.getMinecraft().getSession().getUsername(), projectIdent, true, updateDims, false, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
+            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, true, host, Minecraft.getMinecraft().getSession().getUsername(), projectIdent, true, updateDims, false, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
 
             packetCount++;
             fileSize -= 32000;

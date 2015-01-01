@@ -394,7 +394,7 @@ public class Mainframe
             if(info.identifier.equals(ident))
             {
                 info.cubes.addAll(project.cubes);
-                info.cubeGroups.addAll(info.cubeGroups);
+                info.cubeGroups.addAll(project.cubeGroups);
 
                 if(project.bufferedTexture != null)
                 {
