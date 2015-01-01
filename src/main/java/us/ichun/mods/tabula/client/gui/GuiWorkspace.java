@@ -70,6 +70,9 @@ public class GuiWorkspace extends GuiScreen
         add(4, new ArrayList<Window>()); // chat level
     }};
 
+    public ArrayList<String> editors = new ArrayList<String>();
+    public ArrayList<String> listeners = new ArrayList<String>();
+
     public int oldWidth;
     public int oldHeight;
 
@@ -637,6 +640,38 @@ public class GuiWorkspace extends GuiScreen
                     }
                 }
             }
+            else if(Keyboard.isKeyDown(Keyboard.KEY_TAB) && host != null)
+            {
+                GL11.glPushMatrix();
+                GL11.glTranslatef(0F, 0F, 20F * (levels.size() + 1));
+
+                ArrayList<String> listenersList = remoteSession ? listeners : new ArrayList<String>(Tabula.proxy.tickHandlerClient.mainframe.listeners.keySet());
+                ArrayList<String> editorsList = remoteSession ? editors : Tabula.proxy.tickHandlerClient.mainframe.editors;
+                listenersList.removeAll(editorsList);
+
+                int tabHeight = (fontRendererObj.FONT_HEIGHT + 2) * (listenersList.size() + editorsList.size() + 1) + 3 + 2; // border
+
+
+                RendererHelper.drawColourOnScreen(Theme.instance.windowBorder[0], Theme.instance.windowBorder[1], Theme.instance.windowBorder[2], 255, width / 2 - 101, (height - tabHeight) / 2 - 1, 202, tabHeight + 2    , 0);
+                RendererHelper.drawColourOnScreen(Theme.instance.windowBackground[0], Theme.instance.windowBackground[1], Theme.instance.windowBackground[2], 255, width / 2 - 100, (height - tabHeight) / 2, 200, tabHeight, 0);
+                RendererHelper.drawColourOnScreen(Theme.instance.windowBorder[0], Theme.instance.windowBorder[1], Theme.instance.windowBorder[2], 255, width / 2 - 101, (height - tabHeight) / 2 - 1 + fontRendererObj.FONT_HEIGHT + 2 + 3, 202, 1, 0);
+
+                fontRendererObj.drawString(StatCollector.translateToLocal("system.playersInSession"), width / 2 - 101 + 4, (height - tabHeight) / 2 - 1 + 3, Theme.instance.getAsHex(Theme.instance.font), false);
+
+                for(int i = 0; i < editorsList.size(); i++)
+                {
+                    fontRendererObj.drawString(editorsList.get(i), width / 2 - 101 + 4, (height - tabHeight) / 2 - 1 + 3 + (fontRendererObj.FONT_HEIGHT + 2) + 4, Theme.instance.getAsHex(Theme.instance.font), false);
+                    fontRendererObj.drawString(i == 0 ? StatCollector.translateToLocal("system.host") : StatCollector.translateToLocal("system.editor"), width / 2 + 101 - 4 - fontRendererObj.getStringWidth(i == 0 ? StatCollector.translateToLocal("system.host") : StatCollector.translateToLocal("system.editor")), (height - tabHeight) / 2 - 1 + 3 + (fontRendererObj.FONT_HEIGHT + 2) + 4, Theme.instance.getAsHex(Theme.instance.font), false);
+                    GL11.glTranslatef(0F, (fontRendererObj.FONT_HEIGHT + 2), 0);
+                }
+                for(int i = 0; i < listenersList.size(); i++)
+                {
+                    fontRendererObj.drawString(listenersList.get(i), width / 2 - 101 + 4, (height - tabHeight) / 2 - 1 + 3 + (fontRendererObj.FONT_HEIGHT + 2) + 4, Theme.instance.getAsHex(Theme.instance.font), false);
+                    GL11.glTranslatef(0F, (fontRendererObj.FONT_HEIGHT + 2), 0);
+                }
+
+                GL11.glPopMatrix();
+            }
             if(Keyboard.isKeyDown(Keyboard.KEY_HOME) && !keyHomeDown || !Keyboard.isKeyDown(Keyboard.KEY_HOME) && keyHomeDown)
             {
                 windowAnimate.timeline.setCurrentPos(0);
@@ -1020,26 +1055,31 @@ public class GuiWorkspace extends GuiScreen
             resetModelAnimations();
         }
 
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(grid16);
-        double dist = 0.125D;
-        double pX = -3.495D - dist;
-        double pY = 0.500125D;
-        double pZ = -3.495D - dist;
-        double w = 7 + (dist * 2);
-        double l = 7 + (dist * 2);
-        tessellator.startDrawingQuads();
-        tessellator.addVertexWithUV(pX	  , pY, pZ + l, -0.125D, 7.125D);
-        tessellator.addVertexWithUV(pX + w, pY, pZ + l, 7.125D, 7.125D);
-        tessellator.addVertexWithUV(pX + w, pY, pZ, 7.125D, -0.125D);
-        tessellator.addVertexWithUV(pX	  , pY, pZ, -0.125D, -0.125D);
-        tessellator.addVertexWithUV(pX + w, pY, pZ + l, 7.125D, 7.125D);
-        tessellator.addVertexWithUV(pX	  , pY, pZ + l, -0.125D, 7.125D);
-        tessellator.addVertexWithUV(pX	  , pY, pZ, -0.125D, -0.125D);
-        tessellator.addVertexWithUV(pX + w, pY, pZ, 7.125D, -0.125D);
-        tessellator.draw();
+        if(Tabula.config.getInt("renderGrid") == 1)
+        {
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
+            Minecraft.getMinecraft().getTextureManager().bindTexture(grid16);
+            double dist = 0.125D;
+            double pX = -3.495D - dist;
+            double pY = 0.500125D;
+            double pZ = -3.495D - dist;
+            double w = 7 + (dist * 2);
+            double l = 7 + (dist * 2);
+            tessellator.startDrawingQuads();
+            tessellator.addVertexWithUV(pX, pY, pZ + l, -0.125D, 7.125D);
+            tessellator.addVertexWithUV(pX + w, pY, pZ + l, 7.125D, 7.125D);
+            tessellator.addVertexWithUV(pX + w, pY, pZ, 7.125D, -0.125D);
+            tessellator.addVertexWithUV(pX, pY, pZ, -0.125D, -0.125D);
+            tessellator.addVertexWithUV(pX + w, pY, pZ + l, 7.125D, 7.125D);
+            tessellator.addVertexWithUV(pX, pY, pZ + l, -0.125D, 7.125D);
+            tessellator.addVertexWithUV(pX, pY, pZ, -0.125D, -0.125D);
+            tessellator.addVertexWithUV(pX + w, pY, pZ, 7.125D, -0.125D);
+            tessellator.draw();
+        }
 
         GL11.glPopMatrix();
+
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         ScaledResolution resolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -1069,12 +1109,12 @@ public class GuiWorkspace extends GuiScreen
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
         Minecraft.getMinecraft().getTextureManager().bindTexture(orientationBase);
-        dist = 0.125D;
-        pX = -1D - dist;
-        pY = -0.500125D;
-        pZ = -1D - dist;
-        w = 2 + (dist * 2);
-        l = 2 + (dist * 2);
+        double dist = 0.125D;
+        double pX = -1D - dist;
+        double pY = -0.500125D;
+        double pZ = -1D - dist;
+        double w = 2 + (dist * 2);
+        double l = 2 + (dist * 2);
         tessellator.startDrawingQuads();
         tessellator.addVertexWithUV(pX, pY, pZ + l, 0.0D, 1.0D);
         tessellator.addVertexWithUV(pX + w, pY, pZ + l, 1.0D, 1.0D);

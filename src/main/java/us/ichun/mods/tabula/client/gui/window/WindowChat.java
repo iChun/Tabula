@@ -10,8 +10,6 @@ import us.ichun.mods.tabula.common.packet.PacketChat;
 
 public class WindowChat extends Window
 {
-    public int screenX;
-    public int screenY;
     public int wasDocked;
 
     public ElementTextWrapperChat chatHolder;
@@ -19,8 +17,6 @@ public class WindowChat extends Window
     public WindowChat(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.chat.title", true);
-        screenX = -1;
-        screenY = -1;
         wasDocked = -1;
 
         elements.add(new ElementTextInput(this, 5, height - BORDER_SIZE - 14, width - 10, 12, 0, "window.chat.textbox", 200));

@@ -154,6 +154,9 @@ topdock.exitTabula=Exit Tabula
 topdock.wood=Block
 topdock.woodFull=Toggle showing the block
 
+system.playersInSession=Users In Session
+system.editor=Editor
+system.host=Host
 system.joinedSession=%s has joined the session.
 system.leftSession=%s has left the session.
 system.timeout=%s timed out.
@@ -169,20 +172,30 @@ system.hostingOther=%s is hosting this Tabula session.
 system.cannotReachHost=%s (host) is unavailable. They might have crashed or disconnected. Consider saving the models for them before exiting.
 system.sessionEnded=%s (host) has ended session.
 
+tabula.config.cat.multiplayer.name=Multiplayer
+tabula.config.cat.others.name=Others
+
+tabula.config.cat.multiplayer.comment=Multiplayer settings for Tabula sessions
+tabula.config.cat.others.comment=Other configs that don't really fit. You probably don't want to touch these.
+
 tabula.config.prop.favTheme.name=Favorite Theme
 tabula.config.prop.renderRotationPoint.name=Render Model Rotation Point
 tabula.config.prop.renderWorkspaceBlock.name=Render Workspace Block
+tabula.config.prop.renderGrid.name=Render Grid
 tabula.config.prop.chatSound.name=Chat Sound
 tabula.config.prop.allowEveryoneToEdit.name=Allow Everyone To Edit
 tabula.config.prop.editors.name=Allowed Editors
 tabula.config.prop.animateImports.name=Animate Imports
+tabula.config.prop.chatWindow.name=Chat Window Settings
 
 tabula.config.prop.favTheme.comment=Favorite Colour Theme for Tabula's Interface
 tabula.config.prop.renderRotationPoint.comment=Should the rotation point of selected model parts be rendered
 tabula.config.prop.renderWorkspaceBlock.comment=Should the block in the workspace be rendered
+tabula.config.prop.renderGrid.comment=Should the grid in the workspace be rendered
 tabula.config.prop.chatSound.comment=Enable chat sounds?
 tabula.config.prop.allowEveryoneToEdit.comment=Allow anyone who connects to your Tabula session to edit the model
 tabula.config.prop.editors.comment=People allowed to edit models in your multiplayer Tabula session.\nSeparate usernames by with a comma and a space (", " - no quotes)
 tabula.config.prop.animateImports.comment=Try to animate the possibly imported models to fix their rotations?
+tabula.config.prop.chatWindow.comment=Don't touch this. Seriously.
 
 tile.tabula.block.tabularasa.name=Wax Tablet

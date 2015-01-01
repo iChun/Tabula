@@ -1410,6 +1410,7 @@ public class Mainframe
         {
             PacketHandler.sendToServer(Tabula.channels, new PacketIsEditor(Minecraft.getMinecraft().getSession().getUsername(), id, true));
         }
+        updateListenersList();
     }
 
     public void removeListener(String id)
@@ -1418,6 +1419,8 @@ public class Mainframe
         {
             listeners.remove(id);
             sendChat("System", StatCollector.translateToLocalFormatted("system.leftSession", id));
+
+            updateListenersList();
         }
     }
 
@@ -1456,6 +1459,8 @@ public class Mainframe
 
             Tabula.config.get("editors").set(sb.toString());
             Tabula.config.save();
+
+            updateListenersList();
         }
         else
         {
@@ -1498,10 +1503,23 @@ public class Mainframe
 
             Tabula.config.get("editors").set(sb.toString());
             Tabula.config.save();
+
+            updateListenersList();
         }
         else
         {
             ProjectHelper.receiveChat("System: " + StatCollector.translateToLocalFormatted("system.notEditor", id));
+        }
+    }
+
+    public void updateListenersList()
+    {
+        for(String id : listeners.keySet())
+        {
+            if(!id.equals(Minecraft.getMinecraft().getSession().getUsername()))
+            {
+                PacketHandler.sendToServer(Tabula.channels, new PacketListenersList(id, editors, listeners.keySet()));
+            }
         }
     }
 
@@ -1528,88 +1546,88 @@ public class Mainframe
 
     public void receiveProjectData(String projectIdentifier, boolean isImport, int projectSize, byte packetTotal, byte packetNumber, byte[] data) // return true if only the project data is different?
     {
-            ArrayList<byte[]> byteArray = projectParts.get(projectIdentifier);
-            if(byteArray == null)
+        ArrayList<byte[]> byteArray = projectParts.get(projectIdentifier);
+        if(byteArray == null)
+        {
+            byteArray = new ArrayList<byte[]>();
+
+            projectParts.put(projectIdentifier, byteArray);
+
+            for(int i = 0; i < packetTotal; i++)
             {
-                byteArray = new ArrayList<byte[]>();
-
-                projectParts.put(projectIdentifier, byteArray);
-
-                for(int i = 0; i < packetTotal; i++)
-                {
-                    byteArray.add(new byte[0]);
-                }
+                byteArray.add(new byte[0]);
             }
+        }
 
-            byteArray.set(packetNumber, data);
+        byteArray.set(packetNumber, data);
 
-            boolean hasAllInfo = true;
+        boolean hasAllInfo = true;
+
+        for(int i = 0; i < byteArray.size(); i++)
+        {
+            byte[] byteList = byteArray.get(i);
+            if(byteList.length == 0)
+            {
+                hasAllInfo = false;
+            }
+        }
+
+        if(hasAllInfo)
+        {
+            int size = 0;
 
             for(int i = 0; i < byteArray.size(); i++)
             {
-                byte[] byteList = byteArray.get(i);
-                if(byteList.length == 0)
-                {
-                    hasAllInfo = false;
-                }
+                size += byteArray.get(i).length;
             }
 
-            if(hasAllInfo)
+            byte[] bytes = new byte[size];
+
+            int index = 0;
+
+            for(int i = 0; i < byteArray.size(); i++)
             {
-                int size = 0;
-
-                for(int i = 0; i < byteArray.size(); i++)
-                {
-                    size += byteArray.get(i).length;
-                }
-
-                byte[] bytes = new byte[size];
-
-                int index = 0;
-
-                for(int i = 0; i < byteArray.size(); i++)
-                {
-                    System.arraycopy(byteArray.get(i), 0, bytes, index, byteArray.get(i).length);
-                    index += byteArray.get(i).length;
-                }
-
-                try
-                {
-                    byte[] projBytes = new byte[projectSize];
-                    System.arraycopy(bytes, 0, projBytes, 0, projectSize);
-
-                    String json = new String(projBytes, "UTF-8");
-                    ProjectInfo proj = ProjectHelper.createProjectFromJson(projectIdentifier, json);
-
-                    BufferedImage projImage = null;
-                    if(bytes.length > projectSize)
-                    {
-                        byte[] imgBytes = new byte[bytes.length - projectSize];
-                        System.arraycopy(bytes, projectSize, imgBytes, 0, imgBytes.length);
-
-                        InputStream is = new ByteArrayInputStream(imgBytes);
-                        projImage = ImageIO.read(is);
-                    }
-
-                    if(isImport)
-                    {
-                        importProject(projectIdentifier, proj.getAsJson(), projImage);
-                    }
-                    else
-                    {
-                        overrideProject(projectIdentifier, proj.getAsJson(), projImage);
-                    }
-                }
-                catch(IOException ignored)
-                {
-                }
-                catch(Exception e)
-                {
-                    Tabula.console("Error reading project sent from client!", true);
-                    e.printStackTrace();
-                }
-
-                projectParts.remove(projectIdentifier);
+                System.arraycopy(byteArray.get(i), 0, bytes, index, byteArray.get(i).length);
+                index += byteArray.get(i).length;
             }
+
+            try
+            {
+                byte[] projBytes = new byte[projectSize];
+                System.arraycopy(bytes, 0, projBytes, 0, projectSize);
+
+                String json = new String(projBytes, "UTF-8");
+                ProjectInfo proj = ProjectHelper.createProjectFromJson(projectIdentifier, json);
+
+                BufferedImage projImage = null;
+                if(bytes.length > projectSize)
+                {
+                    byte[] imgBytes = new byte[bytes.length - projectSize];
+                    System.arraycopy(bytes, projectSize, imgBytes, 0, imgBytes.length);
+
+                    InputStream is = new ByteArrayInputStream(imgBytes);
+                    projImage = ImageIO.read(is);
+                }
+
+                if(isImport)
+                {
+                    importProject(projectIdentifier, proj.getAsJson(), projImage);
+                }
+                else
+                {
+                    overrideProject(projectIdentifier, proj.getAsJson(), projImage);
+                }
+            }
+            catch(IOException ignored)
+            {
+            }
+            catch(Exception e)
+            {
+                Tabula.console("Error reading project sent from client!", true);
+                e.printStackTrace();
+            }
+
+            projectParts.remove(projectIdentifier);
+        }
     }
 }
