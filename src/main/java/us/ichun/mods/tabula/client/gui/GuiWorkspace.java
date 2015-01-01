@@ -303,7 +303,7 @@ public class GuiWorkspace extends GuiScreen
                     for(int j = levels.get(i).size() - 1; j >= 0; j--)
                     {
                         Window window = levels.get(i).get(j);
-                        if(window instanceof WindowSaveBeforeClosing)
+                        if(window instanceof WindowSaveBeforeClosing || window instanceof WindowSaveAs)
                         {
                             canClose = false;
                         }

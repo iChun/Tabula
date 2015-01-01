@@ -27,7 +27,7 @@ public class ElementTextWrapperChat extends ElementTextWrapper
             for(int j = 0; j < list.size(); j++)
             {
                 String[] strings = ((String)list.get(j)).split(": ");
-                parent.workspace.getFontRenderer().drawString(strings[0], getPosX() + 4, getPosY() + 4, onName ? getRandomColourForName(strings[0]) : Theme.getAsHex(Theme.instance.fontChat), false);
+                parent.workspace.getFontRenderer().drawString(strings[0], getPosX() + (j == 0 ? 4 : 12), getPosY() + 4, onName ? getRandomColourForName(strings[0]) : Theme.getAsHex(Theme.instance.fontChat), false);
                 if(strings.length > 1)
                 {
                     onName = false;

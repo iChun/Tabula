@@ -458,6 +458,28 @@ public class ElementAnimationTimeline extends Element
                                 if(id == 0)
                                 {
                                     selectedIdentifier = comp.identifier;
+                                    for(ElementListTree.Tree tree1 : parent.workspace.windowModelTree.modelList.trees)
+                                    {
+                                        if(tree1.attachedObject instanceof CubeInfo && ((CubeInfo)tree1.attachedObject).identifier.equals(e.getKey()))
+                                        {
+                                            parent.workspace.windowModelTree.modelList.selectedIdentifier = e.getKey();
+
+                                            parent.workspace.windowControls.selectedObject = tree1.attachedObject;
+                                            parent.workspace.windowControls.refresh = true;
+
+                                            tree1.selected = true;
+                                        }
+                                        else
+                                        {
+                                            tree1.selected = false;
+                                        }
+                                    }
+
+                                    if(!anim.playing)
+                                    {
+                                        setCurrentPos(comp.startKey);
+                                        focusOnTicker();
+                                    }
                                 }
                                 else if(id == 1)
                                 {

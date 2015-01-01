@@ -135,7 +135,17 @@ public class Mainframe
             ProjectInfo info = projects.get(i);
             if(info.identifier.equals(ident))
             {
-                streamProjectClosure(ident);
+                boolean flag = true;
+                Minecraft mc = Minecraft.getMinecraft();
+                if(mc.currentScreen instanceof GuiWorkspace)
+                {
+                    GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
+                    flag = !workspace.wantToExit;
+                }
+                if(flag)
+                {
+                    streamProjectClosure(ident);
+                }
 
                 projects.remove(i);
             }
