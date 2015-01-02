@@ -557,6 +557,11 @@ public class Mainframe
                 //Cube on Cube
                 else if(dragged instanceof CubeInfo && draggedOnto instanceof CubeInfo && !((CubeInfo)draggedOnto).getChildren().contains(dragged))
                 {
+                    if(((CubeInfo)draggedOnto).parentIdentifier != null && ((CubeInfo)draggedOnto).parentIdentifier.equals(((CubeInfo)dragged).identifier))
+                    {
+                        ((CubeInfo)dragged).removeChild((CubeInfo)draggedOnto);
+                        childProtectiveServices(info, null, draggedOnto);
+                    }
                     ((CubeInfo)draggedOnto).addChild((CubeInfo)dragged);
                 }
                 childProtectiveServices(info, draggedOnto, dragged);
@@ -973,6 +978,7 @@ public class Mainframe
             {
                 CubeInfo cube = ((new Gson()).fromJson(json, CubeInfo.class));
 
+                cube.parentIdentifier = null;
                 cube.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
 
                 if(!inPlace)

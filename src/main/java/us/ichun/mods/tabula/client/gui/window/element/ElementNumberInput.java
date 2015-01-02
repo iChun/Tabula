@@ -96,7 +96,7 @@ public class ElementNumberInput extends Element
                 {
                     if(allowDecimal)
                     {
-                        String val = String.format(Locale.ENGLISH, "%.2f", Double.parseDouble(text) + (k > 0 ? (GuiScreen.isShiftKeyDown() ? 1D : 0.1D) : -(GuiScreen.isShiftKeyDown() ? 1D : 0.1D)));
+                        String val = String.format(Locale.ENGLISH, "%.2f", Double.parseDouble(text) + (k > 0 ? (GuiScreen.isShiftKeyDown() ? 1D : GuiScreen.isCtrlKeyDown() ? 0.01D : 0.1D) : -(GuiScreen.isShiftKeyDown() ? 1D : GuiScreen.isCtrlKeyDown() ? 0.01D : 0.1D)));
                         if(val.contains(".") && val.length() > val.indexOf(".") + 4)
                         {
                             val = val.substring(0, val.indexOf(".") + 4);
@@ -182,7 +182,7 @@ public class ElementNumberInput extends Element
                 {
                     if(allowDecimal)
                     {
-                        String val = String.format(Locale.ENGLISH, "%.2f", Double.parseDouble(text) + (GuiScreen.isShiftKeyDown() ? 1D : 0.1D));
+                        String val = String.format(Locale.ENGLISH, "%.2f", Double.parseDouble(text) + (GuiScreen.isShiftKeyDown() ? 1D : GuiScreen.isCtrlKeyDown() ? 0.01D : 0.1D));
                         if(val.contains(".") && val.length() > val.indexOf(".") + 4)
                         {
                             val = val.substring(0, val.indexOf(".") + 4);
@@ -228,7 +228,7 @@ public class ElementNumberInput extends Element
                 {
                     if(allowDecimal)
                     {
-                        String val = String.format(Locale.ENGLISH, "%.2f", Double.parseDouble(text) - (GuiScreen.isShiftKeyDown() ? 1D : 0.1D));
+                        String val = String.format(Locale.ENGLISH, "%.2f", Double.parseDouble(text) - (GuiScreen.isShiftKeyDown() ? 1D : GuiScreen.isCtrlKeyDown() ? 0.01D : 0.1D));
                         if(val.contains(".") && val.length() > val.indexOf(".") + 4)
                         {
                             val = val.substring(0, val.indexOf(".") + 4);

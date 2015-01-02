@@ -137,6 +137,10 @@ public class GuiWorkspace extends GuiScreen
     public int prevMouseX;
     public int prevMouseY;
 
+    public int controlDrag = -1;
+    public int controlDragX;
+    public int controlDragY;
+
     public boolean wantToExit;
 
     public boolean openNextNewProject;
@@ -921,6 +925,46 @@ public class GuiWorkspace extends GuiScreen
         GL11.glOrtho(0.0D, resolution.getScaledWidth_double(), resolution.getScaledHeight_double(), 0.0D, 1000.0D, 3000.0D);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
+
+        if(true && projectManager.selectedProject != -1 && !Keyboard.isKeyDown(Keyboard.KEY_TAB))
+        {
+            GL11.glMatrixMode(GL11.GL_PROJECTION);
+            GL11.glLoadIdentity();
+            Project.gluPerspective(cameraFov, (float)(resolution.getScaledWidth_double() / resolution.getScaledHeight_double()), 1F, 10000F);
+            GL11.glMatrixMode(GL11.GL_MODELVIEW);
+            GL11.glLoadIdentity();
+            GL11.glClearColor(100F, 100F, 100F, 255F);
+            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+            modelSelector = new ModelSelector(this, 20);
+
+            ArrayList<ElementListTree.Tree> trees = windowModelTree.modelList.trees;
+
+            boolean stop = false;
+            for (ElementListTree.Tree tree : trees)
+            {
+                if (tree.selected && tree.attachedObject instanceof CubeInfo)
+                {
+                    CubeInfo cube = (CubeInfo)tree.attachedObject;
+
+                    modelSelector.fakeRenderSelectedCube(cube);
+
+                    stop = true;
+                    break;
+                }
+            }
+
+            if(!stop)
+            {
+                modelSelector.fakeRender();
+            }
+
+            GL11.glMatrixMode(GL11.GL_PROJECTION);
+            GL11.glLoadIdentity();
+            GL11.glOrtho(0.0D, resolution.getScaledWidth_double(), resolution.getScaledHeight_double(), 0.0D, 1000.0D, 3000.0D);
+            GL11.glMatrixMode(GL11.GL_MODELVIEW);
+            GL11.glLoadIdentity();
+        }
     }
 
     public void applyCamera() {
@@ -1060,16 +1104,16 @@ public class GuiWorkspace extends GuiScreen
             {
                 GL11.glBindTexture(GL11.GL_TEXTURE_2D, windowTexture.imageId);
 
-                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 0, renderRotationPoint);
-                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 1, renderRotationPoint);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 0, renderRotationPoint, true);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 1, renderRotationPoint, true);
             }
             else
             {
                 GL11.glDisable(GL11.GL_TEXTURE_2D);
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 0, renderRotationPoint);
-                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 1, renderRotationPoint);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 0, renderRotationPoint, true);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 1, renderRotationPoint, true);
 
                 GL11.glEnable(GL11.GL_TEXTURE_2D);
             }

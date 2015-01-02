@@ -90,14 +90,14 @@ public class TileRendererTabulaRasa extends TileEntitySpecialRenderer
 
                     GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
 
-                    info.model.render(0.0625F, new ArrayList<CubeInfo>(), hidden, 1.0F, true, 1, false);
+                    info.model.render(0.0625F, new ArrayList<CubeInfo>(), hidden, 1.0F, true, 1, false, true);
                 }
                 else
                 {
                     GL11.glDisable(GL11.GL_TEXTURE_2D);
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-                    info.model.render(0.0625F, new ArrayList<CubeInfo>(), hidden, 1.0F, false, 1, false);
+                    info.model.render(0.0625F, new ArrayList<CubeInfo>(), hidden, 1.0F, false, 1, false, true);
 
                     GL11.glEnable(GL11.GL_TEXTURE_2D);
                 }

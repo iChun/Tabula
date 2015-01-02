@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.client.core;
 
 import ichun.client.render.RendererHelper;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.model.ModelRenderer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
@@ -61,44 +62,73 @@ public class ModelSelector {
      */
     public void onClick(int mouseX, int mouseY) {
         if(!isOnWindow(mouseX, mouseY) && workspace.projectManager.selectedProject != -1) {
-            //render the model so the result can be analyzed
-            fakeRender();
 
-            //once the model is rendered we can fetch the id of the part that contributed to the pixel the mouse is hovering
-            int id = getSelectedId();
-
-            //update selection
             ArrayList<ElementListTree.Tree> trees = workspace.windowModelTree.modelList.trees;
-            workspace.windowModelTree.modelList.selectedIdentifier = "";
-            workspace.windowControls.selectedObject = null;
-            int treeId = 0;
-            for (ElementListTree.Tree tree : trees) {
-                if (tree.attachedObject instanceof CubeInfo) {
-                    tree.selected = !tree.selected && id == treeId;
-                    if (tree.selected) {
-                        workspace.windowControls.selectedObject = tree.attachedObject;
-                        workspace.windowModelTree.modelList.selectedIdentifier = ((CubeInfo) tree.attachedObject).identifier;
-                    }
-                    treeId++;
-                } else {
-                    tree.selected = false;
-                }
-            }
-            workspace.windowControls.refresh = true;
 
-            if(workspace.windowControls.selectedObject == null && id == -1)
+            for (ElementListTree.Tree tree : trees)
             {
-                for (ElementListTree.Tree tree : workspace.windowAnimate.animList.trees)
+                if (tree.selected && tree.attachedObject instanceof CubeInfo)
                 {
-                    tree.selected = false;
+                    CubeInfo cube = (CubeInfo)tree.attachedObject;
+
+                    fakeRenderSelectedCube(cube);
+
+                    break;
                 }
-                workspace.windowAnimate.animList.selectedIdentifier = "";
-                workspace.windowAnimate.timeline.selectedIdentifier = "";
-                workspace.windowAnimate.timeline.setCurrentPos(0);
             }
 
-            //clear the depth buffer so the real rendering can properly override what has been rendered
-            GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+            int control = getSelectedId();
+
+
+            if(control != -1)
+            {
+                workspace.controlDrag = GuiScreen.isShiftKeyDown() ? control + 3 : control;
+                workspace.controlDragX = mouseX;
+                workspace.controlDragY = mouseY;
+            }
+            else
+            {
+                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+                //render the model so the result can be analyzed
+                fakeRender();
+
+                //once the model is rendered we can fetch the id of the part that contributed to the pixel the mouse is hovering
+                int id = getSelectedId();
+
+                //update selection
+                workspace.windowModelTree.modelList.selectedIdentifier = "";
+                workspace.windowControls.selectedObject = null;
+                int treeId = 0;
+                for(ElementListTree.Tree tree : trees)
+                {
+                    if(tree.attachedObject instanceof CubeInfo)
+                    {
+                        tree.selected = !tree.selected && id == treeId;
+                        if(tree.selected)
+                        {
+                            workspace.windowControls.selectedObject = tree.attachedObject;
+                            workspace.windowModelTree.modelList.selectedIdentifier = ((CubeInfo)tree.attachedObject).identifier;
+                        }
+                        treeId++;
+                    }
+                    else
+                    {
+                        tree.selected = false;
+                    }
+                }
+                workspace.windowControls.refresh = true;
+
+                if(workspace.windowControls.selectedObject == null && id == -1)
+                {
+                    for(ElementListTree.Tree tree : workspace.windowAnimate.animList.trees)
+                    {
+                        tree.selected = false;
+                    }
+                    workspace.windowAnimate.animList.selectedIdentifier = "";
+                    workspace.windowAnimate.timeline.selectedIdentifier = "";
+                    workspace.windowAnimate.timeline.setCurrentPos(0);
+                }
+            }
         }
     }
 
@@ -127,12 +157,10 @@ public class ModelSelector {
         return R + G * colors + B * colors * colors - 1;
     }
 
-    private void fakeRender() {
+    public void fakeRender() {
         GL11.glPushMatrix();
 
         //the background is black since that's teh color retrieved for sending in id = 0 in the color generator
-        RendererHelper.drawColourOnScreen(0, 0, 0, 255, 0, 0, workspace.width, workspace.height, -4000D);
-
         workspace.applyCamera();
         workspace.applyModelTranslation();
 
@@ -150,6 +178,140 @@ public class ModelSelector {
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glPopMatrix();
+    }
+
+    public void fakeRenderSelectedCube(CubeInfo info)
+    {
+        List<CubeInfo> hidden = workspace.getHiddenElements();
+
+        if(!(info.hidden || hidden.contains(info)))
+        {
+            GL11.glPushMatrix();
+
+            //the background is black since that's teh color retrieved for sending in id = 0 in the color generator
+            workspace.applyCamera();
+            workspace.applyModelTranslation();
+
+            ProjectInfo proj = workspace.projectManager.projects.get(workspace.projectManager.selectedProject);
+
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glDisable(GL11.GL_NORMALIZE);
+
+            GL11.glScaled(1D / proj.scale[0], 1D / proj.scale[1], 1D / proj.scale[2]);
+
+            float f5 = 0.0625F;
+            workspace.applyModelAnimations();
+
+            if (!info.getChildren().isEmpty()) {
+                info.modelCube.childModels.clear();
+            }
+
+            GL11.glPushMatrix();
+            applyParentTransformations(proj.model.getParents(info), f5);
+            int id = 0;
+            applyColorAndFakeRender(info.modelCube, id++, f5);
+
+            GL11.glPushMatrix();
+
+            GL11.glTranslatef(info.modelCube.offsetX, info.modelCube.offsetY, info.modelCube.offsetZ);
+            GL11.glTranslatef(info.modelCube.rotationPointX * f5, info.modelCube.rotationPointY * f5, info.modelCube.rotationPointZ * f5);
+
+            if(info.modelCube.rotateAngleZ != 0.0F)
+            {
+                GL11.glRotatef(info.modelCube.rotateAngleZ * (180F / (float)Math.PI), 0.0F, 0.0F, 1.0F);
+            }
+
+            if(info.modelCube.rotateAngleY != 0.0F)
+            {
+                GL11.glRotatef(info.modelCube.rotateAngleY * (180F / (float)Math.PI), 0.0F, 1.0F, 0.0F);
+            }
+
+            if(info.modelCube.rotateAngleX != 0.0F)
+            {
+                GL11.glRotatef(info.modelCube.rotateAngleX * (180F / (float)Math.PI), 1.0F, 0.0F, 0.0F);
+            }
+
+            if(!GuiScreen.isShiftKeyDown())
+            {
+                GL11.glDisable(GL11.GL_DEPTH_TEST);
+                GL11.glPushMatrix();
+                float scale = 0.75F;
+                GL11.glScalef(scale, scale, scale);
+                applyColor(id++);
+                proj.model.rotationControls.render(f5);
+                GL11.glRotatef(90F, 1.0F, 0.0F, 0.0F);
+                applyColor(id++);
+                proj.model.rotationControls.render(f5);
+                GL11.glRotatef(90F, 0.0F, 0.0F, 1.0F);
+                applyColor(id++);
+                proj.model.rotationControls.render(f5);
+                GL11.glPopMatrix();
+                GL11.glEnable(GL11.GL_DEPTH_TEST);
+            }
+            else
+            {
+                GL11.glPushMatrix();
+                float scale1 = 0.5F;
+                GL11.glScalef(scale1, scale1, scale1);
+
+                GL11.glPushMatrix();
+                GL11.glTranslated((0.125F * (info.dimensions[0] / 2D + info.offset[0])), (0.125D * (1D + (info.dimensions[1] + info.offset[1]) + info.mcScale)), (0.125F * (info.dimensions[2] / 2D + info.offset[2])));
+                applyColor(id++);
+                proj.model.sizeControls.render(f5);
+                GL11.glPopMatrix();
+
+                GL11.glPushMatrix();
+                GL11.glTranslated((0.125F * (info.dimensions[0] / 2D + info.offset[0])), -(0.125D * (1D - (info.offset[1]) + info.mcScale)), (0.125F * (info.dimensions[2] / 2D + info.offset[2])));
+                GL11.glRotatef(180F, 0F, 0F, -1F);
+                applyColor(id++);
+                proj.model.sizeControls.render(f5);
+                GL11.glPopMatrix();
+
+                GL11.glPushMatrix();
+                GL11.glTranslated((0.125F * (1D + info.dimensions[0] + info.offset[0] + info.mcScale)), (0.125D * ((info.dimensions[1] / 2D + info.offset[1]))), (0.125F * (info.dimensions[2] / 2D + info.offset[2])));
+                GL11.glRotatef(90F, 0F, 0F, -1F);
+                applyColor(id++);
+                proj.model.sizeControls.render(f5);
+                GL11.glPopMatrix();
+
+                GL11.glPushMatrix();
+                GL11.glTranslated(-(0.125F * (1D - info.offset[0] + info.mcScale)), (0.125D * ((info.dimensions[1] / 2D + info.offset[1]))), (0.125F * (info.dimensions[2] / 2D + info.offset[2])));
+                GL11.glRotatef(90F, 0F, 0F, 1F);
+                applyColor(id++);
+                proj.model.sizeControls.render(f5);
+                GL11.glPopMatrix();
+
+                GL11.glPushMatrix();
+                GL11.glTranslated((0.125F * (info.dimensions[0] / 2D + info.offset[0])), (0.125D * ((info.dimensions[1] / 2D + info.offset[1]))), (0.125F * (1D + info.dimensions[2] + info.offset[2] + info.mcScale)));
+                GL11.glRotatef(90F, 1F, 0F, 0F);
+                applyColor(id++);
+                proj.model.sizeControls.render(f5);
+                GL11.glPopMatrix();
+
+                GL11.glPushMatrix();
+                GL11.glTranslated((0.125F * (info.dimensions[0] / 2D + info.offset[0])), (0.125D * ((info.dimensions[1] / 2D + info.offset[1]))), -(0.125F * (1D - info.offset[2] + info.mcScale)));
+                GL11.glRotatef(90F, -1F, 0F, 0F);
+                proj.model.sizeControls.render(f5);
+                GL11.glPopMatrix();
+
+                GL11.glPopMatrix();
+            }
+
+            GL11.glPopMatrix();
+
+            GL11.glPopMatrix();
+
+            workspace.resetModelAnimations();
+
+            GL11.glEnable(GL11.GL_NORMALIZE);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GL11.glPopMatrix();
+
+            return;
+        }
     }
 
     private void fakeRenderModel(ProjectInfo info, float f5) {
@@ -202,8 +364,7 @@ public class ModelSelector {
         return id;
     }
 
-
-    private void applyColorAndFakeRender(ModelRenderer model, int id, float f5) {
+    private void applyColor(int id) {
         //calculate the color based on the id, the color can then be used to retrieve the id
         int R = id % colors;
         id /= colors;
@@ -212,7 +373,10 @@ public class ModelSelector {
         int B = id % colors;
 
         GL11.glColor4f(R * color_precision, G * color_precision, B * color_precision, 1.0F);
+    }
 
+    private void applyColorAndFakeRender(ModelRenderer model, int id, float f5) {
+        applyColor(id);
         model.render(f5);
     }
 
