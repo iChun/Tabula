@@ -179,6 +179,10 @@ public class ClientProxy extends CommonProxy
                         }
                     }
                     ModelList.models.add(new ModelInfo(loc, rend.mainModel, clz));
+                    if(rend.renderPassModel != null)
+                    {
+                        ModelList.models.add(new ModelInfo(loc, rend.renderPassModel, clz));
+                    }
                 }
             }
             catch(Exception e)
@@ -186,6 +190,8 @@ public class ClientProxy extends CommonProxy
             }
             renders.remove(clz);
         }
+
+        Collections.sort(ModelList.models);
 
         for(Map.Entry<Class, Render> e : renders.entrySet())
         {
