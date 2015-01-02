@@ -79,7 +79,6 @@ public class ModelSelector {
 
             int control = getSelectedId();
 
-
             if(control != -1)
             {
                 workspace.controlDrag = GuiScreen.isShiftKeyDown() ? control + 3 : control;
@@ -208,6 +207,7 @@ public class ModelSelector {
             }
 
             GL11.glPushMatrix();
+            applyScale(info, f5);
             applyParentTransformations(proj.model.getParents(info), f5);
             int id = 0;
             applyColorAndFakeRender(info.modelCube, id++, f5);
@@ -239,11 +239,13 @@ public class ModelSelector {
                 float scale = 0.75F;
                 GL11.glScalef(scale, scale, scale);
                 applyColor(id++);
-                proj.model.rotationControls.render(f5);
                 GL11.glRotatef(90F, 1.0F, 0.0F, 0.0F);
+                GL11.glRotatef(90F, 0.0F, 0.0F, 1.0F);
+                proj.model.rotationControls.render(f5);
+                GL11.glRotatef(90F, 0.0F, 0.0F, -1.0F);
                 applyColor(id++);
                 proj.model.rotationControls.render(f5);
-                GL11.glRotatef(90F, 0.0F, 0.0F, 1.0F);
+                GL11.glRotatef(90F, -1.0F, 0.0F, 0.0F);
                 applyColor(id++);
                 proj.model.rotationControls.render(f5);
                 GL11.glPopMatrix();
@@ -292,6 +294,7 @@ public class ModelSelector {
                 GL11.glPushMatrix();
                 GL11.glTranslated((0.125F * (info.dimensions[0] / 2D + info.offset[0])), (0.125D * ((info.dimensions[1] / 2D + info.offset[1]))), -(0.125F * (1D - info.offset[2] + info.mcScale)));
                 GL11.glRotatef(90F, -1F, 0F, 0F);
+                applyColor(id++);
                 proj.model.sizeControls.render(f5);
                 GL11.glPopMatrix();
 

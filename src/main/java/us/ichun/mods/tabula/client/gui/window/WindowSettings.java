@@ -26,7 +26,7 @@ public class WindowSettings extends Window
         if(!minimized)
         {
             workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.settings.renderRotationPoint"), posX + 25, posY + 21, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("tabula.config.prop.renderGrid.comment"), posX + 25, posY + 36, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("tabula.config.prop.renderGrid.name"), posX + 25, posY + 36, Theme.getAsHex(Theme.instance.font), false);
             workspace.getFontRenderer().drawString(StatCollector.translateToLocal("tabula.config.prop.chatSound.comment"), posX + 25, posY + 51, Theme.getAsHex(Theme.instance.font), false);
         }
     }

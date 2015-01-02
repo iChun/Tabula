@@ -920,13 +920,113 @@ public class GuiWorkspace extends GuiScreen
             }
         }
 
+        if(controlDrag >= 0)
+        {
+            if(Mouse.isButtonDown(0))
+            {
+                ArrayList<ElementListTree.Tree> trees = windowModelTree.modelList.trees;
+
+                for (ElementListTree.Tree tree : trees)
+                {
+                    if (tree.selected && tree.attachedObject instanceof CubeInfo)
+                    {
+                        CubeInfo cube = (CubeInfo)tree.attachedObject;
+
+                        boolean changed = false;
+
+                        int changeAmt = Math.abs(controlDragY - mouseY) < Math.abs(mouseX - controlDragX) ? mouseX - controlDragX : controlDragY - mouseY;
+
+                        if(controlDrag < 3)
+                        {
+                            changed = true;
+                            if(controlDrag == 2)
+                            {
+                                cube.rotation[1] += changeAmt * 1D / cameraZoom;
+                            }
+                            else if(controlDrag == 1)
+                            {
+                                cube.rotation[2] += changeAmt * 1D / cameraZoom;
+                            }
+                            else if(controlDrag == 0)
+                            {
+                                cube.rotation[0] += changeAmt * 1D / cameraZoom;
+                            }
+                            controlDragX = mouseX;
+                            controlDragY = mouseY;
+                        }
+                        else if(Math.abs(changeAmt) > 6)
+                        {
+                            int dimChange = (int)Math.floor(changeAmt / (6 * cameraZoom));
+                            if(controlDrag <= 4)
+                            {
+                                if(cube.dimensions[1] + dimChange >= 0)
+                                {
+                                    cube.dimensions[1] += dimChange;
+                                    if(controlDrag == 4)
+                                    {
+                                        cube.offset[1] -= dimChange;
+                                    }
+                                }
+                            }
+                            else if(controlDrag <= 6)
+                            {
+                                if(cube.dimensions[0] + dimChange >= 0)
+                                {
+                                    cube.dimensions[0] += dimChange;
+                                    if(controlDrag == 6)
+                                    {
+                                        cube.offset[0] -= dimChange;
+                                    }
+                                }
+                            }
+                            else if(controlDrag <= 8)
+                            {
+                                if(cube.dimensions[2] + dimChange >= 0)
+                                {
+                                    cube.dimensions[2] += dimChange;
+                                    if(controlDrag == 8)
+                                    {
+                                        cube.offset[2] -= dimChange;
+                                    }
+                                }
+                            }
+                            changed = true;
+                            controlDragX = mouseX;
+                            controlDragY = mouseY;
+                        }
+
+                        if(changed)
+                        {
+                            Gson gson = new Gson();
+                            String s = gson.toJson(cube);
+                            if(!this.remoteSession)
+                            {
+                                Tabula.proxy.tickHandlerClient.mainframe.updateCube(this.projectManager.projects.get(this.projectManager.selectedProject).identifier, s, this.windowAnimate.animList.selectedIdentifier, this.windowAnimate.timeline.selectedIdentifier, this.windowAnimate.timeline.getCurrentPos());
+                            }
+                            else if(!this.sessionEnded && this.isEditor)
+                            {
+                                PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(this.host, "updateCube", this.projectManager.projects.get(this.projectManager.selectedProject).identifier, s, this.windowAnimate.animList.selectedIdentifier, this.windowAnimate.timeline.selectedIdentifier, this.windowAnimate.timeline.getCurrentPos()));
+                            }
+                        }
+
+                        break;
+                    }
+                }
+
+            }
+            else
+            {
+                controlDrag = -1;
+            }
+        }
+
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
         GL11.glOrtho(0.0D, resolution.getScaledWidth_double(), resolution.getScaledHeight_double(), 0.0D, 1000.0D, 3000.0D);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
 
-        if(true && projectManager.selectedProject != -1 && !Keyboard.isKeyDown(Keyboard.KEY_TAB))
+        if(false && projectManager.selectedProject != -1 && !Keyboard.isKeyDown(Keyboard.KEY_TAB))
         {
             GL11.glMatrixMode(GL11.GL_PROJECTION);
             GL11.glLoadIdentity();
