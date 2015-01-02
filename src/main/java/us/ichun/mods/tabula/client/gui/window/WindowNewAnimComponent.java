@@ -19,7 +19,7 @@ public class WindowNewAnimComponent extends Window
 
         cubeIdent = info.identifier;
         elements.add(new ElementTextInput(this, 10, 30, width - 20, 12, 4, "window.newAnimComp.name"));
-        elements.add(new ElementNumberInput(this, 10, 65, 40, 12, 1, "window.newAnimComp.length", 1, false, 1, (int)Short.MAX_VALUE, 1D));
+        elements.add(new ElementNumberInput(this, 10, 65, 40, 12, 1, "window.newAnimComp.length", 1, false, 1, (int)Short.MAX_VALUE, 10D));
 
         elements.add(new ElementButton(this, width - 140, height - 30, 60, 16, 100, false, 1, 1, "element.button.ok"));
         elements.add(new ElementButton(this, width - 70, height - 30, 60, 16, 0, false, 1, 1, "element.button.cancel"));

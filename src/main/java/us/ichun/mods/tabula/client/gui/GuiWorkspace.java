@@ -171,7 +171,7 @@ public class GuiWorkspace extends GuiScreen
         {
             init = true;
 
-            windowControls = new WindowControls(this, width / 2 - 80, height / 2 - 125, 162, 290, 162, 290);
+            windowControls = new WindowControls(this, width / 2 - 80, height / 2 - 125, 162, 295, 162, 295);
             windowTexture = new WindowTexture(this, width / 2 - 53, height / 2 - 100, 106, 100, 106, 88);
             windowModelTree = new WindowModelTree(this, width / 2 - 53, height / 2 - 125, 106, 250, 106, 250);
             windowAnimate = new WindowAnimate(this, 0, 0, 100, 100, 100, 100);
@@ -195,6 +195,30 @@ public class GuiWorkspace extends GuiScreen
                     ProjectHelper.addSystemMessage(StatCollector.translateToLocalFormatted("system.hostingOther", host));
                 }
                 windowChat.toggleVisibility();
+
+                String[] chatSettings = Tabula.config.getString("chatWindow").split(":");
+                if(chatSettings.length == 8)
+                {
+                    try
+                    {
+                        windowChat.posX = Integer.parseInt(chatSettings[0]);
+                        windowChat.posY = Integer.parseInt(chatSettings[1]);
+                        windowChat.width = Integer.parseInt(chatSettings[2]);
+                        windowChat.height = Integer.parseInt(chatSettings[3]);
+                        if(Integer.parseInt(chatSettings[4]) >= 0)
+                        {
+                            addToDock(Integer.parseInt(chatSettings[4]), windowChat);
+                        }
+                        if(Boolean.parseBoolean(chatSettings[5]))
+                        {
+                            windowChat.toggleMinimize();
+                        }
+                        windowChat.oriWidth = Integer.parseInt(chatSettings[6]);
+                        windowChat.oriHeight = Integer.parseInt(chatSettings[7]);
+                    }
+                    catch(Exception ignored){}
+                    windowChat.resized();
+                }
             }
             //            Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject("New Project", "iChun? :O", 64, 32);
         }
@@ -1804,6 +1828,29 @@ public class GuiWorkspace extends GuiScreen
         else
         {
             PacketHandler.sendToServer(Tabula.channels, new PacketRemoveListener(host, Minecraft.getMinecraft().getSession().getUsername()));
+        }
+        if(host != null)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.append(windowChat.posX);
+            sb.append(":");
+            sb.append(windowChat.posY);
+            sb.append(":");
+            sb.append(windowChat.width);
+            sb.append(":");
+            sb.append(windowChat.height);
+            sb.append(":");
+            sb.append(windowChat.docked);
+            sb.append(":");
+            sb.append(windowChat.minimized);
+            sb.append(":");
+            sb.append(windowChat.oriWidth);
+            sb.append(":");
+            sb.append(windowChat.oriHeight);
+
+            Tabula.config.get("chatWindow").set(sb.toString());
+            Tabula.config.save();
         }
     }
 
