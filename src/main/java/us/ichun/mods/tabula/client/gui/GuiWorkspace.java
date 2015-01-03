@@ -1204,16 +1204,16 @@ public class GuiWorkspace extends GuiScreen
             {
                 GL11.glBindTexture(GL11.GL_TEXTURE_2D, windowTexture.imageId);
 
-                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 0, renderRotationPoint, true);
-                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 1, renderRotationPoint, true);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 0, renderRotationPoint, Tabula.config.getInt("renderModelControls") == 1);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 1, renderRotationPoint, Tabula.config.getInt("renderModelControls") == 1);
             }
             else
             {
                 GL11.glDisable(GL11.GL_TEXTURE_2D);
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 0, renderRotationPoint, true);
-                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 1, renderRotationPoint, true);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 0, renderRotationPoint, Tabula.config.getInt("renderModelControls") == 1);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 1, renderRotationPoint, Tabula.config.getInt("renderModelControls") == 1);
 
                 GL11.glEnable(GL11.GL_TEXTURE_2D);
             }

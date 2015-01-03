@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
+import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.module.tabula.client.model.ModelBaseDummy;
 import us.ichun.module.tabula.common.project.ProjectInfo;
 import us.ichun.module.tabula.common.project.components.Animation;
@@ -65,15 +66,18 @@ public class ModelSelector {
 
             ArrayList<ElementListTree.Tree> trees = workspace.windowModelTree.modelList.trees;
 
-            for (ElementListTree.Tree tree : trees)
+            if(Tabula.config.getInt("renderModelControls") == 1)
             {
-                if (tree.selected && tree.attachedObject instanceof CubeInfo)
+                for(ElementListTree.Tree tree : trees)
                 {
-                    CubeInfo cube = (CubeInfo)tree.attachedObject;
+                    if(tree.selected && tree.attachedObject instanceof CubeInfo)
+                    {
+                        CubeInfo cube = (CubeInfo)tree.attachedObject;
 
-                    fakeRenderSelectedCube(cube);
+                        fakeRenderSelectedCube(cube);
 
-                    break;
+                        break;
+                    }
                 }
             }
 

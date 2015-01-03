@@ -67,6 +67,7 @@ public class Tabula
         config.createIntBoolProperty("renderRotationPoint", true, false, true);
         config.createIntBoolProperty("renderWorkspaceBlock", true, false, true);
         config.createIntBoolProperty("renderGrid", true, false, true);
+        config.createIntBoolProperty("renderModelControls", true, false, true);
         config.createIntBoolProperty("animateImports", true, false, true);
         config.setCurrentCategory("multiplayer");
         config.createIntBoolProperty("chatSound", true, false, true);
