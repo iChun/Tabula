@@ -179,7 +179,7 @@ public class ClientProxy extends CommonProxy
                         }
                     }
                     ModelList.models.add(new ModelInfo(loc, rend.mainModel, clz));
-                    if(rend.renderPassModel != null)
+                    if(rend.renderPassModel != null && rend.renderPassModel.getClass() != rend.mainModel.getClass())
                     {
                         ModelList.models.add(new ModelInfo(loc, rend.renderPassModel, clz));
                     }
