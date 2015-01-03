@@ -127,6 +127,10 @@ export.javaClass.title=Export as Java Class
 export.javaClass.package=Package For Class
 export.javaClass.name=Java Class
 export.javaClass.className=Class Name
+export.scalaObject.title=Export as Scala Object
+export.scalaObject.package=Package For Object
+export.scalaObject.name=Scala Object
+export.scalaObject.objectName=Object Name
 export.projTexture.name=Project Texture
 
 topdock.new=New Project
