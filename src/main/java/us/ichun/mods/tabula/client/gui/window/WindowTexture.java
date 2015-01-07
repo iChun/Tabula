@@ -179,7 +179,7 @@ public class WindowTexture extends Window
                 if(shouldListen && info.textureFile != null && info.textureFile.exists())
                 {
                     String md5 = MD5Checksum.getMD5Checksum(info.textureFile);
-                    if(!md5.equals(info.textureFileMd5))
+                    if(md5 != null && !md5.equals(info.textureFileMd5))
                     {
                         info.ignoreNextImage = true;
                         info.textureFileMd5 = md5;
