@@ -18,7 +18,7 @@ buildscript {
 apply plugin: 'forge'
 
 // Requires iChunUtil to run. Just put iChunUtil-deobf.jar in the /libs/ folder or it won't compile.
-version = "4.1.0"
+version = "4.1.1"
 group= "tabula" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Tabula"
 
