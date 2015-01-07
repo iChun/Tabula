@@ -1,15 +1,12 @@
 package us.ichun.mods.tabula.common.packet;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import ichun.common.core.network.AbstractPacket;
-import ichun.common.core.network.PacketHandler;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import us.ichun.mods.ichunutil.common.core.network.AbstractPacket;
 import us.ichun.mods.tabula.common.Tabula;
 
 public class PacketRequestHeartbeat extends AbstractPacket
@@ -44,15 +41,15 @@ public class PacketRequestHeartbeat extends AbstractPacket
     {
         if(side.isServer())
         {
-            EntityPlayerMP listening = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(listener);
+            EntityPlayerMP listening = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerByUsername(listener);
             if(listening != null)
             {
-                PacketHandler.sendToPlayer(Tabula.channels, this, listening);
+                Tabula.channel.sendToPlayer(this, listening);
             }
         }
         else
         {
-            PacketHandler.sendToServer(Tabula.channels, new PacketHeartbeat(host, listener));
+            Tabula.channel.sendToServer(new PacketHeartbeat(host, listener));
         }
     }
 }

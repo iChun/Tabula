@@ -1,21 +1,19 @@
 package us.ichun.mods.tabula.common.block;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import ichun.common.core.network.PacketHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketRequestSession;
 import us.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
@@ -41,22 +39,16 @@ public class BlockTabulaRasa extends Block
     }
 
     @Override
-    public boolean renderAsNormalBlock()
+    public boolean isFullCube()
     {
         return false;
     }
 
     @Override
-    public int getRenderType()
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase living, ItemStack stack)
     {
-        return 8;
-    }
-
-    @Override
-    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase living, ItemStack stack)
-    {
-        super.onBlockPlacedBy(world, i, j, k, living, stack);
-        TileEntity te = world.getTileEntity(i, j, k);
+        super.onBlockPlacedBy(world, pos, state, living, stack);
+        TileEntity te = world.getTileEntity(pos);
         if(te instanceof TileEntityTabulaRasa)
         {
             TileEntityTabulaRasa tr = (TileEntityTabulaRasa)te;
@@ -65,19 +57,19 @@ public class BlockTabulaRasa extends Block
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitVecX, float hitVecY, float hitVecZ)
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitVecX, float hitVecY, float hitVecZ)
     {
         if(world.isRemote)
         {
-            PacketHandler.sendToServer(Tabula.channels, new PacketRequestSession(x, y, z));
+            Tabula.channel.sendToServer(new PacketRequestSession(pos.getX(), pos.getY(), pos.getZ()));
         }
         return true;
     }
 
     @Override
-    public float getBlockHardness(World world, int i, int j, int k)
+    public float getBlockHardness(World world, BlockPos pos)
     {
-        TileEntity te = world.getTileEntity(i, j, k);
+        TileEntity te = world.getTileEntity(pos);
         if(te instanceof TileEntityTabulaRasa)
         {
             TileEntityTabulaRasa tr = (TileEntityTabulaRasa)te;
@@ -90,28 +82,28 @@ public class BlockTabulaRasa extends Block
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBoxFromPool(World p_149668_1_, int p_149668_2_, int p_149668_3_, int p_149668_4_)
+    public AxisAlignedBB getCollisionBoundingBox(World world_, BlockPos pos, IBlockState state)
     {
         return null;
     }
 
     @Override
-    public void setBlockBoundsBasedOnState(IBlockAccess world, int i, int j_3_, int k)
+    public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos)
     {
         float width = 0.125F;
         this.setBlockBounds(width, 0.0F, width, 1.0F - width, 0.125F, 1.0F - width);
     }
 
     @Override
-    public boolean canPlaceBlockAt(World world, int i, int j, int k)
+    public boolean canPlaceBlockAt(World world, BlockPos pos)
     {
-        return world.isSideSolid(i, j - 1, k, ForgeDirection.UP, false);
+        return world.isSideSolid(pos.add(0, -1, 0), EnumFacing.UP, false);
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int i, int j, int k, Block block)
+    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block block)
     {
-        TileEntity te = world.getTileEntity(i, j, k);
+        TileEntity te = world.getTileEntity(pos);
         if(te instanceof TileEntityTabulaRasa)
         {
             TileEntityTabulaRasa tr = (TileEntityTabulaRasa)te;
@@ -120,16 +112,10 @@ public class BlockTabulaRasa extends Block
                 return;
             }
         }
-        if(!world.isSideSolid(i, j - 1, k, ForgeDirection.UP, false))
+        if(!world.isSideSolid(pos.add(0, -1, 0), EnumFacing.UP, false))
         {
-            world.setBlockToAir(i, j, k);
-            dropBlockAsItem(world, i, j, k, new ItemStack(Tabula.blockTabulaRasa, 1));
+            world.setBlockToAir(pos);
+            spawnAsEntity(world, pos, new ItemStack(Tabula.blockTabulaRasa, 1));
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconRegister) {
-        this.blockIcon = iconRegister.registerIcon("tabula:tabulaRasa");
     }
 }

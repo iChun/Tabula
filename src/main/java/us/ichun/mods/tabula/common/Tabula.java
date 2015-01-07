@@ -1,44 +1,42 @@
 package us.ichun.mods.tabula.common;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.FMLEmbeddedChannel;
-import cpw.mods.fml.relauncher.Side;
-import ichun.common.core.config.Config;
-import ichun.common.core.config.ConfigHandler;
-import ichun.common.core.config.IConfigUser;
-import ichun.common.core.updateChecker.ModVersionChecker;
-import ichun.common.core.updateChecker.ModVersionInfo;
-import ichun.common.iChunUtil;
 import net.minecraft.block.Block;
 import net.minecraft.client.model.ModelBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import us.ichun.mods.ichunutil.common.core.config.Config;
+import us.ichun.mods.ichunutil.common.core.config.ConfigHandler;
+import us.ichun.mods.ichunutil.common.core.config.IConfigUser;
+import us.ichun.mods.ichunutil.common.core.network.PacketChannel;
+import us.ichun.mods.ichunutil.common.core.updateChecker.ModVersionChecker;
+import us.ichun.mods.ichunutil.common.core.updateChecker.ModVersionInfo;
+import us.ichun.mods.ichunutil.common.iChunUtil;
+import us.ichun.mods.ichunutil.common.module.tabula.client.model.ModelList;
 import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.common.core.CommonProxy;
 import us.ichun.mods.tabula.common.core.EventHandler;
-import us.ichun.module.tabula.client.model.ModelList;
 
 import java.io.File;
-import java.util.EnumMap;
 
 @Mod(modid = "Tabula", name = "Tabula",
         version = Tabula.version,
-        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".1.3,)",
-        acceptableRemoteVersions = "[" + iChunUtil.versionMC +".1.0," + iChunUtil.versionMC + ".2.0)"
+        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".0.0,)",
+        acceptableRemoteVersions = "[" + iChunUtil.versionMC +".0.0," + iChunUtil.versionMC + ".1.0)"
 )
 public class Tabula
         implements IConfigUser
 {
-    public static final String version = iChunUtil.versionMC + ".1.1";
+    public static final String version = iChunUtil.versionMC + ".0.0";
 
     @Mod.Instance("Tabula")
     public static Tabula instance;
@@ -46,7 +44,7 @@ public class Tabula
     @SidedProxy(clientSide = "us.ichun.mods.tabula.client.core.ClientProxy", serverSide = "us.ichun.mods.tabula.common.core.CommonProxy")
     public static CommonProxy proxy;
 
-    public static EnumMap<Side, FMLEmbeddedChannel> channels;
+    public static PacketChannel channel;
 
     private static final Logger logger = LogManager.getLogger("Tabula");
 

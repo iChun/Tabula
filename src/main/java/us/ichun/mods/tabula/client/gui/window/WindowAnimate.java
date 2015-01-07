@@ -1,8 +1,10 @@
 package us.ichun.mods.tabula.client.gui.window;
 
-import ichun.client.render.RendererHelper;
-import ichun.common.core.network.PacketHandler;
 import net.minecraft.util.ResourceLocation;
+import us.ichun.mods.ichunutil.client.render.RendererHelper;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.Animation;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.AnimationComponent;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
@@ -11,9 +13,6 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementButtonTextured;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
-import us.ichun.module.tabula.common.project.components.Animation;
-import us.ichun.module.tabula.common.project.components.AnimationComponent;
-import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -100,7 +99,7 @@ public class WindowAnimate extends Window
                 }
                 else if(!workspace.sessionEnded && workspace.isEditor)
                 {
-                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "deleteAnimation", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "deleteAnimation", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier));
                 }
             }
             else if(element.id == ID_NEW_COMP)
@@ -159,7 +158,7 @@ public class WindowAnimate extends Window
                     }
                     else if(!workspace.sessionEnded && workspace.isEditor)
                     {
-                        PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "deleteAnimComponent", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier));
+                        Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "deleteAnimComponent", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier));
                     }
                 }
             }
@@ -217,7 +216,7 @@ public class WindowAnimate extends Window
                                         }
                                         else if(!workspace.sessionEnded && workspace.isEditor)
                                         {
-                                            PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "splitAnimComponent", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier, timeline.getCurrentPos()));
+                                            Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "splitAnimComponent", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier, timeline.getCurrentPos()));
                                         }
                                         break;
                                     }

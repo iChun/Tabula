@@ -1,15 +1,14 @@
 package us.ichun.mods.tabula.common.packet;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import ichun.common.core.network.AbstractPacket;
-import ichun.common.core.network.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import us.ichun.mods.ichunutil.common.core.network.AbstractPacket;
 import us.ichun.mods.tabula.common.Tabula;
 
 public class PacketAddListener extends AbstractPacket
@@ -44,10 +43,10 @@ public class PacketAddListener extends AbstractPacket
     {
         if(side.isServer())
         {
-            EntityPlayerMP hoster = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(host);
+            EntityPlayerMP hoster = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerByUsername(host);
             if(hoster != null)
             {
-                PacketHandler.sendToPlayer(Tabula.channels, this, hoster);
+                Tabula.channel.sendToPlayer(this, hoster);
             }
         }
         else

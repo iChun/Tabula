@@ -1,7 +1,7 @@
 package us.ichun.mods.tabula.client.gui.window;
 
-import ichun.common.core.network.PacketHandler;
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.Animation;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
@@ -10,7 +10,6 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementCheckBox;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
-import us.ichun.module.tabula.common.project.components.Animation;
 
 public class WindowEditAnimation extends Window
 {
@@ -78,7 +77,7 @@ public class WindowEditAnimation extends Window
                 }
                 else if(!workspace.sessionEnded && workspace.isEditor)
                 {
-                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "editAnimation", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, ident, animName, loop));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "editAnimation", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, ident, animName, loop));
                 }
                 workspace.removeWindow(this, true);
             }

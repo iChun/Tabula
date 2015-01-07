@@ -1,6 +1,8 @@
 package us.ichun.mods.tabula.client.gui.window;
 
-import ichun.common.core.network.PacketHandler;
+import us.ichun.mods.ichunutil.common.module.tabula.client.model.ModelInfo;
+import us.ichun.mods.ichunutil.common.module.tabula.client.model.ModelList;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
@@ -8,10 +10,6 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
-import us.ichun.mods.tabula.common.packet.PacketProjectFragmentFromClient;
-import us.ichun.module.tabula.client.model.ModelInfo;
-import us.ichun.module.tabula.client.model.ModelList;
-import us.ichun.module.tabula.common.project.ProjectInfo;
 
 public class WindowImport extends Window
 {

@@ -1,9 +1,8 @@
 package us.ichun.mods.tabula.client.gui.window.element;
 
-import ichun.client.render.RendererHelper;
 import net.minecraft.client.gui.GuiTextField;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
+import us.ichun.mods.ichunutil.client.render.RendererHelper;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.Window;
 
@@ -17,7 +16,7 @@ public class ElementTextInput extends Element
     public ElementTextInput(Window window, int x, int y, int w, int h, int ID, String tip, int maxLength)
     {
         super(window, x, y, w, 12, ID, false); //12 for height?
-        textField = new GuiTextField(parent.workspace.getFontRenderer(), parent.posX + posX + 2, parent.posY + posY + 2, width - 9, parent.workspace.getFontRenderer().FONT_HEIGHT);
+        textField = new GuiTextField(0, parent.workspace.getFontRenderer(), parent.posX + posX + 2, parent.posY + posY + 2, width - 9, parent.workspace.getFontRenderer().FONT_HEIGHT);
         textField.setMaxStringLength(maxLength);
         textField.setEnableBackgroundDrawing(false);
         textField.setTextColor(Theme.getAsHex(Theme.instance.font));

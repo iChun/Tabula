@@ -1,6 +1,5 @@
 package us.ichun.mods.tabula.client.gui.window;
 
-import ichun.common.core.network.PacketHandler;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
@@ -101,7 +100,7 @@ public class WindowNewProject extends Window
             }
             else if(!workspace.sessionEnded && workspace.isEditor)
             {
-                PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "loadEmptyProject", projName, authName, dimW, dimH, scaleX, scaleY, scaleZ));
+                Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "loadEmptyProject", projName, authName, dimW, dimH, scaleX, scaleY, scaleZ));
             }
             workspace.removeWindow(this, true);
         }

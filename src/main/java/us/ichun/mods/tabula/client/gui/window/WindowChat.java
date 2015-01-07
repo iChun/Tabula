@@ -1,10 +1,10 @@
 package us.ichun.mods.tabula.client.gui.window;
 
-import ichun.common.core.network.PacketHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.window.element.*;
+import us.ichun.mods.tabula.client.gui.window.element.Element;
+import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
+import us.ichun.mods.tabula.client.gui.window.element.ElementTextWrapperChat;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketChat;
 
@@ -75,7 +75,7 @@ public class WindowChat extends Window
                 }
                 else if(!workspace.sessionEnded)
                 {
-                    PacketHandler.sendToServer(Tabula.channels, new PacketChat(workspace.host, Minecraft.getMinecraft().getSession().getUsername(), text.textField.getText()));
+                    Tabula.channel.sendToServer(new PacketChat(workspace.host, Minecraft.getMinecraft().getSession().getUsername(), text.textField.getText()));
                 }
                 text.textField.setText("");
             }

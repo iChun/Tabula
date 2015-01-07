@@ -1,6 +1,5 @@
 package us.ichun.mods.tabula.client.gui.window;
 
-import ichun.common.core.network.PacketHandler;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
@@ -72,7 +71,7 @@ public class WindowNewAnimation extends Window
                 }
                 else if(!workspace.sessionEnded && workspace.isEditor)
                 {
-                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "createNewAnimation", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animName, loop));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "createNewAnimation", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animName, loop));
                 }
                 workspace.removeWindow(this, true);
             }

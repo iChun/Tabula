@@ -1,13 +1,15 @@
 package us.ichun.mods.tabula.client.gui.window;
 
-import ichun.common.core.network.PacketHandler;
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.*;
+import us.ichun.mods.tabula.client.gui.window.element.Element;
+import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
+import us.ichun.mods.tabula.client.gui.window.element.ElementNumberInput;
+import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
-import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 public class WindowNewAnimComponent extends Window
 {
@@ -75,7 +77,7 @@ public class WindowNewAnimComponent extends Window
                 }
                 else if(!workspace.sessionEnded && workspace.isEditor)
                 {
-                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "createNewAnimComponent", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, workspace.windowAnimate.animList.selectedIdentifier, cubeIdent, animName, length, workspace.windowAnimate.timeline.getCurrentPos()));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "createNewAnimComponent", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, workspace.windowAnimate.animList.selectedIdentifier, cubeIdent, animName, length, workspace.windowAnimate.timeline.getCurrentPos()));
                 }
                 workspace.removeWindow(this, true);
             }

@@ -1,7 +1,10 @@
 package us.ichun.mods.tabula.client.gui.window;
 
-import ichun.client.render.RendererHelper;
-import ichun.common.core.network.PacketHandler;
+import us.ichun.mods.ichunutil.client.render.RendererHelper;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.Animation;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeGroup;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
@@ -9,10 +12,6 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementProjectTab;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketSetCurrentProject;
-import us.ichun.module.tabula.common.project.ProjectInfo;
-import us.ichun.module.tabula.common.project.components.Animation;
-import us.ichun.module.tabula.common.project.components.CubeGroup;
-import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.util.ArrayList;
 
@@ -349,7 +348,7 @@ public class WindowProjectSelection extends WindowTopDock
 
             if(!workspace.remoteSession && workspace.host != null)
             {
-                PacketHandler.sendToServer(Tabula.channels, new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, info.identifier));
+                Tabula.channel.sendToServer(new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, info.identifier));
             }
         }
         else
@@ -364,7 +363,7 @@ public class WindowProjectSelection extends WindowTopDock
 
             if(!workspace.remoteSession && workspace.host != null)
             {
-                PacketHandler.sendToServer(Tabula.channels, new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, ""));
+                Tabula.channel.sendToServer(new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, ""));
             }
         }
 

@@ -1,20 +1,13 @@
 package us.ichun.mods.tabula.client.core;
 
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
-import ichun.common.core.EntityHelperBase;
-import ichun.common.core.util.ObfHelper;
-import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderEntity;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
-import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityHorse;
@@ -25,17 +18,19 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import us.ichun.mods.ichunutil.common.core.EntityHelperBase;
+import us.ichun.mods.ichunutil.common.core.util.ObfHelper;
+import us.ichun.mods.ichunutil.common.module.tabula.client.model.ModelInfo;
+import us.ichun.mods.ichunutil.common.module.tabula.client.model.ModelList;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.client.render.TileRendererTabulaRasa;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.core.CommonProxy;
-import us.ichun.module.tabula.client.model.ModelInfo;
-import us.ichun.module.tabula.client.model.ModelList;
-import us.ichun.module.tabula.common.project.ProjectInfo;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -74,7 +69,8 @@ public class ClientProxy extends CommonProxy
         HashMap<Class, Render> renders = new HashMap<Class, Render>();
         try
         {
-            List entityRenderers = (List)ObfuscationReflectionHelper.getPrivateValue(RenderingRegistry.class, RenderingRegistry.instance(), "entityRenderers");
+            RenderingRegistry reg = (RenderingRegistry)ObfuscationReflectionHelper.getPrivateValue(RenderingRegistry.class, null, "INSTANCE");
+            List entityRenderers = (List)ObfuscationReflectionHelper.getPrivateValue(RenderingRegistry.class, reg, "entityRenderers");
 
             for(Object obj : entityRenderers)
             {
@@ -129,7 +125,8 @@ public class ClientProxy extends CommonProxy
                 RendererLivingEntity rend = (RendererLivingEntity)rend1;
                 if(clz == EntityPlayer.class)
                 {
-                    ModelList.models.add(new ModelInfo(AbstractClientPlayer.locationStevePng, rend.mainModel, EntityPlayer.class));
+                    //TODO alex model
+                    ModelList.models.add(new ModelInfo(DefaultPlayerSkin.getDefaultSkinLegacy(), rend.mainModel, EntityPlayer.class));
                 }
                 else if(rend.mainModel != null && clz != null)
                 {
@@ -179,10 +176,11 @@ public class ClientProxy extends CommonProxy
                         }
                     }
                     ModelList.models.add(new ModelInfo(loc, rend.mainModel, clz));
-                    if(rend.renderPassModel != null && rend.renderPassModel.getClass() != rend.mainModel.getClass())
-                    {
-                        ModelList.models.add(new ModelInfo(loc, rend.renderPassModel, clz));
-                    }
+                    //TODO layers
+                    //                    if(rend.renderPassModel != null && rend.renderPassModel.getClass() != rend.mainModel.getClass())
+                    //                    {
+                    //                        ModelList.models.add(new ModelInfo(loc, rend.renderPassModel, clz));
+                    //                    }
                 }
             }
             catch(Exception e)
@@ -222,7 +220,7 @@ public class ClientProxy extends CommonProxy
             }
         }
 
-        Iterator ite2 = RenderManager.instance.entityRenderMap.entrySet().iterator();
+        Iterator ite2 = Minecraft.getMinecraft().getRenderManager().entityRenderMap.entrySet().iterator();
         while(ite2.hasNext())
         {
             Map.Entry e = (Map.Entry)ite2.next();
@@ -330,6 +328,7 @@ public class ClientProxy extends CommonProxy
             }
         }
 
+        //TODO import block and item models.
 
         for(int i = ModelList.models.size() - 1; i >= 0 ; i--)
         {

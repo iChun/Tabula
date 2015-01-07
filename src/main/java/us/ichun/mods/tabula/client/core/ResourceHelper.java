@@ -25,7 +25,7 @@ public class ResourceHelper
 
     public static void init()
     {
-        workRoot = new File(ichun.common.core.util.ResourceHelper.getModsFolder(), "tabula");
+        workRoot = new File(us.ichun.mods.ichunutil.common.core.util.ResourceHelper.getModsFolder(), "tabula");
         saveDir = new File(workRoot, "saves");
         autosaveDir = new File(workRoot, "autosave");
         texturesDir = new File(workRoot, "textures");

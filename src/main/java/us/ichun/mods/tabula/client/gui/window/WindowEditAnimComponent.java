@@ -1,7 +1,7 @@
 package us.ichun.mods.tabula.client.gui.window;
 
-import ichun.common.core.network.PacketHandler;
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.AnimationComponent;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
@@ -10,8 +10,6 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementNumberInput;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
-import us.ichun.module.tabula.common.project.components.AnimationComponent;
-import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 public class WindowEditAnimComponent extends Window
 {
@@ -91,7 +89,7 @@ public class WindowEditAnimComponent extends Window
                 }
                 else if(!workspace.sessionEnded && workspace.isEditor)
                 {
-                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "editAnimComponent", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, workspace.windowAnimate.animList.selectedIdentifier, comp.identifier, animName, length, pos));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "editAnimComponent", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, workspace.windowAnimate.animList.selectedIdentifier, comp.identifier, animName, length, pos));
                 }
                 workspace.removeWindow(this, true);
             }

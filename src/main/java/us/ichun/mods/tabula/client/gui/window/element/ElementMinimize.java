@@ -1,7 +1,7 @@
 package us.ichun.mods.tabula.client.gui.window.element;
 
-import ichun.client.render.RendererHelper;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.renderer.GlStateManager;
+import us.ichun.mods.ichunutil.client.render.RendererHelper;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.client.gui.window.WindowAnimate;
@@ -27,9 +27,9 @@ public class ElementMinimize extends Element
             RendererHelper.drawColourOnScreen(Theme.getAsHex(Theme.instance.font), 255, getPosX() - 0.5D, getPosY() + height - 1, width, 1, 0);
             RendererHelper.drawColourOnScreen(Theme.getAsHex(Theme.instance.font), 255, getPosX() + width - 1  - 0.5D, getPosY(), 1, height, 0);
         }
-        GL11.glPushMatrix();
+        GlStateManager.pushMatrix();
         float scale = 2F;
-        GL11.glScalef(scale, scale, scale);
+        GlStateManager.scale(scale, scale, scale);
         if(parent.minimized && !(parent instanceof WindowAnimate) || !parent.minimized && parent instanceof WindowAnimate)
         {
             parent.workspace.getFontRenderer().drawString("\u25BC", (int)((float)(getPosX() + 2) / scale), (int)((float)(getPosY() - 2) / scale), Theme.getAsHex(Theme.instance.font), false); //down arrow
@@ -38,7 +38,7 @@ public class ElementMinimize extends Element
         {
             parent.workspace.getFontRenderer().drawString("\u25B2", (int)((float)(getPosX() + 2) / scale), (int)((float)(getPosY() - 2) / scale), Theme.getAsHex(Theme.instance.font), false); //up arrow
         }
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
     }
 
     @Override

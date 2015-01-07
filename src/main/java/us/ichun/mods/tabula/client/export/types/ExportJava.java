@@ -1,12 +1,12 @@
 package us.ichun.mods.tabula.client.export.types;
 
 import org.apache.commons.io.FileUtils;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.WindowExportJava;
 import us.ichun.mods.tabula.common.Tabula;
-import us.ichun.module.tabula.common.project.ProjectInfo;
-import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,6 +51,7 @@ public class ExportJava extends Exporter
         }
         if(addGl11)
         {
+            sb.append("import net.minecraft.client.renderer.GlStateManager;\n");
             sb.append("import org.lwjgl.opengl.GL11;\n");
         }
         sb.append("\n");
@@ -128,8 +129,8 @@ public class ExportJava extends Exporter
 
         if(!(info.scale[0] == 1D && info.scale[1] == 1D && info.scale[2] == 1D))
         {
-            sb.append("        GL11.glPushMatrix();\n");
-            sb.append("        GL11.glScaled(1D / modelScale[0], 1D / modelScale[1], 1D / modelScale[2]);\n");
+            sb.append("        GlStateManager.pushMatrix();\n");
+            sb.append("        GlStateManager.scale(1D / modelScale[0], 1D / modelScale[1], 1D / modelScale[2]);\n");
         }
         for(Map.Entry<CubeInfo, String> e : cubeFieldMap.entrySet())
         {
@@ -137,32 +138,32 @@ public class ExportJava extends Exporter
             String field = e.getValue();
             if(!(cube.scale[0] == 1.0D && cube.scale[1] == 1.0D && cube.scale[2] == 1.0D))
             {
-                sb.append("        GL11.glPushMatrix();\n");
-                sb.append("        GL11.glTranslatef(this." + field + ".offsetX, this." + field + ".offsetY, this." + field + ".offsetZ);\n");
-                sb.append("        GL11.glTranslatef(this." + field + ".rotationPointX * f5, this." + field + ".rotationPointY * f5, this." + field + ".rotationPointZ * f5);\n");
-                sb.append("        GL11.glScaled(" + cube.scale[0] + "D, " + cube.scale[1] + "D, " + cube.scale[2] + "D);\n");
-                sb.append("        GL11.glTranslatef(-this." + field + ".offsetX, -this." + field + ".offsetY, -this." + field + ".offsetZ);\n");
-                sb.append("        GL11.glTranslatef(-this." + field + ".rotationPointX * f5, -this." + field + ".rotationPointY * f5, -this." + field + ".rotationPointZ * f5);\n");
+                sb.append("        GlStateManager.pushMatrix();\n");
+                sb.append("        GlStateManager.translate(this." + field + ".offsetX, this." + field + ".offsetY, this." + field + ".offsetZ);\n");
+                sb.append("        GlStateManager.translate(this." + field + ".rotationPointX * f5, this." + field + ".rotationPointY * f5, this." + field + ".rotationPointZ * f5);\n");
+                sb.append("        GlStateManager.scale(" + cube.scale[0] + "D, " + cube.scale[1] + "D, " + cube.scale[2] + "D);\n");
+                sb.append("        GlStateManager.translate(-this." + field + ".offsetX, -this." + field + ".offsetY, -this." + field + ".offsetZ);\n");
+                sb.append("        GlStateManager.translate(-this." + field + ".rotationPointX * f5, -this." + field + ".rotationPointY * f5, -this." + field + ".rotationPointZ * f5);\n");
             }
             if(cube.opacity != 100D)
             {
-                sb.append("        GL11.glEnable(GL11.GL_BLEND);\n");
-                sb.append("        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);\n");
-                sb.append("        GL11.glColor4f(1.0F, 1.0F, 1.0F, " + (cube.opacity / 100D) + "F);\n");
+                sb.append("        GlStateManager.enableBlend();\n");
+                sb.append("        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);\n");
+                sb.append("        GlStateManager.color(1.0F, 1.0F, 1.0F, " + (cube.opacity / 100D) + "F);\n");
             }
             sb.append("        this." + field + ".render(f5);\n");
             if(cube.opacity != 100D)
             {
-                sb.append("        GL11.glDisable(GL11.GL_BLEND);\n");
+                sb.append("        GlStateManager.disableBlend();\n");
             }
             if(!(cube.scale[0] == 1.0D && cube.scale[1] == 1.0D && cube.scale[2] == 1.0D))
             {
-                sb.append("        GL11.glPopMatrix();\n");
+                sb.append("        GlStateManager.popMatrix();\n");
             }
         }
         if(!(info.scale[0] == 1D && info.scale[1] == 1D && info.scale[2] == 1D))
         {
-            sb.append("        GL11.glPopMatrix();\n");
+            sb.append("        GlStateManager.popMatrix();\n");
         }
 
         sb.append("    }\n\n");

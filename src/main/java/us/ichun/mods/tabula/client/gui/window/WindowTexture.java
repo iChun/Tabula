@@ -1,13 +1,16 @@
 package us.ichun.mods.tabula.client.gui.window;
 
-import ichun.client.render.RendererHelper;
-import ichun.common.core.network.PacketHandler;
-import ichun.common.core.util.MD5Checksum;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
+import us.ichun.mods.ichunutil.client.render.RendererHelper;
+import us.ichun.mods.ichunutil.common.core.util.IOUtil;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
@@ -17,8 +20,6 @@ import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketClearTexture;
-import us.ichun.module.tabula.common.project.ProjectInfo;
-import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -79,23 +80,24 @@ public class WindowTexture extends Window
 
             if(image != null)
             {
-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, imageId);
-                Tessellator tessellator = Tessellator.instance;
-                tessellator.startDrawingQuads();
-                tessellator.addVertexWithUV(pX		, pY + h1	, 0, 0.0D, 1.0D);
-                tessellator.addVertexWithUV(pX + w1, pY + h1	, 0, 1.0D, 1.0D);
-                tessellator.addVertexWithUV(pX + w1, pY			, 0, 1.0D, 0.0D);
-                tessellator.addVertexWithUV(pX		, pY			, 0, 0.0D, 0.0D);
+                GlStateManager.bindTexture(imageId);
+                Tessellator tessellator = Tessellator.getInstance();
+                WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+                worldRenderer.startDrawingQuads();
+                worldRenderer.addVertexWithUV(pX		, pY + h1	, 0, 0.0D, 1.0D);
+                worldRenderer.addVertexWithUV(pX + w1, pY + h1	, 0, 1.0D, 1.0D);
+                worldRenderer.addVertexWithUV(pX + w1, pY			, 0, 1.0D, 0.0D);
+                worldRenderer.addVertexWithUV(pX		, pY			, 0, 0.0D, 0.0D);
                 tessellator.draw();
             }
 
             RendererHelper.endGlScissor();
             RendererHelper.startGlScissor((int)pX, (int)pY, (int)w1, (int)h1);
 
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-            GL11.glAlphaFunc(GL11.GL_GREATER, 0.00625F);
+            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.00625F);
 
             for(ElementListTree.Tree tree : workspace.windowModelTree.modelList.trees)
             {
@@ -113,8 +115,8 @@ public class WindowTexture extends Window
                 }
             }
 
-            GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
-            GL11.glDisable(GL11.GL_BLEND);
+            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+            GlStateManager.disableBlend();
 
             RendererHelper.endGlScissor();
             if(this.isTab)
@@ -178,7 +180,7 @@ public class WindowTexture extends Window
                 }
                 if(shouldListen && info.textureFile != null && info.textureFile.exists())
                 {
-                    String md5 = MD5Checksum.getMD5Checksum(info.textureFile);
+                    String md5 = IOUtil.getMD5Checksum(info.textureFile);
                     if(md5 != null && !md5.equals(info.textureFileMd5))
                     {
                         info.ignoreNextImage = true;
@@ -227,7 +229,7 @@ public class WindowTexture extends Window
                     }
                     else if(!workspace.sessionEnded && workspace.isEditor)
                     {
-                        PacketHandler.sendToServer(Tabula.channels, new PacketClearTexture(workspace.host, info.identifier));
+                        Tabula.channel.sendToServer(new PacketClearTexture(workspace.host, info.identifier));
                     }
                 }
             }

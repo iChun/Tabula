@@ -1,11 +1,11 @@
 package us.ichun.mods.tabula.client.gui.window.element;
 
-import ichun.client.render.RendererHelper;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
+import us.ichun.mods.ichunutil.client.render.RendererHelper;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.Window;
 
@@ -32,7 +32,7 @@ public class ElementNumberInput extends Element
 
         for(int i = 0; i < fieldCount; i++)
         {
-            GuiTextField textField = new GuiTextField(parent.workspace.getFontRenderer(), parent.posX + posX + 2 + ((width / fieldCount) * i), parent.posY + posY + 2, (width / fieldCount) - 18, parent.workspace.getFontRenderer().FONT_HEIGHT);
+            GuiTextField textField = new GuiTextField(0, parent.workspace.getFontRenderer(), parent.posX + posX + 2 + ((width / fieldCount) * i), parent.posY + posY + 2, (width / fieldCount) - 18, parent.workspace.getFontRenderer().FONT_HEIGHT);
             textField.setMaxStringLength(20);
             textField.setEnableBackgroundDrawing(false);
             textField.setTextColor(Theme.getAsHex(Theme.instance.font));
@@ -324,12 +324,12 @@ public class ElementNumberInput extends Element
                 RendererHelper.drawColourOnScreen(Theme.instance.elementInputBorder[0], Theme.instance.elementInputBorder[1], Theme.instance.elementInputBorder[2], 255, getPosX() + ((width / textFields.size()) * (i + 1)) - 12, getPosY() + 6, 12, 6, 0);
             }
 
-            GL11.glPushMatrix();
+            GlStateManager.pushMatrix();
             float scale = 1F;
-            GL11.glScalef(scale, scale, scale);
+            GlStateManager.scale(scale, scale, scale);
             parent.workspace.getFontRenderer().drawString("\u25B2", (int)((float)(getPosX() + ((width / textFields.size()) * (i + 1)) - 8) / scale), (int)((float)(getPosY() - 1) / scale), Theme.getAsHex(Theme.instance.font), false);//up
             parent.workspace.getFontRenderer().drawString("\u25BC", (int)((float)(getPosX() + ((width / textFields.size()) * (i + 1)) - 8) / scale), (int)((float)(getPosY() + 5) / scale), Theme.getAsHex(Theme.instance.font), false);//down
-            GL11.glPopMatrix();
+            GlStateManager.popMatrix();
         }
     }
 

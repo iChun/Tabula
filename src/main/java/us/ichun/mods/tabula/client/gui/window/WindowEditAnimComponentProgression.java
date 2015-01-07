@@ -1,13 +1,12 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
-import sun.org.mozilla.javascript.internal.ast.ArrayLiteral;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.Animation;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.AnimationComponent;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.*;
 import us.ichun.mods.tabula.common.Tabula;
-import us.ichun.module.tabula.common.project.components.Animation;
-import us.ichun.module.tabula.common.project.components.AnimationComponent;
 
 import java.util.ArrayList;
 import java.util.Map;

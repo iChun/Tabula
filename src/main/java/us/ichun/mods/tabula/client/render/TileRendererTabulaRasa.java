@@ -1,18 +1,18 @@
 package us.ichun.mods.tabula.client.render;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeGroup;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.client.model.ModelWaxTablet;
 import us.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
-import us.ichun.module.tabula.common.project.ProjectInfo;
-import us.ichun.module.tabula.common.project.components.CubeGroup;
-import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.util.ArrayList;
 
@@ -26,16 +26,29 @@ public class TileRendererTabulaRasa extends TileEntitySpecialRenderer
         model = new ModelWaxTablet();
     }
 
-    public void renderTabulaRasa(TileEntityTabulaRasa tr, double d, double d1, double d2, float f)
+    public void renderTabulaRasa(TileEntityTabulaRasa tr, double d, double d1, double d2, float f, int destroyState)
     {
-        GL11.glPushMatrix();
+        GlStateManager.pushMatrix();
 
-        GL11.glTranslated(d + 0.5D, d1 + 1/16D, d2 + 0.5D);
-        GL11.glScalef(-1F, -1F, 1F);
+        GlStateManager.translate(d + 0.5D, d1 + 1 / 16D, d2 + 0.5D);
+        GlStateManager.scale(-1F, -1F, 1F);
 
-        GL11.glRotatef((tr.side * 90F), 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate((tr.side * 90F), 0.0F, 1.0F, 0.0F);
 
-        bindTexture(txModel);
+        if (destroyState >= 0)
+        {
+            this.bindTexture(DESTROY_STAGES[destroyState]);
+            GlStateManager.matrixMode(GL11.GL_TEXTURE);
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(4.0F, 2.0F, 1.0F);
+            GlStateManager.translate(0.0625F, 0.0625F, 0.0625F);
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        }
+        else
+        {
+            bindTexture(txModel);
+        }
+
         model.render(0.0625F);
 
         if(!tr.host.isEmpty() && !tr.currentProj.isEmpty())
@@ -54,14 +67,14 @@ public class TileRendererTabulaRasa extends TileEntitySpecialRenderer
                     GuiWorkspace.addElementsForHiding(group1, hidden);
                 }
 
-                GL11.glPushMatrix();
+                GlStateManager.pushMatrix();
 
-                GL11.glEnable(GL11.GL_BLEND);
-                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.enableBlend();
+                GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-                GL11.glDisable(GL11.GL_CULL_FACE);
+                GlStateManager.disableCull();
 
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
                 float scale = 0.3F;
 
@@ -71,13 +84,13 @@ public class TileRendererTabulaRasa extends TileEntitySpecialRenderer
                     scale = 0.3F * 16F / size;
                 }
 
-                GL11.glRotatef((tr.age + f) / 2F, 0.0F, 1.0F, 0.0F);
+                GlStateManager.rotate((tr.age + f) / 2F, 0.0F, 1.0F, 0.0F);
 
-                GL11.glTranslatef(0.0F, -0.6F + (-0.075F * (float)Math.sin((tr.age + f) / 10F)), 0.0F);
+                GlStateManager.translate(0.0F, -0.6F + (-0.075F * (float)Math.sin((tr.age + f) / 10F)), 0.0F);
 
-                GL11.glScalef(scale, scale, scale);
+                GlStateManager.scale(scale, scale, scale);
 
-                GL11.glScaled(1D / info.scale[0], 1D / info.scale[1], 1D / info.scale[2]);
+                GlStateManager.scale(1D / info.scale[0], 1D / info.scale[1], 1D / info.scale[2]);
 
                 if(info.bufferedTexture != null)
                 {
@@ -88,31 +101,38 @@ public class TileRendererTabulaRasa extends TileEntitySpecialRenderer
                         ProjectHelper.projectTextureIDs.put(info.bufferedTexture, id);
                     }
 
-                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
+                    GlStateManager.bindTexture(id);
 
                     info.model.render(0.0625F, new ArrayList<CubeInfo>(), hidden, 1.0F, true, 1, false, true);
                 }
                 else
                 {
-                    GL11.glDisable(GL11.GL_TEXTURE_2D);
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    GlStateManager.disableTexture2D();
+                    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
                     info.model.render(0.0625F, new ArrayList<CubeInfo>(), hidden, 1.0F, false, 1, false, true);
 
-                    GL11.glEnable(GL11.GL_TEXTURE_2D);
+                    GlStateManager.enableTexture2D();
                 }
 
-                GL11.glEnable(GL11.GL_CULL_FACE);
-                GL11.glPopMatrix();
+                GlStateManager.enableCull();
+                GlStateManager.popMatrix();
             }
         }
 
-        GL11.glPopMatrix();
+        if (destroyState >= 0)
+        {
+            GlStateManager.matrixMode(GL11.GL_TEXTURE);
+            GlStateManager.popMatrix();
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        }
+
+        GlStateManager.popMatrix();
     }
 
     @Override
-    public void renderTileEntityAt(TileEntity tileentity, double d0, double d1, double d2, float f)
+    public void renderTileEntityAt(TileEntity tileentity, double d0, double d1, double d2, float f, int destroyState)
     {
-        renderTabulaRasa((TileEntityTabulaRasa)tileentity, d0, d1, d2, f);
+        renderTabulaRasa((TileEntityTabulaRasa)tileentity, d0, d1, d2, f, destroyState);
     }
 }

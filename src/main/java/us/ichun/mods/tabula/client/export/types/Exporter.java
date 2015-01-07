@@ -1,7 +1,7 @@
 package us.ichun.mods.tabula.client.export.types;
 
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.module.tabula.common.project.ProjectInfo;
 
 public abstract class Exporter
 {

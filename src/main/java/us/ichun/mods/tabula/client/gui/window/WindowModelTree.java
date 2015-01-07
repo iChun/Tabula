@@ -1,8 +1,7 @@
 package us.ichun.mods.tabula.client.gui.window;
 
-import ichun.client.render.RendererHelper;
-import ichun.common.core.network.PacketHandler;
 import net.minecraft.util.ResourceLocation;
+import us.ichun.mods.ichunutil.client.render.RendererHelper;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
@@ -53,7 +52,7 @@ public class WindowModelTree extends Window
             }
             else if(!workspace.sessionEnded && workspace.isEditor)
             {
-                PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "createNewCube", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier));
+                Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "createNewCube", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier));
             }
         }
         else if(element.id == 1) //newgroup
@@ -64,7 +63,7 @@ public class WindowModelTree extends Window
             }
             else if(!workspace.sessionEnded && workspace.isEditor)
             {
-                PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "createNewGroup", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier));
+                Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "createNewGroup", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier));
             }
         }
         else if(element.id == 2 && !modelList.selectedIdentifier.isEmpty())
@@ -75,7 +74,7 @@ public class WindowModelTree extends Window
             }
             else if(!workspace.sessionEnded && workspace.isEditor)
             {
-                PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "deleteObject", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, modelList.selectedIdentifier));
+                Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "deleteObject", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, modelList.selectedIdentifier));
             }
         }
         else

@@ -1,14 +1,14 @@
 package us.ichun.mods.tabula.common.packet;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.relauncher.Side;
-import ichun.common.core.network.AbstractPacket;
-import ichun.common.core.network.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import us.ichun.mods.ichunutil.common.core.network.AbstractPacket;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
@@ -100,15 +100,15 @@ public class PacketProjectFragment extends AbstractPacket
             {
                 boolean changed = ProjectHelper.receiveProjectData(false, projectIdentifier, isTexture, updateDims, packetTotal, packetNumber, data);
 
-                EntityPlayerMP listening = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(listener);
+                EntityPlayerMP listening = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerByUsername(listener);
                 if(listening != null)
                 {
-                    PacketHandler.sendToPlayer(Tabula.channels, this, listening);
+                    Tabula.channel.sendToPlayer(this, listening);
                 }
 
                 if(x != -1 && y != -1 && z != -1 && isCurrentProject && changed)
                 {
-                    TileEntity te = player.worldObj.getTileEntity(x, y, z);
+                    TileEntity te = player.worldObj.getTileEntity(new BlockPos(x, y, z));
                     if(te instanceof TileEntityTabulaRasa)
                     {
                         TileEntityTabulaRasa tr = (TileEntityTabulaRasa)te;
@@ -122,17 +122,17 @@ public class PacketProjectFragment extends AbstractPacket
                             tr.needProjectUpdate = true;
                         }
                         tr.updateTimeout = 3;
-                        tr.getWorldObj().markBlockForUpdate(tr.xCoord, tr.yCoord, tr.zCoord);
+                        tr.getWorld().markBlockForUpdate(tr.getPos());
                     }
                 }
 
             }
             else
             {
-                EntityPlayerMP hoster = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(host);
+                EntityPlayerMP hoster = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerByUsername(host);
                 if(hoster != null)
                 {
-                    PacketHandler.sendToPlayer(Tabula.channels, this, hoster);
+                    Tabula.channel.sendToPlayer(this, hoster);
                 }
             }
         }

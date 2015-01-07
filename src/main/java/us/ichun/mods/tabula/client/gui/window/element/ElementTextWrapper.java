@@ -1,8 +1,8 @@
 package us.ichun.mods.tabula.client.gui.window.element;
 
-import ichun.client.render.RendererHelper;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
-import org.lwjgl.opengl.GL11;
+import us.ichun.mods.ichunutil.client.render.RendererHelper;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.Window;
 
@@ -40,7 +40,7 @@ public class ElementTextWrapper extends Element
         RendererHelper.endGlScissor();
         RendererHelper.startGlScissor(getPosX(), getPosY(), width, height);
 
-        GL11.glPushMatrix();
+        GlStateManager.pushMatrix();
         int lineHeight = 0;
 
         for(int i = 0; i < text.size(); i++)
@@ -58,12 +58,12 @@ public class ElementTextWrapper extends Element
 
         if(lineHeight > height)
         {
-            GL11.glTranslatef(0F, (float)((height - lineHeight) * sliderProg), 0F);
+            GlStateManager.translate(0F, (float)((height - lineHeight) * sliderProg), 0F);
         }
 
         drawText(mouseX, mouseY, hover);
 
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
 
         RendererHelper.endGlScissor();
         if(parent.isTab)
@@ -107,7 +107,7 @@ public class ElementTextWrapper extends Element
                 {
                     parent.workspace.getFontRenderer().drawString((String)list.get(j), getPosX() + 12, getPosY() + 4, Theme.getAsHex(Theme.instance.font), false);
                 }
-                GL11.glTranslatef(0F, parent.workspace.getFontRenderer().FONT_HEIGHT + 2, 0F);
+                GlStateManager.translate(0F, parent.workspace.getFontRenderer().FONT_HEIGHT + 2, 0F);
             }
         }
     }

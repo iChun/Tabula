@@ -1,7 +1,8 @@
 package us.ichun.mods.tabula.client.gui.window;
 
-import ichun.common.core.util.MD5Checksum;
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.common.core.util.IOUtil;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
@@ -9,7 +10,6 @@ import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.tabula.client.gui.window.element.ElementTextInputSaveAs;
-import us.ichun.module.tabula.common.project.ProjectInfo;
 
 import java.io.File;
 
@@ -109,7 +109,7 @@ public class WindowSaveAs extends Window
                 if(ProjectInfo.saveProject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject), file))
                 {
                     workspace.projectManager.projects.get(workspace.projectManager.selectedProject).saveFile = file;
-                    workspace.projectManager.projects.get(workspace.projectManager.selectedProject).saveFileMd5 = MD5Checksum.getMD5Checksum(file);
+                    workspace.projectManager.projects.get(workspace.projectManager.selectedProject).saveFileMd5 = IOUtil.getMD5Checksum(file);
                     workspace.removeWindow(this, true);
 
                     if(closeProject && !workspace.projectManager.projects.isEmpty())

@@ -1,22 +1,21 @@
 package us.ichun.mods.tabula.client.mainframe;
 
 import com.google.gson.Gson;
-import ichun.common.core.network.PacketHandler;
-import ichun.common.core.util.IOUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 import org.apache.commons.lang3.RandomStringUtils;
+import us.ichun.mods.ichunutil.common.core.util.IOUtil;
+import us.ichun.mods.ichunutil.common.module.tabula.client.model.ModelInfo;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.Animation;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.AnimationComponent;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeGroup;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.*;
-import us.ichun.module.tabula.client.model.ModelInfo;
-import us.ichun.module.tabula.common.project.ProjectInfo;
-import us.ichun.module.tabula.common.project.components.Animation;
-import us.ichun.module.tabula.common.project.components.AnimationComponent;
-import us.ichun.module.tabula.common.project.components.CubeGroup;
-import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -60,7 +59,7 @@ public class Mainframe
                 {
                     if(proj.switchState != -1 && proj.switchState < proj.states.size() - 1)
                     {
-                        while(proj.states.size() > proj.switchState + 1)
+                        while(proj.states.size() > proj.switchState)
                         {
                             proj.states.remove(proj.states.size() - 1);
                         }
@@ -84,7 +83,7 @@ public class Mainframe
                 e.setValue(e.getValue() + 1);
                 if(e.getValue() == 25)
                 {
-                    PacketHandler.sendToServer(Tabula.channels, new PacketRequestHeartbeat(Minecraft.getMinecraft().getSession().getUsername(), e.getKey()));
+                    Tabula.channel.sendToServer(new PacketRequestHeartbeat(Minecraft.getMinecraft().getSession().getUsername(), e.getKey()));
                 }
                 if(e.getValue() > 150)
                 {
@@ -163,7 +162,7 @@ public class Mainframe
             }
             else
             {
-                PacketHandler.sendToServer(Tabula.channels, new PacketChatMessage(Minecraft.getMinecraft().getSession().getUsername(), id, name + ": " + message));
+                Tabula.channel.sendToServer(new PacketChatMessage(Minecraft.getMinecraft().getSession().getUsername(), id, name + ": " + message));
             }
         }
     }
@@ -179,7 +178,7 @@ public class Mainframe
             }
             else
             {
-                PacketHandler.sendToServer(Tabula.channels, new PacketCloseProject(Minecraft.getMinecraft().getSession().getUsername(), id, ident));
+                Tabula.channel.sendToServer(new PacketCloseProject(Minecraft.getMinecraft().getSession().getUsername(), id, ident));
             }
         }
     }
@@ -219,7 +218,7 @@ public class Mainframe
                 GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
                 if(!workspace.remoteSession && workspace.host != null)
                 {
-                    PacketHandler.sendToServer(Tabula.channels, new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, project.identifier));
+                    Tabula.channel.sendToServer(new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, project.identifier));
                 }
             }
         }
@@ -264,7 +263,7 @@ public class Mainframe
                 GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
                 if(!workspace.remoteSession && workspace.host != null)
                 {
-                    PacketHandler.sendToServer(Tabula.channels, new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, ident));
+                    Tabula.channel.sendToServer(new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, ident));
                 }
             }
         }
@@ -288,7 +287,7 @@ public class Mainframe
                 z = workspace.hostZ;
             }
 
-            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, false, Minecraft.getMinecraft().getSession().getUsername(), id, ident, true, false, currentProj, 1, -1, 0, new byte[0]));
+            Tabula.channel.sendToServer(new PacketProjectFragment(x, y, z, false, Minecraft.getMinecraft().getSession().getUsername(), id, ident, true, false, currentProj, 1, -1, 0, new byte[0]));
         }
         else
         {
@@ -335,7 +334,7 @@ public class Mainframe
                 z = workspace.hostZ;
             }
 
-            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, false, Minecraft.getMinecraft().getSession().getUsername(), id, projectIdent, isTexture, false, isCurrentProject, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
+            Tabula.channel.sendToServer(new PacketProjectFragment(x, y, z, false, Minecraft.getMinecraft().getSession().getUsername(), id, projectIdent, isTexture, false, isCurrentProject, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
 
             packetCount++;
             fileSize -= 32000;
@@ -1414,7 +1413,7 @@ public class Mainframe
         }
         if(editors.contains(id) && !id.equals(Minecraft.getMinecraft().getSession().getUsername()))
         {
-            PacketHandler.sendToServer(Tabula.channels, new PacketIsEditor(Minecraft.getMinecraft().getSession().getUsername(), id, true));
+            Tabula.channel.sendToServer(new PacketIsEditor(Minecraft.getMinecraft().getSession().getUsername(), id, true));
         }
         updateListenersList();
     }
@@ -1436,7 +1435,7 @@ public class Mainframe
         {
             editors.add(id);
             sendChat("System", StatCollector.translateToLocalFormatted("system.addEditor", Minecraft.getMinecraft().getSession().getUsername(), id));
-            PacketHandler.sendToServer(Tabula.channels, new PacketIsEditor(Minecraft.getMinecraft().getSession().getUsername(), id, true));
+            Tabula.channel.sendToServer(new PacketIsEditor(Minecraft.getMinecraft().getSession().getUsername(), id, true));
 
             String[] editors = Tabula.config.getString("editors").split(", *");
             ArrayList<String> editorArray = new ArrayList<String>();
@@ -1480,7 +1479,7 @@ public class Mainframe
         {
             editors.remove(id);
             sendChat("System", StatCollector.translateToLocalFormatted("system.removeEditor", Minecraft.getMinecraft().getSession().getUsername(), id));
-            PacketHandler.sendToServer(Tabula.channels, new PacketIsEditor(Minecraft.getMinecraft().getSession().getUsername(), id, false));
+            Tabula.channel.sendToServer(new PacketIsEditor(Minecraft.getMinecraft().getSession().getUsername(), id, false));
 
             String[] editors = Tabula.config.getString("editors").split(", *");
             ArrayList<String> editorArray = new ArrayList<String>();
@@ -1524,7 +1523,7 @@ public class Mainframe
         {
             if(!id.equals(Minecraft.getMinecraft().getSession().getUsername()))
             {
-                PacketHandler.sendToServer(Tabula.channels, new PacketListenersList(id, editors, listeners.keySet()));
+                Tabula.channel.sendToServer(new PacketListenersList(id, editors, listeners.keySet()));
             }
         }
     }

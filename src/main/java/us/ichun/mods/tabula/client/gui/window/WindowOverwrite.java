@@ -1,12 +1,12 @@
 package us.ichun.mods.tabula.client.gui.window;
 
-import ichun.common.core.util.MD5Checksum;
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.common.core.util.IOUtil;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
-import us.ichun.module.tabula.common.project.ProjectInfo;
 
 import java.io.File;
 
@@ -54,7 +54,7 @@ public class WindowOverwrite extends Window
             if(ProjectInfo.saveProject(project, saveFile))
             {
                 project.saveFile = saveFile;
-                project.saveFileMd5 = MD5Checksum.getMD5Checksum(saveFile);
+                project.saveFileMd5 = IOUtil.getMD5Checksum(saveFile);
                 parentWindow.shouldClose = true;
             }
             else

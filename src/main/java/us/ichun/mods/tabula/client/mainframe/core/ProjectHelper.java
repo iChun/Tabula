@@ -1,21 +1,19 @@
 package us.ichun.mods.tabula.client.mainframe.core;
 
 import com.google.gson.Gson;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import ichun.common.core.network.PacketHandler;
-import ichun.common.core.util.IOUtil;
-import ichun.common.core.util.MD5Checksum;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import us.ichun.mods.ichunutil.common.core.util.IOUtil;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.client.gui.window.WindowOpenProject;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketProjectFragment;
 import us.ichun.mods.tabula.common.packet.PacketProjectFragmentFromClient;
-import us.ichun.module.tabula.common.project.ProjectInfo;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -67,7 +65,7 @@ public class ProjectHelper
                         if(((WindowOpenProject)window).openingJson != null && ((WindowOpenProject)window).openingJson.equals(s))
                         {
                             info.saveFile = ((WindowOpenProject)window).openingFile;
-                            info.saveFileMd5 = MD5Checksum.getMD5Checksum(info.saveFile);
+                            info.saveFileMd5 = IOUtil.getMD5Checksum(info.saveFile);
                             info.saved = true;
 
                             window.workspace.removeWindow(window);
@@ -264,7 +262,7 @@ public class ProjectHelper
             workspace.windowChat.chatHolder.text.add(message);
             if(Tabula.config.getInt("chatSound") == 1)
             {
-                mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("random.successful_hit"), 1.0F));
+                mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("random.successful_hit"), 1.0F));
             }
         }
     }
@@ -313,7 +311,7 @@ public class ProjectHelper
                 index++;
             }
 
-            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragmentFromClient(host, ident, isImport, projBytes.length, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
+            Tabula.channel.sendToServer(new PacketProjectFragmentFromClient(host, ident, isImport, projBytes.length, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
 
             packetCount++;
             fileSize -= 32000;
@@ -364,7 +362,7 @@ public class ProjectHelper
                 z = workspace.hostZ;
             }
 
-            PacketHandler.sendToServer(Tabula.channels, new PacketProjectFragment(x, y, z, true, host, Minecraft.getMinecraft().getSession().getUsername(), projectIdent, true, updateDims, false, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
+            Tabula.channel.sendToServer(new PacketProjectFragment(x, y, z, true, host, Minecraft.getMinecraft().getSession().getUsername(), projectIdent, true, updateDims, false, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
 
             packetCount++;
             fileSize -= 32000;

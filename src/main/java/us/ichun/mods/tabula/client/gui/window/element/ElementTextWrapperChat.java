@@ -1,6 +1,6 @@
 package us.ichun.mods.tabula.client.gui.window.element;
 
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.renderer.GlStateManager;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.Window;
 
@@ -16,7 +16,7 @@ public class ElementTextWrapperChat extends ElementTextWrapper
     @Override
     public void drawText(int mouseX, int mouseY, boolean hover)
     {
-        GL11.glPushMatrix();
+        GlStateManager.pushMatrix();
         for(int i = 0; i < text.size(); i++)
         {
             String msg = text.get(i);
@@ -33,10 +33,10 @@ public class ElementTextWrapperChat extends ElementTextWrapper
                     onName = false;
                     parent.workspace.getFontRenderer().drawString(": " + strings[1], getPosX() + parent.workspace.getFontRenderer().getStringWidth(strings[0]) + 4, getPosY() + 4, Theme.getAsHex(Theme.instance.fontChat), false);
                 }
-                GL11.glTranslatef(0F, parent.workspace.getFontRenderer().FONT_HEIGHT + 2, 0F);
+                GlStateManager.translate(0F, parent.workspace.getFontRenderer().FONT_HEIGHT + 2, 0F);
             }
         }
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
     }
 
     public int getRandomColourForName(String s)

@@ -1,17 +1,14 @@
 package us.ichun.mods.tabula.common.packet;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import ichun.common.core.network.AbstractPacket;
-import ichun.common.core.network.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import us.ichun.mods.ichunutil.common.core.network.AbstractPacket;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
@@ -57,7 +54,7 @@ public class PacketPingAlive extends AbstractPacket
     {
         if(side.isServer())
         {
-            TileEntity te = player.worldObj.getTileEntity(x, y, z);
+            TileEntity te = player.worldObj.getTileEntity(new BlockPos(x, y, z));
             if(te instanceof TileEntityTabulaRasa)
             {
                 ((TileEntityTabulaRasa)te).pingTime = 0;
@@ -78,7 +75,7 @@ public class PacketPingAlive extends AbstractPacket
             GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
             if(workspace.hostX == x && workspace.hostY == y && workspace.hostZ == z)
             {
-                PacketHandler.sendToServer(Tabula.channels, this);
+                Tabula.channel.sendToServer(this);
             }
         }
     }

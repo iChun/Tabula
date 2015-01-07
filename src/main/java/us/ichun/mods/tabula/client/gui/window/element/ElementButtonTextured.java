@@ -1,8 +1,8 @@
 package us.ichun.mods.tabula.client.gui.window.element;
 
-import ichun.client.render.RendererHelper;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
+import us.ichun.mods.ichunutil.client.render.RendererHelper;
 import us.ichun.mods.tabula.client.gui.window.Window;
 
 public class ElementButtonTextured extends ElementButton
@@ -25,7 +25,7 @@ public class ElementButtonTextured extends ElementButton
     public void draw(int mouseX, int mouseY, boolean hover)
     {
         super.draw(mouseX, mouseY, hover);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         RendererHelper.drawTextureOnScreen(txLocation, getPosX() + 2, getPosY() + 2, width - 4, height - 4, 0);
     }
 

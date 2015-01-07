@@ -1,15 +1,14 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import com.google.gson.Gson;
-import ichun.common.core.network.PacketHandler;
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeGroup;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
 import us.ichun.mods.tabula.client.gui.window.element.*;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
-import us.ichun.module.tabula.common.project.components.CubeGroup;
-import us.ichun.module.tabula.common.project.components.CubeInfo;
 
 import java.util.Locale;
 
@@ -350,7 +349,7 @@ public class WindowControls extends Window
                 }
                 else if(!workspace.sessionEnded && workspace.isEditor)
                 {
-                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "updateCube", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, s, workspace.windowAnimate.animList.selectedIdentifier, workspace.windowAnimate.timeline.selectedIdentifier, workspace.windowAnimate.timeline.getCurrentPos()));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "updateCube", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, s, workspace.windowAnimate.animList.selectedIdentifier, workspace.windowAnimate.timeline.selectedIdentifier, workspace.windowAnimate.timeline.getCurrentPos()));
                 }
             }
             else if(selectedObject instanceof CubeGroup)
@@ -428,7 +427,7 @@ public class WindowControls extends Window
                 }
                 else if(!workspace.sessionEnded && workspace.isEditor)
                 {
-                    PacketHandler.sendToServer(Tabula.channels, new PacketGenericMethod(workspace.host, "updateGroup", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, info.identifier, name, pos, offset, scale, txOffset, rot, mirror, mcScale, opacity));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "updateGroup", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, info.identifier, name, pos, offset, scale, txOffset, rot, mirror, mcScale, opacity));
                 }
             }
         }

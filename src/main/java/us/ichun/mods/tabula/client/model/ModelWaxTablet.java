@@ -2,8 +2,7 @@ package us.ichun.mods.tabula.client.model;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.entity.Entity;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.renderer.GlStateManager;
 
 /**
  * Wax Tablet - iChun
@@ -90,8 +89,8 @@ public class ModelWaxTablet extends ModelBase {
     }
 
     public void render(float f5) {
-        GL11.glPushMatrix();
-        GL11.glScaled(1D / modelScale[0], 1D / modelScale[1], 1D / modelScale[2]);
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(1D / modelScale[0], 1D / modelScale[1], 1D / modelScale[2]);
         this.bBindBottom.render(f5);
         this.lBorderBack.render(f5);
         this.bBindRight.render(f5);
@@ -110,7 +109,7 @@ public class ModelWaxTablet extends ModelBase {
         this.rBorderFront.render(f5);
         this.lBorderR.render(f5);
         this.rBorderL.render(f5);
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
     }
 
     /**
