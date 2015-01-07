@@ -23,7 +23,7 @@ public class CommonProxy
     {
         Tabula.blockTabulaRasa = (new BlockTabulaRasa(Material.wood)).setHardness(0.0F).setCreativeTab(CreativeTabs.tabDecorations).setStepSound(Block.soundTypeWood).setUnlocalizedName("tabula.block.tabularasa");
 
-        GameRegistry.registerBlock(Tabula.blockTabulaRasa, "Tabula_TabulaRasa");
+        GameRegistry.registerBlock(Tabula.blockTabulaRasa, "TabulaRasa");
 
         GameRegistry.addRecipe(new ItemStack(Tabula.blockTabulaRasa, 1),"#", "S", Character.valueOf('#'), Items.ghast_tear, Character.valueOf('S'), Blocks.wooden_pressure_plate);
 

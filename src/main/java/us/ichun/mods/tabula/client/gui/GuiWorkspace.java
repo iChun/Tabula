@@ -3,6 +3,7 @@ package us.ichun.mods.tabula.client.gui;
 import com.google.common.base.Splitter;
 import com.google.gson.Gson;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
@@ -1117,8 +1119,6 @@ public class GuiWorkspace extends GuiScreen
         {
             block = Blocks.planks;
         }
-//        renderBlocks.setRenderBoundsFromBlock(block);
-//        renderBlocks.enableAO = false;
 
         boolean enableWood = false;
 
@@ -1133,36 +1133,9 @@ public class GuiWorkspace extends GuiScreen
 
         if(enableWood)
         {
-            GlStateManager.pushMatrix();
-            GlStateManager.rotate(-90F, 0.0F, 1.0F, 0.0F);
-            //TODO block rendering
-//            renderBlocks.renderBlockAsItem(block, meta, 1.0F);
-            GlStateManager.popMatrix();
-
-            //            tessellator.startDrawingQuads();
-            //            tessellator.setNormal(0.0F, -1.0F, 0.0F);
-            //            renderBlocks.renderFaceYNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 0, 1));
-            //            tessellator.draw();
-            //            tessellator.startDrawingQuads();
-            //            tessellator.setNormal(0.0F, 1.0F, 0.0F);
-            //            renderBlocks.renderFaceYPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 1, 1));
-            //            tessellator.draw();
-            //            tessellator.startDrawingQuads();
-            //            tessellator.setNormal(0.0F, 0.0F, -1.0F);
-            //            renderBlocks.renderFaceZNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 2, 1));
-            //            tessellator.draw();
-            //            tessellator.startDrawingQuads();
-            //            tessellator.setNormal(0.0F, 0.0F, 1.0F);
-            //            renderBlocks.renderFaceZPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 3, 1));
-            //            tessellator.draw();
-            //            tessellator.startDrawingQuads();
-            //            tessellator.setNormal(-1.0F, 0.0F, 0.0F);
-            //            renderBlocks.renderFaceXNeg(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 4, 1));
-            //            tessellator.draw();
-            //            tessellator.startDrawingQuads();
-            //            tessellator.setNormal(1.0F, 0.0F, 0.0F);
-            //            renderBlocks.renderFaceXPos(block, -0.5D, -0.5D, -0.5D, renderBlocks.getBlockIconFromSideAndMetadata(block, 5, 1));
-            //            tessellator.draw();
+            ItemStack spoof = new ItemStack(block, 1, meta);
+            IBlockState state = block.getStateFromMeta(meta);
+            RendererHelper.renderBakedModel(mc.getBlockRendererDispatcher().getBlockModelShapes().getModelForState(state), -1, spoof);
         }
 
         GlStateManager.enableBlend();
@@ -1266,10 +1239,12 @@ public class GuiWorkspace extends GuiScreen
         GlStateManager.scale(scale, scale, scale);
         GlStateManager.scale(-1.0F, 1.0F, 1.0F);
         GlStateManager.rotate(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
-        GlStateManager.rotate(-38F + cameraYaw + 90F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(-38F + cameraYaw, 0.0F, 1.0F, 0.0F);
 
-        //TODO blcok rendering as a furnace
-//        renderBlocks.renderBlockAsItem(block, 0, 1.0F);
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(2.0F, 2.0F, 2.0F);
+        mc.getRenderItem().renderItemModel(new ItemStack(block, 1));
+        GlStateManager.popMatrix();
 
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

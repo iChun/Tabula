@@ -45,6 +45,12 @@ public class BlockTabulaRasa extends Block
     }
 
     @Override
+    public int getRenderType()
+    {
+        return 2;
+    }
+
+    @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase living, ItemStack stack)
     {
         super.onBlockPlacedBy(world, pos, state, living, stack);
