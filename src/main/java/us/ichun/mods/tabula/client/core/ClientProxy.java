@@ -4,10 +4,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderEntity;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
+import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityHorse;
@@ -22,6 +25,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import us.ichun.mods.ichunutil.client.model.ModelHelper;
 import us.ichun.mods.ichunutil.common.core.EntityHelperBase;
 import us.ichun.mods.ichunutil.common.core.util.ObfHelper;
 import us.ichun.mods.ichunutil.common.module.tabula.client.model.ModelInfo;
@@ -64,7 +68,6 @@ public class ClientProxy extends CommonProxy
                 compatibleEntities.add(clz);
             }
         }
-        compatibleEntities.add(EntityPlayer.class);
 
         HashMap<Class, Render> renders = new HashMap<Class, Render>();
         try
@@ -115,79 +118,18 @@ public class ClientProxy extends CommonProxy
 
         for(Class clz : compatibleEntities)
         {
-            try
+            Render rend1 = renders.get(clz);
+            if(!(rend1 instanceof RendererLivingEntity))
             {
-                Render rend1 = renders.get(clz);
-                if(!(rend1 instanceof RendererLivingEntity))
-                {
-                    continue;
-                }
-                RendererLivingEntity rend = (RendererLivingEntity)rend1;
-                if(clz == EntityPlayer.class)
-                {
-                    //TODO alex model
-                    ModelList.models.add(new ModelInfo(DefaultPlayerSkin.getDefaultSkinLegacy(), rend.mainModel, EntityPlayer.class));
-                }
-                else if(rend.mainModel != null && clz != null)
-                {
-                    EntityLivingBase instance;
-                    try
-                    {
-                        instance = (EntityLivingBase)clz.getConstructor(World.class).newInstance(new Object[] { null });
-                    }
-                    catch(Exception e)
-                    {
-                        instance = null;
-                    }
-                    if(Tabula.config.getInt("animateImports") == 1)
-                    {
-                        try
-                        {
-                            rend.mainModel.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, instance);
-                        }
-                        catch(Exception e)
-                        {
-                        }
-                        try
-                        {
-                            rend.mainModel.render(instance, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
-                        }
-                        catch(Exception e)
-                        {
-                        }
-                        try
-                        {
-                            rend.mainModel.setLivingAnimations(instance, 0.0F, 0.0F, 0.0F);
-                        }
-                        catch(Exception e)
-                        {
-                        }
-                    }
-                    ResourceLocation loc = null;
-                    if(clz != EntityHorse.class) //horse gives some kind of error that can't be silenced
-                    {
-                        try
-                        {
-                            loc = ObfHelper.invokeGetEntityTexture(rend, rend.getClass(), instance);
-                        }
-                        catch(Exception e)
-                        {
-                            loc = null;
-                        }
-                    }
-                    ModelList.models.add(new ModelInfo(loc, rend.mainModel, clz));
-                    //TODO layers
-                    //                    if(rend.renderPassModel != null && rend.renderPassModel.getClass() != rend.mainModel.getClass())
-                    //                    {
-                    //                        ModelList.models.add(new ModelInfo(loc, rend.renderPassModel, clz));
-                    //                    }
-                }
+                continue;
             }
-            catch(Exception e)
-            {
-            }
+            RendererLivingEntity rend = (RendererLivingEntity)rend1;
+            mapModelInfo(clz, rend, null);
             renders.remove(clz);
         }
+
+        mapModelInfo(EntityPlayer.class, (RenderPlayer)Minecraft.getMinecraft().getRenderManager().skinMap.get("default"), new ResourceLocation("textures/entity/steve.png"));
+        mapModelInfo(EntityPlayer.class, (RenderPlayer)Minecraft.getMinecraft().getRenderManager().skinMap.get("slim"), new ResourceLocation("textures/entity/alex.png"));
 
         Collections.sort(ModelList.models);
 
@@ -365,5 +307,102 @@ public class ClientProxy extends CommonProxy
         {
             Tabula.proxy.tickHandlerClient.mainframe.loadTexture(ident, ProjectHelper.projectTextures.get(ident), updateDims);
         }
+    }
+
+    public void mapModelInfo(Class<? extends EntityLivingBase> clz, final RendererLivingEntity rend, ResourceLocation loc)
+    {
+        try
+        {
+            if(rend.mainModel != null && clz != null)
+            {
+                EntityLivingBase instance;
+                try
+                {
+                    instance = (EntityLivingBase)clz.getConstructor(World.class).newInstance(new Object[] { null });
+                }
+                catch(Exception e)
+                {
+                    instance = null;
+                }
+                if(Tabula.config.getInt("animateImports") == 1)
+                {
+                    try
+                    {
+                        rend.mainModel.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, instance);
+                    }
+                    catch(Exception e)
+                    {
+                    }
+                    try
+                    {
+                        rend.mainModel.render(instance, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
+                    }
+                    catch(Exception e)
+                    {
+                    }
+                    try
+                    {
+                        rend.mainModel.setLivingAnimations(instance, 0.0F, 0.0F, 0.0F);
+                    }
+                    catch(Exception e)
+                    {
+                    }
+                }
+                if(clz != EntityHorse.class && loc == null) //horse gives some kind of error that can't be silenced
+                {
+                    try
+                    {
+                        loc = ObfHelper.invokeGetEntityTexture(rend, rend.getClass(), instance);
+                    }
+                    catch(Exception e)
+                    {
+                        loc = null;
+                    }
+                }
+                ModelList.models.add(new ModelInfo(loc, rend.mainModel, clz));
+
+                ArrayList<ModelBase> modelsToCompare = new ArrayList<ModelBase>() {{ add(rend.mainModel); }};
+                for(int i = 0; i < rend.layerRenderers.size(); i++)
+                {
+                    LayerRenderer layer = (LayerRenderer)rend.layerRenderers.get(i);
+                    Field[] fields = layer.getClass().getDeclaredFields();
+                    ResourceLocation loc1 = null;
+                    ModelBase base = null;
+                    for(Field f : fields)
+                    {
+                        f.setAccessible(true);
+                        if(ModelBase.class.isAssignableFrom(f.getType()))
+                        {
+                            base = (ModelBase)f.get(layer);
+                        }
+                        if(loc1 == null && ResourceLocation.class.isAssignableFrom(f.getType()))
+                        {
+                            loc1 = (ResourceLocation)f.get(layer);
+                        }
+                    }
+                    if(base != null)
+                    {
+                        boolean add = true;
+                        for(ModelBase model : modelsToCompare)
+                        {
+                            if(ModelHelper.areModelsEqual(model, base))
+                            {
+                                add = false;
+                                break;
+                            }
+                        }
+                        if(add)
+                        {
+                            ModelList.models.add(new ModelInfo(loc1 == null ? loc : loc1, base, clz));
+                            modelsToCompare.add(base);
+                        }
+                    }
+                }
+            }
+        }
+        catch(Exception e)
+        {
+        }
+
     }
 }
