@@ -349,9 +349,12 @@ public class ElementNumberInput extends Element
             }
             else if(key == Keyboard.KEY_RETURN)
             {
-                if(textFields.get(selectedTextField).getText().isEmpty())
+                for(GuiTextField text : textFields)
                 {
-                    textFields.get(selectedTextField).setText("0");
+                    if(text.getText().isEmpty())
+                    {
+                        text.setText("0");
+                    }
                 }
                 parent.elementTriggered(this);
             }

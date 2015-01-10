@@ -20,7 +20,7 @@ public class EventHandler
     public static final int TABULA_BUTTON_ID = "Tabula".hashCode();
 
     @SideOnly(Side.CLIENT)
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SubscribeEvent(priority = EventPriority.LOW)
     public void onInitGuiPost(GuiScreenEvent.InitGuiEvent.Post event)
     {
         if(event.gui instanceof GuiMainMenu)
