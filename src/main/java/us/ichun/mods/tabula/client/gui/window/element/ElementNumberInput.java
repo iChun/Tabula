@@ -257,6 +257,13 @@ public class ElementNumberInput extends Element
                         }
                     }
                 }
+                for(GuiTextField text1 : textFields)
+                {
+                    if(text1.getText().isEmpty() || text1.getText().equals("-"))
+                    {
+                        text1.setText("0");
+                    }
+                }
                 parent.elementTriggered(this);
                 break;
             }
@@ -351,7 +358,7 @@ public class ElementNumberInput extends Element
             {
                 for(GuiTextField text : textFields)
                 {
-                    if(text.getText().isEmpty())
+                    if(text.getText().isEmpty() || text.getText().equals("-"))
                     {
                         text.setText("0");
                     }
