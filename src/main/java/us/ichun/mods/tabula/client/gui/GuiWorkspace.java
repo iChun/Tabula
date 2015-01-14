@@ -10,8 +10,10 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
@@ -171,8 +173,6 @@ public class GuiWorkspace extends GuiScreen
         super.initGui();
         if(!init)
         {
-            init = true;
-
             windowControls = new WindowControls(this, width / 2 - 80, height / 2 - 125, 162, 295, 162, 295);
             windowTexture = new WindowTexture(this, width / 2 - 53, height / 2 - 100, 106, 100, 106, 88);
             windowModelTree = new WindowModelTree(this, width / 2 - 53, height / 2 - 125, 106, 250, 106, 250);
@@ -222,7 +222,7 @@ public class GuiWorkspace extends GuiScreen
                     windowChat.resized();
                 }
             }
-            //            Tabula.proxy.tickHandlerClient.mainframe.loadEmptyProject("New Project", "iChun? :O", 64, 32);
+            init = true;
         }
         resize = true;
         screenResize();
@@ -233,6 +233,10 @@ public class GuiWorkspace extends GuiScreen
     @Override
     public void updateScreen()
     {
+        if(!init)
+        {
+            return;
+        }
         if(resize)
         {
             resize = false;
@@ -373,6 +377,10 @@ public class GuiWorkspace extends GuiScreen
     public void drawScreen(int mouseX, int mouseY, float renderTick)
     {
         this.renderTick = renderTick;
+        if(!init)
+        {
+            return;
+        }
         //TODO a reset all windows button for people who "accidentally" drag the window out of the screen
         //TODO Do not close window if it is docked?
         Minecraft mc = Minecraft.getMinecraft();
@@ -954,7 +962,7 @@ public class GuiWorkspace extends GuiScreen
                         }
                         else if(Math.abs(changeAmt) > 6)
                         {
-                            int dimChange = (int)Math.floor(changeAmt / (6 * cameraZoom));
+                            int dimChange = (int)Math.round(changeAmt / ((float)6 * cameraZoom));
                             if(controlDrag <= 4)
                             {
                                 if(cube.dimensions[1] + dimChange >= 0)

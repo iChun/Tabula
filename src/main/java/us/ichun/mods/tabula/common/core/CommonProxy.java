@@ -19,9 +19,9 @@ public class CommonProxy
 {
     public TickHandlerClient tickHandlerClient;
 
-    public void init()
+    public void preInit()
     {
-        Tabula.blockTabulaRasa = (new BlockTabulaRasa(Material.wood)).setHardness(0.0F).setCreativeTab(CreativeTabs.tabDecorations).setStepSound(Block.soundTypeWood).setUnlocalizedName("tabula.block.tabularasa");
+        Tabula.blockTabulaRasa = (new BlockTabulaRasa(Material.circuits)).setHardness(0.0F).setCreativeTab(CreativeTabs.tabDecorations).setStepSound(Block.soundTypeWood).setUnlocalizedName("tabula.block.tabularasa");
 
         GameRegistry.registerBlock(Tabula.blockTabulaRasa, "TabulaRasa");
 
@@ -34,6 +34,8 @@ public class CommonProxy
                 PacketHeartbeat.class, PacketProjectFragment.class, PacketCloseProject.class, PacketRequestProject.class, PacketSetCurrentProject.class,
                 PacketGenericMethod.class, PacketProjectFragmentFromClient.class, PacketClearTexture.class, PacketListenersList.class);
     }
+
+    public void init(){}
 
     public void postInit(){}
 

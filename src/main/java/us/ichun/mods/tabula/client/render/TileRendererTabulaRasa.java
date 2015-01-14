@@ -35,6 +35,8 @@ public class TileRendererTabulaRasa extends TileEntitySpecialRenderer
 
         GlStateManager.rotate((tr.side * 90F), 0.0F, 1.0F, 0.0F);
 
+        GlStateManager.enableNormalize();
+
         if (destroyState >= 0)
         {
             this.bindTexture(DESTROY_STAGES[destroyState]);
@@ -126,6 +128,8 @@ public class TileRendererTabulaRasa extends TileEntitySpecialRenderer
             GlStateManager.popMatrix();
             GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         }
+
+        GlStateManager.disableNormalize();
 
         GlStateManager.popMatrix();
     }

@@ -47,7 +47,7 @@ public class BlockTabulaRasa extends Block
     @Override
     public int getRenderType()
     {
-        return 2;
+        return -1;
     }
 
     @Override

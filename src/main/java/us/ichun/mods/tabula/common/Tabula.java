@@ -58,23 +58,26 @@ public class Tabula
     @Mod.EventHandler
     public void preLoad(FMLPreInitializationEvent event)
     {
-        proxy.init();
+        proxy.preInit();
 
-        config = ConfigHandler.createConfig(new File(ResourceHelper.getConfigDir(), "config.cfg"), "tabula", "Tabula", logger, instance);
-        config.createStringProperty("favTheme", true, false, "default");
-        config.createIntBoolProperty("renderRotationPoint", true, false, true);
-        config.createIntBoolProperty("renderWorkspaceBlock", true, false, true);
-        config.createIntBoolProperty("renderGrid", true, false, true);
-        config.createIntBoolProperty("renderModelControls", true, false, true);
-        config.createIntBoolProperty("animateImports", true, false, true);
-        config.setCurrentCategory("multiplayer");
-        config.createIntBoolProperty("chatSound", true, false, true);
-        config.createIntBoolProperty("allowEveryoneToEdit", true, false, true);
-        config.createStringProperty("editors", true, false, "");
-        config.setCurrentCategory("others");
-        config.createStringProperty("chatWindow", true, false, "");
+        if(FMLCommonHandler.instance().getEffectiveSide().isClient())
+        {
+            config = ConfigHandler.createConfig(new File(ResourceHelper.getConfigDir(), "config.cfg"), "tabula", "Tabula", logger, instance);
+            config.createStringProperty("favTheme", true, false, "default");
+            config.createIntBoolProperty("renderRotationPoint", true, false, true);
+            config.createIntBoolProperty("renderWorkspaceBlock", true, false, true);
+            config.createIntBoolProperty("renderGrid", true, false, true);
+            config.createIntBoolProperty("renderModelControls", true, false, true);
+            config.createIntBoolProperty("animateImports", true, false, true);
+            config.setCurrentCategory("multiplayer");
+            config.createIntBoolProperty("chatSound", true, false, true);
+            config.createIntBoolProperty("allowEveryoneToEdit", true, false, true);
+            config.createStringProperty("editors", true, false, "");
+            config.setCurrentCategory("others");
+            config.createStringProperty("chatWindow", true, false, "");
 
-        config.createIntBoolProperty("animationWarning", "Animation Warning Shown", "Temp setting, so ignore this comment", true, false, false);
+            config.createIntBoolProperty("animationWarning", "Animation Warning Shown", "Temp setting, so ignore this comment", true, false, false);
+        }
 
         EventHandler handler = new EventHandler();
         FMLCommonHandler.instance().bus().register(handler);
@@ -86,6 +89,7 @@ public class Tabula
     @Mod.EventHandler
     public void load(FMLInitializationEvent event)
     {
+        proxy.init();
     }
 
     @Mod.EventHandler

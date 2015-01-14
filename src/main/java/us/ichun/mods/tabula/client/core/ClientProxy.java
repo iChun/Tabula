@@ -9,8 +9,7 @@ import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityHorse;
@@ -41,14 +40,22 @@ import java.util.*;
 public class ClientProxy extends CommonProxy
 {
     @Override
-    public void init()
+    public void preInit()
     {
-        super.init();
+        super.preInit();
 
         ResourceHelper.init();
 
         tickHandlerClient = new TickHandlerClient();
         FMLCommonHandler.instance().bus().register(tickHandlerClient);
+    }
+
+    @Override
+    public void init()
+    {
+        super.init();
+
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(Tabula.blockTabulaRasa), 0, new ModelResourceLocation("tabula:TabulaRasa", "inventory"));
     }
 
     @Override
