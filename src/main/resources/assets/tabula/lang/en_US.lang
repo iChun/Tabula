@@ -1,11 +1,5 @@
 tabula.name=Tabula
 
-element.minimize=Minimize
-element.expand=Expand
-
-element.button.ok=OK
-element.button.cancel=Cancel
-
 window.controls.title=Controls
 window.controls.cubeName=Selected Cube Name
 window.controls.dimensions=Dimensions
