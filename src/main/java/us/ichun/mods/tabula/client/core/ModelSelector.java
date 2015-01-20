@@ -58,9 +58,9 @@ public class ModelSelector {
      * @param mouseY The y coordinate as it is used in minecraft interfaces
      */
     public void onClick(int mouseX, int mouseY) {
-        if(!isOnWindow(mouseX, mouseY) && ((GuiWorkspace)workspace).projectManager.selectedProject != -1) {
+        if(!isOnWindow(mouseX, mouseY) && workspace.projectManager.selectedProject != -1) {
 
-            ArrayList<ElementListTree.Tree> trees = ((GuiWorkspace)workspace).windowModelTree.modelList.trees;
+            ArrayList<ElementListTree.Tree> trees = workspace.windowModelTree.modelList.trees;
 
             if(Tabula.config.getInt("renderModelControls") == 1)
             {
@@ -95,8 +95,8 @@ public class ModelSelector {
                 int id = getSelectedId();
 
                 //update selection
-                ((GuiWorkspace)workspace).windowModelTree.modelList.selectedIdentifier = "";
-                ((GuiWorkspace)workspace).windowControls.selectedObject = null;
+                workspace.windowModelTree.modelList.selectedIdentifier = "";
+                workspace.windowControls.selectedObject = null;
                 int treeId = 0;
                 for(ElementListTree.Tree tree : trees)
                 {
@@ -105,8 +105,8 @@ public class ModelSelector {
                         tree.selected = !tree.selected && id == treeId;
                         if(tree.selected)
                         {
-                            ((GuiWorkspace)workspace).windowControls.selectedObject = tree.attachedObject;
-                            ((GuiWorkspace)workspace).windowModelTree.modelList.selectedIdentifier = ((CubeInfo)tree.attachedObject).identifier;
+                            workspace.windowControls.selectedObject = tree.attachedObject;
+                            workspace.windowModelTree.modelList.selectedIdentifier = ((CubeInfo)tree.attachedObject).identifier;
                         }
                         treeId++;
                     }
@@ -115,17 +115,17 @@ public class ModelSelector {
                         tree.selected = false;
                     }
                 }
-                ((GuiWorkspace)workspace).windowControls.refresh = true;
+                workspace.windowControls.refresh = true;
 
-                if(((GuiWorkspace)workspace).windowControls.selectedObject == null && id == -1)
+                if(workspace.windowControls.selectedObject == null && id == -1)
                 {
-                    for(ElementListTree.Tree tree : ((GuiWorkspace)workspace).windowAnimate.animList.trees)
+                    for(ElementListTree.Tree tree : workspace.windowAnimate.animList.trees)
                     {
                         tree.selected = false;
                     }
-                    ((GuiWorkspace)workspace).windowAnimate.animList.selectedIdentifier = "";
-                    ((GuiWorkspace)workspace).windowAnimate.timeline.selectedIdentifier = "";
-                    ((GuiWorkspace)workspace).windowAnimate.timeline.setCurrentPos(0);
+                    workspace.windowAnimate.animList.selectedIdentifier = "";
+                    workspace.windowAnimate.timeline.selectedIdentifier = "";
+                    workspace.windowAnimate.timeline.setCurrentPos(0);
                 }
             }
         }
@@ -163,7 +163,7 @@ public class ModelSelector {
         workspace.applyCamera();
         workspace.applyModelTranslation();
 
-        ProjectInfo info = ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject);
+        ProjectInfo info = workspace.projectManager.projects.get(workspace.projectManager.selectedProject);
 
         GlStateManager.disableTexture2D();
         GlStateManager.disableLighting();
@@ -191,7 +191,7 @@ public class ModelSelector {
             workspace.applyCamera();
             workspace.applyModelTranslation();
 
-            ProjectInfo proj = ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject);
+            ProjectInfo proj = workspace.projectManager.projects.get(workspace.projectManager.selectedProject);
 
             GlStateManager.disableTexture2D();
             GlStateManager.disableLighting();
