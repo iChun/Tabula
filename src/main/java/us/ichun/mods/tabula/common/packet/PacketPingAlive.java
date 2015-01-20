@@ -73,7 +73,7 @@ public class PacketPingAlive extends AbstractPacket
         if(host.equals(mc.getSession().getUsername()) && mc.currentScreen instanceof GuiWorkspace)
         {
             GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
-            if(workspace.hostX == x && workspace.hostY == y && workspace.hostZ == z)
+            if(((GuiWorkspace)workspace).hostX == x && ((GuiWorkspace)workspace).hostY == y && ((GuiWorkspace)workspace).hostZ == z)
             {
                 Tabula.channel.sendToServer(this);
             }

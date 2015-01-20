@@ -2,11 +2,13 @@ package us.ichun.mods.tabula.client.gui.window;
 
 import com.google.gson.Gson;
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.*;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeGroup;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.*;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 
@@ -17,7 +19,7 @@ public class WindowControls extends Window
     public Object selectedObject;
     public boolean refresh;
 
-    public WindowControls(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowControls(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.controls.title", true);
 
@@ -49,9 +51,9 @@ public class WindowControls extends Window
             {
                 CubeInfo info = (CubeInfo)selectedObject;
 
-                if(!workspace.windowAnimate.timeline.selectedIdentifier.isEmpty())
+                if(!((GuiWorkspace)workspace).windowAnimate.timeline.selectedIdentifier.isEmpty())
                 {
-                    workspace.applyModelAnimations();
+                    ((GuiWorkspace)workspace).applyModelAnimations();
                 }
 
                 for(int k = 0; k < elements.size(); k++)
@@ -128,9 +130,9 @@ public class WindowControls extends Window
                         }
                     }
                 }
-                if(!workspace.windowAnimate.timeline.selectedIdentifier.isEmpty())
+                if(!((GuiWorkspace)workspace).windowAnimate.timeline.selectedIdentifier.isEmpty())
                 {
-                    workspace.resetModelAnimations();
+                    ((GuiWorkspace)workspace).resetModelAnimations();
                 }
             }
             else if(selectedObject instanceof CubeGroup)
@@ -252,15 +254,15 @@ public class WindowControls extends Window
         {
             int offset = 26;
             int count = 0;
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.cubeName"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.dimensions"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.position"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.offset"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.opacity"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.mcScale"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.scale"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.txOffset"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.rotation"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.cubeName"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.dimensions"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.position"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.offset"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.opacity"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.mcScale"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.scale"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.txOffset"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.controls.rotation"), posX + 6, posY + 17 + offset * count++, Theme.getAsHex(workspace.currentTheme.font), false);
         }
     }
 
@@ -343,13 +345,13 @@ public class WindowControls extends Window
 
                 Gson gson = new Gson();
                 String s = gson.toJson(selectedObject);
-                if(!workspace.remoteSession)
+                if(!((GuiWorkspace)workspace).remoteSession)
                 {
-                    Tabula.proxy.tickHandlerClient.mainframe.updateCube(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, s, workspace.windowAnimate.animList.selectedIdentifier, workspace.windowAnimate.timeline.selectedIdentifier, workspace.windowAnimate.timeline.getCurrentPos());
+                    Tabula.proxy.tickHandlerClient.mainframe.updateCube(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, s, ((GuiWorkspace)workspace).windowAnimate.animList.selectedIdentifier, ((GuiWorkspace)workspace).windowAnimate.timeline.selectedIdentifier, ((GuiWorkspace)workspace).windowAnimate.timeline.getCurrentPos());
                 }
-                else if(!workspace.sessionEnded && workspace.isEditor)
+                else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
                 {
-                    Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "updateCube", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, s, workspace.windowAnimate.animList.selectedIdentifier, workspace.windowAnimate.timeline.selectedIdentifier, workspace.windowAnimate.timeline.getCurrentPos()));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)workspace).host, "updateCube", ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, s, ((GuiWorkspace)workspace).windowAnimate.animList.selectedIdentifier, ((GuiWorkspace)workspace).windowAnimate.timeline.selectedIdentifier, ((GuiWorkspace)workspace).windowAnimate.timeline.getCurrentPos()));
                 }
             }
             else if(selectedObject instanceof CubeGroup)
@@ -421,13 +423,13 @@ public class WindowControls extends Window
                     }
                 }
 
-                if(!workspace.remoteSession)
+                if(!((GuiWorkspace)workspace).remoteSession)
                 {
-                    Tabula.proxy.tickHandlerClient.mainframe.updateGroup(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, info.identifier, name, pos, offset, scale, txOffset, rot, mirror, mcScale, opacity);
+                    Tabula.proxy.tickHandlerClient.mainframe.updateGroup(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, info.identifier, name, pos, offset, scale, txOffset, rot, mirror, mcScale, opacity);
                 }
-                else if(!workspace.sessionEnded && workspace.isEditor)
+                else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
                 {
-                    Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "updateGroup", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, info.identifier, name, pos, offset, scale, txOffset, rot, mirror, mcScale, opacity));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)workspace).host, "updateGroup", ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, info.identifier, name, pos, offset, scale, txOffset, rot, mirror, mcScale, opacity));
                 }
             }
         }

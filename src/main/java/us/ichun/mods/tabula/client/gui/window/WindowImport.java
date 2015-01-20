@@ -1,13 +1,15 @@
 package us.ichun.mods.tabula.client.gui.window;
 
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementToggle;
 import us.ichun.mods.ichunutil.common.module.tabula.client.model.ModelInfo;
 import us.ichun.mods.ichunutil.common.module.tabula.client.model.ModelList;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
-import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
 
@@ -15,7 +17,7 @@ public class WindowImport extends Window
 {
     public ElementListTree modelList;
 
-    public WindowImport(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowImport(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.importMC.title", true);
 
@@ -69,27 +71,27 @@ public class WindowImport extends Window
                 if(tree.selected)
                 {
                     ProjectInfo proj;
-                    if(workspace.projectManager.selectedProject == -1 || newProj)
+                    if(((GuiWorkspace)workspace).projectManager.selectedProject == -1 || newProj)
                     {
                         proj = new ProjectInfo(((ModelInfo)tree.attachedObject).modelParent.getClass().getSimpleName(), "Either Mojang or a mod author");
                         proj.projVersion = ProjectInfo.PROJ_VERSION;
                         proj.identifier = "";
-                        workspace.openNextNewProject = true;
+                        ((GuiWorkspace)workspace).openNextNewProject = true;
                     }
                     else
                     {
-                        proj = workspace.projectManager.projects.get(workspace.projectManager.selectedProject);
+                        proj = ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject);
                     }
 
                     proj.importModel(((ModelInfo)tree.attachedObject), texture);
 
-                    if(!workspace.remoteSession)
+                    if(!((GuiWorkspace)workspace).remoteSession)
                     {
                         Tabula.proxy.tickHandlerClient.mainframe.overrideProject(proj.identifier, proj.getAsJson(), proj.bufferedTexture);
                     }
-                    else if(!workspace.sessionEnded && workspace.isEditor)
+                    else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
                     {
-                        ProjectHelper.sendProjectToServer(workspace.host, proj.identifier, proj, false);
+                        ProjectHelper.sendProjectToServer(((GuiWorkspace)workspace).host, proj.identifier, proj, false);
                     }
                     found = true;
                     break;

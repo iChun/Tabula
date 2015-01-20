@@ -1,17 +1,19 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 
 public class WindowSaveBeforeClosing extends Window
 {
     public ProjectInfo project;
 
-    public WindowSaveBeforeClosing(GuiWorkspace parent, ProjectInfo projectInfo)
+    public WindowSaveBeforeClosing(IWorkspace parent, ProjectInfo projectInfo)
     {
         super(parent, 0, 0, 300, 120, 300, 120, "window.notSaved.title", true);
 
@@ -27,8 +29,8 @@ public class WindowSaveBeforeClosing extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.notSaved.unsaved"), posX + 15, posY + 40, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.notSaved.save"), posX + 15, posY + 52, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.notSaved.unsaved"), posX + 15, posY + 40, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.notSaved.save"), posX + 15, posY + 52, Theme.getAsHex(workspace.currentTheme.font), false);
         }
     }
 
@@ -39,7 +41,7 @@ public class WindowSaveBeforeClosing extends Window
         {
             project.saved = true;
             workspace.removeWindow(this, true);
-            workspace.closeProject(project);
+            ((GuiWorkspace)workspace).closeProject(project);
         }
         if(element.id == 3)
         {
@@ -47,7 +49,7 @@ public class WindowSaveBeforeClosing extends Window
             {
                 workspace.windowDragged = null;
             }
-            workspace.save(true);
+            ((GuiWorkspace)workspace).save(true);
             workspace.removeWindow(this, true);
         }
     }

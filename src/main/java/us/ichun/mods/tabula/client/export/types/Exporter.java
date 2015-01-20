@@ -1,9 +1,10 @@
 package us.ichun.mods.tabula.client.export.types;
 
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.element.IListable;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
-import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 
-public abstract class Exporter
+public abstract class Exporter implements IListable
 {
     public final String name;
 
@@ -14,8 +15,14 @@ public abstract class Exporter
 
     public abstract boolean export(ProjectInfo info, Object...params);
 
-    public boolean override(GuiWorkspace workspace)
+    public boolean override(IWorkspace workspace)
     {
         return false;
+    }
+
+    @Override
+    public String getName()
+    {
+        return name;
     }
 }

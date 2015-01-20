@@ -1,13 +1,13 @@
 package us.ichun.mods.tabula.client.gui.window;
 
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
 import us.ichun.mods.ichunutil.client.render.RendererHelper;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.Animation;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeGroup;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.gui.window.element.ElementProjectTab;
 import us.ichun.mods.tabula.common.Tabula;
@@ -20,7 +20,7 @@ public class WindowProjectSelection extends WindowTopDock
     public ArrayList<ProjectInfo> projects = new ArrayList<ProjectInfo>();
     public int selectedProject;
 
-    public WindowProjectSelection(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowProjectSelection(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH);
 
@@ -43,7 +43,7 @@ public class WindowProjectSelection extends WindowTopDock
             return;
         }
         super.draw(mouseX, mouseY);
-        RendererHelper.drawColourOnScreen(Theme.instance.tabSideInactive[0], Theme.instance.tabSideInactive[1], Theme.instance.tabSideInactive[2], 255, posX, posY, width, 1, 0);
+        RendererHelper.drawColourOnScreen(workspace.currentTheme.tabSideInactive[0], workspace.currentTheme.tabSideInactive[1], workspace.currentTheme.tabSideInactive[2], 255, posX, posY, width, 1, 0);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class WindowProjectSelection extends WindowTopDock
         {
             posX = 0;
         }
-        posY = GuiWorkspace.TOP_DOCK_HEIGHT + 1;
+        posY = workspace.TOP_DOCK_HEIGHT + 1;
         if(!workspace.levels.get(1).isEmpty())
         {
             width = workspace.width - posX - workspace.levels.get(1).get(0).width + 2;
@@ -135,10 +135,10 @@ public class WindowProjectSelection extends WindowTopDock
         }
         else
         {
-            workspace.windowModelTree.modelList.trees.clear();
-            workspace.windowAnimate.animList.trees.clear();
-            workspace.windowControls.selectedObject = null;
-            workspace.windowControls.refresh = true;
+            ((GuiWorkspace)workspace).windowModelTree.modelList.trees.clear();
+            ((GuiWorkspace)workspace).windowAnimate.animList.trees.clear();
+            ((GuiWorkspace)workspace).windowControls.selectedObject = null;
+            ((GuiWorkspace)workspace).windowControls.refresh = true;
         }
 
         resized();
@@ -184,19 +184,19 @@ public class WindowProjectSelection extends WindowTopDock
         {
             if(projects.isEmpty())
             {
-                info.cameraFov = workspace.cameraFov;
-                info.cameraZoom = workspace.cameraZoom;
-                info.cameraYaw = workspace.cameraYaw;
-                info.cameraPitch = workspace.cameraPitch;
-                info.cameraOffsetX = workspace.cameraOffsetX;
-                info.cameraOffsetY = workspace.cameraOffsetY;
+                info.cameraFov = ((GuiWorkspace)workspace).cameraFov;
+                info.cameraZoom = ((GuiWorkspace)workspace).cameraZoom;
+                info.cameraYaw = ((GuiWorkspace)workspace).cameraYaw;
+                info.cameraPitch = ((GuiWorkspace)workspace).cameraPitch;
+                info.cameraOffsetX = ((GuiWorkspace)workspace).cameraOffsetX;
+                info.cameraOffsetY = ((GuiWorkspace)workspace).cameraOffsetY;
             }
-            info.lastAutosave = workspace.liveTime;
+            info.lastAutosave = ((GuiWorkspace)workspace).liveTime;
             projects.add(info);
             elements.add(new ElementProjectTab(this, 0, 0, 10, 10, elements.size(), info));
-            if(projects.size() == 1 || workspace.openNextNewProject)
+            if(projects.size() == 1 || ((GuiWorkspace)workspace).openNextNewProject)
             {
-                workspace.openNextNewProject = false;
+                ((GuiWorkspace)workspace).openNextNewProject = false;
                 changeProject(projects.size() - 1);
             }
         }
@@ -213,7 +213,7 @@ public class WindowProjectSelection extends WindowTopDock
 
     public void updateModelTree(ProjectInfo info)
     {
-        ElementListTree modelList = workspace.windowModelTree.modelList;
+        ElementListTree modelList = ((GuiWorkspace)workspace).windowModelTree.modelList;
         modelList.trees.clear();
 
         for(int k = 0; k < info.cubeGroups.size(); k++)
@@ -252,11 +252,11 @@ public class WindowProjectSelection extends WindowTopDock
         }
         if(modelList.selectedIdentifier.isEmpty())
         {
-            workspace.windowControls.selectedObject = null;
-            workspace.windowControls.refresh = true;
+            ((GuiWorkspace)workspace).windowControls.selectedObject = null;
+            ((GuiWorkspace)workspace).windowControls.refresh = true;
         }
 
-        ElementListTree animList = workspace.windowAnimate.animList;
+        ElementListTree animList = ((GuiWorkspace)workspace).windowAnimate.animList;
         animList.trees.clear();
 
         for(int i = 0; i < info.anims.size(); i++)
@@ -324,50 +324,50 @@ public class WindowProjectSelection extends WindowTopDock
         if(selectedProject != -1)
         {
             ProjectInfo info = projects.get(selectedProject);
-            info.cameraFov = workspace.cameraFov;
-            info.cameraZoom = workspace.cameraZoom;
-            info.cameraYaw = workspace.cameraYaw;
-            info.cameraPitch = workspace.cameraPitch;
-            info.cameraOffsetX = workspace.cameraOffsetX;
-            info.cameraOffsetY = workspace.cameraOffsetY;
+            info.cameraFov = ((GuiWorkspace)workspace).cameraFov;
+            info.cameraZoom = ((GuiWorkspace)workspace).cameraZoom;
+            info.cameraYaw = ((GuiWorkspace)workspace).cameraYaw;
+            info.cameraPitch = ((GuiWorkspace)workspace).cameraPitch;
+            info.cameraOffsetX = ((GuiWorkspace)workspace).cameraOffsetX;
+            info.cameraOffsetY = ((GuiWorkspace)workspace).cameraOffsetY;
         }
         selectedProject = i;
         if(selectedProject != -1)
         {
             ProjectInfo info = projects.get(selectedProject);
-            workspace.cameraFov = info.cameraFov;
-            workspace.cameraZoom = info.cameraZoom;
-            workspace.cameraYaw = info.cameraYaw;
-            workspace.cameraPitch = info.cameraPitch;
-            workspace.cameraOffsetX = info.cameraOffsetX;
-            workspace.cameraOffsetY = info.cameraOffsetY;
+            ((GuiWorkspace)workspace).cameraFov = info.cameraFov;
+            ((GuiWorkspace)workspace).cameraZoom = info.cameraZoom;
+            ((GuiWorkspace)workspace).cameraYaw = info.cameraYaw;
+            ((GuiWorkspace)workspace).cameraPitch = info.cameraPitch;
+            ((GuiWorkspace)workspace).cameraOffsetX = info.cameraOffsetX;
+            ((GuiWorkspace)workspace).cameraOffsetY = info.cameraOffsetY;
 
             ((ElementProjectTab)elements.get(i)).changed = false;
 
             updateModelTree(info);
 
-            if(!workspace.remoteSession && workspace.host != null)
+            if(!((GuiWorkspace)workspace).remoteSession && ((GuiWorkspace)workspace).host != null)
             {
-                Tabula.channel.sendToServer(new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, info.identifier));
+                Tabula.channel.sendToServer(new PacketSetCurrentProject(((GuiWorkspace)workspace).host, ((GuiWorkspace)workspace).hostX, ((GuiWorkspace)workspace).hostY, ((GuiWorkspace)workspace).hostZ, info.identifier));
             }
         }
         else
         {
-            workspace.windowAnimate.animList.selectedIdentifier = "";
-            workspace.windowAnimate.timeline.selectedIdentifier = "";
-            workspace.cameraZoom = 1.0F;
-            workspace.cameraYaw = 0.0F;
-            workspace.cameraPitch = 0.0F;
-            workspace.cameraOffsetX = 0.0F;
-            workspace.cameraOffsetY = 0.0F;
+            ((GuiWorkspace)workspace).windowAnimate.animList.selectedIdentifier = "";
+            ((GuiWorkspace)workspace).windowAnimate.timeline.selectedIdentifier = "";
+            ((GuiWorkspace)workspace).cameraZoom = 1.0F;
+            ((GuiWorkspace)workspace).cameraYaw = 0.0F;
+            ((GuiWorkspace)workspace).cameraPitch = 0.0F;
+            ((GuiWorkspace)workspace).cameraOffsetX = 0.0F;
+            ((GuiWorkspace)workspace).cameraOffsetY = 0.0F;
 
-            if(!workspace.remoteSession && workspace.host != null)
+            if(!((GuiWorkspace)workspace).remoteSession && ((GuiWorkspace)workspace).host != null)
             {
-                Tabula.channel.sendToServer(new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, ""));
+                Tabula.channel.sendToServer(new PacketSetCurrentProject(((GuiWorkspace)workspace).host, ((GuiWorkspace)workspace).hostX, ((GuiWorkspace)workspace).hostY, ((GuiWorkspace)workspace).hostZ, ""));
             }
         }
 
-        workspace.windowModelTree.modelList.sliderProg = 0.0F;
+        ((GuiWorkspace)workspace).windowModelTree.modelList.sliderProg = 0.0F;
     }
 
     @Override

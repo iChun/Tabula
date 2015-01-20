@@ -201,9 +201,9 @@ public class Mainframe
                 if(mc.currentScreen instanceof GuiWorkspace)
                 {
                     GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
-                    if(!workspace.projectManager.projects.isEmpty())
+                    if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
                     {
-                        isCurrent = project.identifier.equals(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier);
+                        isCurrent = project.identifier.equals(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier);
                     }
                 }
                 streamProjectToListener(id, project, isCurrent);
@@ -216,9 +216,9 @@ public class Mainframe
             if(mc.currentScreen instanceof GuiWorkspace)
             {
                 GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
-                if(!workspace.remoteSession && workspace.host != null)
+                if(!((GuiWorkspace)workspace).remoteSession && ((GuiWorkspace)workspace).host != null)
                 {
-                    Tabula.channel.sendToServer(new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, project.identifier));
+                    Tabula.channel.sendToServer(new PacketSetCurrentProject(((GuiWorkspace)workspace).host, ((GuiWorkspace)workspace).hostX, ((GuiWorkspace)workspace).hostY, ((GuiWorkspace)workspace).hostZ, project.identifier));
                 }
             }
         }
@@ -247,9 +247,9 @@ public class Mainframe
                 if(mc.currentScreen instanceof GuiWorkspace)
                 {
                     GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
-                    if(!workspace.projectManager.projects.isEmpty())
+                    if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
                     {
-                        isCurrent = ident.equals(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier);
+                        isCurrent = ident.equals(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier);
                     }
                 }
                 streamProjectTextureToListener(id, ident, bufferedImage, isCurrent);
@@ -261,9 +261,9 @@ public class Mainframe
             if(mc.currentScreen instanceof GuiWorkspace)
             {
                 GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
-                if(!workspace.remoteSession && workspace.host != null)
+                if(!((GuiWorkspace)workspace).remoteSession && ((GuiWorkspace)workspace).host != null)
                 {
-                    Tabula.channel.sendToServer(new PacketSetCurrentProject(workspace.host, workspace.hostX, workspace.hostY, workspace.hostZ, ident));
+                    Tabula.channel.sendToServer(new PacketSetCurrentProject(((GuiWorkspace)workspace).host, ((GuiWorkspace)workspace).hostX, ((GuiWorkspace)workspace).hostY, ((GuiWorkspace)workspace).hostZ, ident));
                 }
             }
         }
@@ -282,9 +282,9 @@ public class Mainframe
             if(mc.currentScreen instanceof GuiWorkspace)
             {
                 GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
-                x = workspace.hostX;
-                y = workspace.hostY;
-                z = workspace.hostZ;
+                x = ((GuiWorkspace)workspace).hostX;
+                y = ((GuiWorkspace)workspace).hostY;
+                z = ((GuiWorkspace)workspace).hostZ;
             }
 
             Tabula.channel.sendToServer(new PacketProjectFragment(x, y, z, false, Minecraft.getMinecraft().getSession().getUsername(), id, ident, true, false, currentProj, 1, -1, 0, new byte[0]));
@@ -329,9 +329,9 @@ public class Mainframe
             if(mc.currentScreen instanceof GuiWorkspace)
             {
                 GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
-                x = workspace.hostX;
-                y = workspace.hostY;
-                z = workspace.hostZ;
+                x = ((GuiWorkspace)workspace).hostX;
+                y = ((GuiWorkspace)workspace).hostY;
+                z = ((GuiWorkspace)workspace).hostZ;
             }
 
             Tabula.channel.sendToServer(new PacketProjectFragment(x, y, z, false, Minecraft.getMinecraft().getSession().getUsername(), id, projectIdent, isTexture, false, isCurrentProject, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));

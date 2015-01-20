@@ -1,11 +1,12 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.ResourceLocation;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButtonTextured;
 import us.ichun.mods.ichunutil.client.render.RendererHelper;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButtonTextured;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
@@ -14,7 +15,7 @@ public class WindowModelTree extends Window
 {
     public ElementListTree modelList;
 
-    public WindowModelTree(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowModelTree(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.modelTree.title", true);
 
@@ -31,7 +32,7 @@ public class WindowModelTree extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            RendererHelper.drawColourOnScreen(Theme.instance.elementButtonBorder[0], Theme.instance.elementButtonBorder[1], Theme.instance.elementButtonBorder[2], 255, posX + BORDER_SIZE, posY + height - 21 - BORDER_SIZE, width - (BORDER_SIZE * 2), 1, 0);
+            RendererHelper.drawColourOnScreen(workspace.currentTheme.elementButtonBorder[0], workspace.currentTheme.elementButtonBorder[1], workspace.currentTheme.elementButtonBorder[2], 255, posX + BORDER_SIZE, posY + height - 21 - BORDER_SIZE, width - (BORDER_SIZE * 2), 1, 0);
         }
     }
 
@@ -46,35 +47,35 @@ public class WindowModelTree extends Window
     {
         if(element.id == 0) //newcube
         {
-            if(!workspace.remoteSession)
+            if(!((GuiWorkspace)workspace).remoteSession)
             {
-                Tabula.proxy.tickHandlerClient.mainframe.createNewCube(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier);
+                Tabula.proxy.tickHandlerClient.mainframe.createNewCube(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier);
             }
-            else if(!workspace.sessionEnded && workspace.isEditor)
+            else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
             {
-                Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "createNewCube", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier));
+                Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)workspace).host, "createNewCube", ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier));
             }
         }
         else if(element.id == 1) //newgroup
         {
-            if(!workspace.remoteSession)
+            if(!((GuiWorkspace)workspace).remoteSession)
             {
-                Tabula.proxy.tickHandlerClient.mainframe.createNewGroup(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier);
+                Tabula.proxy.tickHandlerClient.mainframe.createNewGroup(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier);
             }
-            else if(!workspace.sessionEnded && workspace.isEditor)
+            else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
             {
-                Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "createNewGroup", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier));
+                Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)workspace).host, "createNewGroup", ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier));
             }
         }
         else if(element.id == 2 && !modelList.selectedIdentifier.isEmpty())
         {
-            if(!workspace.remoteSession)
+            if(!((GuiWorkspace)workspace).remoteSession)
             {
-                Tabula.proxy.tickHandlerClient.mainframe.deleteObject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, modelList.selectedIdentifier);
+                Tabula.proxy.tickHandlerClient.mainframe.deleteObject(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, modelList.selectedIdentifier);
             }
-            else if(!workspace.sessionEnded && workspace.isEditor)
+            else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
             {
-                Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "deleteObject", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, modelList.selectedIdentifier));
+                Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)workspace).host, "deleteObject", ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, modelList.selectedIdentifier));
             }
         }
         else

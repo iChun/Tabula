@@ -3,11 +3,12 @@ package us.ichun.mods.tabula.client.gui.window;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import org.apache.commons.io.FilenameUtils;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.core.ResourceHelper;
-import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 
 import java.io.File;
@@ -19,11 +20,11 @@ public class WindowThemeSelect extends Window
     public ElementListTree modelList;
     public Theme currentTheme;
 
-    public WindowThemeSelect(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowThemeSelect(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.selectTheme.title", true);
 
-        currentTheme = Theme.copyInstance();
+        currentTheme = (Theme)Theme.copyTheme(parent.currentTheme);
 
         elements.add(new ElementButton(this, width - 140, height - 22, 60, 16, 1, false, 1, 1, "element.button.ok"));
         elements.add(new ElementButton(this, width - 70, height - 22, 60, 16, 0, false, 1, 1, "element.button.cancel"));
@@ -83,7 +84,7 @@ public class WindowThemeSelect extends Window
     {
         if(element.id == 0)
         {
-            Theme.loadTheme(currentTheme);
+            Theme.loadTheme(workspace.currentTheme, currentTheme);
             workspace.removeWindow(this, true);
         }
         if(element.id == 1 || element.id == 3)

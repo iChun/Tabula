@@ -1,13 +1,15 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
 import us.ichun.mods.ichunutil.common.module.tabula.client.formats.ImportList;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
@@ -22,7 +24,7 @@ public class WindowOpenProject extends Window
     public File openingFile;
     public String openingJson;
 
-    public WindowOpenProject(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowOpenProject(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.open.title", true);
 
@@ -55,7 +57,7 @@ public class WindowOpenProject extends Window
         super.draw(mouseX, mouseY);
         if(!minimized && openingFile != null)
         {
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.open.opening"), posX + 11, posY + height - 18, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.open.opening"), posX + 11, posY + height - 18, Theme.getAsHex(workspace.currentTheme.font), false);
         }
     }
 
@@ -66,7 +68,7 @@ public class WindowOpenProject extends Window
         {
             workspace.removeWindow(this, true);
         }
-        if((element.id == 1 || element.id == 3) && openingFile == null && workspace.isEditor)
+        if((element.id == 1 || element.id == 3) && openingFile == null && ((GuiWorkspace)workspace).isEditor)
         {
             for(int i = 0; i < modelList.trees.size(); i++)
             {
@@ -88,14 +90,14 @@ public class WindowOpenProject extends Window
 
                         openingFile = (File)tree.attachedObject;
                         openingJson = project.getAsJson();
-                        workspace.openNextNewProject = true;
-                        if(!workspace.remoteSession)
+                        ((GuiWorkspace)workspace).openNextNewProject = true;
+                        if(!((GuiWorkspace)workspace).remoteSession)
                         {
                             Tabula.proxy.tickHandlerClient.mainframe.overrideProject("", openingJson, project.bufferedTexture);
                         }
-                        else if(!workspace.sessionEnded)
+                        else if(!((GuiWorkspace)workspace).sessionEnded)
                         {
-                            ProjectHelper.sendProjectToServer(workspace.host, "", project, false);
+                            ProjectHelper.sendProjectToServer(((GuiWorkspace)workspace).host, "", project, false);
                         }
                     }
                     break;

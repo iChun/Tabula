@@ -1,13 +1,15 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementNumberInput;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
-import us.ichun.mods.tabula.client.gui.window.element.ElementNumberInput;
-import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 
@@ -15,7 +17,7 @@ public class WindowNewAnimComponent extends Window
 {
     public String cubeIdent;
 
-    public WindowNewAnimComponent(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH, CubeInfo info)
+    public WindowNewAnimComponent(IWorkspace parent, int x, int y, int w, int h, int minW, int minH, CubeInfo info)
     {
         super(parent, x, y, w, h, minW, minH, "window.newAnimComp.title", true);
 
@@ -33,8 +35,8 @@ public class WindowNewAnimComponent extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newAnimComp.name"), posX + 11, posY + 20, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newAnimComp.length"), posX + 11, posY + 55, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newAnimComp.name"), posX + 11, posY + 20, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newAnimComp.length"), posX + 11, posY + 55, Theme.getAsHex(workspace.currentTheme.font), false);
         }
     }
 
@@ -47,7 +49,7 @@ public class WindowNewAnimComponent extends Window
         }
         if(element.id > 1)
         {
-            if(!workspace.projectManager.projects.isEmpty() && !workspace.windowAnimate.animList.selectedIdentifier.isEmpty())
+            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty() && !((GuiWorkspace)workspace).windowAnimate.animList.selectedIdentifier.isEmpty())
             {
                 String animName = "";
                 int length = 1;
@@ -71,13 +73,13 @@ public class WindowNewAnimComponent extends Window
                 {
                     animName = "NewComponent";
                 }
-                if(!workspace.remoteSession)
+                if(!((GuiWorkspace)workspace).remoteSession)
                 {
-                    Tabula.proxy.tickHandlerClient.mainframe.createNewAnimComponent(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, workspace.windowAnimate.animList.selectedIdentifier, cubeIdent, animName, length, workspace.windowAnimate.timeline.getCurrentPos());
+                    Tabula.proxy.tickHandlerClient.mainframe.createNewAnimComponent(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, ((GuiWorkspace)workspace).windowAnimate.animList.selectedIdentifier, cubeIdent, animName, length, ((GuiWorkspace)workspace).windowAnimate.timeline.getCurrentPos());
                 }
-                else if(!workspace.sessionEnded && workspace.isEditor)
+                else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
                 {
-                    Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "createNewAnimComponent", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, workspace.windowAnimate.animList.selectedIdentifier, cubeIdent, animName, length, workspace.windowAnimate.timeline.getCurrentPos()));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)workspace).host, "createNewAnimComponent", ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, ((GuiWorkspace)workspace).windowAnimate.animList.selectedIdentifier, cubeIdent, animName, length, ((GuiWorkspace)workspace).windowAnimate.timeline.getCurrentPos()));
                 }
                 workspace.removeWindow(this, true);
             }

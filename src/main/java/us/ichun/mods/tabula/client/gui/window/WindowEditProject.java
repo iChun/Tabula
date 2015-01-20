@@ -1,13 +1,15 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementNumberInput;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
-import us.ichun.mods.tabula.client.gui.window.element.ElementNumberInput;
-import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 
@@ -15,11 +17,11 @@ import java.util.Locale;
 
 public class WindowEditProject extends Window
 {
-    public WindowEditProject(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowEditProject(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.editProject.title", true);
 
-        ProjectInfo project = workspace.projectManager.projects.get(workspace.projectManager.selectedProject);
+        ProjectInfo project = ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject);
 
         ElementTextInput text1 = new ElementTextInput(this, 10, 30, width - 20, 12, 1, "window.newProject.projIdent");
         text1.textField.setText(project.modelName);
@@ -46,10 +48,10 @@ public class WindowEditProject extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.projIdent"), posX + 11, posY + 20, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.animName"), posX + 11, posY + 55, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.txDimensions"), posX + 11, posY + 90, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.projectScale"), posX + 11, posY + 125, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.projIdent"), posX + 11, posY + 20, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.animName"), posX + 11, posY + 55, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.txDimensions"), posX + 11, posY + 90, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newProject.projectScale"), posX + 11, posY + 125, Theme.getAsHex(workspace.currentTheme.font), false);
         }
     }
 
@@ -62,7 +64,7 @@ public class WindowEditProject extends Window
         }
         if(element.id > 0 && element.id != 3 && element.id != 4)
         {
-            if(!workspace.projectManager.projects.isEmpty())
+            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
                 String projName = "";
                 String authName = "";
@@ -105,13 +107,13 @@ public class WindowEditProject extends Window
                 {
                     return;
                 }
-                if(!workspace.remoteSession)
+                if(!((GuiWorkspace)workspace).remoteSession)
                 {
-                    Tabula.proxy.tickHandlerClient.mainframe.editProject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, projName, authName, dimW, dimH, scaleX, scaleY, scaleZ);
+                    Tabula.proxy.tickHandlerClient.mainframe.editProject(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, projName, authName, dimW, dimH, scaleX, scaleY, scaleZ);
                 }
-                else if(!workspace.sessionEnded && workspace.isEditor)
+                else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
                 {
-                    Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "editProject", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, projName, authName, dimW, dimH, scaleX, scaleY, scaleZ));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)workspace).host, "editProject", ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, projName, authName, dimW, dimH, scaleX, scaleY, scaleZ));
                 }
                 workspace.removeWindow(this, true);
             }

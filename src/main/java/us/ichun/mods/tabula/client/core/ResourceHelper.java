@@ -44,7 +44,7 @@ public class ResourceHelper
         if(!defaultTheme.exists())
         {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            String jsonOutput = gson.toJson(Theme.instance);
+            String jsonOutput = gson.toJson(new Theme());
 
             try
             {

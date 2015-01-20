@@ -2,10 +2,13 @@ package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButtonTextured;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementToggle;
+import us.ichun.mods.ichunutil.client.render.RendererHelper;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButtonTextured;
-import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.common.Tabula;
 
 public class WindowTopDock extends Window
@@ -35,7 +38,7 @@ public class WindowTopDock extends Window
 
     public static final int ID_WOOD = -1;
 
-    public WindowTopDock(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowTopDock(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "", false);
 
@@ -58,10 +61,10 @@ public class WindowTopDock extends Window
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE_WITHOUT_CHILDREN, true, 0, 0, "topdock.pasteWithoutChildren", new ResourceLocation("tabula", "textures/icon/pasteWithoutChildren.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_UNDO, true, 0, 0, "topdock.undo", new ResourceLocation("tabula", "textures/icon/undo.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_REDO, true, 0, 0, "topdock.redo", new ResourceLocation("tabula", "textures/icon/redo.png")));
-        if(workspace.host != null)
+        if(((GuiWorkspace)workspace).host != null)
         {
             elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CHAT, true, 0, 0, "topdock.chat", new ResourceLocation("tabula", "textures/icon/chat.png")));
-            if(!workspace.remoteSession)
+            if(!((GuiWorkspace)workspace).remoteSession)
             {
                 elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_ADD_EDITOR, true, 0, 0, "topdock.addEditor", new ResourceLocation("tabula", "textures/icon/addEditor.png")));
                 elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_REMOVE_EDITOR, true, 0, 0, "topdock.removeEditor", new ResourceLocation("tabula", "textures/icon/removeEditor.png")));
@@ -94,7 +97,7 @@ public class WindowTopDock extends Window
         }
         else if(element.id == ID_EDIT)
         {
-            if(!workspace.projectManager.projects.isEmpty())
+            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
                 workspace.addWindowOnTop(new WindowEditProject(workspace, workspace.width / 2 - 100, workspace.height / 2 - 100, 200, 200, 200, 160).putInMiddleOfScreen());
             }
@@ -105,18 +108,18 @@ public class WindowTopDock extends Window
         }
         else if(element.id == ID_SAVE)
         {
-            workspace.save(false);
+            ((GuiWorkspace)workspace).save(false);
         }
         else if(element.id == ID_SAVE_AS)
         {
-            if(!workspace.projectManager.projects.isEmpty())
+            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
                 workspace.addWindowOnTop(new WindowSaveAs(workspace, workspace.width / 2 - 100, workspace.height / 2 - 80, 200, 100, 200, 100, false).putInMiddleOfScreen());
             }
         }
         else if(element.id == ID_IMPORT)
         {
-            if(!workspace.projectManager.projects.isEmpty())
+            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
                 workspace.addWindowOnTop(new WindowImportProject(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 260, 320, 240, 160).putInMiddleOfScreen());
             }
@@ -127,42 +130,42 @@ public class WindowTopDock extends Window
         }
         else if(element.id == ID_EXPORT)
         {
-            if(!workspace.projectManager.projects.isEmpty())
+            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
                 workspace.addWindowOnTop(new WindowExport(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 260, 160, 240, 160).putInMiddleOfScreen());
             }
         }
         else if(element.id == ID_CUT)
         {
-            workspace.cut();
+            ((GuiWorkspace)workspace).cut();
         }
         else if(element.id == ID_COPY)
         {
-            workspace.copy();
+            ((GuiWorkspace)workspace).copy();
         }
         else if(element.id == ID_PASTE)
         {
-            workspace.paste(GuiScreen.isShiftKeyDown(), true);
+            ((GuiWorkspace)workspace).paste(GuiScreen.isShiftKeyDown(), true);
         }
         else if(element.id == ID_PASTE_IN_PLACE)
         {
-            workspace.paste(true, true);
+            ((GuiWorkspace)workspace).paste(true, true);
         }
         else if(element.id == ID_PASTE_WITHOUT_CHILDREN)
         {
-            workspace.paste(GuiScreen.isShiftKeyDown(), false);
+            ((GuiWorkspace)workspace).paste(GuiScreen.isShiftKeyDown(), false);
         }
         else if(element.id == ID_UNDO)
         {
-            workspace.switchState(true);
+            ((GuiWorkspace)workspace).switchState(true);
         }
         else if(element.id == ID_REDO)
         {
-            workspace.switchState(false);
+            ((GuiWorkspace)workspace).switchState(false);
         }
         else if(element.id == ID_CHAT)
         {
-            workspace.windowChat.toggleVisibility();
+            ((GuiWorkspace)workspace).windowChat.toggleVisibility();
         }
         else if(element.id == ID_ADD_EDITOR)
         {
@@ -186,7 +189,7 @@ public class WindowTopDock extends Window
         }
         else if(element.id == ID_EXIT_TABULA)
         {
-            workspace.wantToExit = true;
+            ((GuiWorkspace)workspace).wantToExit = true;
         }
         else if(element.id == ID_WOOD)
         {
@@ -198,14 +201,20 @@ public class WindowTopDock extends Window
     @Override
     public void resized()
     {
-        for(Element element : elements)
-        {
-            element.resized();
-        }
         posX = 0;
         posY = 0;
         width = workspace.width;
         height = 20;
+        for(Element element : elements)
+        {
+            element.resized();
+        }
+    }
+
+    @Override
+    public boolean canBeDragged()
+    {
+        return false;
     }
 
     @Override
@@ -214,6 +223,24 @@ public class WindowTopDock extends Window
     }
 
     @Override
+    public boolean isStatic()
+    {
+        return true;
+    }
+
+    @Override
+    public void setScissor()
+    {
+        RendererHelper.startGlScissor(posX, posY, getWidth(), getHeight());
+}
+
+    @Override
+    public void drawBackground()
+    {
+        RendererHelper.drawColourOnScreen(workspace.currentTheme.windowBackground[0], workspace.currentTheme.windowBackground[1], workspace.currentTheme.windowBackground[2], 255, posX, posY, getWidth(), getHeight(), 0);
+    }
+
+        @Override
     public int getHeight()
     {
         return 20;

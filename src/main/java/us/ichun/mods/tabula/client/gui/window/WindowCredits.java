@@ -1,10 +1,11 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
-import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
-import us.ichun.mods.tabula.client.gui.window.element.ElementTextWrapper;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementTextWrapper;
 import us.ichun.mods.tabula.common.Tabula;
 
 public class WindowCredits extends Window
@@ -14,7 +15,7 @@ public class WindowCredits extends Window
             Tabula.version, "iChun", "mr_hazard", "heldplayer, Vswe, bombmask", "Kihira, Dizkonnekted, Dunkleosteus, Zorn_Taov, OndraSter, K-4U, Horfius, GlitchPulse"
     };
 
-    public WindowCredits(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowCredits(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.about.title", true);
 

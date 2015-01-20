@@ -1,11 +1,17 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementListTree;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementToggle;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.Animation;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.AnimationComponent;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.*;
+import us.ichun.mods.tabula.client.gui.window.element.ElementAnimationProgression;
 import us.ichun.mods.tabula.common.Tabula;
 
 import java.util.ArrayList;
@@ -19,7 +25,7 @@ public class WindowEditAnimComponentProgression extends Window
 
     public boolean playAnim = true;
 
-    public WindowEditAnimComponentProgression(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH, String anim, String model, String animComp)
+    public WindowEditAnimComponentProgression(IWorkspace parent, int x, int y, int w, int h, int minW, int minH, String anim, String model, String animComp)
     {
         super(parent, x, y, w, h, minW, minH, "window.editAnimCompProg.title", true);
 
@@ -40,7 +46,7 @@ public class WindowEditAnimComponentProgression extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.editAnimCompProg.prog"), posX + (width / 2) - workspace.getFontRenderer().getStringWidth(StatCollector.translateToLocal("window.editAnimCompProg.prog")) / 2, posY + 40 + 250, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.editAnimCompProg.prog"), posX + (width / 2) - workspace.getFontRenderer().getStringWidth(StatCollector.translateToLocal("window.editAnimCompProg.prog")) / 2, posY + 40 + 250, Theme.getAsHex(workspace.currentTheme.font), false);
 //            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newAnimComp.length"), posX + 11, posY + 55, Theme.getAsHex(Theme.instance.font), false);
 //            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.editAnimComp.startPos"), posX + 11, posY + 90, Theme.getAsHex(Theme.instance.font), false);
         }
@@ -51,7 +57,7 @@ public class WindowEditAnimComponentProgression extends Window
     {
         if(playAnim)
         {
-            for(ElementListTree.Tree tree : workspace.windowAnimate.animList.trees)
+            for(ElementListTree.Tree tree : ((GuiWorkspace)workspace).windowAnimate.animList.trees)
             {
                 if(tree.selected)
                 {
@@ -81,7 +87,7 @@ public class WindowEditAnimComponentProgression extends Window
         }
         else
         {
-            for(ElementListTree.Tree tree : workspace.windowAnimate.animList.trees)
+            for(ElementListTree.Tree tree : ((GuiWorkspace)workspace).windowAnimate.animList.trees)
             {
                 if(tree.selected)
                 {
@@ -109,9 +115,9 @@ public class WindowEditAnimComponentProgression extends Window
     {
         if(element.id == 0)
         {
-            if(!workspace.projectManager.projects.isEmpty())
+            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
-                Tabula.proxy.tickHandlerClient.mainframe.resetAnimCompProgCoord(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, parentAnim, comp);
+                Tabula.proxy.tickHandlerClient.mainframe.resetAnimCompProgCoord(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, parentAnim, comp);
             }
         }
         if(element.id == 1)
@@ -120,9 +126,9 @@ public class WindowEditAnimComponentProgression extends Window
         }
         if(element.id > 2)
         {
-            if(!workspace.projectManager.projects.isEmpty() && !workspace.windowAnimate.animList.selectedIdentifier.isEmpty())
+            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty() && !((GuiWorkspace)workspace).windowAnimate.animList.selectedIdentifier.isEmpty())
             {
-                for(ElementListTree.Tree tree : workspace.windowAnimate.animList.trees)
+                for(ElementListTree.Tree tree : ((GuiWorkspace)workspace).windowAnimate.animList.trees)
                 {
                     if(tree.selected)
                     {
@@ -151,7 +157,7 @@ public class WindowEditAnimComponentProgression extends Window
                     }
                 }
 
-                for(ElementListTree.Tree tree : workspace.windowAnimate.animList.trees)
+                for(ElementListTree.Tree tree : ((GuiWorkspace)workspace).windowAnimate.animList.trees)
                 {
                     if(tree.selected)
                     {

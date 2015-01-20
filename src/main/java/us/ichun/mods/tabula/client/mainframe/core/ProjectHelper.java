@@ -6,10 +6,10 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
 import us.ichun.mods.ichunutil.common.core.util.IOUtil;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.client.gui.window.WindowOpenProject;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketProjectFragment;
@@ -85,7 +85,7 @@ public class ProjectHelper
         if(mc.currentScreen instanceof GuiWorkspace)
         {
             GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
-            workspace.projectManager.updateProject(project);
+            ((GuiWorkspace)workspace).projectManager.updateProject(project);
         }
     }
 
@@ -96,7 +96,7 @@ public class ProjectHelper
         if(mc.currentScreen instanceof GuiWorkspace)
         {
             GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
-            workspace.projectManager.removeProject(ident);
+            ((GuiWorkspace)workspace).projectManager.removeProject(ident);
         }
     }
 
@@ -107,7 +107,7 @@ public class ProjectHelper
         if(mc.currentScreen instanceof GuiWorkspace)
         {
             GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
-            for(ProjectInfo project : workspace.projectManager.projects)
+            for(ProjectInfo project : ((GuiWorkspace)workspace).projectManager.projects)
             {
                 if(project.identifier.equals(ident))
                 {
@@ -357,9 +357,9 @@ public class ProjectHelper
             if(mc.currentScreen instanceof GuiWorkspace)
             {
                 GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
-                x = workspace.hostX;
-                y = workspace.hostY;
-                z = workspace.hostZ;
+                x = ((GuiWorkspace)workspace).hostX;
+                y = ((GuiWorkspace)workspace).hostY;
+                z = ((GuiWorkspace)workspace).hostZ;
             }
 
             Tabula.channel.sendToServer(new PacketProjectFragment(x, y, z, true, host, Minecraft.getMinecraft().getSession().getUsername(), projectIdent, true, updateDims, false, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));

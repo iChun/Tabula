@@ -1,10 +1,12 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.client.Minecraft;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementTextInput;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementTextWrapperChat;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
-import us.ichun.mods.tabula.client.gui.window.element.ElementTextWrapperChat;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketChat;
 
@@ -14,7 +16,7 @@ public class WindowChat extends Window
 
     public ElementTextWrapperChat chatHolder;
 
-    public WindowChat(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowChat(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.chat.title", true);
         wasDocked = -1;
@@ -69,13 +71,13 @@ public class WindowChat extends Window
             ElementTextInput text = (ElementTextInput)element;
             if(!text.textField.getText().isEmpty())
             {
-                if(!workspace.remoteSession)
+                if(!((GuiWorkspace)workspace).remoteSession)
                 {
                     Tabula.proxy.tickHandlerClient.mainframe.sendChat(Minecraft.getMinecraft().getSession().getUsername(), text.textField.getText());
                 }
-                else if(!workspace.sessionEnded)
+                else if(!((GuiWorkspace)workspace).sessionEnded)
                 {
-                    Tabula.channel.sendToServer(new PacketChat(workspace.host, Minecraft.getMinecraft().getSession().getUsername(), text.textField.getText()));
+                    Tabula.channel.sendToServer(new PacketChat(((GuiWorkspace)workspace).host, Minecraft.getMinecraft().getSession().getUsername(), text.textField.getText()));
                 }
                 text.textField.setText("");
             }

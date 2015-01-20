@@ -84,7 +84,7 @@ public class TileEntityTabulaRasa extends TileEntity
         if(mc.currentScreen instanceof GuiWorkspace)
         {
             GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
-            if(workspace.host.equals(host))
+            if(((GuiWorkspace)workspace).host.equals(host))
             {
                 return;
             }

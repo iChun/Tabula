@@ -1,13 +1,15 @@
 package us.ichun.mods.tabula.client.gui.window;
 
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementToggle;
 import us.ichun.mods.ichunutil.common.core.util.IOUtil;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
-import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
 
@@ -21,7 +23,7 @@ public class WindowLoadTexture extends Window
 {
     public transient ElementListTree modelList;
 
-    public WindowLoadTexture(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowLoadTexture(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.loadTexture.title", true);
 
@@ -58,9 +60,9 @@ public class WindowLoadTexture extends Window
         }
         if(element.id == 1 || element.id == 3)
         {
-            if(!workspace.projectManager.projects.isEmpty())
+            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
-                ProjectInfo info = workspace.projectManager.projects.get(workspace.projectManager.selectedProject);
+                ProjectInfo info = ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject);
 
                 boolean found = false;
 
@@ -82,7 +84,7 @@ public class WindowLoadTexture extends Window
                         info.textureFile = (File)tree.attachedObject;
                         info.ignoreNextImage = true;
                         info.textureFileMd5 = IOUtil.getMD5Checksum(info.textureFile);
-                        workspace.windowTexture.listenTime = 0;
+                        ((GuiWorkspace)workspace).windowTexture.listenTime = 0;
 
                         BufferedImage image = null;
                         try
@@ -93,13 +95,13 @@ public class WindowLoadTexture extends Window
                         {
                         }
 
-                        if(!workspace.remoteSession)
+                        if(!((GuiWorkspace)workspace).remoteSession)
                         {
                             Tabula.proxy.tickHandlerClient.mainframe.loadTexture(info.identifier, image, texture);
                         }
-                        else if(!workspace.sessionEnded && workspace.isEditor)
+                        else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
                         {
-                            ProjectHelper.sendTextureToServer(workspace.host, info.identifier, texture, image);
+                            ProjectHelper.sendTextureToServer(((GuiWorkspace)workspace).host, info.identifier, texture, image);
                         }
                         found = true;
                         break;

@@ -1,15 +1,17 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementTextInput;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementTextInputSaveAs;
 import us.ichun.mods.ichunutil.common.core.util.IOUtil;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
-import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
-import us.ichun.mods.tabula.client.gui.window.element.ElementTextInputSaveAs;
 
 import java.io.File;
 
@@ -20,11 +22,11 @@ public class WindowSaveAs extends Window
     public boolean shouldClose;
     public boolean closeProject;
 
-    public WindowSaveAs(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH, boolean close)
+    public WindowSaveAs(IWorkspace parent, int x, int y, int w, int h, int minW, int minH, boolean close)
     {
         super(parent, x, y, w, h, minW, minH, "window.saveAs.title", true);
 
-        ProjectInfo project = workspace.projectManager.projects.get(workspace.projectManager.selectedProject);
+        ProjectInfo project = ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject);
 
         ElementTextInputSaveAs text = new ElementTextInputSaveAs(this, 10, 30, width - 20, 12, 1, "window.saveAs.fileName");
         String name = project.modelName;
@@ -45,9 +47,9 @@ public class WindowSaveAs extends Window
         if(shouldClose)
         {
             workspace.removeWindow(this, true);
-            if(closeProject && !workspace.projectManager.projects.isEmpty())
+            if(closeProject && !((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
-                workspace.closeProject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject));
+                ((GuiWorkspace)workspace).closeProject(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject));
             }
         }
     }
@@ -58,7 +60,7 @@ public class WindowSaveAs extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.saveAs.fileName"), posX + 11, posY + 20, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.saveAs.fileName"), posX + 11, posY + 20, Theme.getAsHex(workspace.currentTheme.font), false);
         }
     }
 
@@ -68,7 +70,7 @@ public class WindowSaveAs extends Window
         if(element.id == 0)
         {
             workspace.removeWindow(this, true);
-            workspace.wantToExit = false;
+            ((GuiWorkspace)workspace).wantToExit = false;
         }
         if(element.id == 3)
         {
@@ -102,19 +104,19 @@ public class WindowSaveAs extends Window
             }
             if(file.exists())
             {
-                workspace.addWindowOnTop(new WindowOverwrite(workspace, this, workspace.projectManager.projects.get(workspace.projectManager.selectedProject), file).putInMiddleOfScreen());
+                workspace.addWindowOnTop(new WindowOverwrite(workspace, this, ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject), file).putInMiddleOfScreen());
             }
             else
             {
-                if(ProjectInfo.saveProject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject), file))
+                if(ProjectInfo.saveProject(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject), file))
                 {
-                    workspace.projectManager.projects.get(workspace.projectManager.selectedProject).saveFile = file;
-                    workspace.projectManager.projects.get(workspace.projectManager.selectedProject).saveFileMd5 = IOUtil.getMD5Checksum(file);
+                    ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).saveFile = file;
+                    ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).saveFileMd5 = IOUtil.getMD5Checksum(file);
                     workspace.removeWindow(this, true);
 
-                    if(closeProject && !workspace.projectManager.projects.isEmpty())
+                    if(closeProject && !((GuiWorkspace)workspace).projectManager.projects.isEmpty())
                     {
-                        workspace.closeProject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject));
+                        ((GuiWorkspace)workspace).closeProject(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject));
                     }
                 }
                 else

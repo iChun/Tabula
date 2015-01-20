@@ -1,23 +1,25 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.export.ExportList;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
-import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
 
 public class WindowExportJava extends Window
 {
-    public WindowExportJava(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowExportJava(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "export.javaClass.title", true);
 
         elements.add(new ElementTextInput(this, 10, 30, width - 20, 12, 1, "export.javaClass.package"));
         ElementTextInput clzName = new ElementTextInput(this, 10, 65, width - 20, 12, 2, "export.javaClass.className");
-        clzName.textField.setText(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).modelName.replaceAll(" ", ""));
+        clzName.textField.setText(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).modelName.replaceAll(" ", ""));
         elements.add(clzName);
         elements.add(new ElementButton(this, width - 140, height - 30, 60, 16, 100, false, 1, 1, "element.button.ok"));
         elements.add(new ElementButton(this, width - 70, height - 30, 60, 16, 0, false, 1, 1, "element.button.cancel"));
@@ -29,8 +31,8 @@ public class WindowExportJava extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("export.javaClass.package"), posX + 11, posY + 20, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("export.javaClass.name"), posX + 11, posY + 55, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("export.javaClass.package"), posX + 11, posY + 20, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("export.javaClass.name"), posX + 11, posY + 55, Theme.getAsHex(workspace.currentTheme.font), false);
         }
     }
 
@@ -43,14 +45,14 @@ public class WindowExportJava extends Window
         }
         if(element.id > 0 && element.id != 3)
         {
-            if(!workspace.projectManager.projects.isEmpty())
+            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
                 if(workspace.windowDragged == this)
                 {
                     workspace.windowDragged = null;
                 }
 
-                ProjectInfo info = workspace.projectManager.projects.get(workspace.projectManager.selectedProject);
+                ProjectInfo info = ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject);
                 String projName = "";
                 String authName = "";
                 for(int i = 0; i < elements.size(); i++)

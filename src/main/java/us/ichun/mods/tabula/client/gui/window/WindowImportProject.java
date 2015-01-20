@@ -1,13 +1,15 @@
 package us.ichun.mods.tabula.client.gui.window;
 
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementToggle;
 import us.ichun.mods.ichunutil.common.module.tabula.client.formats.ImportList;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
-import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
 
@@ -20,7 +22,7 @@ public class WindowImportProject extends Window
 
     public File openingFile;
 
-    public WindowImportProject(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowImportProject(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.import.title", true);
 
@@ -63,7 +65,7 @@ public class WindowImportProject extends Window
         }
         if((element.id == 1 || element.id == 3) && openingFile == null)
         {
-            if(!workspace.projectManager.projects.isEmpty())
+            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
                 boolean texture = false;
                 for(Element e : elements)
@@ -92,13 +94,13 @@ public class WindowImportProject extends Window
                         else
                         {
                             openingFile = (File)tree.attachedObject;
-                            if(!workspace.remoteSession)
+                            if(!((GuiWorkspace)workspace).remoteSession)
                             {
-                                Tabula.proxy.tickHandlerClient.mainframe.importProject(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, project.getAsJson(), texture ? project.bufferedTexture : null);
+                                Tabula.proxy.tickHandlerClient.mainframe.importProject(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, project.getAsJson(), texture ? project.bufferedTexture : null);
                             }
-                            else if(!workspace.sessionEnded && workspace.isEditor)
+                            else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
                             {
-                                ProjectHelper.sendProjectToServer(workspace.host, workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, project, true);
+                                ProjectHelper.sendProjectToServer(((GuiWorkspace)workspace).host, ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, project, true);
                             }
                             workspace.removeWindow(this, true);
                         }

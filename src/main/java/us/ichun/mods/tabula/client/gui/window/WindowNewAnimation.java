@@ -1,18 +1,20 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementCheckBox;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
-import us.ichun.mods.tabula.client.gui.window.element.ElementCheckBox;
-import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 
 public class WindowNewAnimation extends Window
 {
-    public WindowNewAnimation(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowNewAnimation(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.newAnim.title", true);
 
@@ -28,8 +30,8 @@ public class WindowNewAnimation extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newAnim.animName"), posX + 11, posY + 20, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newAnim.animLoop"), posX + 25, posY + 55, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newAnim.animName"), posX + 11, posY + 20, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newAnim.animLoop"), posX + 25, posY + 55, Theme.getAsHex(workspace.currentTheme.font), false);
         }
     }
 
@@ -42,7 +44,7 @@ public class WindowNewAnimation extends Window
         }
         if(element.id > 0)
         {
-            if(!workspace.projectManager.projects.isEmpty())
+            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
                 String animName = "";
                 boolean loop = false;
@@ -65,13 +67,13 @@ public class WindowNewAnimation extends Window
                 {
                     animName = "NewAnimation";
                 }
-                if(!workspace.remoteSession)
+                if(!((GuiWorkspace)workspace).remoteSession)
                 {
-                    Tabula.proxy.tickHandlerClient.mainframe.createNewAnimation(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animName, loop);
+                    Tabula.proxy.tickHandlerClient.mainframe.createNewAnimation(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, animName, loop);
                 }
-                else if(!workspace.sessionEnded && workspace.isEditor)
+                else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
                 {
-                    Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "createNewAnimation", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animName, loop));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)workspace).host, "createNewAnimation", ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, animName, loop));
                 }
                 workspace.removeWindow(this, true);
             }

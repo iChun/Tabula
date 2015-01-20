@@ -1,17 +1,19 @@
 package us.ichun.mods.tabula.client.gui.window;
 
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.export.ExportList;
 import us.ichun.mods.tabula.client.export.types.Exporter;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 
 public class WindowExport extends Window
 {
     public ElementListTree modelList;
 
-    public WindowExport(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowExport(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "export.title", true);
 
@@ -41,7 +43,7 @@ public class WindowExport extends Window
         }
         if(element.id == 1 || element.id == 3)
         {
-            if(!workspace.projectManager.projects.isEmpty())
+            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
                 boolean found = false;
 
@@ -55,7 +57,7 @@ public class WindowExport extends Window
                     if(tree.selected)
                     {
                         Exporter exporter = (Exporter)tree.attachedObject;
-                        if(!exporter.override(workspace) && !exporter.export(workspace.projectManager.projects.get(workspace.projectManager.selectedProject)))
+                        if(!exporter.override(workspace) && !exporter.export(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject)))
                         {
                             workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 180, 80, 180, 80, "export.failed").putInMiddleOfScreen());
                         }

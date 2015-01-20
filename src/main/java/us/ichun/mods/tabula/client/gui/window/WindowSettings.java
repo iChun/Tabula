@@ -1,16 +1,17 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
-import us.ichun.mods.tabula.client.gui.GuiWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementCheckBox;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
-import us.ichun.mods.tabula.client.gui.window.element.ElementCheckBox;
 import us.ichun.mods.tabula.common.Tabula;
 
 public class WindowSettings extends Window
 {
-    public WindowSettings(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowSettings(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.settings.title", true);
 
@@ -30,10 +31,10 @@ public class WindowSettings extends Window
         if(!minimized)
         {
             int offset = 0;
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.settings.renderRotationPoint"), posX + 25, posY + 21 + (15 * offset++), Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("tabula.config.prop.renderGrid.name"), posX + 25, posY + 21 + (15 * offset++), Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("tabula.config.prop.renderModelControls.name"), posX + 25, posY + 21 + (15 * offset++), Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("tabula.config.prop.chatSound.comment"), posX + 25, posY + 21 + (15 * offset++), Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.settings.renderRotationPoint"), posX + 25, posY + 21 + (15 * offset++), Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("tabula.config.prop.renderGrid.name"), posX + 25, posY + 21 + (15 * offset++), Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("tabula.config.prop.renderModelControls.name"), posX + 25, posY + 21 + (15 * offset++), Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("tabula.config.prop.chatSound.comment"), posX + 25, posY + 21 + (15 * offset++), Theme.getAsHex(workspace.currentTheme.font), false);
         }
     }
 

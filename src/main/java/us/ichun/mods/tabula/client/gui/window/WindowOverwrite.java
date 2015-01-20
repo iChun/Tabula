@@ -1,12 +1,13 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
 import us.ichun.mods.ichunutil.common.core.util.IOUtil;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
-import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
 
 import java.io.File;
 
@@ -16,7 +17,7 @@ public class WindowOverwrite extends Window
     public ProjectInfo project;
     public File saveFile;
 
-    public WindowOverwrite(GuiWorkspace parent, WindowSaveAs win, ProjectInfo projectInfo, File file)
+    public WindowOverwrite(IWorkspace parent, WindowSaveAs win, ProjectInfo projectInfo, File file)
     {
         super(parent, 0, 0, 300, 120, 300, 120, "window.saveAs.overwrite", true);
 
@@ -34,7 +35,7 @@ public class WindowOverwrite extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.saveAs.confirmOverwrite"), posX + 15, posY + 40, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.saveAs.confirmOverwrite"), posX + 15, posY + 40, Theme.getAsHex(workspace.currentTheme.font), false);
         }
     }
 

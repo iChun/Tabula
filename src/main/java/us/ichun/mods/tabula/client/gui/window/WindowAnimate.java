@@ -1,15 +1,17 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButtonTextured;
 import us.ichun.mods.ichunutil.client.render.RendererHelper;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.Animation;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.AnimationComponent;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
-import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
 import us.ichun.mods.tabula.client.gui.window.element.ElementAnimationTimeline;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButtonTextured;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
@@ -35,7 +37,7 @@ public class WindowAnimate extends Window
     public ElementListTree animList;
     public ElementAnimationTimeline timeline;
 
-    public WindowAnimate(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowAnimate(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.animate.title", true);
 
@@ -67,14 +69,14 @@ public class WindowAnimate extends Window
             return;
         }
         super.draw(mouseX, mouseY);
-        RendererHelper.drawColourOnScreen(Theme.instance.elementButtonBorder[0], Theme.instance.elementButtonBorder[1], Theme.instance.elementButtonBorder[2], 255, posX + 100 + 1, posY + height - 20, Math.min(100, width - 101), 1, 0);
-        RendererHelper.drawColourOnScreen(Theme.instance.elementTreeBorder[0], Theme.instance.elementTreeBorder[1], Theme.instance.elementTreeBorder[2], 255, posX + 100, posY + 13, 1, height - 13, 0);
+        RendererHelper.drawColourOnScreen(workspace.currentTheme.elementButtonBorder[0], workspace.currentTheme.elementButtonBorder[1], workspace.currentTheme.elementButtonBorder[2], 255, posX + 100 + 1, posY + height - 20, Math.min(100, width - 101), 1, 0);
+        RendererHelper.drawColourOnScreen(workspace.currentTheme.elementTreeBorder[0], workspace.currentTheme.elementTreeBorder[1], workspace.currentTheme.elementTreeBorder[2], 255, posX + 100, posY + 13, 1, height - 13, 0);
     }
 
     @Override
     public void elementTriggered(Element element)
     {
-        if(!workspace.projectManager.projects.isEmpty())
+        if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
         {
             if(element.id == ID_NEW_ANIM)
             {
@@ -93,20 +95,20 @@ public class WindowAnimate extends Window
             }
             else if(element.id == ID_DEL_ANIM)
             {
-                if(!workspace.remoteSession)
+                if(!((GuiWorkspace)workspace).remoteSession)
                 {
-                    Tabula.proxy.tickHandlerClient.mainframe.deleteAnimation(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier);
+                    Tabula.proxy.tickHandlerClient.mainframe.deleteAnimation(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, animList.selectedIdentifier);
                 }
-                else if(!workspace.sessionEnded && workspace.isEditor)
+                else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
                 {
-                    Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "deleteAnimation", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)workspace).host, "deleteAnimation", ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, animList.selectedIdentifier));
                 }
             }
             else if(element.id == ID_NEW_COMP)
             {
                 if(!animList.selectedIdentifier.isEmpty())
                 {
-                    Object obj = workspace.windowControls.selectedObject;
+                    Object obj = ((GuiWorkspace)workspace).windowControls.selectedObject;
                     if(obj instanceof CubeInfo)
                     {
                         CubeInfo info = (CubeInfo)obj;
@@ -152,13 +154,13 @@ public class WindowAnimate extends Window
             {
                 if(!animList.selectedIdentifier.isEmpty() && !timeline.selectedIdentifier.isEmpty())
                 {
-                    if(!workspace.remoteSession)
+                    if(!((GuiWorkspace)workspace).remoteSession)
                     {
-                        Tabula.proxy.tickHandlerClient.mainframe.deleteAnimComponent(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier);
+                        Tabula.proxy.tickHandlerClient.mainframe.deleteAnimComponent(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier);
                     }
-                    else if(!workspace.sessionEnded && workspace.isEditor)
+                    else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
                     {
-                        Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "deleteAnimComponent", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier));
+                        Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)workspace).host, "deleteAnimComponent", ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier));
                     }
                 }
             }
@@ -210,13 +212,13 @@ public class WindowAnimate extends Window
                                 {
                                     if(comp.identifier.equalsIgnoreCase(timeline.selectedIdentifier))
                                     {
-                                        if(!workspace.remoteSession)
+                                        if(!((GuiWorkspace)workspace).remoteSession)
                                         {
-                                            Tabula.proxy.tickHandlerClient.mainframe.splitAnimComponent(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier, timeline.getCurrentPos());
+                                            Tabula.proxy.tickHandlerClient.mainframe.splitAnimComponent(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier, timeline.getCurrentPos());
                                         }
-                                        else if(!workspace.sessionEnded && workspace.isEditor)
+                                        else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
                                         {
-                                            Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "splitAnimComponent", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier, timeline.getCurrentPos()));
+                                            Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)workspace).host, "splitAnimComponent", ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, animList.selectedIdentifier, timeline.selectedIdentifier, timeline.getCurrentPos()));
                                         }
                                         break;
                                     }
@@ -269,6 +271,12 @@ public class WindowAnimate extends Window
     }
 
     @Override
+    public boolean canBeDragged()
+    {
+        return false;
+    }
+
+    @Override
     public int clickedOnBorder(int mouseX, int mouseY, int id)//only left clicks
     {
         if(id == 0 && !minimized)
@@ -292,6 +300,62 @@ public class WindowAnimate extends Window
             Tabula.config.get("animationWarning").set(1);
             Tabula.config.save();
         }
+    }
+    
+    @Override
+    public void setScissor()
+    {
+        RendererHelper.startGlScissor(posX, posY + 1, getWidth(), getHeight());
+    }
+    
+    @Override
+    public void drawBackground()
+    {
+        if(!minimized)
+        {
+            if(docked >= 0)
+            {
+                RendererHelper.drawColourOnScreen(workspace.currentTheme.windowBorder[0], workspace.currentTheme.windowBorder[1], workspace.currentTheme.windowBorder[2], 255, posX, posY + 1, getWidth(), getHeight() - 2, 0);
+                RendererHelper.drawColourOnScreen(workspace.currentTheme.windowBackground[0], workspace.currentTheme.windowBackground[1], workspace.currentTheme.windowBackground[2], 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
+            }
+            else
+            {
+                RendererHelper.drawColourOnScreen(workspace.currentTheme.windowBorder[0], workspace.currentTheme.windowBorder[1], workspace.currentTheme.windowBorder[2], 255, posX + 1, posY + 1, getWidth() - 2, getHeight() - 2, 0);
+                RendererHelper.drawColourOnScreen(workspace.currentTheme.windowBackground[0], workspace.currentTheme.windowBackground[1], workspace.currentTheme.windowBackground[2], 255, posX + BORDER_SIZE, posY + BORDER_SIZE, getWidth() - (BORDER_SIZE * 2), getHeight() - (BORDER_SIZE * 2), 0);
+            }
+        }
+    }
+    
+    @Override
+    public void drawTitle()
+    {
+        if(hasTitle)
+        {
+                RendererHelper.drawColourOnScreen(workspace.currentTheme.windowBorder[0], workspace.currentTheme.windowBorder[1], workspace.currentTheme.windowBorder[2], 255, posX, posY + 1, getWidth(), 12, 0);
+            String titleToRender = StatCollector.translateToLocal(titleLocale);
+            while(titleToRender.length() > 1 && workspace.getFontRenderer().getStringWidth(titleToRender) > getWidth() - (BORDER_SIZE * 2) - workspace.getFontRenderer().getStringWidth("  _"))
+            {
+                if(titleToRender.startsWith("..."))
+                {
+                    break;
+                }
+                if(titleToRender.endsWith("..."))
+                {
+                    titleToRender = titleToRender.substring(0, titleToRender.length() - 4) + "...";
+                }
+                else
+                {
+                    titleToRender = titleToRender.substring(0, titleToRender.length() - 1) + "...";
+                }
+            }
+            workspace.getFontRenderer().drawString(titleToRender, posX + 4, posY + 3, workspace.currentTheme.getAsHex(workspace.currentTheme.font), false);
+        }
+    }
+
+    @Override
+    public boolean invertMinimizeSymbol()
+    {
+        return true;
     }
 
     @Override

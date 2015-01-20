@@ -1,13 +1,15 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import net.minecraft.util.StatCollector;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementCheckBox;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.Animation;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButton;
-import us.ichun.mods.tabula.client.gui.window.element.ElementCheckBox;
-import us.ichun.mods.tabula.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 
@@ -15,7 +17,7 @@ public class WindowEditAnimation extends Window
 {
     public String ident;
 
-    public WindowEditAnimation(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH, Animation anim)
+    public WindowEditAnimation(IWorkspace parent, int x, int y, int w, int h, int minW, int minH, Animation anim)
     {
         super(parent, x, y, w, h, minW, minH, "window.editAnim.title", true);
 
@@ -34,8 +36,8 @@ public class WindowEditAnimation extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newAnim.animName"), posX + 11, posY + 20, Theme.getAsHex(Theme.instance.font), false);
-            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newAnim.animLoop"), posX + 25, posY + 55, Theme.getAsHex(Theme.instance.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newAnim.animName"), posX + 11, posY + 20, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.newAnim.animLoop"), posX + 25, posY + 55, Theme.getAsHex(workspace.currentTheme.font), false);
         }
     }
 
@@ -48,7 +50,7 @@ public class WindowEditAnimation extends Window
         }
         if(element.id > 0)
         {
-            if(!workspace.projectManager.projects.isEmpty())
+            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
                 String animName = "";
                 boolean loop = false;
@@ -71,13 +73,13 @@ public class WindowEditAnimation extends Window
                 {
                     animName = "NewAnimation";
                 }
-                if(!workspace.remoteSession)
+                if(!((GuiWorkspace)workspace).remoteSession)
                 {
-                    Tabula.proxy.tickHandlerClient.mainframe.editAnimation(workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, ident, animName, loop);
+                    Tabula.proxy.tickHandlerClient.mainframe.editAnimation(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, ident, animName, loop);
                 }
-                else if(!workspace.sessionEnded && workspace.isEditor)
+                else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
                 {
-                    Tabula.channel.sendToServer(new PacketGenericMethod(workspace.host, "editAnimation", workspace.projectManager.projects.get(workspace.projectManager.selectedProject).identifier, ident, animName, loop));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)workspace).host, "editAnimation", ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, ident, animName, loop));
                 }
                 workspace.removeWindow(this, true);
             }

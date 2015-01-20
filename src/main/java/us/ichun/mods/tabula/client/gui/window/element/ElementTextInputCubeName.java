@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.client.gui.window.element;
 
-import us.ichun.mods.tabula.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementTextInput;
 
 public class ElementTextInputCubeName extends ElementTextInput
 {

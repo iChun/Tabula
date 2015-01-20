@@ -5,12 +5,14 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Mouse;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
 import us.ichun.mods.ichunutil.client.render.RendererHelper;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.Animation;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.AnimationComponent;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
+import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.Window;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 
@@ -45,10 +47,10 @@ public class ElementAnimationTimeline extends Element
     {
         this.mX = mouseX;
         this.mY = mouseY;
-        //        RendererHelper.drawColourOnScreen(Theme.instance.elementTreeBorder[0], Theme.instance.elementTreeBorder[1], Theme.instance.elementTreeBorder[2], 255, getPosX() + 1, getPosY() + 1, width - 2, height - 2, 0);
-        RendererHelper.drawColourOnScreen(Theme.instance.elementTreeBorder[0], Theme.instance.elementTreeBorder[1], Theme.instance.elementTreeBorder[2], 255, getPosX() + 100, getPosY(), 1, height, 0);
+        //        RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeBorder[0], parent.workspace.currentTheme.elementTreeBorder[1], parent.workspace.currentTheme.elementTreeBorder[2], 255, getPosX() + 1, getPosY() + 1, width - 2, height - 2, 0);
+        RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeBorder[0], parent.workspace.currentTheme.elementTreeBorder[1], parent.workspace.currentTheme.elementTreeBorder[2], 255, getPosX() + 100, getPosY(), 1, height, 0);
 
-        RendererHelper.drawColourOnScreen(Theme.instance.elementTreeItemBorder[0], Theme.instance.elementTreeItemBorder[1], Theme.instance.elementTreeItemBorder[2], 255, getPosX() + 101, getPosY() + height - 19, width - 101, 20, 0); //timeline bg
+        RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeItemBorder[0], parent.workspace.currentTheme.elementTreeItemBorder[1], parent.workspace.currentTheme.elementTreeItemBorder[2], 255, getPosX() + 101, getPosY() + height - 19, width - 101, 20, 0); //timeline bg
 
         RendererHelper.startGlScissor(getPosX(), getPosY(), 100, height - 20);
 
@@ -60,7 +62,7 @@ public class ElementAnimationTimeline extends Element
 
         Animation currentAnim = null;
 
-        for(ElementListTree.Tree tree : parent.workspace.windowAnimate.animList.trees)
+        for(ElementListTree.Tree tree : ((GuiWorkspace)parent.workspace).windowAnimate.animList.trees)
         {
             if(tree.selected)
             {
@@ -113,7 +115,7 @@ public class ElementAnimationTimeline extends Element
             for(Map.Entry<String, ArrayList<AnimationComponent>> e : currentAnim.sets.entrySet())
             {
                 String cubeName = "<Unknown (not good)>";
-                for(ElementListTree.Tree model : parent.workspace.windowModelTree.modelList.trees)
+                for(ElementListTree.Tree model : ((GuiWorkspace)parent.workspace).windowModelTree.modelList.trees)
                 {
                     if(model.attachedObject instanceof CubeInfo && ((CubeInfo)model.attachedObject).identifier.equals(e.getKey()))
                     {
@@ -159,10 +161,10 @@ public class ElementAnimationTimeline extends Element
 
             int timelineWidth = hasScrollVert ? (width - 10) : width;
 
-            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeScrollBarBorder[0], Theme.instance.elementTreeScrollBarBorder[1], Theme.instance.elementTreeScrollBarBorder[2], 255, getPosX() + 101 + ((timelineWidth - 101) / 40), x2 + 4, (timelineWidth - 101) - (((timelineWidth - 101) / 40) * 2), 2, 0);
+            RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeScrollBarBorder[0], parent.workspace.currentTheme.elementTreeScrollBarBorder[1], parent.workspace.currentTheme.elementTreeScrollBarBorder[2], 255, getPosX() + 101 + ((timelineWidth - 101) / 40), x2 + 4, (timelineWidth - 101) - (((timelineWidth - 101) / 40) * 2), 2, 0);
 
-            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeScrollBarBorder[0], Theme.instance.elementTreeScrollBarBorder[1], Theme.instance.elementTreeScrollBarBorder[2], 255, getPosX() + 101 + (((timelineWidth - 101) - ((timelineWidth - 101) / 11)) * sliderProgHori), x2, Math.floor((float)(timelineWidth - 101) / 11D), 10, 0);
-            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeScrollBar[0], Theme.instance.elementTreeScrollBar[1], Theme.instance.elementTreeScrollBar[2], 255, getPosX() + 101 + 1 + (((timelineWidth - 101) - ((timelineWidth - 101) / 11)) * sliderProgHori), x2 + 1, Math.floor(((float)(timelineWidth - 101) / 11D) - 2), 8, 0);
+            RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeScrollBarBorder[0], parent.workspace.currentTheme.elementTreeScrollBarBorder[1], parent.workspace.currentTheme.elementTreeScrollBarBorder[2], 255, getPosX() + 101 + (((timelineWidth - 101) - ((timelineWidth - 101) / 11)) * sliderProgHori), x2, Math.floor((float)(timelineWidth - 101) / 11D), 10, 0);
+            RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeScrollBar[0], parent.workspace.currentTheme.elementTreeScrollBar[1], parent.workspace.currentTheme.elementTreeScrollBar[2], 255, getPosX() + 101 + 1 + (((timelineWidth - 101) - ((timelineWidth - 101) / 11)) * sliderProgHori), x2 + 1, Math.floor(((float)(timelineWidth - 101) / 11D) - 2), 8, 0);
 
             int sbx1 = getPosX() + 101 - parent.posX;
             int sbx2 = getPosX() + 1 + timelineWidth - parent.posX;
@@ -190,17 +192,17 @@ public class ElementAnimationTimeline extends Element
         {
             if(tick % 5 == 0)
             {
-                RendererHelper.drawColourOnScreen(Theme.instance.elementTreeItemBorder[0], Theme.instance.elementTreeItemBorder[1], Theme.instance.elementTreeItemBorder[2], 255, getPosX() + 100.5D + timeOffX, getPosY(), 1, height - 19, 0);
-                RendererHelper.drawColourOnScreen(Theme.instance.elementTreeScrollBarBorder[0], Theme.instance.elementTreeScrollBarBorder[1], Theme.instance.elementTreeScrollBarBorder[2], 255, getPosX() + 100 + timeOffX, getPosY() + height - 19, 2, 7, 0);
+                RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeItemBorder[0], parent.workspace.currentTheme.elementTreeItemBorder[1], parent.workspace.currentTheme.elementTreeItemBorder[2], 255, getPosX() + 100.5D + timeOffX, getPosY(), 1, height - 19, 0);
+                RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeScrollBarBorder[0], parent.workspace.currentTheme.elementTreeScrollBarBorder[1], parent.workspace.currentTheme.elementTreeScrollBarBorder[2], 255, getPosX() + 100 + timeOffX, getPosY() + height - 19, 2, 7, 0);
                 GlStateManager.pushMatrix();
                 float scale = 0.5F;
                 GlStateManager.scale(scale, scale, scale);
-                parent.workspace.getFontRenderer().drawString(Integer.toString(tick), (int)((getPosX() + 103 + timeOffX) / scale), (int)((getPosY() + height - 16) / scale), Theme.getAsHex(tick == currentPos ? Theme.instance.font : Theme.instance.fontDim), false);
+                parent.workspace.getFontRenderer().drawString(Integer.toString(tick), (int)((getPosX() + 103 + timeOffX) / scale), (int)((getPosY() + height - 16) / scale), Theme.getAsHex(tick == currentPos ? parent.workspace.currentTheme.font : parent.workspace.currentTheme.fontDim), false);
                 GlStateManager.popMatrix();
             }
             else
             {
-                RendererHelper.drawColourOnScreen(Theme.instance.elementTreeScrollBarBorder[0], Theme.instance.elementTreeScrollBarBorder[1], Theme.instance.elementTreeScrollBarBorder[2], 255, getPosX() + 100 + timeOffX, getPosY() + height - 19, 2, 2, 0);
+                RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeScrollBarBorder[0], parent.workspace.currentTheme.elementTreeScrollBarBorder[1], parent.workspace.currentTheme.elementTreeScrollBarBorder[2], 255, getPosX() + 100 + timeOffX, getPosY() + height - 19, 2, 2, 0);
             }
             tick++;
             timeOffX += tickWidth;
@@ -231,14 +233,14 @@ public class ElementAnimationTimeline extends Element
                 for(AnimationComponent comp : e.getValue())
                 {
                     //draw stuff
-                    int[] lineClr = Theme.instance.elementTreeItemBg;
+                    int[] lineClr = parent.workspace.currentTheme.elementTreeItemBg;
                     if(comp.identifier.equals(selectedIdentifier))
                     {
-                        lineClr = Theme.instance.elementTreeItemBgSelect;
+                        lineClr = parent.workspace.currentTheme.elementTreeItemBgSelect;
                     }
                     else if(idClicked == idHovered)
                     {
-                        lineClr = Theme.instance.elementTreeItemBgHover;
+                        lineClr = parent.workspace.currentTheme.elementTreeItemBgHover;
                     }
 
                     RendererHelper.drawColourOnScreen(lineClr[0], lineClr[1], lineClr[2], 255, getPosX() + 99D + (comp.startKey * tickWidth), getPosY() + offY + 4.5D, 4, 4, 0);
@@ -264,7 +266,7 @@ public class ElementAnimationTimeline extends Element
                 focusOnTicker();
                 if(currentPos < currentAnim.getLength())
                 {
-                    GlStateManager.translate(tickWidth + parent.workspace.renderTick, 0F, 0F);
+                    GlStateManager.translate(tickWidth + ((GuiWorkspace)parent.workspace).renderTick, 0F, 0F);
                 }
             }
             else
@@ -273,16 +275,16 @@ public class ElementAnimationTimeline extends Element
             }
         }
         //Timeline cursor
-        RendererHelper.drawColourOnScreen(Theme.instance.tabBorder[0], Theme.instance.tabBorder[1], Theme.instance.tabBorder[2], 255, getPosX() + 100.5D + (currentPos * tickWidth), getPosY(), 1, height - 19, 0);
-        RendererHelper.drawColourOnScreen(Theme.instance.tabBorder[0], Theme.instance.tabBorder[1], Theme.instance.tabBorder[2], 255, getPosX() + 99 + (currentPos * tickWidth), getPosY() + height - 19, 4, 1.5D, 0);
+        RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.tabBorder[0], parent.workspace.currentTheme.tabBorder[1], parent.workspace.currentTheme.tabBorder[2], 255, getPosX() + 100.5D + (currentPos * tickWidth), getPosY(), 1, height - 19, 0);
+        RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.tabBorder[0], parent.workspace.currentTheme.tabBorder[1], parent.workspace.currentTheme.tabBorder[2], 255, getPosX() + 99 + (currentPos * tickWidth), getPosY() + height - 19, 4, 1.5D, 0);
 
         if(currentPos % 5 != 0)
         {
-            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeItemBorder[0], Theme.instance.elementTreeItemBorder[1], Theme.instance.elementTreeItemBorder[2], 255, (getPosX() + 100 + (currentPos * tickWidth)) - (parent.workspace.getFontRenderer().getStringWidth(Integer.toString(currentPos)) / 2) * 0.5F, getPosY() + height - 17, parent.workspace.getFontRenderer().getStringWidth(Integer.toString(currentPos)) / 2 + 2, 5, 0);//blocks underlying number
+            RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeItemBorder[0], parent.workspace.currentTheme.elementTreeItemBorder[1], parent.workspace.currentTheme.elementTreeItemBorder[2], 255, (getPosX() + 100 + (currentPos * tickWidth)) - (parent.workspace.getFontRenderer().getStringWidth(Integer.toString(currentPos)) / 2) * 0.5F, getPosY() + height - 17, parent.workspace.getFontRenderer().getStringWidth(Integer.toString(currentPos)) / 2 + 2, 5, 0);//blocks underlying number
             GlStateManager.pushMatrix();
             float scale = 0.5F;
             GlStateManager.scale(scale, scale, scale);
-            parent.workspace.getFontRenderer().drawString(Integer.toString(currentPos), (int)((getPosX() + 101 + (currentPos * tickWidth)) / scale) - parent.workspace.getFontRenderer().getStringWidth(Integer.toString(currentPos)) / 2, (int)((getPosY() + height - 16) / scale), Theme.getAsHex(Theme.instance.font), false);
+            parent.workspace.getFontRenderer().drawString(Integer.toString(currentPos), (int)((getPosX() + 101 + (currentPos * tickWidth)) / scale) - parent.workspace.getFontRenderer().getStringWidth(Integer.toString(currentPos)) / 2, (int)((getPosY() + height - 16) / scale), Theme.getAsHex(parent.workspace.currentTheme.font), false);
             GlStateManager.popMatrix();
         }
 
@@ -296,12 +298,12 @@ public class ElementAnimationTimeline extends Element
         {
             int x2 = getPosX() + width - 10;
 
-            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeItemBorder[0], Theme.instance.elementTreeItemBorder[1], Theme.instance.elementTreeItemBorder[2], 255, x2, getPosY(), 10, height - 19, 0);
+            RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeItemBorder[0], parent.workspace.currentTheme.elementTreeItemBorder[1], parent.workspace.currentTheme.elementTreeItemBorder[2], 255, x2, getPosY(), 10, height - 19, 0);
 
-            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeScrollBarBorder[0], Theme.instance.elementTreeScrollBarBorder[1], Theme.instance.elementTreeScrollBarBorder[2], 255, x2 + 4, getPosY() + ((height - 20) / 40), 2, (height - 20) - (((height - 20) / 40) * 2), 0);
+            RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeScrollBarBorder[0], parent.workspace.currentTheme.elementTreeScrollBarBorder[1], parent.workspace.currentTheme.elementTreeScrollBarBorder[2], 255, x2 + 4, getPosY() + ((height - 20) / 40), 2, (height - 20) - (((height - 20) / 40) * 2), 0);
 
-            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeScrollBarBorder[0], Theme.instance.elementTreeScrollBarBorder[1], Theme.instance.elementTreeScrollBarBorder[2], 255, x2, getPosY() + (((height - 20) - ((height - 20) / 11)) * sliderProgVert), 10, Math.ceil((float)(height - 20) / 10D), 0);
-            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeScrollBar[0], Theme.instance.elementTreeScrollBar[1], Theme.instance.elementTreeScrollBar[2], 255, x2 + 1, getPosY() + 1 + (((height - 20) - ((height - 20) / 11)) * sliderProgVert), 8, Math.ceil(((float)(height - 20) / 10D) - 2), 0);
+            RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeScrollBarBorder[0], parent.workspace.currentTheme.elementTreeScrollBarBorder[1], parent.workspace.currentTheme.elementTreeScrollBarBorder[2], 255, x2, getPosY() + (((height - 20) - ((height - 20) / 11)) * sliderProgVert), 10, Math.ceil((float)(height - 20) / 10D), 0);
+            RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeScrollBar[0], parent.workspace.currentTheme.elementTreeScrollBar[1], parent.workspace.currentTheme.elementTreeScrollBar[2], 255, x2 + 1, getPosY() + 1 + (((height - 20) - ((height - 20) / 11)) * sliderProgVert), 8, Math.ceil(((float)(height - 20) / 10D) - 2), 0);
 
             int sbx1 = x2 + 1 - parent.posX;
             int sbx2 = sbx1 + 10;
@@ -333,27 +335,27 @@ public class ElementAnimationTimeline extends Element
 
     public void drawCompElement(String name, int offY, boolean isSelected, boolean isHidden, boolean hover)
     {
-        RendererHelper.drawColourOnScreen(Theme.instance.elementTreeItemBorder[0], Theme.instance.elementTreeItemBorder[1], Theme.instance.elementTreeItemBorder[2], 255, getPosX(), getPosY() + offY, 100, 13, 0);
+        RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeItemBorder[0], parent.workspace.currentTheme.elementTreeItemBorder[1], parent.workspace.currentTheme.elementTreeItemBorder[2], 255, getPosX(), getPosY() + offY, 100, 13, 0);
 
         if(isSelected)
         {
-            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeItemBgSelect[0], Theme.instance.elementTreeItemBgSelect[1], Theme.instance.elementTreeItemBgSelect[2], 255, getPosX()+ 1, getPosY() + offY + 1, 100 - 2, 13 - 2, 0);
+            RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeItemBgSelect[0], parent.workspace.currentTheme.elementTreeItemBgSelect[1], parent.workspace.currentTheme.elementTreeItemBgSelect[2], 255, getPosX()+ 1, getPosY() + offY + 1, 100 - 2, 13 - 2, 0);
         }
         else if(hover)
         {
-            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeItemBgHover[0], Theme.instance.elementTreeItemBgHover[1], Theme.instance.elementTreeItemBgHover[2], 255, getPosX() + 1, getPosY() + offY + 1, 100 - 2, 13 - 2, 0);
+            RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeItemBgHover[0], parent.workspace.currentTheme.elementTreeItemBgHover[1], parent.workspace.currentTheme.elementTreeItemBgHover[2], 255, getPosX() + 1, getPosY() + offY + 1, 100 - 2, 13 - 2, 0);
         }
         else
         {
-            RendererHelper.drawColourOnScreen(Theme.instance.elementTreeItemBg[0], Theme.instance.elementTreeItemBg[1], Theme.instance.elementTreeItemBg[2], 255, getPosX() + 1, getPosY() + offY + 1, 100 - 2, 13 - 2, 0);
+            RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeItemBg[0], parent.workspace.currentTheme.elementTreeItemBg[1], parent.workspace.currentTheme.elementTreeItemBg[2], 255, getPosX() + 1, getPosY() + offY + 1, 100 - 2, 13 - 2, 0);
         }
         if(isHidden)
         {
-            parent.workspace.getFontRenderer().drawString(reString(name, 100), getPosX() + 4, getPosY() + offY + 2, Theme.getAsHex(Theme.instance.fontDim), false);
+            parent.workspace.getFontRenderer().drawString(reString(name, 100), getPosX() + 4, getPosY() + offY + 2, Theme.getAsHex(parent.workspace.currentTheme.fontDim), false);
         }
         else
         {
-            parent.workspace.getFontRenderer().drawString(reString(name, 100), getPosX() + 4, getPosY() + offY + 2, Theme.getAsHex(Theme.instance.font), false);
+            parent.workspace.getFontRenderer().drawString(reString(name, 100), getPosX() + 4, getPosY() + offY + 2, Theme.getAsHex(parent.workspace.currentTheme.font), false);
         }
     }
 
@@ -361,7 +363,7 @@ public class ElementAnimationTimeline extends Element
     {
         int totalWidth = 0;
         boolean hasScrollVert = false;
-        for(ElementListTree.Tree tree : parent.workspace.windowAnimate.animList.trees)
+        for(ElementListTree.Tree tree : ((GuiWorkspace)parent.workspace).windowAnimate.animList.trees)
         {
             if(tree.selected)
             {
@@ -411,7 +413,7 @@ public class ElementAnimationTimeline extends Element
             //get total animation element height
             int size = 0;
 
-            for(ElementListTree.Tree tree : parent.workspace.windowAnimate.animList.trees)
+            for(ElementListTree.Tree tree : ((GuiWorkspace)parent.workspace).windowAnimate.animList.trees)
             {
                 if(tree.selected)
                 {
@@ -435,7 +437,7 @@ public class ElementAnimationTimeline extends Element
             }
             int idClicked = (int)(mouseY - posY + ((size - (height - 20)) * sliderProgVert)) / 13; //spacing = 13
 
-            for(ElementListTree.Tree tree : parent.workspace.windowAnimate.animList.trees)
+            for(ElementListTree.Tree tree : ((GuiWorkspace)parent.workspace).windowAnimate.animList.trees)
             {
                 if(tree.selected)
                 {
@@ -457,14 +459,14 @@ public class ElementAnimationTimeline extends Element
                                 if(id == 0)
                                 {
                                     selectedIdentifier = comp.identifier;
-                                    for(ElementListTree.Tree tree1 : parent.workspace.windowModelTree.modelList.trees)
+                                    for(ElementListTree.Tree tree1 : ((GuiWorkspace)parent.workspace).windowModelTree.modelList.trees)
                                     {
                                         if(tree1.attachedObject instanceof CubeInfo && ((CubeInfo)tree1.attachedObject).identifier.equals(e.getKey()))
                                         {
-                                            parent.workspace.windowModelTree.modelList.selectedIdentifier = e.getKey();
+                                            ((GuiWorkspace)parent.workspace).windowModelTree.modelList.selectedIdentifier = e.getKey();
 
-                                            parent.workspace.windowControls.selectedObject = tree1.attachedObject;
-                                            parent.workspace.windowControls.refresh = true;
+                                            ((GuiWorkspace)parent.workspace).windowControls.selectedObject = tree1.attachedObject;
+                                            ((GuiWorkspace)parent.workspace).windowControls.refresh = true;
 
                                             tree1.selected = true;
                                         }
@@ -482,13 +484,13 @@ public class ElementAnimationTimeline extends Element
                                 }
                                 else if(id == 1)
                                 {
-                                    if(!parent.workspace.remoteSession)
+                                    if(!((GuiWorkspace)parent.workspace).remoteSession)
                                     {
-                                        Tabula.proxy.tickHandlerClient.mainframe.toggleAnimComponentVisibility(parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, anim.identifier, comp.identifier);
+                                        Tabula.proxy.tickHandlerClient.mainframe.toggleAnimComponentVisibility(((GuiWorkspace)parent.workspace).projectManager.projects.get(((GuiWorkspace)parent.workspace).projectManager.selectedProject).identifier, anim.identifier, comp.identifier);
                                     }
-                                    else if(!parent.workspace.sessionEnded && parent.workspace.isEditor)
+                                    else if(!((GuiWorkspace)parent.workspace).sessionEnded && ((GuiWorkspace)parent.workspace).isEditor)
                                     {
-                                        Tabula.channel.sendToServer(new PacketGenericMethod(parent.workspace.host, "toggleAnimComponentVisibility", parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject).identifier, anim.identifier, comp.identifier));
+                                        Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)parent.workspace).host, "toggleAnimComponentVisibility", ((GuiWorkspace)parent.workspace).projectManager.projects.get(((GuiWorkspace)parent.workspace).projectManager.selectedProject).identifier, anim.identifier, comp.identifier));
                                     }
                                 }
                             }
@@ -516,7 +518,7 @@ public class ElementAnimationTimeline extends Element
         //get total animation element height
         int size = 0;
         int timeWidth = 0;
-        for(ElementListTree.Tree tree : parent.workspace.windowAnimate.animList.trees)
+        for(ElementListTree.Tree tree : ((GuiWorkspace)parent.workspace).windowAnimate.animList.trees)
         {
             if(tree.selected)
             {
@@ -565,7 +567,7 @@ public class ElementAnimationTimeline extends Element
     public void setCurrentPos(int i)
     {
         currentPos = i;
-        parent.workspace.windowControls.refresh = true;
+        ((GuiWorkspace)parent.workspace).windowControls.refresh = true;
     }
 
     public int getCurrentPos()
@@ -599,7 +601,7 @@ public class ElementAnimationTimeline extends Element
         int timeWidth = 0;
 
 
-        for(ElementListTree.Tree tree : parent.workspace.windowAnimate.animList.trees)
+        for(ElementListTree.Tree tree : ((GuiWorkspace)parent.workspace).windowAnimate.animList.trees)
         {
             if(tree.selected)
             {

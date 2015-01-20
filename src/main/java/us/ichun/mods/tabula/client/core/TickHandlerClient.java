@@ -103,49 +103,6 @@ public class TickHandlerClient
         }
         mainframe.addListener(mc.getSession().getUsername(), true);
 
-        File defaultTheme = new File(ResourceHelper.getThemesDir(), "default.json");
-
-        try
-        {
-            InputStream con = new FileInputStream(defaultTheme);
-            String data = new String(ByteStreams.toByteArray(con));
-            con.close();
-
-            Theme.loadTheme((new Gson()).fromJson(data, Theme.class));
-        }
-        catch(Exception e)
-        {
-            Tabula.console("Error reading default theme!", true);
-            e.printStackTrace();
-        }
-
-        String fav = Tabula.config.getString("favTheme");
-        if(!(fav.isEmpty() || fav.equalsIgnoreCase("default")))
-        {
-            File userTheme = new File(ResourceHelper.getThemesDir(), fav + ".json");
-
-            if(userTheme.exists())
-            {
-                try
-                {
-                    InputStream con = new FileInputStream(userTheme);
-                    String data = new String(ByteStreams.toByteArray(con));
-                    con.close();
-
-                    Theme.loadTheme((new Gson()).fromJson(data, Theme.class));
-                }
-                catch(Exception e)
-                {
-                    Tabula.console("Error reading preferred theme!", true);
-                    e.printStackTrace();
-                }
-            }
-            else
-            {
-                Tabula.console("Preferred theme file does not exist!", true);
-            }
-        }
-
         FMLClientHandler.instance().showGuiScreen(new GuiWorkspace(oriScale, false, true, name, i, j, k));
     }
 

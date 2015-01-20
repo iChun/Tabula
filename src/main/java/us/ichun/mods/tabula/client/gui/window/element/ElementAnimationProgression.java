@@ -4,13 +4,14 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
 import us.ichun.mods.ichunutil.client.render.RendererHelper;
 import us.ichun.mods.ichunutil.common.module.tabula.common.math.PolynomialFunctionLagrangeForm;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.Animation;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.AnimationComponent;
-import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.Window;
+import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.WindowEditAnimComponentProgression;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
@@ -30,7 +31,7 @@ public class ElementAnimationProgression extends Element
     @Override
     public void draw(int mouseX, int mouseY, boolean hover)
     {
-        RendererHelper.drawColourOnScreen(Theme.instance.elementTreeItemBorder[0], Theme.instance.elementTreeItemBorder[1], Theme.instance.elementTreeItemBorder[2], 255, getPosX(), getPosY(), width, height, 0);
+        RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementTreeItemBorder[0], parent.workspace.currentTheme.elementTreeItemBorder[1], parent.workspace.currentTheme.elementTreeItemBorder[2], 255, getPosX(), getPosY(), width, height, 0);
 
         WindowEditAnimComponentProgression window = (WindowEditAnimComponentProgression)parent;
 
@@ -38,9 +39,9 @@ public class ElementAnimationProgression extends Element
         Animation anim = null;
         AnimationComponent comp = null;
 
-        if(!parent.workspace.projectManager.projects.isEmpty())
+        if(!((GuiWorkspace)parent.workspace).projectManager.projects.isEmpty())
         {
-            info = parent.workspace.projectManager.projects.get(parent.workspace.projectManager.selectedProject);
+            info = ((GuiWorkspace)parent.workspace).projectManager.projects.get(((GuiWorkspace)parent.workspace).projectManager.selectedProject);
             for(Animation animation : info.anims)
             {
                 if(animation.identifier.equals(window.parentAnim))
@@ -76,7 +77,7 @@ public class ElementAnimationProgression extends Element
         PolynomialFunctionLagrangeForm curve = comp.getProgressionCurve();
 
         GlStateManager.disableTexture2D();
-        GlStateManager.color(Theme.instance.elementInputUpDownClick[0] / 255F, Theme.instance.elementInputUpDownClick[1] / 255F, Theme.instance.elementInputUpDownClick[2] / 255F, 1.0F);
+        GlStateManager.color(parent.workspace.currentTheme.elementInputUpDownClick[0] / 255F, parent.workspace.currentTheme.elementInputUpDownClick[1] / 255F, parent.workspace.currentTheme.elementInputUpDownClick[2] / 255F, 1.0F);
         GL11.glLineWidth(2F);
         GL11.glBegin(GL11.GL_LINE_STRIP);
         if(curve == null)
@@ -96,7 +97,7 @@ public class ElementAnimationProgression extends Element
 
         for(double[] coord : coords)
         {
-            RendererHelper.drawColourOnScreen(Theme.instance.elementInputUpDownHover[0], Theme.instance.elementInputUpDownHover[1], Theme.instance.elementInputUpDownHover[2], 255, getPosX() + width * coord[0] - 2, getPosY() + height - height * coord[1] - 2, 4, 4, 0);
+            RendererHelper.drawColourOnScreen(parent.workspace.currentTheme.elementInputUpDownHover[0], parent.workspace.currentTheme.elementInputUpDownHover[1], parent.workspace.currentTheme.elementInputUpDownHover[2], 255, getPosX() + width * coord[0] - 2, getPosY() + height - height * coord[1] - 2, 4, 4, 0);
         }
 
         int clickPosX = width - (width - (mouseX - posX));
@@ -133,13 +134,13 @@ public class ElementAnimationProgression extends Element
                 }
 
                 coordDragged = new Coords(MathHelper.clamp_double(clickPosX, 0D, width), MathHelper.clamp_double(clickPosY, 0D, height));
-                if(!parent.workspace.remoteSession)
+                if(!((GuiWorkspace)parent.workspace).remoteSession)
                 {
                     Tabula.proxy.tickHandlerClient.mainframe.moveAnimCompProgCoord(info.identifier, anim.identifier, comp.identifier, oldCoord == null ? -1 : oldCoord.x / (double)width, oldCoord == null ? -1 : oldCoord.y / (double)height, coordDragged.x / (double)width, coordDragged.y / (double)height);
                 }
-                else if(!parent.workspace.sessionEnded && parent.workspace.isEditor)
+                else if(!((GuiWorkspace)parent.workspace).sessionEnded && ((GuiWorkspace)parent.workspace).isEditor)
                 {
-                    Tabula.channel.sendToServer(new PacketGenericMethod(parent.workspace.host, "moveAnimCompProgCoord", info.identifier, anim.identifier, comp.identifier, oldCoord == null ? -1 : oldCoord.x / (double)width, oldCoord == null ? -1 : oldCoord.y / (double)height, coordDragged.x / (double)width, coordDragged.y / (double)height));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)parent.workspace).host, "moveAnimCompProgCoord", info.identifier, anim.identifier, comp.identifier, oldCoord == null ? -1 : oldCoord.x / (double)width, oldCoord == null ? -1 : oldCoord.y / (double)height, coordDragged.x / (double)width, coordDragged.y / (double)height));
                 }
             }
         }
@@ -149,13 +150,13 @@ public class ElementAnimationProgression extends Element
             if(clickPosX < -10 || clickPosY < -10 || clickPosX > width + 10 || clickPosY > height + 10)
             {
                 //remove coord
-                if(!parent.workspace.remoteSession)
+                if(!((GuiWorkspace)parent.workspace).remoteSession)
                 {
                     Tabula.proxy.tickHandlerClient.mainframe.moveAnimCompProgCoord(info.identifier, anim.identifier, comp.identifier, coordDragged.x / (double)width, coordDragged.y / (double)height, -1, -1);
                 }
-                else if(!parent.workspace.sessionEnded && parent.workspace.isEditor)
+                else if(!((GuiWorkspace)parent.workspace).sessionEnded && ((GuiWorkspace)parent.workspace).isEditor)
                 {
-                    Tabula.channel.sendToServer(new PacketGenericMethod(parent.workspace.host, "moveAnimCompProgCoord", info.identifier, anim.identifier, comp.identifier, coordDragged.x / (double)width, coordDragged.y / (double)height, -1, -1));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)parent.workspace).host, "moveAnimCompProgCoord", info.identifier, anim.identifier, comp.identifier, coordDragged.x / (double)width, coordDragged.y / (double)height, -1, -1));
                 }
                 coordDragged = null;
             }
@@ -164,13 +165,13 @@ public class ElementAnimationProgression extends Element
                 Coords oldCoord = coordDragged;
                 coordDragged = new Coords(MathHelper.clamp_double(clickPosX, 0D, width), MathHelper.clamp_double(clickPosY, 0D, height));
 
-                if(!parent.workspace.remoteSession)
+                if(!((GuiWorkspace)parent.workspace).remoteSession)
                 {
                     Tabula.proxy.tickHandlerClient.mainframe.moveAnimCompProgCoord(info.identifier, anim.identifier, comp.identifier, oldCoord.x / (double)width, oldCoord.y / (double)height, coordDragged.x / (double)width, coordDragged.y / (double)height);
                 }
-                else if(!parent.workspace.sessionEnded && parent.workspace.isEditor)
+                else if(!((GuiWorkspace)parent.workspace).sessionEnded && ((GuiWorkspace)parent.workspace).isEditor)
                 {
-                    Tabula.channel.sendToServer(new PacketGenericMethod(parent.workspace.host, "moveAnimCompProgCoord", info.identifier, anim.identifier, comp.identifier, oldCoord.x / (double)width, oldCoord.y / (double)height, coordDragged.x / (double)width, coordDragged.y / (double)height));
+                    Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)parent.workspace).host, "moveAnimCompProgCoord", info.identifier, anim.identifier, comp.identifier, oldCoord.x / (double)width, oldCoord.y / (double)height, coordDragged.x / (double)width, coordDragged.y / (double)height));
                 }
             }
         }

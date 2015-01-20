@@ -7,16 +7,18 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
+import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.element.Element;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementButtonTextured;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementListTree;
+import us.ichun.mods.ichunutil.client.gui.window.element.ElementToggle;
 import us.ichun.mods.ichunutil.client.render.RendererHelper;
 import us.ichun.mods.ichunutil.common.core.util.IOUtil;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.Theme;
-import us.ichun.mods.tabula.client.gui.window.element.Element;
-import us.ichun.mods.tabula.client.gui.window.element.ElementButtonTextured;
-import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
-import us.ichun.mods.tabula.client.gui.window.element.ElementToggle;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketClearTexture;
@@ -32,7 +34,7 @@ public class WindowTexture extends Window
     public BufferedImage image;
     public int imageId = -1;
 
-    public WindowTexture(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowTexture(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
     {
         super(parent, x, y, w, h, minW, minH, "window.texture.title", true);
 
@@ -45,9 +47,9 @@ public class WindowTexture extends Window
     public void draw(int mouseX, int mouseY) //4 pixel border?
     {
         super.draw(mouseX, mouseY);
-        if(!workspace.projectManager.projects.isEmpty())
+        if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
         {
-            ProjectInfo project = workspace.projectManager.projects.get(workspace.projectManager.selectedProject);
+            ProjectInfo project = ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject);
             double w = width - (BORDER_SIZE * 2);
             double h = height - BORDER_SIZE - 22 - 15 - 12;
             double rW = w / (double)project.textureWidth;
@@ -99,7 +101,7 @@ public class WindowTexture extends Window
 
             GlStateManager.alphaFunc(GL11.GL_GREATER, 0.00625F);
 
-            for(ElementListTree.Tree tree : workspace.windowModelTree.modelList.trees)
+            for(ElementListTree.Tree tree : ((GuiWorkspace)workspace).windowModelTree.modelList.trees)
             {
                 if(tree.attachedObject instanceof CubeInfo)
                 {
@@ -130,15 +132,15 @@ public class WindowTexture extends Window
 
             if(imageId == -1)
             {
-                workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.texture.noTexture"), posX + 4, posY + height - BORDER_SIZE - 12 - 20, Theme.getAsHex(Theme.instance.font), false);
+                workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.texture.noTexture"), posX + 4, posY + height - BORDER_SIZE - 12 - 20, Theme.getAsHex(workspace.currentTheme.font), false);
             }
             else if(project.textureFile != null)
             {
-                workspace.getFontRenderer().drawString(project.textureFile.getName(), posX + 4, posY + height - BORDER_SIZE - 12 - 20, Theme.getAsHex(Theme.instance.font), false);
+                workspace.getFontRenderer().drawString(project.textureFile.getName(), posX + 4, posY + height - BORDER_SIZE - 12 - 20, Theme.getAsHex(workspace.currentTheme.font), false);
             }
             else
             {
-                workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.texture.remoteTexture"), posX + 4, posY + height - BORDER_SIZE - 12 - 20, Theme.getAsHex(Theme.instance.font), false);
+                workspace.getFontRenderer().drawString(StatCollector.translateToLocal("window.texture.remoteTexture"), posX + 4, posY + height - BORDER_SIZE - 12 - 20, Theme.getAsHex(workspace.currentTheme.font), false);
             }
         }
     }
@@ -162,9 +164,9 @@ public class WindowTexture extends Window
     public void update()
     {
         super.update();
-        if(!workspace.projectManager.projects.isEmpty())
+        if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
         {
-            ProjectInfo info = workspace.projectManager.projects.get(workspace.projectManager.selectedProject);
+            ProjectInfo info = ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject);
 
             listenTime++;
             if(listenTime > 20)
@@ -195,13 +197,13 @@ public class WindowTexture extends Window
                         {
                         }
 
-                        if(!workspace.remoteSession)
+                        if(!((GuiWorkspace)workspace).remoteSession)
                         {
                             Tabula.proxy.tickHandlerClient.mainframe.loadTexture(info.identifier, image, false);
                         }
-                        else if(!workspace.sessionEnded && workspace.isEditor)
+                        else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
                         {
-                            ProjectHelper.sendTextureToServer(workspace.host, info.identifier, false, image);
+                            ProjectHelper.sendTextureToServer(((GuiWorkspace)workspace).host, info.identifier, false, image);
                         }
                     }
                 }
@@ -218,18 +220,18 @@ public class WindowTexture extends Window
         }
         if(element.id == 2)
         {
-            if(!workspace.projectManager.projects.isEmpty())
+            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
-                ProjectInfo info = workspace.projectManager.projects.get(workspace.projectManager.selectedProject);
+                ProjectInfo info = ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject);
                 if(info.bufferedTexture != null)
                 {
-                    if(!workspace.remoteSession)
+                    if(!((GuiWorkspace)workspace).remoteSession)
                     {
                         Tabula.proxy.tickHandlerClient.mainframe.clearTexture(info.identifier);
                     }
-                    else if(!workspace.sessionEnded && workspace.isEditor)
+                    else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
                     {
-                        Tabula.channel.sendToServer(new PacketClearTexture(workspace.host, info.identifier));
+                        Tabula.channel.sendToServer(new PacketClearTexture(((GuiWorkspace)workspace).host, info.identifier));
                     }
                 }
             }
