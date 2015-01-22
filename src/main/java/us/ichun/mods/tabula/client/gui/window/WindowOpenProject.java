@@ -3,6 +3,7 @@ package us.ichun.mods.tabula.client.gui.window;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
 import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.WindowPopup;
 import us.ichun.mods.ichunutil.client.gui.window.element.Element;
 import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
 import us.ichun.mods.ichunutil.common.module.tabula.client.formats.ImportList;

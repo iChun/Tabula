@@ -1,11 +1,5 @@
 tabula.name=Tabula
 
-element.minimize=Minimieren
-element.expand=Erweitern
-
-element.button.ok=OK
-element.button.cancel=Abbrechen
-
 window.controls.title=Steuerung
 window.controls.cubeName=Gewählter Würfelname
 window.controls.dimensions=Dimensionen
@@ -53,12 +47,6 @@ window.loadTexture.updateTextureDimensionsFull=Die Textur-Dimensionen des Projek
 window.chat.title=Chat
 window.chat.textbox=Drücke ENTER zum Senden
 
-window.saveAs.title=Speichern unter
-window.saveAs.fileName=Dateiname
-window.saveAs.overwrite=Überschreiben?
-window.saveAs.confirmOverwrite=Datei existiert bereits! Überschreiben?
-window.saveAs.failed=Speichern der Datei fehlgeschlagen.
-
 window.notSaved.title=Projekt nicht gespeichert!
 window.notSaved.unsaved=Das Projekt ist nicht gespeichert!
 window.notSaved.save=Möchtest du vor dem Schließen speichern?
@@ -66,8 +54,6 @@ window.notSaved.save=Möchtest du vor dem Schließen speichern?
 window.open.title=Projekt öffnen
 window.open.opening=Öffne...
 window.open.failed=Öffnen der Datei fehlgeschlagen.
-
-window.popup.title=Achtung!
 
 window.about.title=Über
 window.about.line0=Mod Version: 

@@ -20,9 +20,9 @@ public class WindowProjectSelection extends WindowTopDock
     public ArrayList<ProjectInfo> projects = new ArrayList<ProjectInfo>();
     public int selectedProject;
 
-    public WindowProjectSelection(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowProjectSelection(IWorkspace parent, int w, int h)
     {
-        super(parent, x, y, w, h, minW, minH);
+        super(parent, w, h);
 
         elements.clear();
 

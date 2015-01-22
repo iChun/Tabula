@@ -49,12 +49,6 @@ window.loadTexture.updateTextureDimensionsFull=Update the texture dimensions of 
 window.chat.title=Chat
 window.chat.textbox=Hit ENTER to send
 
-window.saveAs.title=Save As
-window.saveAs.fileName=File Name
-window.saveAs.overwrite=Overwrite?
-window.saveAs.confirmOverwrite=File already exists! Confirm overwrite?
-window.saveAs.failed=Failed to save file.
-
 window.notSaved.title=Project not saved!
 window.notSaved.unsaved=Project is not saved!
 window.notSaved.save=Would you like to save before closing?
@@ -62,8 +56,6 @@ window.notSaved.save=Would you like to save before closing?
 window.open.title=Open Project
 window.open.opening=Opening...
 window.open.failed=Failed to open file.
-
-window.popup.title=Alert!
 
 window.about.title=About
 window.about.line0=Mod Version: 

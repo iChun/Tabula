@@ -4,6 +4,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
 import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.WindowPopup;
 import us.ichun.mods.ichunutil.client.gui.window.element.Element;
 import us.ichun.mods.ichunutil.client.gui.window.element.ElementButtonTextured;
 import us.ichun.mods.ichunutil.client.render.RendererHelper;

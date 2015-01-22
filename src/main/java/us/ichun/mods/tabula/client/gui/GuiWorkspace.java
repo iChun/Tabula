@@ -19,6 +19,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Project;
 import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
 import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.WindowPopup;
 import us.ichun.mods.ichunutil.client.gui.window.element.Element;
 import us.ichun.mods.ichunutil.client.gui.window.element.ElementMinimize;
 import us.ichun.mods.ichunutil.client.gui.window.element.ElementToggle;
@@ -183,8 +184,8 @@ public class GuiWorkspace extends IWorkspace
 
         //        renderBlocks = new RenderBlocks();
 
-        levels.get(3).add(new WindowTopDock(this, 0, 0, width, 20, 20, 20));
-        projectManager = new WindowProjectSelection(this, 0, 0, width, 20, 20, 20);
+        levels.get(3).add(new WindowTopDock(this, width, 20));
+        projectManager = new WindowProjectSelection(this, width, 20);
         levels.get(3).add(projectManager);
     }
 
@@ -1104,21 +1105,25 @@ public class GuiWorkspace extends IWorkspace
             ProjectInfo proj = this.projectManager.projects.get(this.projectManager.selectedProject);
             boolean saveAs = true;
             boolean error = false;
-            String md5 = IOUtil.getMD5Checksum(proj.saveFile);
-            if(proj.saveFile != null && proj.saveFile.exists() && md5 != null && md5.equals(proj.saveFileMd5))
+
+            if(proj.saveFile != null && proj.saveFile.exists())
             {
-                if(ProjectInfo.saveProject(proj, proj.saveFile))
+                String md5 = IOUtil.getMD5Checksum(proj.saveFile);
+                if(md5 != null && md5.equals(proj.saveFileMd5))
                 {
-                    proj.saveFileMd5 = IOUtil.getMD5Checksum(proj.saveFile);
-                    saveAs = false;
-                    if(close)
+                    if(ProjectInfo.saveProject(proj, proj.saveFile))
                     {
-                        closeProject(proj);
+                        proj.saveFileMd5 = IOUtil.getMD5Checksum(proj.saveFile);
+                        saveAs = false;
+                        if(close)
+                        {
+                            closeProject(proj);
+                        }
                     }
-                }
-                else
-                {
-                    error = true;
+                    else
+                    {
+                        error = true;
+                    }
                 }
             }
             if(saveAs)

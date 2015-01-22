@@ -2,6 +2,7 @@ package us.ichun.mods.tabula.client.gui.window;
 
 import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
 import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.WindowPopup;
 import us.ichun.mods.ichunutil.client.gui.window.element.Element;
 import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
 import us.ichun.mods.ichunutil.client.gui.window.element.ElementToggle;

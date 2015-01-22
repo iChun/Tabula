@@ -4,6 +4,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
 import us.ichun.mods.ichunutil.client.gui.window.Window;
+import us.ichun.mods.ichunutil.client.gui.window.WindowTopDockBase;
 import us.ichun.mods.ichunutil.client.gui.window.element.Element;
 import us.ichun.mods.ichunutil.client.gui.window.element.ElementButtonTextured;
 import us.ichun.mods.ichunutil.client.gui.window.element.ElementToggle;
@@ -11,7 +12,7 @@ import us.ichun.mods.ichunutil.client.render.RendererHelper;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.common.Tabula;
 
-public class WindowTopDock extends Window
+public class WindowTopDock extends WindowTopDockBase
 {
     public static final int ID_NEW = 0;
     public static final int ID_OPEN = 1;
@@ -38,9 +39,9 @@ public class WindowTopDock extends Window
 
     public static final int ID_WOOD = -1;
 
-    public WindowTopDock(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public WindowTopDock(IWorkspace parent, int w, int h)
     {
-        super(parent, x, y, w, h, minW, minH, "", false);
+        super(parent, w, h);
 
         //ADD Elements
         elements.add(new ElementToggle(this, width - 44 - 20, 4, 40, 12, ID_WOOD, true, 1, 0, "topdock.wood", "topdock.woodFull", Tabula.config.getInt("renderWorkspaceBlock") == 1));
@@ -74,18 +75,6 @@ public class WindowTopDock extends Window
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_SETTINGS, true, 0, 0, "topdock.settings", new ResourceLocation("tabula", "textures/icon/settings.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CREDITS, true, 0, 0, "topdock.info", new ResourceLocation("tabula", "textures/icon/info.png")));
         elements.add(new ElementButtonTextured(this, width - 20, 0, ID_EXIT_TABULA, true, 1, 0, "topdock.exitTabula", new ResourceLocation("tabula", "textures/icon/exitTabula.png")));
-    }
-
-    @Override
-    public int clickedOnBorder(int mouseX, int mouseY, int id)//only left clicks
-    {
-        return 0;
-    }
-
-    @Override
-    public boolean clickedOnTitle(int mouseX, int mouseY, int id)
-    {
-        return false;
     }
 
     @Override
@@ -197,53 +186,4 @@ public class WindowTopDock extends Window
             Tabula.config.save();
         }
     }
-
-    @Override
-    public void resized()
-    {
-        posX = 0;
-        posY = 0;
-        width = workspace.width;
-        height = 20;
-        for(Element element : elements)
-        {
-            element.resized();
-        }
-    }
-
-    @Override
-    public boolean canBeDragged()
-    {
-        return false;
-    }
-
-    @Override
-    public void toggleMinimize()
-    {
-    }
-
-    @Override
-    public boolean isStatic()
-    {
-        return true;
-    }
-
-    @Override
-    public void setScissor()
-    {
-        RendererHelper.startGlScissor(posX, posY, getWidth(), getHeight());
-}
-
-    @Override
-    public void drawBackground()
-    {
-        RendererHelper.drawColourOnScreen(workspace.currentTheme.windowBackground[0], workspace.currentTheme.windowBackground[1], workspace.currentTheme.windowBackground[2], 255, posX, posY, getWidth(), getHeight(), 0);
-    }
-
-        @Override
-    public int getHeight()
-    {
-        return 20;
-    }
-
 }
