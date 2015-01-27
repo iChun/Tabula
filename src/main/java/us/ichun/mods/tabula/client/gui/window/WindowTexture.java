@@ -47,7 +47,7 @@ public class WindowTexture extends Window
     public void draw(int mouseX, int mouseY) //4 pixel border?
     {
         super.draw(mouseX, mouseY);
-        if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
+        if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty() && !minimized)
         {
             ProjectInfo project = ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject);
             double w = width - (BORDER_SIZE * 2);
