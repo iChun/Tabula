@@ -291,14 +291,14 @@ public class WindowAnimate extends Window
     public void toggleMinimize()
     {
         super.toggleMinimize();
-        if(!minimized && Tabula.config.getInt("animationWarning") != 1)
+        if(!minimized && Tabula.config.animationWarning != 1)
         {
             workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "You can find the link from the About button -iChun").putInMiddleOfScreen());
             workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "Let me know how anims work/suggestions on the GitHub.").putInMiddleOfScreen());
             workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "Anims are saved and do work however.").putInMiddleOfScreen());
             workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "The exporter does not currently export animations").putInMiddleOfScreen());
             workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "I'm currently looking for feedback on the animation UI").putInMiddleOfScreen());
-            Tabula.config.get("animationWarning").set(1);
+            Tabula.config.animationWarning = 1;
             Tabula.config.save();
         }
     }

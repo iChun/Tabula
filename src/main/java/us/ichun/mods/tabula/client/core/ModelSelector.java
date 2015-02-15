@@ -62,7 +62,7 @@ public class ModelSelector {
 
             ArrayList<ElementListTree.Tree> trees = workspace.windowModelTree.modelList.trees;
 
-            if(Tabula.config.getInt("renderModelControls") == 1)
+            if(Tabula.config.renderModelControls == 1)
             {
                 for(ElementListTree.Tree tree : trees)
                 {

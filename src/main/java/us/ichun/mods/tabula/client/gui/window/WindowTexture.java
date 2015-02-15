@@ -66,20 +66,6 @@ public class WindowTexture extends Window
 
             RendererHelper.drawColourOnScreen(200, 200, 200, 255, pX, pY, w1, h1, 0D);
 
-            if(project.bufferedTexture != image)
-            {
-                if(imageId != -1)
-                {
-                    TextureUtil.deleteTexture(imageId);
-                    imageId = -1;
-                }
-                image = project.bufferedTexture;
-                if(image != null)
-                {
-                    imageId = TextureUtil.uploadTextureImage(TextureUtil.glGenTextures(), image);
-                }
-            }
-
             if(image != null)
             {
                 GlStateManager.bindTexture(imageId);
@@ -206,6 +192,20 @@ public class WindowTexture extends Window
                             ProjectHelper.sendTextureToServer(((GuiWorkspace)workspace).host, info.identifier, false, image);
                         }
                     }
+                }
+            }
+
+            if(info.bufferedTexture != this.image)
+            {
+                if(this.imageId != -1)
+                {
+                    TextureUtil.deleteTexture(this.imageId);
+                    this.imageId = -1;
+                }
+                this.image = info.bufferedTexture;
+                if(this.image != null)
+                {
+                    this.imageId = TextureUtil.uploadTextureImage(TextureUtil.glGenTextures(), this.image);
                 }
             }
         }

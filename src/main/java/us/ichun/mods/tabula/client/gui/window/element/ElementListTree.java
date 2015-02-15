@@ -78,7 +78,7 @@ public class ElementListTree extends us.ichun.mods.ichunutil.client.gui.window.e
             Theme.loadTheme(parent.workspace.currentTheme, theme);
             if(theme.filename != null)
             {
-                Tabula.config.get("favTheme").set(theme.filename);
+                Tabula.config.favTheme = (theme.filename);
                 Tabula.config.save();
             }
         }

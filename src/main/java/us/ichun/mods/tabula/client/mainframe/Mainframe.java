@@ -337,7 +337,7 @@ public class Mainframe
             Tabula.channel.sendToServer(new PacketProjectFragment(x, y, z, false, Minecraft.getMinecraft().getSession().getUsername(), id, projectIdent, isTexture, false, isCurrentProject, packetsToSend, packetCount, fileSize > maxFile ? maxFile : fileSize, fileBytes));
 
             packetCount++;
-            fileSize -= 32000;
+            fileSize -= maxFile;
             offset += index;
         }
     }
@@ -1437,7 +1437,7 @@ public class Mainframe
             sendChat("System", StatCollector.translateToLocalFormatted("system.addEditor", Minecraft.getMinecraft().getSession().getUsername(), id));
             Tabula.channel.sendToServer(new PacketIsEditor(Minecraft.getMinecraft().getSession().getUsername(), id, true));
 
-            String[] editors = Tabula.config.getString("editors").split(", *");
+            String[] editors = Tabula.config.editors.split(", *");
             ArrayList<String> editorArray = new ArrayList<String>();
             for(String s : editors)
             {
@@ -1462,7 +1462,7 @@ public class Mainframe
                 }
             }
 
-            Tabula.config.get("editors").set(sb.toString());
+            Tabula.config.editors = (sb.toString());
             Tabula.config.save();
 
             updateListenersList();
@@ -1481,7 +1481,7 @@ public class Mainframe
             sendChat("System", StatCollector.translateToLocalFormatted("system.removeEditor", Minecraft.getMinecraft().getSession().getUsername(), id));
             Tabula.channel.sendToServer(new PacketIsEditor(Minecraft.getMinecraft().getSession().getUsername(), id, false));
 
-            String[] editors = Tabula.config.getString("editors").split(", *");
+            String[] editors = Tabula.config.editors.split(", *");
             ArrayList<String> editorArray = new ArrayList<String>();
             for(String s : editors)
             {
@@ -1506,7 +1506,7 @@ public class Mainframe
                 }
             }
 
-            Tabula.config.get("editors").set(sb.toString());
+            Tabula.config.editors = (sb.toString());
             Tabula.config.save();
 
             updateListenersList();
@@ -1530,7 +1530,7 @@ public class Mainframe
 
     public boolean isEditor(String id)
     {
-        String[] editors = Tabula.config.getString("editors").split(", *");
+        String[] editors = Tabula.config.editors.split(", *");
         for(String editor : editors)
         {
             if(!editor.isEmpty())
@@ -1538,7 +1538,7 @@ public class Mainframe
                 return editor.equals(id);
             }
         }
-        return Tabula.config.getInt("allowEveryoneToEdit") == 1 || id.equals(Minecraft.getMinecraft().getSession().getUsername());
+        return Tabula.config.allowEveryoneToEdit == 1 || id.equals(Minecraft.getMinecraft().getSession().getUsername());
     }
 
     public void shutdown()

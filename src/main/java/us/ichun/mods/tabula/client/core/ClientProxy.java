@@ -331,7 +331,7 @@ public class ClientProxy extends CommonProxy
                 {
                     instance = null;
                 }
-                if(Tabula.config.getInt("animateImports") == 1)
+                if(Tabula.config.animateImports == 1)
                 {
                     try
                     {

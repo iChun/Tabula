@@ -147,7 +147,7 @@ public class GuiWorkspace extends IWorkspace
             e.printStackTrace();
         }
 
-        String fav = Tabula.config.getString("favTheme");
+        String fav = Tabula.config.favTheme;
         if(!(fav.isEmpty() || fav.equalsIgnoreCase("default")))
         {
             File userTheme = new File(ResourceHelper.getThemesDir(), fav + ".json");
@@ -220,7 +220,7 @@ public class GuiWorkspace extends IWorkspace
                 }
                 windowChat.toggleVisibility();
 
-                String[] chatSettings = Tabula.config.getString("chatWindow").split(":");
+                String[] chatSettings = Tabula.config.chatWindow.split(":");
                 if(chatSettings.length == 8)
                 {
                     try
@@ -873,7 +873,7 @@ public class GuiWorkspace extends IWorkspace
             }
             ArrayList<CubeInfo> hidden = getHiddenElements();
 
-            boolean renderRotationPoint = Tabula.config.getInt("renderRotationPoint") == 1;
+            boolean renderRotationPoint = Tabula.config.renderRotationPoint == 1;
 
             applyModelAnimations();
 
@@ -882,16 +882,16 @@ public class GuiWorkspace extends IWorkspace
             {
                 GlStateManager.bindTexture(windowTexture.imageId);
 
-                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 0, renderRotationPoint, Tabula.config.getInt("renderModelControls") == 1);
-                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 1, renderRotationPoint, Tabula.config.getInt("renderModelControls") == 1);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 0, renderRotationPoint, Tabula.config.renderModelControls == 1);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, true, 1, renderRotationPoint, Tabula.config.renderModelControls == 1);
             }
             else
             {
                 GlStateManager.disableTexture2D();
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 0, renderRotationPoint, Tabula.config.getInt("renderModelControls") == 1);
-                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 1, renderRotationPoint, Tabula.config.getInt("renderModelControls") == 1);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 0, renderRotationPoint, Tabula.config.renderModelControls == 1);
+                info.model.render(0.0625F, selected, hidden, cameraZoom, false, 1, renderRotationPoint, Tabula.config.renderModelControls == 1);
 
                 GlStateManager.enableTexture2D();
             }
@@ -901,7 +901,7 @@ public class GuiWorkspace extends IWorkspace
             resetModelAnimations();
         }
 
-        if(Tabula.config.getInt("renderGrid") == 1)
+        if(Tabula.config.renderGrid == 1)
         {
             GlStateManager.color(1.0F, 1.0F, 1.0F, 0.5F);
             Minecraft.getMinecraft().getTextureManager().bindTexture(grid16);
@@ -1321,7 +1321,7 @@ public class GuiWorkspace extends IWorkspace
             sb.append(":");
             sb.append(windowChat.oriHeight);
 
-            Tabula.config.get("chatWindow").set(sb.toString());
+            Tabula.config.chatWindow = (sb.toString());
             Tabula.config.save();
         }
     }

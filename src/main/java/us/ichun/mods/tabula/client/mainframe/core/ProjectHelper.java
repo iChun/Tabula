@@ -260,7 +260,7 @@ public class ProjectHelper
         {
             GuiWorkspace workspace = (GuiWorkspace)mc.currentScreen;
             workspace.windowChat.chatHolder.text.add(message);
-            if(Tabula.config.getInt("chatSound") == 1)
+            if(Tabula.config.chatSound == 1)
             {
                 mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("random.successful_hit"), 1.0F));
             }

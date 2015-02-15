@@ -18,10 +18,10 @@ public class WindowSettings extends Window
         elements.add(new ElementButton(this, width / 2 - 30, height - 25, 60, 16, -1, false, 2, 1, "element.button.ok"));
 
         int offset = 0;
-        elements.add(new ElementCheckBox(this, 11, 20 + (15 * offset++), 0, false, 0, 0, "window.settings.renderRotationPoint", Tabula.config.getInt("renderRotationPoint") == 1));
-        elements.add(new ElementCheckBox(this, 11, 20 + (15 * offset++), 2, false, 0, 0, "tabula.config.prop.renderGrid.comment", Tabula.config.getInt("renderGrid") == 1));
-        elements.add(new ElementCheckBox(this, 11, 20 + (15 * offset++), 3, false, 0, 0, "tabula.config.prop.renderModelControls.comment", Tabula.config.getInt("renderModelControls") == 1));// ID 3
-        elements.add(new ElementCheckBox(this, 11, 20 + (15 * offset++), 1, false, 0, 0, "tabula.config.prop.chatSound.comment", Tabula.config.getInt("chatSound") == 1));
+        elements.add(new ElementCheckBox(this, 11, 20 + (15 * offset++), 0, false, 0, 0, "window.settings.renderRotationPoint", Tabula.config.renderRotationPoint == 1));
+        elements.add(new ElementCheckBox(this, 11, 20 + (15 * offset++), 2, false, 0, 0, "tabula.config.prop.renderGrid.comment", Tabula.config.renderGrid == 1));
+        elements.add(new ElementCheckBox(this, 11, 20 + (15 * offset++), 3, false, 0, 0, "tabula.config.prop.renderModelControls.comment", Tabula.config.renderModelControls == 1));// ID 3
+        elements.add(new ElementCheckBox(this, 11, 20 + (15 * offset++), 1, false, 0, 0, "tabula.config.prop.chatSound.comment", Tabula.config.chatSound == 1));
     }
 
     @Override
@@ -43,22 +43,22 @@ public class WindowSettings extends Window
     {
         if(element.id == 0)
         {
-            Tabula.config.get("renderRotationPoint").set(((ElementCheckBox)element).toggledState ? 1 : 0);
+            Tabula.config.renderRotationPoint = (((ElementCheckBox)element).toggledState ? 1 : 0);
             Tabula.config.save();
         }
         else if(element.id == 1)
         {
-            Tabula.config.get("chatSound").set(((ElementCheckBox)element).toggledState ? 1 : 0);
+            Tabula.config.chatSound = (((ElementCheckBox)element).toggledState ? 1 : 0);
             Tabula.config.save();
         }
         else if(element.id == 2)
         {
-            Tabula.config.get("renderGrid").set(((ElementCheckBox)element).toggledState ? 1 : 0);
+            Tabula.config.renderGrid = (((ElementCheckBox)element).toggledState ? 1 : 0);
             Tabula.config.save();
         }
         else if(element.id == 3)
         {
-            Tabula.config.get("renderModelControls").set(((ElementCheckBox)element).toggledState ? 1 : 0);
+            Tabula.config.renderModelControls = (((ElementCheckBox)element).toggledState ? 1 : 0);
             Tabula.config.save();
         }
         if(element.id == -1)

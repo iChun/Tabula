@@ -44,7 +44,7 @@ public class WindowTopDock extends WindowTopDockBase
         super(parent, w, h);
 
         //ADD Elements
-        elements.add(new ElementToggle(this, width - 44 - 20, 4, 40, 12, ID_WOOD, true, 1, 0, "topdock.wood", "topdock.woodFull", Tabula.config.getInt("renderWorkspaceBlock") == 1));
+        elements.add(new ElementToggle(this, width - 44 - 20, 4, 40, 12, ID_WOOD, true, 1, 0, "topdock.wood", "topdock.woodFull", Tabula.config.renderWorkspaceBlock == 1));
 
         int button = 0;
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_NEW, true, 0, 0, "topdock.new", new ResourceLocation("tabula", "textures/icon/new.png")));
@@ -182,7 +182,7 @@ public class WindowTopDock extends WindowTopDockBase
         }
         else if(element.id == ID_WOOD)
         {
-            Tabula.config.get("renderWorkspaceBlock").set(((ElementToggle)element).toggledState ? 1 : 0);
+            Tabula.config.renderWorkspaceBlock = (((ElementToggle)element).toggledState ? 1 : 0);
             Tabula.config.save();
         }
     }
