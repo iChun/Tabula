@@ -52,20 +52,20 @@ public class PacketRequestSession extends AbstractPacket
             if(tr.host.isEmpty())
             {
                 //Start new session with this player
-                tr.host = player.getName();
+                tr.host = player.getCommandSenderName();
                 Tabula.channel.sendToPlayer(new PacketBeginSession(tr.host, x, y, z), player);
             }
-            else if(!tr.host.equals(player.getName()))
+            else if(!tr.host.equals(player.getCommandSenderName()))
             {
                 EntityPlayerMP host = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerByUsername(tr.host);
                 //Connect to existing session
                 if(host != null)
                 {
-                    if(!tr.listeners.contains(player.getName()))
+                    if(!tr.listeners.contains(player.getCommandSenderName()))
                     {
-                        tr.listeners.add(player.getName());
+                        tr.listeners.add(player.getCommandSenderName());
                     }
-                    Tabula.channel.sendToPlayer(new PacketAddListener(tr.host, player.getName()), host);
+                    Tabula.channel.sendToPlayer(new PacketAddListener(tr.host, player.getCommandSenderName()), host);
                     Tabula.channel.sendToPlayer(new PacketBeginSession(tr.host, x, y, z), player);
                 }
             }

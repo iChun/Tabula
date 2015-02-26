@@ -58,7 +58,7 @@ public class PacketSetCurrentProject extends AbstractPacket
             if(te instanceof TileEntityTabulaRasa)
             {
                 TileEntityTabulaRasa tr = (TileEntityTabulaRasa)te;
-                if(tr.host.equals(player.getName()))
+                if(tr.host.equals(player.getCommandSenderName()))
                 {
                     tr.currentProj = ident;
                     tr.needProjectUpdate = true;
