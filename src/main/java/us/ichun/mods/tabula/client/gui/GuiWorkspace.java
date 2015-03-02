@@ -1326,6 +1326,94 @@ public class GuiWorkspace extends IWorkspace
         }
     }
 
+    public void layoutTextures() {
+        if(projectManager.selectedProject == -1) return;
+        ProjectInfo info = projectManager.projects.get(projectManager.selectedProject);
+
+        boolean[][] positions = new boolean[info.textureWidth][info.textureHeight];
+
+        ArrayList<CubeInfo> cubes = info.getAllCubes();
+
+        for(CubeInfo cube : cubes) {
+            boolean collide = true;
+            int breakout = 0;
+            cube.txOffset[0] = 0;
+            cube.txOffset[1] = 0;
+
+            while (collide && cube.txOffset[0] + cube.dimensions[2] * 2 + cube.dimensions[0] * 2 < info.textureWidth && cube.txOffset[1] + cube.dimensions[1] + cube.dimensions[2] < info.textureHeight && breakout++ < 100000) {
+                collide = false;
+                for (int i = 0; i < cube.dimensions[0]; i++) {
+                    for (int j = 0; j < cube.dimensions[1]; j++) {
+                        for (int k = 0; k < cube.dimensions[2]; k++) {
+                            if (withinBounds(info.textureWidth, info.textureHeight, cube.txOffset[0] + k, cube.txOffset[1] + cube.dimensions[2] + j) && positions[cube.txOffset[0] + k][cube.txOffset[1] + cube.dimensions[2] + j]) {
+                                collide = true;
+                            }
+                            if (withinBounds(info.textureWidth, info.textureHeight, cube.txOffset[0] + cube.dimensions[2] + i, cube.txOffset[1] + cube.dimensions[2] + j) && positions[cube.txOffset[0] + cube.dimensions[2] + i][cube.txOffset[1] + cube.dimensions[2] + j]) {
+                                collide = true;
+                            }
+                            if (withinBounds(info.textureWidth, info.textureHeight, cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + k, cube.txOffset[1] + cube.dimensions[2] + j) && positions[cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + k][cube.txOffset[1] + cube.dimensions[2] + j]) {
+                                collide = true;
+                            }
+                            if (withinBounds(info.textureWidth, info.textureHeight, cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + cube.dimensions[2] + i, cube.txOffset[1] + cube.dimensions[2] + j) && positions[cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + cube.dimensions[2] + i][cube.txOffset[1] + cube.dimensions[2] + j]) {
+                                collide = true;
+                            }
+                            if (withinBounds(info.textureWidth, info.textureHeight, cube.txOffset[0] + cube.dimensions[2] + i, cube.txOffset[1] + k) && positions[cube.txOffset[0] + cube.dimensions[2] + i][cube.txOffset[1] + k]) {
+                                collide = true;
+                            }
+                            if (withinBounds(info.textureWidth, info.textureHeight, cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + i, cube.txOffset[1] + k) && positions[cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + i][cube.txOffset[1] + k]) {
+                                collide = true;
+                            }
+                        }
+                    }
+                }
+
+                if (!collide) {
+                    for (int i = 0; i < cube.dimensions[0]; i++) {
+                        for (int j = 0; j < cube.dimensions[1]; j++) {
+                            for (int k = 0; k < cube.dimensions[2]; k++) {
+                                if (withinBounds(info.textureWidth, info.textureHeight, cube.txOffset[0] + k, cube.txOffset[1] + cube.dimensions[2] + j)) {
+                                    positions[cube.txOffset[0] + k][cube.txOffset[1] + cube.dimensions[2] + j] = true;
+                                }
+                                if (withinBounds(info.textureWidth, info.textureHeight, cube.txOffset[0] + cube.dimensions[2] + i, cube.txOffset[1] + cube.dimensions[2] + j)) {
+                                    positions[cube.txOffset[0] + cube.dimensions[2] + i][cube.txOffset[1] + cube.dimensions[2] + j] = true;
+                                }
+                                if (withinBounds(info.textureWidth, info.textureHeight, cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + k, cube.txOffset[1] + cube.dimensions[2] + j)) {
+                                    positions[cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + k][cube.txOffset[1] + cube.dimensions[2] + j] = true;
+                                }
+                                if (withinBounds(info.textureWidth, info.textureHeight, cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + cube.dimensions[2] + i, cube.txOffset[1] + cube.dimensions[2] + j)) {
+                                    positions[cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + cube.dimensions[2] + i][cube.txOffset[1] + cube.dimensions[2] + j] = true;
+                                }
+                                if (withinBounds(info.textureWidth, info.textureHeight, cube.txOffset[0] + cube.dimensions[2] + i, cube.txOffset[1] + k)) {
+                                    positions[cube.txOffset[0] + cube.dimensions[2] + i][cube.txOffset[1] + k] = true;
+                                }
+                                if (withinBounds(info.textureWidth, info.textureHeight, cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + i, cube.txOffset[1] + k)) {
+                                    positions[cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + i][cube.txOffset[1] + k] = true;
+                                }
+                            }
+                        }
+                    }
+
+                }
+                if(collide) {
+                    cube.txOffset[0]++;
+                    if(cube.txOffset[0] + cube.dimensions[2] * 2 + cube.dimensions[0] * 2 >= info.textureWidth) {
+                        cube.txOffset[0] = 0;
+                        cube.txOffset[1]++;
+                    }
+                }
+            }
+
+            if(breakout >= 100000 || collide == true) {
+                this.addWindowOnTop(new WindowPopup(this, 0, 0, 180, 80, 180, 80, "window.autoLayout.failed").putInMiddleOfScreen());
+            }
+        }
+    }
+
+    public boolean withinBounds(int textureWidth, int textureHeight, int x, int y)
+    {
+        return x >= 0 && x < textureWidth && y >= 0 && y < textureHeight;
+    }
+
     @Override
     public boolean doesGuiPauseGame()
     {
