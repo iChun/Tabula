@@ -774,6 +774,17 @@ public class GuiWorkspace extends IWorkspace
         keyTabDown = Keyboard.isKeyDown(Keyboard.KEY_TAB);
     }
 
+    public boolean hasOpenProject()
+    {
+        return !projectManager.projects.isEmpty();
+    }
+
+    public ProjectInfo getOpenProject()
+    {
+        return projectManager.selectedProject >= 0 ? projectManager.projects.get(projectManager.selectedProject) : null;
+    }
+
+
     public void applyCamera() {
         float scale = 100F;
         GlStateManager.scale(scale, scale, scale);

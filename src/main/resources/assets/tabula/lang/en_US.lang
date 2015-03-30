@@ -108,6 +108,9 @@ window.settings.renderRotationPoint=Render Model Rotation Point
 
 window.autoLayout.failed=Failed to layout textures.
 
+window.metadata.title=Project Metadata
+window.metadata.titleShort=Metadata
+
 export.title=Export Project
 export.failed=Export Failed!
 export.textureMap.name=Texture Map

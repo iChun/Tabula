@@ -38,6 +38,7 @@ public class WindowEditProject extends Window
         scale.textFields.get(1).setText(String.format(Locale.ENGLISH, "%.2f", project.scale[1]));
         scale.textFields.get(2).setText(String.format(Locale.ENGLISH, "%.2f", project.scale[2]));
         elements.add(scale);
+        elements.add(new ElementButton(this, (width - 80) / 2, height - 55, 80, 12, -5, false, 2, 1, "window.metadata.titleShort"));
         elements.add(new ElementButton(this, width - 140, height - 30, 60, 16, 100, false, 1, 1, "element.button.ok"));
         elements.add(new ElementButton(this, width - 70, height - 30, 60, 16, 0, false, 1, 1, "element.button.cancel"));
     }
@@ -61,6 +62,12 @@ public class WindowEditProject extends Window
         if(element.id == 0)
         {
             workspace.removeWindow(this, true);
+        }
+        if(element.id == -5)//metadata
+        {
+            workspace.removeWindow(this, true);
+
+            workspace.addWindowOnTop(new WindowEditProjectMetadata(workspace, 0, 0, 300, 200, 180, 80).putInMiddleOfScreen());
         }
         if(element.id > 0 && element.id != 3 && element.id != 4)
         {

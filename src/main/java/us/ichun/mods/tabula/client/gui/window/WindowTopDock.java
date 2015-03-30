@@ -90,7 +90,7 @@ public class WindowTopDock extends WindowTopDockBase
         {
             if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
-                workspace.addWindowOnTop(new WindowEditProject(workspace, workspace.width / 2 - 100, workspace.height / 2 - 100, 200, 200, 200, 160).putInMiddleOfScreen());
+                workspace.addWindowOnTop(new WindowEditProject(workspace, workspace.width / 2 - 100, workspace.height / 2 - 100, 200, 240, 200, 160).putInMiddleOfScreen());
             }
         }
         else if(element.id == ID_OPEN)
