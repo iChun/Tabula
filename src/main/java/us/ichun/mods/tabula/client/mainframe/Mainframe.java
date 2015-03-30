@@ -956,16 +956,17 @@ public class Mainframe
         }
     }
 
-    public void reidentifyChildren(ArrayList<CubeInfo> children, ProjectInfo info)
+    public void reidentifyChildren(String parentIdent, ArrayList<CubeInfo> children, ProjectInfo info)
     {
         for(CubeInfo cube : children)
         {
+            cube.parentIdentifier = parentIdent;
             cube.identifier = RandomStringUtils.randomAscii(IDENTIFIER_LENGTH);
             if(info != null)
             {
                 info.cubeCount++;
             }
-            reidentifyChildren(cube.getChildren(), info);
+            reidentifyChildren(cube.identifier, cube.getChildren(), info);
         }
     }
 
@@ -992,7 +993,7 @@ public class Mainframe
 
                 if(withChildren)
                 {
-                    reidentifyChildren(cube.getChildren(), info);
+                    reidentifyChildren(cube.identifier, cube.getChildren(), info);
                 }
                 else
                 {
