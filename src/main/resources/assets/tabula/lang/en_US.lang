@@ -177,6 +177,7 @@ tabula.config.prop.allowEveryoneToEdit.name=Allow Everyone To Edit
 tabula.config.prop.editors.name=Allowed Editors
 tabula.config.prop.animateImports.name=Animate Imports
 tabula.config.prop.chatWindow.name=Chat Window Settings
+tabula.config.prop.tooltipTime.name=Tooltip Time
 
 tabula.config.prop.favTheme.comment=Favorite Colour Theme for Tabula's Interface
 tabula.config.prop.renderRotationPoint.comment=Should the rotation point of selected model parts be rendered
@@ -188,5 +189,6 @@ tabula.config.prop.allowEveryoneToEdit.comment=Allow anyone who connects to your
 tabula.config.prop.editors.comment=People allowed to edit models in your multiplayer Tabula session.\nSeparate usernames by with a comma and a space (", " - no quotes)
 tabula.config.prop.animateImports.comment=Try to animate the possibly imported models to fix their rotations?
 tabula.config.prop.chatWindow.comment=Don't touch this. Seriously.
+tabula.config.prop.tooltipTime.comment=Time (in ticks) for tooltip to appear.
 
 tile.tabula.block.tabularasa.name=Wax Tablet

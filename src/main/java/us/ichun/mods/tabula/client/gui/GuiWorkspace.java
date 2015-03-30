@@ -129,6 +129,8 @@ public class GuiWorkspace extends IWorkspace
 
         oriScale = scale;
 
+        tooltipTime = Tabula.config.tooltipTime;
+
         File defaultTheme = new File(ResourceHelper.getThemesDir(), "default.json");
 
         Theme theme = new Theme();

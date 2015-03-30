@@ -3,6 +3,7 @@ package us.ichun.mods.tabula.common.core;
 import us.ichun.mods.ichunutil.common.core.config.ConfigBase;
 import us.ichun.mods.ichunutil.common.core.config.annotations.ConfigProp;
 import us.ichun.mods.ichunutil.common.core.config.annotations.IntBool;
+import us.ichun.mods.ichunutil.common.core.config.annotations.IntMinMax;
 
 import java.io.File;
 
@@ -30,6 +31,10 @@ public class Config extends ConfigBase
     @ConfigProp
     @IntBool
     public int animateImports = 1;
+
+    @ConfigProp
+    @IntMinMax(min = 0)
+    public int tooltipTime = 20;
 
     @ConfigProp(category = "multiplayer")
     @IntBool

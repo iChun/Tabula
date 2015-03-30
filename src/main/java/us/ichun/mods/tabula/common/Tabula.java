@@ -29,7 +29,7 @@ import java.io.File;
 
 @Mod(modid = "Tabula", name = "Tabula",
         version = Tabula.version,
-        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".0.0,)",
+        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".2.0,)",
         acceptableRemoteVersions = "[" + iChunUtil.versionMC +".0.0," + iChunUtil.versionMC + ".1.0)"
 )
 public class Tabula

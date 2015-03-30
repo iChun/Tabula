@@ -23,7 +23,7 @@ group= "tabula" // http://maven.apache.org/guides/mini/guide-naming-conventions.
 archivesBaseName = "Tabula"
 
 minecraft {
-    version = "1.8-11.14.1.1329"
+    version = "1.8-11.14.1.1344"
     runDir = "eclipse"
     
     // the mappings can be changed at any time, and must be in the following format.
@@ -31,7 +31,7 @@ minecraft {
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not allways work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_nodoc_20150223"
+    mappings = "snapshot_nodoc_20150328"
 }
 processResources
 {

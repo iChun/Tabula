@@ -184,7 +184,7 @@ public class WindowTopDock extends WindowTopDockBase
         }
         else if(element.id == ID_AUTO_LAYOUT)
         {
-            workspace.layoutTextures();
+            ((GuiWorkspace)workspace).layoutTextures();
         }
         else if(element.id == ID_WOOD)
         {
