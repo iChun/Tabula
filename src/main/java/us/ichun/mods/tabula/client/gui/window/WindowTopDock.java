@@ -36,6 +36,7 @@ public class WindowTopDock extends WindowTopDockBase
     public static final int ID_SETTINGS = 19;
     public static final int ID_ADD_EDITOR = 20;
     public static final int ID_REMOVE_EDITOR = 21;
+    public static final int ID_AUTO_LAYOUT = 22;
 
     public static final int ID_WOOD = -1;
 
@@ -60,6 +61,7 @@ public class WindowTopDock extends WindowTopDockBase
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE, true, 0, 0, "topdock.paste", new ResourceLocation("tabula", "textures/icon/paste.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE_IN_PLACE, true, 0, 0, "topdock.pasteInPlace", new ResourceLocation("tabula", "textures/icon/pasteInPlace.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE_WITHOUT_CHILDREN, true, 0, 0, "topdock.pasteWithoutChildren", new ResourceLocation("tabula", "textures/icon/pasteWithoutChildren.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_AUTO_LAYOUT, true, 0, 0, "topdock.autoLayout", new ResourceLocation("tabula", "textures/icon/autoLayout.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_UNDO, true, 0, 0, "topdock.undo", new ResourceLocation("tabula", "textures/icon/undo.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_REDO, true, 0, 0, "topdock.redo", new ResourceLocation("tabula", "textures/icon/redo.png")));
         if(((GuiWorkspace)workspace).host != null)
@@ -179,6 +181,10 @@ public class WindowTopDock extends WindowTopDockBase
         else if(element.id == ID_EXIT_TABULA)
         {
             ((GuiWorkspace)workspace).wantToExit = true;
+        }
+        else if(element.id == ID_AUTO_LAYOUT)
+        {
+            workspace.layoutTextures();
         }
         else if(element.id == ID_WOOD)
         {

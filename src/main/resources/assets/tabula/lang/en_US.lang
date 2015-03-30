@@ -106,6 +106,8 @@ window.selectTheme.title=Select Theme
 window.settings.title=Settings
 window.settings.renderRotationPoint=Render Model Rotation Point
 
+window.autoLayout.failed=Failed to layout textures.
+
 export.title=Export Project
 export.failed=Export Failed!
 export.textureMap.name=Texture Map
@@ -139,6 +141,7 @@ topdock.info=About this mod
 topdock.exitTabula=Exit Tabula
 topdock.wood=Block
 topdock.woodFull=Toggle showing the block
+topdock.autoLayout=Automatically Layout Textures
 
 system.playersInSession=Users In Session
 system.editor=Editor
