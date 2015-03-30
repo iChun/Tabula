@@ -7,7 +7,11 @@ import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
 import us.ichun.mods.ichunutil.client.gui.window.element.ElementTextInput;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
+import us.ichun.mods.tabula.common.Tabula;
+import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
+import us.ichun.mods.tabula.common.packet.PacketSetProjectMetadata;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 public class WindowEditProjectMetadata extends Window
@@ -64,8 +68,7 @@ public class WindowEditProjectMetadata extends Window
         {
             if(((GuiWorkspace)workspace).hasOpenProject())
             {
-                ProjectInfo info = ((GuiWorkspace)workspace).getOpenProject();
-                info.metadata.clear();
+                ArrayList<String> meta = new ArrayList<String>();
 
                 for(Element e : elements)
                 {
@@ -74,12 +77,21 @@ public class WindowEditProjectMetadata extends Window
                         String text = ((ElementTextInput)e).textField.getText();
                         if(!text.isEmpty())
                         {
-                            info.metadata.add(text);
+                            meta.add(text);
                         }
                     }
                 }
 
-                Collections.sort(info.metadata);
+                Collections.sort(meta);
+
+                if(!((GuiWorkspace)workspace).remoteSession)
+                {
+                    Tabula.proxy.tickHandlerClient.mainframe.setProjectMetadata(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, meta);
+                }
+                else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
+                {
+                    Tabula.channel.sendToServer(new PacketSetProjectMetadata(((GuiWorkspace)workspace).host, ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, meta));
+                }
             }
 
             workspace.removeWindow(this, true);

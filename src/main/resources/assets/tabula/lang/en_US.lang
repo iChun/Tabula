@@ -111,6 +111,8 @@ window.autoLayout.failed=Failed to layout textures.
 window.metadata.title=Project Metadata
 window.metadata.titleShort=Metadata
 
+window.ghostModel.title=Set Ghost Model
+
 export.title=Export Project
 export.failed=Export Failed!
 export.textureMap.name=Texture Map
@@ -145,6 +147,7 @@ topdock.exitTabula=Exit Tabula
 topdock.wood=Block
 topdock.woodFull=Toggle showing the block
 topdock.autoLayout=Automatically Layout Textures
+topdock.ghostModel=Set Ghost Model
 
 system.playersInSession=Users In Session
 system.editor=Editor

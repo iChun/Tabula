@@ -499,6 +499,18 @@ public class Mainframe
         }
     }
 
+    public void setProjectMetadata(String ident, ArrayList<String> meta)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.identifier.equals(ident))
+            {
+                info.metadata = meta;
+                streamProject(info);
+            }
+        }
+    }
+
     private void importModel(String ident, ModelInfo model, boolean texture)
     {
         ProjectInfo projectInfo = null;

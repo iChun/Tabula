@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -908,6 +909,46 @@ public class GuiWorkspace extends IWorkspace
 
                 GlStateManager.enableTexture2D();
             }
+
+            if(info.ghostModel != null)
+            {
+                if(info.ghostModel.model == null)
+                {
+                    info.ghostModel.initClient();
+
+                    if(info.ghostModel.bufferedTexture != null)
+                    {
+                        info.ghostModel.bufferedTextureId = TextureUtil.uploadTextureImage(TextureUtil.glGenTextures(), info.ghostModel.bufferedTexture);
+                    }
+                }
+
+                GlStateManager.pushMatrix();
+
+                GlStateManager.scale(1D / info.ghostModel.scale[0], 1D / info.ghostModel.scale[1], 1D / info.ghostModel.scale[2]);
+
+                ArrayList<CubeInfo> emptyList = new ArrayList<CubeInfo>();
+
+                if(info.ghostModel.bufferedTextureId != -1)
+                {
+                    GlStateManager.bindTexture(info.ghostModel.bufferedTextureId);
+
+                    info.ghostModel.model.render(0.0625F, emptyList, emptyList, cameraZoom, true, 0, false, false);
+                    info.ghostModel.model.render(0.0625F, emptyList, emptyList, cameraZoom, true, 1, false, false);
+                }
+                else
+                {
+                    GlStateManager.disableTexture2D();
+                    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+
+                    info.ghostModel.model.render(0.0625F, emptyList, emptyList, cameraZoom, false, 0, false, false);
+                    info.ghostModel.model.render(0.0625F, emptyList, emptyList, cameraZoom, false, 1, false, false);
+
+                    GlStateManager.enableTexture2D();
+                }
+
+                GlStateManager.popMatrix();
+            }
+
             GlStateManager.enableCull();
             GlStateManager.popMatrix();
 

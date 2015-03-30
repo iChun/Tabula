@@ -37,6 +37,7 @@ public class WindowTopDock extends WindowTopDockBase
     public static final int ID_ADD_EDITOR = 20;
     public static final int ID_REMOVE_EDITOR = 21;
     public static final int ID_AUTO_LAYOUT = 22;
+    public static final int ID_GHOST_MODEL = 23;
 
     public static final int ID_WOOD = -1;
 
@@ -56,6 +57,7 @@ public class WindowTopDock extends WindowTopDockBase
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_IMPORT, true, 0, 0, "topdock.import", new ResourceLocation("tabula", "textures/icon/import.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_IMPORT_MC, true, 0, 0, "topdock.importMC", new ResourceLocation("tabula", "textures/icon/importMC.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_EXPORT, true, 0, 0, "topdock.export", new ResourceLocation("tabula", "textures/icon/export.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_GHOST_MODEL, true, 0, 0, "topdock.ghostModel", new ResourceLocation("tabula", "textures/icon/ghostModel.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CUT, true, 0, 0, "topdock.cut", new ResourceLocation("tabula", "textures/icon/cut.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_COPY, true, 0, 0, "topdock.copy", new ResourceLocation("tabula", "textures/icon/copy.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE, true, 0, 0, "topdock.paste", new ResourceLocation("tabula", "textures/icon/paste.png")));
@@ -124,6 +126,13 @@ public class WindowTopDock extends WindowTopDockBase
             if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
             {
                 workspace.addWindowOnTop(new WindowExport(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 260, 160, 240, 160).putInMiddleOfScreen());
+            }
+        }
+        else if(element.id == ID_GHOST_MODEL)
+        {
+            if(((GuiWorkspace)workspace).hasOpenProject())
+            {
+                workspace.addWindowOnTop(new WindowSetGhostModel(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 260, 320, 240, 160).putInMiddleOfScreen());
             }
         }
         else if(element.id == ID_CUT)
