@@ -177,6 +177,8 @@ public class ModelSelector {
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.popMatrix();
+
+
     }
 
     public void fakeRenderSelectedCube(CubeInfo info)

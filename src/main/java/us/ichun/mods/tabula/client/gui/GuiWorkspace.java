@@ -14,6 +14,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -36,6 +37,7 @@ import us.ichun.mods.tabula.client.core.ResourceHelper;
 import us.ichun.mods.tabula.client.gui.window.*;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 import us.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
+import us.ichun.mods.tabula.client.model.ModelVoxel;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.packet.PacketEndSession;
 import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
@@ -44,6 +46,7 @@ import us.ichun.mods.tabula.common.packet.PacketRemoveListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -61,8 +64,11 @@ public class GuiWorkspace extends IWorkspace
     public int hostY;
     public int hostZ;
 
-    public ResourceLocation grid16 = new ResourceLocation("tabula", "textures/workspace/grid16.png");
-    public ResourceLocation orientationBase = new ResourceLocation("tabula", "textures/workspace/orientationBase.png");
+    public ModelVoxel voxel;
+    public static final ResourceLocation txVoxel = new ResourceLocation("tabula", "textures/model/cube.png");
+
+    public static final ResourceLocation grid16 = new ResourceLocation("tabula", "textures/workspace/grid16.png");
+    public static final ResourceLocation orientationBase = new ResourceLocation("tabula", "textures/workspace/orientationBase.png");
 
     public ArrayList<String> editors = new ArrayList<String>();
     public ArrayList<String> listeners = new ArrayList<String>();
@@ -131,6 +137,8 @@ public class GuiWorkspace extends IWorkspace
         oriScale = scale;
 
         tooltipTime = Tabula.config.tooltipTime;
+
+        voxel = new ModelVoxel();
 
         File defaultTheme = new File(ResourceHelper.getThemesDir(), "default.json");
 
@@ -406,6 +414,81 @@ public class GuiWorkspace extends IWorkspace
         }
 
         ScaledResolution resolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+
+        if (Mouse.isButtonDown(0) && !mouseLeftDown)
+        {
+            //Render the "furnace"
+            GlStateManager.matrixMode(GL11.GL_PROJECTION);
+            GlStateManager.loadIdentity();
+            GlStateManager.ortho(0.0D, resolution.getScaledWidth_double(), resolution.getScaledHeight_double(), 0.0D, -5000.0D, 5000.0D);
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+            GlStateManager.loadIdentity();
+            GlStateManager.pushMatrix();
+            Minecraft.getMinecraft().renderEngine.bindTexture(txVoxel);
+            GlStateManager.translate(width - (levels.get(1).isEmpty() ? 15F : 15F + levels.get(1).get(0).width), height - 15F - windowAnimate.getHeight(), 3000F);
+            float scale = 15F;
+            GlStateManager.scale(scale, scale, scale);
+            GlStateManager.scale(-1.0F, 1.0F, 1.0F);
+            GlStateManager.rotate(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
+            GlStateManager.rotate(-38F + cameraYaw, 0.0F, 1.0F, 0.0F);
+            float scale1 = 16F;
+            GlStateManager.scale(scale1, scale1, scale1);
+            GlStateManager.clearColor(0F, 0F, 0F, 255F);
+            GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT);
+            voxel.render(0.0625F);
+            FloatBuffer buffer = BufferUtils.createFloatBuffer(3);
+            GL11.glReadPixels(Mouse.getX(), Mouse.getY(), 1, 1, GL11.GL_RGB, GL11.GL_FLOAT, buffer);
+            int blue = Math.round(buffer.get(2) * 255F);
+            if(blue > 0)
+            {
+                blue -= 250;
+                if(blue <= 1)
+                {
+                    cameraYaw = 0F;
+                }
+                else
+                {
+                    cameraPitch = 0F;
+                }
+                switch(blue)
+                {
+                    case 0:
+                    {
+                        cameraPitch = 90F;
+                        break;
+                    }
+                    case 1:
+                    {
+                        cameraPitch = -90F;
+                        break;
+                    }
+                    case 2:
+                    {
+                        cameraYaw = 90F;
+                        break;
+                    }
+                    case 3:
+                    {
+                        cameraYaw = 270F;
+                        break;
+                    }
+                    case 4:
+                    {
+                        cameraYaw = 180F;
+                        break;
+                    }
+                    case 5:
+                    {
+                        cameraYaw = 0F;
+                        break;
+                    }
+                }
+                cameraPitch += 15F;
+                cameraYaw += 38F;
+            }
+            GlStateManager.popMatrix();
+        }
+
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.loadIdentity();
         Project.gluPerspective(cameraFov, (float)(resolution.getScaledWidth_double() / resolution.getScaledHeight_double()), 1F, 10000F);
@@ -753,6 +836,35 @@ public class GuiWorkspace extends IWorkspace
             GlStateManager.ortho(0.0D, resolution.getScaledWidth_double(), resolution.getScaledHeight_double(), 0.0D, 1000.0D, 3000.0D);
             GlStateManager.matrixMode(GL11.GL_MODELVIEW);
             GlStateManager.loadIdentity();
+
+            GlStateManager.matrixMode(GL11.GL_PROJECTION);
+            GlStateManager.loadIdentity();
+            GlStateManager.ortho(0.0D, resolution.getScaledWidth_double(), resolution.getScaledHeight_double(), 0.0D, -5000.0D, 5000.0D);
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+            GlStateManager.loadIdentity();
+
+            GlStateManager.pushMatrix();
+
+            //        Block block = Blocks.diamond_ore;
+
+            Minecraft.getMinecraft().renderEngine.bindTexture(txVoxel);
+
+            GlStateManager.translate(width - (levels.get(1).isEmpty() ? 15F : 15F + levels.get(1).get(0).width), height - 15F - windowAnimate.getHeight(), 3000F);
+            float scale = 15F;
+            GlStateManager.scale(scale, scale, scale);
+            GlStateManager.scale(-1.0F, 1.0F, 1.0F);
+            GlStateManager.rotate(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
+            GlStateManager.rotate(-38F + cameraYaw, 0.0F, 1.0F, 0.0F);
+
+            GlStateManager.pushMatrix();
+            float scale1 = 16F;
+            GlStateManager.scale(scale1, scale1, scale1);
+
+            voxel.render(0.0625F);
+
+            GlStateManager.popMatrix();
+
+            GlStateManager.popMatrix();
         }
     }
 
@@ -1378,6 +1490,8 @@ public class GuiWorkspace extends IWorkspace
             Tabula.config.chatWindow = (sb.toString());
             Tabula.config.save();
         }
+
+        voxel.destroy();
     }
 
     public void layoutTextures() {
