@@ -300,7 +300,7 @@ public class WindowControls extends Window
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
                             info.position[l] = Double.parseDouble(((ElementNumberInput)e).textFields.get(l).getText());
-                            if(Tabula.config.swapPositionOffset == 1 && Math.abs(info.position[l] - oldPos[l]) > 0D)
+                            if(Tabula.config.swapPositionOffset == 1 && Math.abs(info.position[l] - oldPos[l]) > 0.0001D)
                             {
                                 info.offset[l] -= info.position[l] - oldPos[l];
                                 for(Element e1: elements)
@@ -319,7 +319,7 @@ public class WindowControls extends Window
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
                             info.offset[l] = Double.parseDouble(((ElementNumberInput)e).textFields.get(l).getText());
-                            if(Tabula.config.swapPositionOffset == 1 && Math.abs(info.offset[l] - oldPos[l]) > 0D)
+                            if(Tabula.config.swapPositionOffset == 1 && Math.abs(info.offset[l] - oldPos[l]) > 0.0001D)
                             {
                                 info.position[l] -= info.offset[l] - oldPos[l];
                                 for(Element e1: elements)

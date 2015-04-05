@@ -26,7 +26,7 @@ public class WindowEditAnimComponent extends Window
         text.textField.setText(comp.name);
         elements.add(text);
         elements.add(new ElementNumberInput(this, 10, 65, 40, 12, 1, "window.newAnimComp.length", 1, false, 1, (int)Short.MAX_VALUE, comp.length));
-        elements.add(new ElementNumberInput(this, 10, 100, 40, 12, 2, "window.editAnimComp.startPos", 1, false, 1, (int)Short.MAX_VALUE, comp.startKey));
+        elements.add(new ElementNumberInput(this, 10, 100, 40, 12, 2, "window.editAnimComp.startPos", 1, false, 0, (int)Short.MAX_VALUE, comp.startKey));
 
         elements.add(new ElementButton(this, width - 140, height - 30, 60, 16, 100, false, 1, 1, "element.button.ok"));
         elements.add(new ElementButton(this, width - 70, height - 30, 60, 16, 0, false, 1, 1, "element.button.cancel"));
