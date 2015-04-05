@@ -296,16 +296,40 @@ public class WindowControls extends Window
                     }
                     else if(e.id == 2)
                     {
+                        double[] oldPos = new double[] { info.position[0], info.position[1], info.position[2] };
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
                             info.position[l] = Double.parseDouble(((ElementNumberInput)e).textFields.get(l).getText());
+                            if(Tabula.config.swapPositionOffset == 1 && Math.abs(info.position[l] - oldPos[l]) > 0D)
+                            {
+                                info.offset[l] -= info.position[l] - oldPos[l];
+                                for(Element e1: elements)
+                                {
+                                    if(e1.id == 3)
+                                    {
+                                        ((ElementNumberInput)e1).textFields.get(l).setText(String.format(Locale.ENGLISH, "%.2f", info.offset[l]));
+                                    }
+                                }
+                            }
                         }
                     }
                     else if(e.id == 3)
                     {
+                        double[] oldPos = new double[] { info.offset[0], info.offset[1], info.offset[2] };
                         for(int l = 0; l < ((ElementNumberInput)e).textFields.size(); l++)
                         {
                             info.offset[l] = Double.parseDouble(((ElementNumberInput)e).textFields.get(l).getText());
+                            if(Tabula.config.swapPositionOffset == 1 && Math.abs(info.offset[l] - oldPos[l]) > 0D)
+                            {
+                                info.position[l] -= info.offset[l] - oldPos[l];
+                                for(Element e1: elements)
+                                {
+                                    if(e1.id == 2)
+                                    {
+                                        ((ElementNumberInput)e1).textFields.get(l).setText(String.format(Locale.ENGLISH, "%.2f", info.position[l]));
+                                    }
+                                }
+                            }
                         }
                     }
                     else if(e.id == 4)

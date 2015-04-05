@@ -181,7 +181,7 @@ public class WindowTopDock extends WindowTopDockBase
         }
         else if(element.id == ID_SETTINGS)
         {
-            workspace.addWindowOnTop(new WindowSettings(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 260, 160, 240, 160).putInMiddleOfScreen());
+            workspace.addWindowOnTop(new WindowSettings(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 500, 160, 400, 160).putInMiddleOfScreen());
         }
         else if(element.id == ID_CREDITS)
         {

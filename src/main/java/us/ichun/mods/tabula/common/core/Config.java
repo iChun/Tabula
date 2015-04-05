@@ -30,6 +30,10 @@ public class Config extends ConfigBase
 
     @ConfigProp
     @IntBool
+    public int swapPositionOffset = 0;
+
+    @ConfigProp
+    @IntBool
     public int animateImports = 1;
 
     @ConfigProp
