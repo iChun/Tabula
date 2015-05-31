@@ -1,0 +1,20 @@
+[
+{
+  "modid" : "Tabula",
+  "name" : "Tabula",
+  "version" : "${version}",
+  "url" : "http://www.ichun.us/",
+  "credits" : "",
+  "authorList": [
+    "iChun"
+  ],
+  "description": "A successor to the modeler Techne, an in-game modeler with SMP support.",
+  "updateUrl" : "",
+  "parent" : "",
+  "screenshots": [
+  ],
+  "dependencies": [
+    "Forge", "iChunUtil"
+  ]
+}
+]
