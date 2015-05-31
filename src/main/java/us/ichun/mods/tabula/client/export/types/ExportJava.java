@@ -2,6 +2,7 @@ package us.ichun.mods.tabula.client.export.types;
 
 import org.apache.commons.io.FileUtils;
 import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import us.ichun.mods.ichunutil.common.module.tabula.client.formats.types.Exporter;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
 import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.client.core.ResourceHelper;

@@ -6,7 +6,7 @@ import us.ichun.mods.ichunutil.client.gui.window.WindowPopup;
 import us.ichun.mods.ichunutil.client.gui.window.element.Element;
 import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
 import us.ichun.mods.tabula.client.export.ExportList;
-import us.ichun.mods.tabula.client.export.types.Exporter;
+import us.ichun.mods.ichunutil.common.module.tabula.client.formats.types.Exporter;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.client.gui.window.element.ElementListTree;
 

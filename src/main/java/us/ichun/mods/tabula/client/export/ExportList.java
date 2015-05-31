@@ -3,7 +3,7 @@ package us.ichun.mods.tabula.client.export;
 import us.ichun.mods.tabula.client.export.types.ExportJava;
 import us.ichun.mods.tabula.client.export.types.ExportProjectTexture;
 import us.ichun.mods.tabula.client.export.types.ExportTextureMap;
-import us.ichun.mods.tabula.client.export.types.Exporter;
+import us.ichun.mods.ichunutil.common.module.tabula.client.formats.types.Exporter;
 
 import java.util.ArrayList;
 
