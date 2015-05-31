@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.client.gui.window;
 
 import com.google.gson.Gson;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 import us.ichun.mods.ichunutil.client.gui.window.IWorkspace;
 import us.ichun.mods.ichunutil.client.gui.window.Window;
@@ -125,7 +126,7 @@ public class WindowControls extends Window
                         {
                             if(e.id - 50 - i == 0)
                             {
-                                ((ElementHoriSlider)e).sliderProg = (info.rotation[i] + 180F) / 360F;
+                                ((ElementHoriSlider)e).sliderProg = MathHelper.clamp_double((info.rotation[i] + 180F) / 360F, 0.0D, 1.0D);
                             }
                         }
                     }
