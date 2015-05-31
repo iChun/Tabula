@@ -10,9 +10,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import us.ichun.mods.ichunutil.common.core.Logger;
 import us.ichun.mods.ichunutil.common.core.config.ConfigBase;
 import us.ichun.mods.ichunutil.common.core.config.ConfigHandler;
 import us.ichun.mods.ichunutil.common.core.network.PacketChannel;
@@ -27,16 +25,18 @@ import us.ichun.mods.tabula.common.core.EventHandler;
 
 import java.io.File;
 
-@Mod(modid = "Tabula", name = "Tabula",
+@Mod(modid = Tabula.modName, name = Tabula.modName,
         version = Tabula.version,
-        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".2.0,)",
-        acceptableRemoteVersions = "[" + iChunUtil.versionMC +".0.0," + iChunUtil.versionMC + ".1.0)"
+        guiFactory = "us.ichun.mods.ichunutil.common.core.config.GenericModGuiFactory",
+        dependencies = "required-after:iChunUtil@[" + iChunUtil.versionMC +".4.0," + (iChunUtil.versionMC + 1) + ".0.0)",
+        acceptableRemoteVersions = "[" + iChunUtil.versionMC +".1.0," + iChunUtil.versionMC + ".2.0)"
 )
 public class Tabula
 {
-    public static final String version = iChunUtil.versionMC + ".0.0";
+    public static final String modName = "Tabula";
+    public static final String version = iChunUtil.versionMC + ".1.0";
 
-    @Mod.Instance("Tabula")
+    @Mod.Instance(Tabula.modName)
     public static Tabula instance;
 
     @SidedProxy(clientSide = "us.ichun.mods.tabula.client.core.ClientProxy", serverSide = "us.ichun.mods.tabula.common.core.CommonProxy")
@@ -44,7 +44,7 @@ public class Tabula
 
     public static PacketChannel channel;
 
-    private static final Logger logger = LogManager.getLogger("Tabula");
+    public static final Logger logger = Logger.createLogger(Tabula.modName);
 
     public static Config config;
 
@@ -64,7 +64,7 @@ public class Tabula
         FMLCommonHandler.instance().bus().register(handler);
         MinecraftForge.EVENT_BUS.register(handler);
 
-        ModVersionChecker.register_iChunMod(new ModVersionInfo("Tabula", iChunUtil.versionOfMC, version, false));
+        ModVersionChecker.register_iChunMod(new ModVersionInfo(modName, iChunUtil.versionOfMC, version, false));
     }
 
     @Mod.EventHandler
@@ -93,30 +93,24 @@ public class Tabula
                     {
                         if(ModelList.modelBlacklist.contains(clz))
                         {
-                            console(message.getStringValue() + " is already blacklisted", true);
+                            Tabula.logger.warn(message.getStringValue() + " is already blacklisted");
                         }
                         else
                         {
                             ModelList.modelBlacklist.add(clz);
-                            console(message.getStringValue() + " blacklisted from Tabula's import list", true);
+                            Tabula.logger.warn(message.getStringValue() + " blacklisted from Tabula's import list");
                         }
                     }
                     else
                     {
-                        console(message.getStringValue() + " is not a model class!", true);
+                        Tabula.logger.warn(message.getStringValue() + " is not a model class!");
                     }
                 }
                 catch(Exception e)
                 {
-                    console("Could not find class " + message.getStringValue() + " for blacklist", true);
+                    Tabula.logger.warn("Could not find class " + message.getStringValue() + " for blacklist");
                 }
             }
         }
-    }
-
-    public static void console(String s, boolean warning)
-    {
-        StringBuilder sb = new StringBuilder();
-        logger.log(warning ? Level.WARN : Level.INFO, sb.append("[").append(version).append("] ").append(s).toString());
     }
 }

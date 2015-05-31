@@ -17,7 +17,7 @@ import java.awt.*;
 
 public class EventHandler
 {
-    public static final int TABULA_BUTTON_ID = "Tabula".hashCode();
+    public static final int TABULA_BUTTON_ID = Tabula.modName.hashCode();
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent(priority = EventPriority.LOW)

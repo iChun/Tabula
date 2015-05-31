@@ -153,7 +153,7 @@ public class PacketGenericMethod extends AbstractPacket
             }
             catch(Exception e)
             {
-                Tabula.console("This shouldn't be happening. Inform the mod author. Error method: " + methodName, true);
+                Tabula.logger.warn("This shouldn't be happening. Inform the mod author. Error method: " + methodName);
                 e.printStackTrace();
             }
         }

@@ -1641,7 +1641,7 @@ public class Mainframe
             }
             catch(Exception e)
             {
-                Tabula.console("Error reading project sent from client!", true);
+                Tabula.logger.warn("Error reading project sent from client!");
                 e.printStackTrace();
             }
 
