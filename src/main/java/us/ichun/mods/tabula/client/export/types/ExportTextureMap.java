@@ -29,35 +29,35 @@ public class ExportTextureMap extends Exporter
 
         for(CubeInfo cube : cubes)
         {
-            for(int i = 0; i < cube.dimensions[0]; i++)
+            for(int i = 0; i < cube.dimensions[0] || i == 0 && cube.dimensions[0] == 0; i++)
             {
-                for(int j = 0; j < cube.dimensions[1]; j++)
+                for(int j = 0; j < cube.dimensions[1] || j == 0 && cube.dimensions[1] == 0; j++)
                 {
-                    for(int k = 0; k < cube.dimensions[2]; k++)
+                    for(int k = 0; k < cube.dimensions[2] || k == 0 && cube.dimensions[2] == 0; k++)
                     {
-                        if(withinBounds(tmp, cube.txOffset[0] + k, cube.txOffset[1] + cube.dimensions[2] + j))
+                        if(withinBounds(tmp, cube.txOffset[0] + k, cube.txOffset[1] + cube.dimensions[2] + j) && cube.dimensions[2] > 0 && cube.dimensions[1] > 0)
                         {
-                            tmp.setRGB(cube.txOffset[0] + k, cube.txOffset[1] + cube.dimensions[2] + j, 0xffff0000);
+                            tmp.setRGB(cube.txOffset[0] + k, cube.txOffset[1] + cube.dimensions[2] + j, 0xffff0000); //red
                         }
-                        if(withinBounds(tmp, cube.txOffset[0] + cube.dimensions[2] + i, cube.txOffset[1] + cube.dimensions[2] + j))
+                        if(withinBounds(tmp, cube.txOffset[0] + cube.dimensions[2] + i, cube.txOffset[1] + cube.dimensions[2] + j) && cube.dimensions[0] > 0 && cube.dimensions[1] > 0)
                         {
-                            tmp.setRGB(cube.txOffset[0] + cube.dimensions[2] + i, cube.txOffset[1] + cube.dimensions[2] + j, 0xff0000ff);
+                            tmp.setRGB(cube.txOffset[0] + cube.dimensions[2] + i, cube.txOffset[1] + cube.dimensions[2] + j, 0xff0000ff); //blue
                         }
-                        if(withinBounds(tmp, cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + k, cube.txOffset[1] + cube.dimensions[2] + j))
+                        if(withinBounds(tmp, cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + k, cube.txOffset[1] + cube.dimensions[2] + j) && cube.dimensions[2] > 0 && cube.dimensions[1] > 0)
                         {
-                            tmp.setRGB(cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + k, cube.txOffset[1] + cube.dimensions[2] + j, 0xffaa0000);
+                            tmp.setRGB(cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + k, cube.txOffset[1] + cube.dimensions[2] + j, 0xffaa0000); //dark red
                         }
-                        if(withinBounds(tmp, cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + cube.dimensions[2] + i, cube.txOffset[1] + cube.dimensions[2] + j))
+                        if(withinBounds(tmp, cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + cube.dimensions[2] + i, cube.txOffset[1] + cube.dimensions[2] + j) && cube.dimensions[0] > 0 && cube.dimensions[1] > 0)
                         {
-                            tmp.setRGB(cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + cube.dimensions[2] + i, cube.txOffset[1] + cube.dimensions[2] + j, 0xff0000aa);
+                            tmp.setRGB(cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + cube.dimensions[2] + i, cube.txOffset[1] + cube.dimensions[2] + j, 0xff0000aa); //dark blue
                         }
-                        if(withinBounds(tmp, cube.txOffset[0] + cube.dimensions[2] + i, cube.txOffset[1] + k))
+                        if(withinBounds(tmp, cube.txOffset[0] + cube.dimensions[2] + i, cube.txOffset[1] + k) && cube.dimensions[0] > 0 && cube.dimensions[2] > 0)
                         {
-                            tmp.setRGB(cube.txOffset[0] + cube.dimensions[2] + i, cube.txOffset[1] + k, 0xff00ff00);
+                            tmp.setRGB(cube.txOffset[0] + cube.dimensions[2] + i, cube.txOffset[1] + k, 0xff00ff00); //green
                         }
-                        if(withinBounds(tmp, cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + i, cube.txOffset[1] + k))
+                        if(withinBounds(tmp, cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + i, cube.txOffset[1] + k) && cube.dimensions[0] > 0 && cube.dimensions[2] > 0)
                         {
-                            tmp.setRGB(cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + i, cube.txOffset[1] + k, 0xff00aa00);
+                            tmp.setRGB(cube.txOffset[0] + cube.dimensions[2] + cube.dimensions[0] + i, cube.txOffset[1] + k, 0xff00aa00); //dark green
                         }
                     }
                 }
