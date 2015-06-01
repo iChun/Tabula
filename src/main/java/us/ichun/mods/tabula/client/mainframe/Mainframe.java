@@ -499,13 +499,28 @@ public class Mainframe
         }
     }
 
-    public void setProjectMetadata(String ident, ArrayList<String> meta)
+    public void setProjectMetadata(String projIdent, String objIdent, ArrayList<String> meta, boolean isProjectMeta)
     {
         for(ProjectInfo info : projects)
         {
-            if(info.identifier.equals(ident))
+            if(info.identifier.equals(projIdent))
             {
-                info.metadata = meta;
+                if(isProjectMeta)
+                {
+                    info.metadata = meta;
+                }
+                else
+                {
+                    Object obj = info.getObjectByIdent(objIdent);
+                    if(obj instanceof CubeInfo)
+                    {
+                        ((CubeInfo)obj).metadata = meta;
+                    }
+                    else if(obj instanceof CubeGroup)
+                    {
+                        ((CubeGroup)obj).metadata = meta;
+                    }
+                }
                 streamProject(info);
             }
         }

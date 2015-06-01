@@ -22,6 +22,7 @@ public class WindowModelTree extends Window
         elements.add(new ElementButtonTextured(this, BORDER_SIZE + 00, height - 20 - BORDER_SIZE, 0, false, 0, 1, "window.modelTree.newCube", new ResourceLocation("tabula", "textures/icon/newCube.png")));
         elements.add(new ElementButtonTextured(this, BORDER_SIZE + 20, height - 20 - BORDER_SIZE, 1, false, 0, 1, "window.modelTree.newGroup", new ResourceLocation("tabula", "textures/icon/newGroup.png")));
         elements.add(new ElementButtonTextured(this, BORDER_SIZE + 40, height - 20 - BORDER_SIZE, 2, false, 0, 1, "window.modelTree.delete", new ResourceLocation("tabula", "textures/icon/delete.png")));
+        elements.add(new ElementButtonTextured(this, BORDER_SIZE + 60, height - 20 - BORDER_SIZE, 3, false, 0, 1, "window.editMeta.title", new ResourceLocation("tabula", "textures/icon/editMeta.png")));
         modelList = new ElementListTree(this, BORDER_SIZE + 1, BORDER_SIZE + 1 + 10, width - (BORDER_SIZE * 2 + 2), height - BORDER_SIZE - 21 - 16, 3, false, true);
         elements.add(modelList);
     }
@@ -77,6 +78,10 @@ public class WindowModelTree extends Window
             {
                 Tabula.channel.sendToServer(new PacketGenericMethod(((GuiWorkspace)workspace).host, "deleteObject", ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, modelList.selectedIdentifier));
             }
+        }
+        else if(element.id == 3 && !modelList.selectedIdentifier.isEmpty())
+        {
+            workspace.addWindowOnTop(new WindowEditObjectMetadata((GuiWorkspace)workspace, 0, 0, 300, 200, 180, 80, modelList.selectedIdentifier).putInMiddleOfScreen());
         }
         else
         {

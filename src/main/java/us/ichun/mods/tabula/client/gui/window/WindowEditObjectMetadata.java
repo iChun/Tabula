@@ -5,30 +5,44 @@ import us.ichun.mods.ichunutil.client.gui.window.Window;
 import us.ichun.mods.ichunutil.client.gui.window.element.Element;
 import us.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
 import us.ichun.mods.ichunutil.client.gui.window.element.ElementTextInput;
-import us.ichun.mods.ichunutil.common.module.tabula.common.project.ProjectInfo;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeGroup;
+import us.ichun.mods.ichunutil.common.module.tabula.common.project.components.CubeInfo;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.common.Tabula;
-import us.ichun.mods.tabula.common.packet.PacketGenericMethod;
 import us.ichun.mods.tabula.common.packet.PacketSetProjectMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class WindowEditProjectMetadata extends Window
+public class WindowEditObjectMetadata extends Window
 {
-    public WindowEditProjectMetadata(IWorkspace parent, int x, int y, int w, int h, int minW, int minH)
+    public String identifier;
+
+    public WindowEditObjectMetadata(GuiWorkspace parent, int x, int y, int w, int h, int minW, int minH, String ident)
     {
-        super(parent, x, y, w, h, minW, minH, "window.metadata.title", true);
+        super(parent, x, y, w, h, minW, minH, "window.modelTree.editMeta", true);
+
+        identifier = ident;
 
         elements.add(new ElementButton(this, width / 2 - 30, height - 25, 60, 16, -20, false, 2, 1, "gui.done"));
 
-        GuiWorkspace workspace = ((GuiWorkspace)parent);
+        GuiWorkspace workspace = parent;
 
         if(workspace.hasOpenProject())
         {
-            for(int i = 0; i <= workspace.getOpenProject().metadata.size(); i++)
+            Object obj = workspace.getOpenProject().getObjectByIdent(identifier);
+            ArrayList<String> metadata = new ArrayList<String>();
+            if(obj instanceof CubeInfo)
             {
-                elements.add(new ElementTextInput(this, 10, i * 18 + 20, width - 20, 12, i, null, 500, i == workspace.getOpenProject().metadata.size() ? "" : workspace.getOpenProject().metadata.get(i)));
+                metadata = ((CubeInfo)obj).metadata;
+            }
+            else if(obj instanceof CubeGroup)
+            {
+                metadata = ((CubeGroup)obj).metadata;
+            }
+            for(int i = 0; i <= metadata.size(); i++)
+            {
+                elements.add(new ElementTextInput(this, 10, i * 18 + 20, width - 20, 12, i, null, 500, i == metadata.size() ? "" : metadata.get(i)));
             }
         }
     }
@@ -86,11 +100,11 @@ public class WindowEditProjectMetadata extends Window
 
                 if(!((GuiWorkspace)workspace).remoteSession)
                 {
-                    Tabula.proxy.tickHandlerClient.mainframe.setProjectMetadata(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, "", meta, true);
+                    Tabula.proxy.tickHandlerClient.mainframe.setProjectMetadata(((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, identifier, meta, false);
                 }
                 else if(!((GuiWorkspace)workspace).sessionEnded && ((GuiWorkspace)workspace).isEditor)
                 {
-                    Tabula.channel.sendToServer(new PacketSetProjectMetadata(((GuiWorkspace)workspace).host, ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, "", meta, true));
+                    Tabula.channel.sendToServer(new PacketSetProjectMetadata(((GuiWorkspace)workspace).host, ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).identifier, identifier, meta, false));
                 }
             }
 
