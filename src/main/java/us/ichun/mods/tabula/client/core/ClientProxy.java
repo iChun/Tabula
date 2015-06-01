@@ -18,8 +18,6 @@ import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -235,41 +233,6 @@ public class ClientProxy extends CommonProxy
                 if(base != null && te != null)
                 {
                     ModelList.models.add(new ModelInfo(loc, base, te));
-                }
-            }
-            catch(Exception e1)
-            {
-            }
-        }
-
-        IdentityHashMap<Item, IItemRenderer> customItemRenderers = ObfuscationReflectionHelper.getPrivateValue(MinecraftForgeClient.class, null, "customItemRenderers");//TODO move this string to iChunUtil obfhelper in 1.8
-        Iterator ite3 = customItemRenderers.entrySet().iterator();
-        while(ite3.hasNext())
-        {
-            Map.Entry<Item, IItemRenderer> e = (Map.Entry)ite3.next();
-            Item item = e.getKey();
-            IItemRenderer renderer = e.getValue();
-
-            try
-            {
-                ModelBase base = null;
-                ResourceLocation loc = null;
-                Field[] fields = renderer.getClass().getDeclaredFields();
-                for(Field f : fields)
-                {
-                    f.setAccessible(true);
-                    if(ModelBase.class.isAssignableFrom(f.getType()))
-                    {
-                        base = (ModelBase)f.get(renderer);
-                    }
-                    if(loc == null && ResourceLocation.class.isAssignableFrom(f.getType()))
-                    {
-                        loc = (ResourceLocation)f.get(e.getValue());
-                    }
-                }
-                if(base != null && item != null)
-                {
-                    ModelList.models.add(new ModelInfo(loc, base, item.getClass()));
                 }
             }
             catch(Exception e1)

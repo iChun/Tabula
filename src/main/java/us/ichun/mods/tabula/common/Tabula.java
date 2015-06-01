@@ -11,7 +11,6 @@ import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import us.ichun.mods.ichunutil.common.core.Logger;
-import us.ichun.mods.ichunutil.common.core.config.ConfigBase;
 import us.ichun.mods.ichunutil.common.core.config.ConfigHandler;
 import us.ichun.mods.ichunutil.common.core.network.PacketChannel;
 import us.ichun.mods.ichunutil.common.core.updateChecker.ModVersionChecker;
