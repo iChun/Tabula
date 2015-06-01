@@ -25,6 +25,7 @@ window.modelTree.title=Arborescence du modèle
 window.modelTree.newCube=Nouveau cube
 window.modelTree.newGroup=Nouveau groupe
 window.modelTree.delete=Supprimer
+window.modelTree.editMeta=Éditer la Metadata
 
 window.texture.title=Texture
 window.texture.loadTexture=Charger une texture
@@ -106,6 +107,13 @@ window.selectTheme.title=Sélectinner le thème
 window.settings.title=Options
 window.settings.renderRotationPoint=Point de rotation du rendu de modèle
 
+window.autoLayout.failed=Echec d'application des textures.
+
+window.metadata.title=Metadata du projet
+window.metadata.titleShort=Metadata
+
+window.ghostModel.title=Mettre le modèle fantome
+
 export.title=Exporter le projet
 export.failed=Echec d'export !
 export.textureMap.name=plan de texture
@@ -139,6 +147,8 @@ topdock.info=A propos de ce mod
 topdock.exitTabula=Quitter Tabula
 topdock.wood=Bloc
 topdock.woodFull=Masquer/Afficher le bloc
+topdock.autoLayout=Appliquer les textures automatiquement
+topdock.ghostModel=Mettre le modèle fantome
 
 system.playersInSession=Joueur en session
 system.editor=Éditeur
@@ -169,21 +179,25 @@ tabula.config.prop.renderRotationPoint.name=Point de rotation du rendu de modèl
 tabula.config.prop.renderWorkspaceBlock.name=Espace de travail du rendu
 tabula.config.prop.renderGrid.name=Grille de rendu
 tabula.config.prop.renderModelControls.name=Contrôles du modèle de rendu
+tabula.config.prop.swapPositionOffset.name=Échange de Position/Offset
 tabula.config.prop.chatSound.name=Son du Chat
 tabula.config.prop.allowEveryoneToEdit.name=Autorise tout le monde à éditer
 tabula.config.prop.editors.name=Éditeurs autorisés
 tabula.config.prop.animateImports.name=imports d'animation
-tabula.config.prop.chatWindow.name=Option de fen^tre du Chat 
+tabula.config.prop.chatWindow.name=Option de fenêtre du Chat 
+tabula.config.prop.tooltipTime.name=Délai de bulle d'aide
 
 tabula.config.prop.favTheme.comment=Thème de couleur favori de l'interface Tabula
 tabula.config.prop.renderRotationPoint.comment=Le point de rotation du modèle sélectionné doit-il être rendu
 tabula.config.prop.renderWorkspaceBlock.comment=Le bloc de l'espace de travail doit-il être rendu
 tabula.config.prop.renderGrid.comment=La grille de l'espace de travail doit-elle être rendue
 tabula.config.prop.renderModelControls.comment=Les contrôles du modèle doit-ils être rendus
-tabula.config.prop.chatSound.comment=Activer les son du chat ?
+tabula.config.prop.swapPositionOffset.comment=Échanger la position et l'offset du modèle lors du changement des deux valeurs ?
+tabula.config.prop.chatSound.comment=Activer les sons du chat ?
 tabula.config.prop.allowEveryoneToEdit.comment=Autorise les personnes qui sont connectées à votre session Tabula d'éditer le modèle
 tabula.config.prop.editors.comment=Personnes autorisés à éditer les modèles dans votre session multijoueur Tabula.\nSéparez les nom d'utilisateurs par une virgule et un espace (", " - pas de citations)
 tabula.config.prop.animateImports.comment=Essayer d'animer les possibles modèles importés pour corriger leurs rotations?
 tabula.config.prop.chatWindow.comment=Ne touchez pas ceci. Sérieusement.
+tabula.config.prop.tooltipTime.comment=Délais (en tics) d'apparition des bulles d'aide.
 
 tile.tabula.block.tabularasa.name=Tablette de cire
