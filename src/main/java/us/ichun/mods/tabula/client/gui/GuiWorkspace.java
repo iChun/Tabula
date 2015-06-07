@@ -1585,6 +1585,6 @@ public class GuiWorkspace extends IWorkspace
     @Override
     public boolean doesGuiPauseGame()
     {
-        return false;
+        return true;
     }
 }
