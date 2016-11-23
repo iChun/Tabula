@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import us.ichun.mods.ichunutil.common.core.network.AbstractPacket;
+import me.ichun.mods.ichunutil.common.core.network.AbstractPacket;
 import us.ichun.mods.tabula.common.Tabula;
 
 public class PacketClearTexture extends AbstractPacket
@@ -25,21 +25,21 @@ public class PacketClearTexture extends AbstractPacket
     }
 
     @Override
-    public void writeTo(ByteBuf buffer, Side side)
+    public void writeTo(ByteBuf buffer)
     {
         ByteBufUtils.writeUTF8String(buffer, host);
         ByteBufUtils.writeUTF8String(buffer, projIdent);
     }
 
     @Override
-    public void readFrom(ByteBuf buffer, Side side)
+    public void readFrom(ByteBuf buffer)
     {
         host = ByteBufUtils.readUTF8String(buffer);
         projIdent = ByteBufUtils.readUTF8String(buffer);
     }
 
     @Override
-    public void execute(Side side, EntityPlayer player)
+    public AbstractPacket execute(Side side, EntityPlayer player)
     {
         if(side.isServer())
         {

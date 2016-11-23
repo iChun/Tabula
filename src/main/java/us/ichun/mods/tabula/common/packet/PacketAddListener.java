@@ -1,6 +1,7 @@
 package us.ichun.mods.tabula.common.packet;
 
 import io.netty.buffer.ByteBuf;
+import me.ichun.mods.ichunutil.common.core.network.AbstractPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -8,7 +9,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import us.ichun.mods.ichunutil.common.core.network.AbstractPacket;
 import us.ichun.mods.tabula.common.Tabula;
 
 public class PacketAddListener extends AbstractPacket
@@ -25,34 +25,41 @@ public class PacketAddListener extends AbstractPacket
     }
 
     @Override
-    public void writeTo(ByteBuf buffer, Side side)
+    public void writeTo(ByteBuf buffer)
     {
         ByteBufUtils.writeUTF8String(buffer, host);
         ByteBufUtils.writeUTF8String(buffer, listener);
     }
 
     @Override
-    public void readFrom(ByteBuf buffer, Side side)
+    public void readFrom(ByteBuf buffer)
     {
         host = ByteBufUtils.readUTF8String(buffer);
         listener = ByteBufUtils.readUTF8String(buffer);
     }
 
     @Override
-    public void execute(Side side, EntityPlayer player)
+    public AbstractPacket execute(Side side, EntityPlayer player)
     {
         if(side.isServer())
         {
-            EntityPlayerMP hoster = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerByUsername(host);
+            EntityPlayerMP hoster = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(host);
             if(hoster != null)
             {
-                Tabula.channel.sendToPlayer(this, hoster);
+                Tabula.channel.sendTo(this, hoster);
             }
         }
         else
         {
             handleClient();
         }
+        return null;
+    }
+
+    @Override
+    public Side receivingSide()
+    {
+        return null;
     }
 
     @SideOnly(Side.CLIENT)

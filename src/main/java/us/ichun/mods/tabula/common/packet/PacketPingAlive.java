@@ -8,7 +8,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import us.ichun.mods.ichunutil.common.core.network.AbstractPacket;
+import me.ichun.mods.ichunutil.common.core.network.AbstractPacket;
 import us.ichun.mods.tabula.client.gui.GuiWorkspace;
 import us.ichun.mods.tabula.common.Tabula;
 import us.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
@@ -32,7 +32,7 @@ public class PacketPingAlive extends AbstractPacket
     }
 
     @Override
-    public void writeTo(ByteBuf buffer, Side side)
+    public void writeTo(ByteBuf buffer)
     {
         ByteBufUtils.writeUTF8String(buffer, host);
         buffer.writeInt(x);
@@ -41,7 +41,7 @@ public class PacketPingAlive extends AbstractPacket
     }
 
     @Override
-    public void readFrom(ByteBuf buffer, Side side)
+    public void readFrom(ByteBuf buffer)
     {
         host = ByteBufUtils.readUTF8String(buffer);
         x = buffer.readInt();
@@ -50,7 +50,7 @@ public class PacketPingAlive extends AbstractPacket
     }
 
     @Override
-    public void execute(Side side, EntityPlayer player)
+    public AbstractPacket execute(Side side, EntityPlayer player)
     {
         if(side.isServer())
         {

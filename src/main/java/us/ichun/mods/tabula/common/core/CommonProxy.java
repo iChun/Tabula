@@ -1,5 +1,6 @@
 package us.ichun.mods.tabula.common.core;
 
+import me.ichun.mods.ichunutil.common.core.network.PacketChannel;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -21,15 +22,15 @@ public class CommonProxy
 
     public void preInit()
     {
-        Tabula.blockTabulaRasa = (new BlockTabulaRasa(Material.circuits)).setHardness(0.0F).setCreativeTab(CreativeTabs.tabDecorations).setStepSound(Block.soundTypeWood).setUnlocalizedName("tabula.block.tabularasa");
+        Tabula.blockTabulaRasa = (new BlockTabulaRasa(Material.CIRCUITS)).setHardness(0.0F).setCreativeTab(CreativeTabs.DECORATIONS).setStepSound(Block.soundTypeWood).setUnlocalizedName("tabula.block.tabularasa");
 
         GameRegistry.registerBlock(Tabula.blockTabulaRasa, "TabulaRasa");
 
-        GameRegistry.addRecipe(new ItemStack(Tabula.blockTabulaRasa, 1),"#", "S", Character.valueOf('#'), Items.ghast_tear, Character.valueOf('S'), Blocks.wooden_pressure_plate);
+        GameRegistry.addRecipe(new ItemStack(Tabula.blockTabulaRasa, 1),"#", "S", '#', Items.GHAST_TEAR, 'S', Blocks.WOODEN_PRESSURE_PLATE);
 
         registerTileEntity(TileEntityTabulaRasa.class, "Tabula_TabulaRasa");
 
-        Tabula.channel = ChannelHandler.getChannelHandlers(Tabula.modName, PacketRequestSession.class, PacketBeginSession.class, PacketEndSession.class, PacketAddListener.class, PacketRemoveListener.class,
+        Tabula.channel = new PacketChannel(Tabula.MOD_NAME, PacketRequestSession.class, PacketBeginSession.class, PacketEndSession.class, PacketAddListener.class, PacketRemoveListener.class,
                 PacketChat.class, PacketChatMessage.class, PacketPingAlive.class, PacketIsEditor.class, PacketRequestHeartbeat.class,
                 PacketHeartbeat.class, PacketProjectFragment.class, PacketCloseProject.class, PacketRequestProject.class, PacketSetCurrentProject.class,
                 PacketGenericMethod.class, PacketProjectFragmentFromClient.class, PacketClearTexture.class, PacketListenersList.class, PacketSetProjectMetadata.class);

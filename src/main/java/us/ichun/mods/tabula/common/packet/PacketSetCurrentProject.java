@@ -6,7 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
-import us.ichun.mods.ichunutil.common.core.network.AbstractPacket;
+import me.ichun.mods.ichunutil.common.core.network.AbstractPacket;
 import us.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
 
 public class PacketSetCurrentProject extends AbstractPacket
@@ -30,7 +30,7 @@ public class PacketSetCurrentProject extends AbstractPacket
     }
 
     @Override
-    public void writeTo(ByteBuf buffer, Side side)
+    public void writeTo(ByteBuf buffer)
     {
         ByteBufUtils.writeUTF8String(buffer, host);
         buffer.writeInt(x);
@@ -40,7 +40,7 @@ public class PacketSetCurrentProject extends AbstractPacket
     }
 
     @Override
-    public void readFrom(ByteBuf buffer, Side side)
+    public void readFrom(ByteBuf buffer)
     {
         host = ByteBufUtils.readUTF8String(buffer);
         x = buffer.readInt();
@@ -50,7 +50,7 @@ public class PacketSetCurrentProject extends AbstractPacket
     }
 
     @Override
-    public void execute(Side side, EntityPlayer player)
+    public AbstractPacket execute(Side side, EntityPlayer player)
     {
         if(side.isServer())
         {

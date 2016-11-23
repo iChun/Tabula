@@ -58,7 +58,7 @@ public class ExportJava extends Exporter
         sb.append("\n");
         sb.append("/**\n");
         sb.append(" * " + info.modelName + " - " + info.authorName + "\n");
-        sb.append(" * Created using Tabula " + Tabula.version + "\n");
+        sb.append(" * Created using Tabula " + Tabula.VERSION + "\n");
         sb.append(" */\n");
         sb.append("public class " + params[1] + " extends ModelBase {\n");
         if(!(info.scale[0] == 1D && info.scale[1] == 1D && info.scale[2] == 1D))

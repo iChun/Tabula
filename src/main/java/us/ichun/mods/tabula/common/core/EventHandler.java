@@ -17,18 +17,18 @@ import java.awt.*;
 
 public class EventHandler
 {
-    public static final int TABULA_BUTTON_ID = Tabula.modName.hashCode();
+    public static final int TABULA_BUTTON_ID = Tabula.MOD_NAME.hashCode();
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onInitGuiPost(GuiScreenEvent.InitGuiEvent.Post event)
     {
-        if(event.gui instanceof GuiMainMenu)
+        if(event.getGui() instanceof GuiMainMenu)
         {
             int offsetX = 0;
             int offsetY = 0; //24?
-            int btnX = event.gui.width / 2 - 124 + offsetX;
-            int btnY = event.gui.height / 4 + 48 + 24 * 2 + offsetY;
+            int btnX = event.getGui().width / 2 - 124 + offsetX;
+            int btnY = event.getGui().height / 4 + 48 + 24 * 2 + offsetY;
             while(true)
             {
                 if(btnX < 0)
@@ -43,16 +43,16 @@ public class EventHandler
                     {
                         offsetX = 0;
                         offsetY -= 24;
-                        btnX = event.gui.width / 2 - 124 + offsetX;
-                        btnY = event.gui.height / 4 + 48 + 24 * 2 + offsetY;
+                        btnX = event.getGui().width / 2 - 124 + offsetX;
+                        btnY = event.getGui().height / 4 + 48 + 24 * 2 + offsetY;
                     }
                 }
 
                 Rectangle btn = new Rectangle(btnX, btnY, 20, 20);//Thanks to heldplayer for this.
                 boolean intersects = false;
-                for(int i = 0; i < event.gui.buttonList.size(); i++)
+                for(int i = 0; i < event.getGui().buttonList.size(); i++)
                 {
-                    GuiButton button = (GuiButton)event.gui.buttonList.get(i);
+                    GuiButton button = (GuiButton)event.getGui().buttonList.get(i);
                     if(!intersects)
                     {
                         intersects = btn.intersects(new Rectangle(button.xPosition, button.yPosition, button.width, button.height));
@@ -67,7 +67,7 @@ public class EventHandler
                 btnX -= 24; // move to the left to try and find a free space.
             }
 
-            event.gui.buttonList.add(new GuiButton(TABULA_BUTTON_ID, btnX, btnY, 20, 20, "T"));
+            event.getGui().buttonList.add(new GuiButton(TABULA_BUTTON_ID, btnX, btnY, 20, 20, "T"));
         }
     }
 
@@ -75,7 +75,7 @@ public class EventHandler
     @SubscribeEvent
     public void onButtonPressPre(GuiScreenEvent.ActionPerformedEvent.Pre event)
     {
-        if(event.gui instanceof GuiMainMenu && event.button.id == TABULA_BUTTON_ID)
+        if(event.getGui() instanceof GuiMainMenu && event.getButton().id == TABULA_BUTTON_ID)
         {
             Tabula.proxy.tickHandlerClient.initializeMainframe(null, -1, -1, -1);
             event.setCanceled(true);

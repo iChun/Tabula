@@ -1,6 +1,6 @@
 package us.ichun.mods.tabula.client.gui;
 
-public class Theme extends us.ichun.mods.ichunutil.client.gui.Theme
+public class Theme extends me.ichun.mods.ichunutil.client.gui.Theme
 {
     public BlockInfo workspaceBlock = new BlockInfo();
 

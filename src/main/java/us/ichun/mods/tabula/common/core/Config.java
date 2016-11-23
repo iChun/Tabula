@@ -1,9 +1,10 @@
 package us.ichun.mods.tabula.common.core;
 
-import us.ichun.mods.ichunutil.common.core.config.ConfigBase;
-import us.ichun.mods.ichunutil.common.core.config.annotations.ConfigProp;
-import us.ichun.mods.ichunutil.common.core.config.annotations.IntBool;
-import us.ichun.mods.ichunutil.common.core.config.annotations.IntMinMax;
+import me.ichun.mods.ichunutil.common.core.config.ConfigBase;
+import me.ichun.mods.ichunutil.common.core.config.annotations.ConfigProp;
+import me.ichun.mods.ichunutil.common.core.config.annotations.IntBool;
+import me.ichun.mods.ichunutil.common.core.config.annotations.IntMinMax;
+import us.ichun.mods.tabula.common.Tabula;
 
 import java.io.File;
 
@@ -58,15 +59,15 @@ public class Config extends ConfigBase
     @IntBool
     public int animationWarning = 0;
 
-    public Config(File file, String... unhide)
+    public Config(File file)
     {
-        super(file, unhide);
+        super(file);
     }
 
     @Override
     public String getModId()
     {
-        return "tabula";
+        return Tabula.MOD_ID;
     }
 
     @Override

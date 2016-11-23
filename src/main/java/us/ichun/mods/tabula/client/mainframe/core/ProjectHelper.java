@@ -242,7 +242,7 @@ public class ProjectHelper
                 }
                 catch(Exception e)
                 {
-                    Tabula.logger.warn("Error reading project sent through server!");
+                    Tabula.LOGGER.warn("Error reading project sent through server!");
                     e.printStackTrace();
                 }
 

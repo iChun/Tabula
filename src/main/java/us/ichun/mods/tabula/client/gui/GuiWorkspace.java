@@ -154,7 +154,7 @@ public class GuiWorkspace extends IWorkspace
         }
         catch(Exception e)
         {
-            Tabula.logger.warn("Error reading default theme!");
+            Tabula.LOGGER.warn("Error reading default theme!");
             e.printStackTrace();
         }
 
@@ -175,13 +175,13 @@ public class GuiWorkspace extends IWorkspace
                 }
                 catch(Exception e)
                 {
-                    Tabula.logger.warn("Error reading preferred theme!");
+                    Tabula.LOGGER.warn("Error reading preferred theme!");
                     e.printStackTrace();
                 }
             }
             else
             {
-                Tabula.logger.warn("Preferred theme file does not exist!");
+                Tabula.LOGGER.warn("Preferred theme file does not exist!");
             }
         }
 
