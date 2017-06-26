@@ -1,9 +1,9 @@
 [
 {
-  "modid" : "Tabula",
+  "modid" : "tabula",
   "name" : "Tabula",
   "version" : "${version}",
-  "url" : "http://www.ichun.us/",
+  "url" : "http://ichun.me/mods/tabula-minecraft-modeler/",
   "credits" : "",
   "authorList": [
     "iChun"
