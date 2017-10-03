@@ -3,15 +3,8 @@ package me.ichun.mods.tabula.common.core;
 import me.ichun.mods.ichunutil.common.core.network.PacketChannel;
 import me.ichun.mods.tabula.client.core.TickHandlerClient;
 import me.ichun.mods.tabula.common.Tabula;
-import me.ichun.mods.tabula.common.block.BlockTabulaRasa;
 import me.ichun.mods.tabula.common.packet.*;
 import me.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
-import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ProxyCommon
