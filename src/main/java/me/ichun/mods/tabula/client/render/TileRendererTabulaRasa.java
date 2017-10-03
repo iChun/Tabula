@@ -16,7 +16,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 
-public class TileRendererTabulaRasa extends TileEntitySpecialRenderer
+public class TileRendererTabulaRasa extends TileEntitySpecialRenderer<TileEntityTabulaRasa>
 {
     public ModelWaxTablet model;
     public final ResourceLocation txModel = new ResourceLocation("tabula", "textures/model/tabulaRasa.png");
@@ -26,7 +26,7 @@ public class TileRendererTabulaRasa extends TileEntitySpecialRenderer
         model = new ModelWaxTablet();
     }
 
-    public void renderTabulaRasa(TileEntityTabulaRasa tr, double d, double d1, double d2, float f, int destroyState)
+    public void render(TileEntityTabulaRasa tr, double d, double d1, double d2, float f, int destroyState, float alpha)
     {
         GlStateManager.pushMatrix();
 
@@ -127,11 +127,5 @@ public class TileRendererTabulaRasa extends TileEntitySpecialRenderer
         GlStateManager.disableNormalize();
 
         GlStateManager.popMatrix();
-    }
-
-    @Override
-    public void renderTileEntityAt(TileEntity tileentity, double d0, double d1, double d2, float f, int destroyState)
-    {
-        renderTabulaRasa((TileEntityTabulaRasa)tileentity, d0, d1, d2, f, destroyState);
     }
 }

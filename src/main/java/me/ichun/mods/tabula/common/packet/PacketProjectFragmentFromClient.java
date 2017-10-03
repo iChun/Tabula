@@ -66,7 +66,7 @@ public class PacketProjectFragmentFromClient extends AbstractPacket
     }
 
     @Override
-    public AbstractPacket execute(Side side, EntityPlayer player)
+    public void execute(Side side, EntityPlayer player)
     {
         if(side.isServer())
         {
@@ -80,7 +80,6 @@ public class PacketProjectFragmentFromClient extends AbstractPacket
         {
             handleClient();
         }
-        return null;
     }
 
     @Override

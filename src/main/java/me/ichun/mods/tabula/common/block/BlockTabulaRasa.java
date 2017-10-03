@@ -72,12 +72,12 @@ public class BlockTabulaRasa extends Block
         if(te instanceof TileEntityTabulaRasa)
         {
             TileEntityTabulaRasa tr = (TileEntityTabulaRasa)te;
-            tr.side = MathHelper.floor_double((double)(living.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+            tr.side = MathHelper.floor((double)(living.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
         }
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if(world.isRemote)
         {
@@ -102,7 +102,7 @@ public class BlockTabulaRasa extends Block
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos)
     {
         return null;
     }
@@ -120,7 +120,7 @@ public class BlockTabulaRasa extends Block
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block)
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos)
     {
         TileEntity te = world.getTileEntity(pos);
         if(te instanceof TileEntityTabulaRasa)

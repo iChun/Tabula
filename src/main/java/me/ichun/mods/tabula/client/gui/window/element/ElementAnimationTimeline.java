@@ -175,7 +175,7 @@ public class ElementAnimationTimeline extends Element
             {
                 sbx1 += 10;
                 sbx2 -= 10;
-                sliderProgHori = 1.0F - MathHelper.clamp_double((double) (sbx2 - mouseX) / (double) (sbx2 - sbx1), 0.0D, 1.0D);
+                sliderProgHori = 1.0F - MathHelper.clamp((double) (sbx2 - mouseX) / (double) (sbx2 - sbx1), 0.0D, 1.0D);
             }
         }
         else
@@ -314,7 +314,7 @@ public class ElementAnimationTimeline extends Element
             {
                 sby1 += 10;
                 sby2 -= 10;
-                sliderProgVert = 1.0F - MathHelper.clamp_double((double) (sby2 - mouseY) / (double) (sby2 - sby1), 0.0D, 1.0D);
+                sliderProgVert = 1.0F - MathHelper.clamp((double) (sby2 - mouseY) / (double) (sby2 - sby1), 0.0D, 1.0D);
             }
         }
         else
@@ -400,7 +400,7 @@ public class ElementAnimationTimeline extends Element
             int hiddenWidth = totalWidth - elementWidth;
             if(tickerPos > elementWidth + sliderProgHori * hiddenWidth || tickerPos < hiddenWidth * sliderProgHori)
             {
-                sliderProgHori = MathHelper.clamp_double((tickerPos - (elementWidth / 3D)) / (double)hiddenWidth, 0.0D, 1.0D);
+                sliderProgHori = MathHelper.clamp((tickerPos - (elementWidth / 3D)) / (double)hiddenWidth, 0.0D, 1.0D);
             }
         }
     }
@@ -549,7 +549,7 @@ public class ElementAnimationTimeline extends Element
             if(timeWidth + 20 > Math.floor((float)(width - 101) / (float)tickWidth))
             {
                 sliderProgHori += 0.05D * -k;
-                sliderProgHori = MathHelper.clamp_double(sliderProgHori, 0.0D, 1.0D);
+                sliderProgHori = MathHelper.clamp(sliderProgHori, 0.0D, 1.0D);
             }
         }
         else
@@ -557,7 +557,7 @@ public class ElementAnimationTimeline extends Element
             if(size > height - 20)
             {
                 sliderProgVert += 0.05D * -k;
-                sliderProgVert = MathHelper.clamp_double(sliderProgVert, 0.0D, 1.0D);
+                sliderProgVert = MathHelper.clamp(sliderProgVert, 0.0D, 1.0D);
             }
         }
 

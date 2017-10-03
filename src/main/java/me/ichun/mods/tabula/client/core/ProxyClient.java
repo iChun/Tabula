@@ -1,6 +1,5 @@
 package me.ichun.mods.tabula.client.core;
 
-import me.ichun.mods.ichunutil.client.gui.window.element.Element;
 import me.ichun.mods.ichunutil.client.model.util.ModelHelper;
 import me.ichun.mods.ichunutil.client.module.tabula.model.ModelInfo;
 import me.ichun.mods.ichunutil.client.module.tabula.model.ModelList;
@@ -16,14 +15,11 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderEntity;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
-import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -35,6 +31,8 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -56,24 +54,15 @@ public class ProxyClient extends ProxyCommon
     }
 
     @Override
-    public void init()
-    {
-        super.init();
-
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(Tabula.blockTabulaRasa), 0, new ModelResourceLocation("tabula:TabulaRasa", "inventory"));
-    }
-
-    @Override
     public void postInit()
     {
         super.postInit();
 
         ArrayList<Class<? extends Entity>> compatibleEntities = new ArrayList<>();
 
-        for(Object o2 : EntityList.CLASS_TO_NAME.entrySet())
+        for(EntityEntry entry : ForgeRegistries.ENTITIES.getValues())
         {
-            Map.Entry e = (Map.Entry)o2;
-            Class clz = (Class)e.getKey();
+            Class clz = entry.getEntityClass();
             if(EntityLivingBase.class.isAssignableFrom(clz) && !compatibleEntities.contains(clz))
             {
                 compatibleEntities.add(clz);
@@ -211,7 +200,7 @@ public class ProxyClient extends ProxyCommon
             }
         }
 
-        for(Object o : TileEntityRendererDispatcher.instance.mapSpecialRenderers.entrySet())
+        for(Object o : TileEntityRendererDispatcher.instance.renderers.entrySet())
         {
             Map.Entry e = (Map.Entry)o;
             Class te = (Class)e.getKey();

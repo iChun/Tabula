@@ -93,7 +93,7 @@ public class PacketProjectFragment extends AbstractPacket
     }
 
     @Override
-    public AbstractPacket execute(Side side, EntityPlayer player)
+    public void execute(Side side, EntityPlayer player)
     {
         if(side.isServer())
         {
@@ -109,7 +109,7 @@ public class PacketProjectFragment extends AbstractPacket
 
                 if(x != -1 && y != -1 && z != -1 && isCurrentProject && changed)
                 {
-                    TileEntity te = player.worldObj.getTileEntity(new BlockPos(x, y, z));
+                    TileEntity te = player.world.getTileEntity(new BlockPos(x, y, z));
                     if(te instanceof TileEntityTabulaRasa)
                     {
                         TileEntityTabulaRasa tr = (TileEntityTabulaRasa)te;
@@ -142,7 +142,6 @@ public class PacketProjectFragment extends AbstractPacket
         {
             ProjectHelper.receiveProjectData(!host.equals(listener), projectIdentifier, isTexture, updateDims, packetTotal, packetNumber, data);
         }
-        return null;
     }
 
     @Override

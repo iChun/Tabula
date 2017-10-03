@@ -768,11 +768,11 @@ public class Mainframe
                             split1.scaleOffset = comp.scaleOffset;
                             split1.opacityOffset = comp.opacityOffset;
 
-                            float prog = MathHelper.clamp_float((currentPos - comp.startKey) / (float)comp.length, 0F, 1F);
+                            float prog = MathHelper.clamp((currentPos - comp.startKey) / (float)comp.length, 0F, 1F);
                             float mag = prog;
                             if(comp.getProgressionCurve() != null)
                             {
-                                mag = MathHelper.clamp_float((float)comp.getProgressionCurve().value(prog), 0.0F, 1.0F);
+                                mag = MathHelper.clamp((float)comp.getProgressionCurve().value(prog), 0.0F, 1.0F);
                             }
                             for(int i = 0; i < 3; i++)
                             {

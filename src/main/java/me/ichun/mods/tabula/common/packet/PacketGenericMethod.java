@@ -100,7 +100,7 @@ public class PacketGenericMethod extends AbstractPacket
     }
 
     @Override
-    public AbstractPacket execute(Side side, EntityPlayer player)
+    public void execute(Side side, EntityPlayer player)
     {
         if(side.isServer())
         {
@@ -114,7 +114,6 @@ public class PacketGenericMethod extends AbstractPacket
         {
             handleClient();
         }
-        return null;
     }
 
     @Override

@@ -642,25 +642,25 @@ public class GuiWorkspace extends IWorkspace
                 ArrayList<String> editorsList = remoteSession ? editors : Tabula.proxy.tickHandlerClient.mainframe.editors;
                 listenersList.removeAll(editorsList);
 
-                int tabHeight = (fontRendererObj.FONT_HEIGHT + 2) * (listenersList.size() + editorsList.size() + 1) + 3 + 2; // border
+                int tabHeight = (fontRenderer.FONT_HEIGHT + 2) * (listenersList.size() + editorsList.size() + 1) + 3 + 2; // border
 
 
                 RendererHelper.drawColourOnScreen(currentTheme.windowBorder[0], currentTheme.windowBorder[1], currentTheme.windowBorder[2], 255, width / 2 - 101, (height - tabHeight) / 2 - 1, 202, tabHeight + 2    , 0);
                 RendererHelper.drawColourOnScreen(currentTheme.windowBackground[0], currentTheme.windowBackground[1], currentTheme.windowBackground[2], 255, width / 2 - 100, (height - tabHeight) / 2, 200, tabHeight, 0);
-                RendererHelper.drawColourOnScreen(currentTheme.windowBorder[0], currentTheme.windowBorder[1], currentTheme.windowBorder[2], 255, width / 2 - 101, (height - tabHeight) / 2 - 1 + fontRendererObj.FONT_HEIGHT + 2 + 3, 202, 1, 0);
+                RendererHelper.drawColourOnScreen(currentTheme.windowBorder[0], currentTheme.windowBorder[1], currentTheme.windowBorder[2], 255, width / 2 - 101, (height - tabHeight) / 2 - 1 + fontRenderer.FONT_HEIGHT + 2 + 3, 202, 1, 0);
 
-                fontRendererObj.drawString(I18n.translateToLocal("system.playersInSession"), width / 2 - 101 + 4, (height - tabHeight) / 2 - 1 + 3, currentTheme.getAsHex(currentTheme.font), false);
+                fontRenderer.drawString(I18n.translateToLocal("system.playersInSession"), width / 2 - 101 + 4, (height - tabHeight) / 2 - 1 + 3, currentTheme.getAsHex(currentTheme.font), false);
 
                 for(int i = 0; i < editorsList.size(); i++)
                 {
-                    fontRendererObj.drawString(editorsList.get(i), width / 2 - 101 + 4, (height - tabHeight) / 2 - 1 + 3 + (fontRendererObj.FONT_HEIGHT + 2) + 4, currentTheme.getAsHex(currentTheme.font), false);
-                    fontRendererObj.drawString(i == 0 ? I18n.translateToLocal("system.host") : I18n.translateToLocal("system.editor"), width / 2 + 101 - 4 - fontRendererObj.getStringWidth(i == 0 ? I18n.translateToLocal("system.host") : I18n.translateToLocal("system.editor")), (height - tabHeight) / 2 - 1 + 3 + (fontRendererObj.FONT_HEIGHT + 2) + 4, currentTheme.getAsHex(currentTheme.font), false);
-                    GlStateManager.translate(0F, (fontRendererObj.FONT_HEIGHT + 2), 0);
+                    fontRenderer.drawString(editorsList.get(i), width / 2 - 101 + 4, (height - tabHeight) / 2 - 1 + 3 + (fontRenderer.FONT_HEIGHT + 2) + 4, currentTheme.getAsHex(currentTheme.font), false);
+                    fontRenderer.drawString(i == 0 ? I18n.translateToLocal("system.host") : I18n.translateToLocal("system.editor"), width / 2 + 101 - 4 - fontRenderer.getStringWidth(i == 0 ? I18n.translateToLocal("system.host") : I18n.translateToLocal("system.editor")), (height - tabHeight) / 2 - 1 + 3 + (fontRenderer.FONT_HEIGHT + 2) + 4, currentTheme.getAsHex(currentTheme.font), false);
+                    GlStateManager.translate(0F, (fontRenderer.FONT_HEIGHT + 2), 0);
                 }
                 for(String aListenersList : listenersList)
                 {
-                    fontRendererObj.drawString(aListenersList, width / 2 - 101 + 4, (height - tabHeight) / 2 - 1 + 3 + (fontRendererObj.FONT_HEIGHT + 2) + 4, currentTheme.getAsHex(currentTheme.font), false);
-                    GlStateManager.translate(0F, (fontRendererObj.FONT_HEIGHT + 2), 0);
+                    fontRenderer.drawString(aListenersList, width / 2 - 101 + 4, (height - tabHeight) / 2 - 1 + 3 + (fontRenderer.FONT_HEIGHT + 2) + 4, currentTheme.getAsHex(currentTheme.font), false);
+                    GlStateManager.translate(0F, (fontRenderer.FONT_HEIGHT + 2), 0);
                 }
 
                 GlStateManager.popMatrix();
@@ -933,7 +933,7 @@ public class GuiWorkspace extends IWorkspace
         GlStateManager.enableLighting();
 
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer vertexbuffer = tessellator.getBuffer();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
         int light1 = 15728880 >> 16 & 65535;
         int light2 = 15728880 & 65535;
 
@@ -1077,15 +1077,15 @@ public class GuiWorkspace extends IWorkspace
             double pZ = -3.495D - dist;
             double w = 7 + (dist * 2);
             double l = 7 + (dist * 2);
-            vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
-            vertexbuffer.pos(pX, pY, pZ + l).tex(-0.125D, 7.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-            vertexbuffer.pos(pX + w, pY, pZ + l).tex(7.125D, 7.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-            vertexbuffer.pos(pX + w, pY, pZ).tex(7.125D, -0.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-            vertexbuffer.pos(pX, pY, pZ).tex(-0.125D, -0.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-            vertexbuffer.pos(pX + w, pY, pZ + l).tex(7.125D, 7.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-            vertexbuffer.pos(pX, pY, pZ + l).tex(-0.125D, 7.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-            vertexbuffer.pos(pX, pY, pZ).tex(-0.125D, -0.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-            vertexbuffer.pos(pX + w, pY, pZ).tex(7.125D, -0.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+            bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
+            bufferbuilder.pos(pX, pY, pZ + l).tex(-0.125D, 7.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+            bufferbuilder.pos(pX + w, pY, pZ + l).tex(7.125D, 7.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+            bufferbuilder.pos(pX + w, pY, pZ).tex(7.125D, -0.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+            bufferbuilder.pos(pX, pY, pZ).tex(-0.125D, -0.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+            bufferbuilder.pos(pX + w, pY, pZ + l).tex(7.125D, 7.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+            bufferbuilder.pos(pX, pY, pZ + l).tex(-0.125D, 7.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+            bufferbuilder.pos(pX, pY, pZ).tex(-0.125D, -0.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+            bufferbuilder.pos(pX + w, pY, pZ).tex(7.125D, -0.125D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
             tessellator.draw();
         }
 
@@ -1127,15 +1127,15 @@ public class GuiWorkspace extends IWorkspace
         double pZ = -1D - dist;
         double w = 2 + (dist * 2);
         double l = 2 + (dist * 2);
-        vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
-        vertexbuffer.pos(pX, pY, pZ + l).tex(0.0D, 1.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-        vertexbuffer.pos(pX + w, pY, pZ + l).tex(1.0D, 1.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-        vertexbuffer.pos(pX + w, pY, pZ).tex(1.0D, 0.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-        vertexbuffer.pos(pX	  , pY, pZ).tex(0.0D, 0.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-        vertexbuffer.pos(pX + w, pY, pZ + l).tex(1.0D, 1.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-        vertexbuffer.pos(pX	  , pY, pZ + l).tex(0.0D, 1.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-        vertexbuffer.pos(pX	  , pY, pZ).tex(0.0D, 0.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-        vertexbuffer.pos(pX + w, pY, pZ).tex(1.0D, 0.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
+        bufferbuilder.pos(pX, pY, pZ + l).tex(0.0D, 1.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+        bufferbuilder.pos(pX + w, pY, pZ + l).tex(1.0D, 1.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+        bufferbuilder.pos(pX + w, pY, pZ).tex(1.0D, 0.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+        bufferbuilder.pos(pX	  , pY, pZ).tex(0.0D, 0.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+        bufferbuilder.pos(pX + w, pY, pZ + l).tex(1.0D, 1.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+        bufferbuilder.pos(pX	  , pY, pZ + l).tex(0.0D, 1.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+        bufferbuilder.pos(pX	  , pY, pZ).tex(0.0D, 0.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
+        bufferbuilder.pos(pX + w, pY, pZ).tex(1.0D, 0.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
         tessellator.draw();
 
         GlStateManager.disableBlend();

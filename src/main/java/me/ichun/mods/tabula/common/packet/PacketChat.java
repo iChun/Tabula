@@ -43,7 +43,7 @@ public class PacketChat extends AbstractPacket
     }
 
     @Override
-    public AbstractPacket execute(Side side, EntityPlayer player)
+    public void execute(Side side, EntityPlayer player)
     {
         if(side.isServer())
         {
@@ -57,7 +57,6 @@ public class PacketChat extends AbstractPacket
         {
             handleClient();
         }
-        return null;
     }
 
     @Override

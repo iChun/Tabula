@@ -20,10 +20,6 @@ public class ProxyCommon
 
     public void preInit()
     {
-        Tabula.blockTabulaRasa = GameRegistry.register((new BlockTabulaRasa(Material.CIRCUITS)).setHardness(0.0F).setCreativeTab(CreativeTabs.DECORATIONS).setRegistryName(new ResourceLocation("tabula", "TabulaRasa")).setUnlocalizedName("tabula.block.tabularasa"));
-
-        GameRegistry.addRecipe(new ItemStack(Tabula.blockTabulaRasa, 1),"#", "S", '#', Items.GHAST_TEAR, 'S', Blocks.WOODEN_PRESSURE_PLATE);
-
         GameRegistry.registerTileEntity(TileEntityTabulaRasa.class, "Tabula_TabulaRasa");
 
         Tabula.channel = new PacketChannel(Tabula.MOD_NAME, PacketRequestSession.class, PacketBeginSession.class, PacketEndSession.class, PacketAddListener.class, PacketRemoveListener.class,

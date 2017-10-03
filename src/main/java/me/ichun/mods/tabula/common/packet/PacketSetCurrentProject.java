@@ -51,11 +51,11 @@ public class PacketSetCurrentProject extends AbstractPacket
     }
 
     @Override
-    public AbstractPacket execute(Side side, EntityPlayer player)
+    public void execute(Side side, EntityPlayer player)
     {
         if(side.isServer())
         {
-            TileEntity te = player.worldObj.getTileEntity(new BlockPos(x, y, z));
+            TileEntity te = player.world.getTileEntity(new BlockPos(x, y, z));
             if(te instanceof TileEntityTabulaRasa)
             {
                 TileEntityTabulaRasa tr = (TileEntityTabulaRasa)te;
@@ -69,7 +69,6 @@ public class PacketSetCurrentProject extends AbstractPacket
                 }
             }
         }
-        return null;
     }
 
     @Override

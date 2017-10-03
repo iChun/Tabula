@@ -89,7 +89,7 @@ public class ElementAnimationProgression extends Element
         {
             for(int i = 0; i <= width; i++)
             {
-                GL11.glVertex2f(getPosX() + MathHelper.clamp_float((width * i / (float)width), 0.0F, width), getPosY() + MathHelper.clamp_float(height - (height * (float)curve.value(i / (double)height)), 0.0F, height));
+                GL11.glVertex2f(getPosX() + MathHelper.clamp((width * i / (float)width), 0.0F, width), getPosY() + MathHelper.clamp(height - (height * (float)curve.value(i / (double)height)), 0.0F, height));
             }
         }
         GL11.glEnd();
@@ -133,7 +133,7 @@ public class ElementAnimationProgression extends Element
                     }
                 }
 
-                coordDragged = new Coords(MathHelper.clamp_double(clickPosX, 0D, width), MathHelper.clamp_double(clickPosY, 0D, height));
+                coordDragged = new Coords(MathHelper.clamp(clickPosX, 0D, width), MathHelper.clamp(clickPosY, 0D, height));
                 if(!((GuiWorkspace)parent.workspace).remoteSession)
                 {
                     Tabula.proxy.tickHandlerClient.mainframe.moveAnimCompProgCoord(info.identifier, anim.identifier, comp.identifier, oldCoord == null ? -1 : oldCoord.x / (double)width, oldCoord == null ? -1 : oldCoord.y / (double)height, coordDragged.x / (double)width, coordDragged.y / (double)height);
@@ -163,7 +163,7 @@ public class ElementAnimationProgression extends Element
             else if(clickPosX != coordDragged.x || clickPosY != coordDragged.y)
             {
                 Coords oldCoord = coordDragged;
-                coordDragged = new Coords(MathHelper.clamp_double(clickPosX, 0D, width), MathHelper.clamp_double(clickPosY, 0D, height));
+                coordDragged = new Coords(MathHelper.clamp(clickPosX, 0D, width), MathHelper.clamp(clickPosY, 0D, height));
 
                 if(!((GuiWorkspace)parent.workspace).remoteSession)
                 {

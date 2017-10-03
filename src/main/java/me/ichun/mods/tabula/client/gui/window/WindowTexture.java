@@ -15,9 +15,9 @@ import me.ichun.mods.tabula.client.gui.Theme;
 import me.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import me.ichun.mods.tabula.common.Tabula;
 import me.ichun.mods.tabula.common.packet.PacketClearTexture;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
@@ -71,12 +71,12 @@ public class WindowTexture extends Window
             {
                 GlStateManager.bindTexture(imageId);
                 Tessellator tessellator = Tessellator.getInstance();
-                VertexBuffer vertexbuffer = tessellator.getBuffer();
-                vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
-                vertexbuffer.pos(pX		, pY + h1	, 0).tex(0.0D, 1.0D).endVertex();
-                vertexbuffer.pos(pX + w1, pY + h1	, 0).tex(1.0D, 1.0D).endVertex();
-                vertexbuffer.pos(pX + w1, pY			, 0).tex(1.0D, 0.0D).endVertex();
-                vertexbuffer.pos(pX		, pY			, 0).tex(0.0D, 0.0D).endVertex();
+                BufferBuilder bufferbuilder = tessellator.getBuffer();
+                bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+                bufferbuilder.pos(pX		, pY + h1	, 0).tex(0.0D, 1.0D).endVertex();
+                bufferbuilder.pos(pX + w1, pY + h1	, 0).tex(1.0D, 1.0D).endVertex();
+                bufferbuilder.pos(pX + w1, pY			, 0).tex(1.0D, 0.0D).endVertex();
+                bufferbuilder.pos(pX		, pY			, 0).tex(0.0D, 0.0D).endVertex();
                 tessellator.draw();
             }
 

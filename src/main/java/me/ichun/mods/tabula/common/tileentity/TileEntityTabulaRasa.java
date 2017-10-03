@@ -48,7 +48,7 @@ public class TileEntityTabulaRasa extends TileEntity
         age++;
         if(!host.isEmpty())
         {
-            if(!worldObj.isRemote)
+            if(!world.isRemote)
             {
                 pingTime++;
                 if(pingTime > 150 || FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(host) == null)
@@ -124,8 +124,8 @@ public class TileEntityTabulaRasa extends TileEntity
         currentProj = "";
         listeners.clear();
 
-        IBlockState state = worldObj.getBlockState(getPos());
-        worldObj.notifyBlockUpdate(getPos(), state, state, 3);
+        IBlockState state = world.getBlockState(getPos());
+        world.notifyBlockUpdate(getPos(), state, state, 3);
     }
 
     @SideOnly(Side.CLIENT)
@@ -134,8 +134,8 @@ public class TileEntityTabulaRasa extends TileEntity
     {
         readFromNBT(pkt.getNbtCompound());
 
-        IBlockState state = worldObj.getBlockState(getPos());
-        worldObj.notifyBlockUpdate(getPos(), state, state, 3);
+        IBlockState state = world.getBlockState(getPos());
+        world.notifyBlockUpdate(getPos(), state, state, 3);
     }
 
     @Override

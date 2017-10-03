@@ -37,7 +37,7 @@ public class PacketRequestHeartbeat extends AbstractPacket
     }
 
     @Override
-    public AbstractPacket execute(Side side, EntityPlayer player)
+    public void execute(Side side, EntityPlayer player)
     {
         if(side.isServer())
         {
@@ -51,7 +51,6 @@ public class PacketRequestHeartbeat extends AbstractPacket
         {
             Tabula.channel.sendToServer(new PacketHeartbeat(host, listener));
         }
-        return null;
     }
 
     @Override
