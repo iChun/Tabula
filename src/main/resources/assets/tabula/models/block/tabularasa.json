@@ -5,12 +5,11 @@
         "texture": "tabula:blocks/tabularasa"
     },
     "elements": [
-        {   "from": [ 0, 0, 15.2 ],
-            "to": [ 16, 16, 15.2 ],
+        {   "from": [ 0, 0, 0 ],
+            "to": [ 0, 0, 0 ],
             "shade": false,
             "faces": {
-                "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#texture" },
-                "south": { "uv": [ 0, 0, 16, 16 ], "texture": "#texture" }
+                "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#texture" }
             }
         }
     ]

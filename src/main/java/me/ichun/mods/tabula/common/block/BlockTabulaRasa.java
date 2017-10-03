@@ -61,7 +61,7 @@ public class BlockTabulaRasa extends Block
     @Override
     public boolean isCollidable()
     {
-        return false;
+        return true;
     }
 
     @Override

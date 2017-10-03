@@ -1,20 +1,20 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "S",
-    "#"
+    "#",
+    "S"
   ],
   "key": {
-    "S": {
-      "item": "minecraft:stick"
-    },
     "#": {
-      "item": "minecraft:wooden_slab",
+      "item": "minecraft:ghast_tear"
+    },
+    "S": {
+      "item": "minecraft:wooden_pressure_plate",
       "data": 32767
     }
   },
   "result": {
-    "item": "hatstand:hatstand"
+    "item": "tabula:tabularasa"
   }
 }
  
