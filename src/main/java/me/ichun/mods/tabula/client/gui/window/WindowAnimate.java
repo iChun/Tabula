@@ -46,17 +46,17 @@ public class WindowAnimate extends Window
         elements.add(timeline);
 
         int button = 0;
-        elements.add(new ElementButtonTextured(this, 20 * button++, 80, ID_NEW_ANIM, true, 0, 1, "window.animate.newAnim", new ResourceLocation("tabula", "textures/icon/newAnim.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++, 80, ID_EDIT_ANIM, true, 0, 1, "window.animate.editAnim", new ResourceLocation("tabula", "textures/icon/editAnim.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++, 80, ID_DEL_ANIM, true, 0, 1, "window.animate.delAnim", new ResourceLocation("tabula", "textures/icon/delAnim.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++, 80, ID_PLAY_ANIM, true, 0, 1, "window.animate.playAnim", new ResourceLocation("tabula", "textures/icon/playAnim.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++, 80, ID_STOP_ANIM, true, 0, 1, "window.animate.stopAnim", new ResourceLocation("tabula", "textures/icon/stopAnim.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 80, ID_NEW_ANIM, true, 0, 1, "window.animate.newAnim", new ResourceLocation("tabula", "textures/icon/newanim.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 80, ID_EDIT_ANIM, true, 0, 1, "window.animate.editAnim", new ResourceLocation("tabula", "textures/icon/editanim.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 80, ID_DEL_ANIM, true, 0, 1, "window.animate.delAnim", new ResourceLocation("tabula", "textures/icon/delanim.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 80, ID_PLAY_ANIM, true, 0, 1, "window.animate.playAnim", new ResourceLocation("tabula", "textures/icon/playanim.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 80, ID_STOP_ANIM, true, 0, 1, "window.animate.stopAnim", new ResourceLocation("tabula", "textures/icon/stopanim.png")));
 
-        elements.add(new ElementButtonTextured(this, 20 * button++ + 1, 80, ID_NEW_COMP, true, 0, 1, "window.animate.newComponent", new ResourceLocation("tabula", "textures/icon/newComponent.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++ + 1, 80, ID_EDIT_COMP, true, 0, 1, "window.animate.editComponent", new ResourceLocation("tabula", "textures/icon/editComponent.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++ + 1, 80, ID_DEL_COMP, true, 0, 1, "window.animate.delComponent", new ResourceLocation("tabula", "textures/icon/delComponent.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++ + 1, 80, ID_SPLIT_COMP, true, 0, 1, "window.animate.splitComponent", new ResourceLocation("tabula", "textures/icon/splitComponent.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++ + 1, 80, ID_EDIT_PROGRESSION_COMP, true, 0, 1, "window.animate.editProgComponent", new ResourceLocation("tabula", "textures/icon/editProgComponent.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++ + 1, 80, ID_NEW_COMP, true, 0, 1, "window.animate.newComponent", new ResourceLocation("tabula", "textures/icon/newcomponent.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++ + 1, 80, ID_EDIT_COMP, true, 0, 1, "window.animate.editComponent", new ResourceLocation("tabula", "textures/icon/editcomponent.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++ + 1, 80, ID_DEL_COMP, true, 0, 1, "window.animate.delComponent", new ResourceLocation("tabula", "textures/icon/delcomponent.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++ + 1, 80, ID_SPLIT_COMP, true, 0, 1, "window.animate.splitComponent", new ResourceLocation("tabula", "textures/icon/splitcomponent.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++ + 1, 80, ID_EDIT_PROGRESSION_COMP, true, 0, 1, "window.animate.editProgComponent", new ResourceLocation("tabula", "textures/icon/editprogcomponent.png")));
 
         animList = new ElementListTree(this, BORDER_SIZE - 1, BORDER_SIZE + 1 + 10, 100 - (BORDER_SIZE * 2 + 2), height - BORDER_SIZE - 22 - 12, -1, false, false);
         elements.add(animList);

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class TileRendererTabulaRasa extends TileEntitySpecialRenderer<TileEntityTabulaRasa>
 {
     public ModelWaxTablet model;
-    public final ResourceLocation txModel = new ResourceLocation("tabula", "textures/model/tabulaRasa.png");
+    public final ResourceLocation txModel = new ResourceLocation("tabula", "textures/model/tabularasa.png");
 
     public TileRendererTabulaRasa()
     {

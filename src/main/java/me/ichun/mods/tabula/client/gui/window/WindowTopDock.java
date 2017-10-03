@@ -51,17 +51,17 @@ public class WindowTopDock extends WindowTopDockBase
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_EDIT, true, 0, 0, "topdock.edit", new ResourceLocation("tabula", "textures/icon/edit.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_OPEN, true, 0, 0, "topdock.open", new ResourceLocation("tabula", "textures/icon/open.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_SAVE, true, 0, 0, "topdock.save", new ResourceLocation("tabula", "textures/icon/save.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_SAVE_AS, true, 0, 0, "topdock.saveAs", new ResourceLocation("tabula", "textures/icon/saveAs.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_SAVE_AS, true, 0, 0, "topdock.saveAs", new ResourceLocation("tabula", "textures/icon/saveas.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_IMPORT, true, 0, 0, "topdock.import", new ResourceLocation("tabula", "textures/icon/import.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_IMPORT_MC, true, 0, 0, "topdock.importMC", new ResourceLocation("tabula", "textures/icon/importMC.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_IMPORT_MC, true, 0, 0, "topdock.importMC", new ResourceLocation("tabula", "textures/icon/importmc.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_EXPORT, true, 0, 0, "topdock.export", new ResourceLocation("tabula", "textures/icon/export.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_GHOST_MODEL, true, 0, 0, "topdock.ghostModel", new ResourceLocation("tabula", "textures/icon/ghostModel.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_GHOST_MODEL, true, 0, 0, "topdock.ghostModel", new ResourceLocation("tabula", "textures/icon/ghostmodel.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CUT, true, 0, 0, "topdock.cut", new ResourceLocation("tabula", "textures/icon/cut.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_COPY, true, 0, 0, "topdock.copy", new ResourceLocation("tabula", "textures/icon/copy.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE, true, 0, 0, "topdock.paste", new ResourceLocation("tabula", "textures/icon/paste.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE_IN_PLACE, true, 0, 0, "topdock.pasteInPlace", new ResourceLocation("tabula", "textures/icon/pasteInPlace.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE_WITHOUT_CHILDREN, true, 0, 0, "topdock.pasteWithoutChildren", new ResourceLocation("tabula", "textures/icon/pasteWithoutChildren.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_AUTO_LAYOUT, true, 0, 0, "topdock.autoLayout", new ResourceLocation("tabula", "textures/icon/autoLayout.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE_IN_PLACE, true, 0, 0, "topdock.pasteInPlace", new ResourceLocation("tabula", "textures/icon/pasteinplace.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE_WITHOUT_CHILDREN, true, 0, 0, "topdock.pasteWithoutChildren", new ResourceLocation("tabula", "textures/icon/pastewithoutchildren.png")));
+        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_AUTO_LAYOUT, true, 0, 0, "topdock.autoLayout", new ResourceLocation("tabula", "textures/icon/autolayout.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_UNDO, true, 0, 0, "topdock.undo", new ResourceLocation("tabula", "textures/icon/undo.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_REDO, true, 0, 0, "topdock.redo", new ResourceLocation("tabula", "textures/icon/redo.png")));
         if(((GuiWorkspace)workspace).host != null)
@@ -69,14 +69,14 @@ public class WindowTopDock extends WindowTopDockBase
             elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CHAT, true, 0, 0, "topdock.chat", new ResourceLocation("tabula", "textures/icon/chat.png")));
             if(!((GuiWorkspace)workspace).remoteSession)
             {
-                elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_ADD_EDITOR, true, 0, 0, "topdock.addEditor", new ResourceLocation("tabula", "textures/icon/addEditor.png")));
-                elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_REMOVE_EDITOR, true, 0, 0, "topdock.removeEditor", new ResourceLocation("tabula", "textures/icon/removeEditor.png")));
+                elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_ADD_EDITOR, true, 0, 0, "topdock.addEditor", new ResourceLocation("tabula", "textures/icon/addeditor.png")));
+                elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_REMOVE_EDITOR, true, 0, 0, "topdock.removeEditor", new ResourceLocation("tabula", "textures/icon/removeeditor.png")));
             }
         }
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_THEMES, true, 0, 0, "topdock.themes", new ResourceLocation("tabula", "textures/icon/themes.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_SETTINGS, true, 0, 0, "topdock.settings", new ResourceLocation("tabula", "textures/icon/settings.png")));
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CREDITS, true, 0, 0, "topdock.info", new ResourceLocation("tabula", "textures/icon/info.png")));
-        elements.add(new ElementButtonTextured(this, width - 20, 0, ID_EXIT_TABULA, true, 1, 0, "topdock.exitTabula", new ResourceLocation("tabula", "textures/icon/exitTabula.png")));
+        elements.add(new ElementButtonTextured(this, width - 20, 0, ID_EXIT_TABULA, true, 1, 0, "topdock.exitTabula", new ResourceLocation("tabula", "textures/icon/exittabula.png")));
     }
 
     @Override

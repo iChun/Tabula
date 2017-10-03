@@ -69,7 +69,7 @@ public class GuiWorkspace extends IWorkspace
     public static final ResourceLocation txVoxel = new ResourceLocation("tabula", "textures/model/cube.png");
 
     public static final ResourceLocation grid16 = new ResourceLocation("tabula", "textures/workspace/grid16.png");
-    public static final ResourceLocation orientationBase = new ResourceLocation("tabula", "textures/workspace/orientationBase.png");
+    public static final ResourceLocation orientationBase = new ResourceLocation("tabula", "textures/workspace/orientationbase.png");
 
     public ArrayList<String> editors = new ArrayList<>();
     public ArrayList<String> listeners = new ArrayList<>();

@@ -1,7 +1,7 @@
 {
     "parent": "builtin/generated",
     "textures": {
-        "layer0": "tabula:blocks/tabulaRasa"
+        "layer0": "tabula:blocks/tabularasa"
     },
     "display": {
         "thirdperson": {
