@@ -113,7 +113,7 @@ public class WindowControls extends Window
                     }
                     else if(e.id == 8)
                     {
-                        ((ElementNumberInput)e).textFields.get(0).setText(String.format(Locale.ENGLISH, "%.2f", info.parentIdentifier == null ? info.mcScale : 0D));
+                        ((ElementNumberInput)e).textFields.get(0).setText(String.format(Locale.ENGLISH, "%.2f", info.mcScale));
                     }
                     else if(e.id == 9)
                     {
@@ -357,7 +357,7 @@ public class WindowControls extends Window
                     }
                     else if(e.id == 8)
                     {
-                        info.mcScale = info.parentIdentifier == null ? Double.parseDouble(((ElementNumberInput)e).textFields.get(0).getText()) : 0D;
+                        info.mcScale = Double.parseDouble(((ElementNumberInput)e).textFields.get(0).getText());
                     }
                     else if(e.id == 9)
                     {
