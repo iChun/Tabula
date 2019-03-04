@@ -122,6 +122,13 @@ export.javaClass.package=Package For Class
 export.javaClass.name=Java Class
 export.javaClass.className=Class Name
 export.projTexture.name=Project Texture
+export.blockjson.name=Block JSON
+export.blockjson.title=Export Block JSON
+export.blockjson.filename=File Name
+export.blockjson.corner=Corner of block is at (0, 0) (click to change)
+export.blockjson.centre=Center of block is at (0, 0) (click to change)
+export.blockjson.relative=Block model is relative to wood block (click to change)
+export.blockjson.absolute=Block model is relative to y = 0 (click to change)
 
 topdock.new=New Project
 topdock.edit=Edit Project
