@@ -118,7 +118,7 @@ public class EventHandler
     @SubscribeEvent
     public void onRegisterBlock(RegistryEvent.Register<Block> event)
     {
-        Tabula.blockTabulaRasa = (new BlockTabulaRasa(Material.CIRCUITS)).setHardness(0.0F).setCreativeTab(CreativeTabs.DECORATIONS).setRegistryName(new ResourceLocation("tabula", "tabularasa")).setUnlocalizedName("tabula.block.tabularasa");
+        Tabula.blockTabulaRasa = (new BlockTabulaRasa(Material.CIRCUITS)).setHardness(0.0F).setCreativeTab(CreativeTabs.DECORATIONS).setRegistryName(new ResourceLocation("tabula", "tabularasa")).setTranslationKey("tabula.block.tabularasa");
         event.getRegistry().register(Tabula.blockTabulaRasa);
     }
 

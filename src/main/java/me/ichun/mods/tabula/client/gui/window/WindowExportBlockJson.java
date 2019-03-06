@@ -41,7 +41,7 @@ public class WindowExportBlockJson extends Window
     {
         super(parent, x, y, w, h, minW, minH, "export.blockjson.title", true);
 
-        elements.add(new ElementTextInput(this, 10, 30, width - 20, 12, 1, "Modid"));
+        elements.add(new ElementTextInput(this, 10, 30, width - 20, 12, 1, "Mod ID"));
         String suggestedName = ((GuiWorkspace)workspace).projectManager.projects.get(((GuiWorkspace)workspace).projectManager.selectedProject).modelName.toLowerCase().replaceAll(" ", "_");
         ElementTextInput fileName = new ElementTextInput(this, 10, 65, width - 50, 12, 2, "export.blockjson.filename");
         fileName.textField.setText(suggestedName);
@@ -65,7 +65,7 @@ public class WindowExportBlockJson extends Window
         super.draw(mouseX, mouseY);
         if(!minimized)
         {
-            workspace.getFontRenderer().drawString(I18n.translateToLocal("Modid"), posX + 11, posY + 20, Theme.getAsHex(workspace.currentTheme.font), false);
+            workspace.getFontRenderer().drawString("Mod ID", posX + 11, posY + 20, Theme.getAsHex(workspace.currentTheme.font), false);
             workspace.getFontRenderer().drawString(I18n.translateToLocal("export.blockjson.filename"), posX + 11, posY + 55, Theme.getAsHex(workspace.currentTheme.font), false);
             workspace.getFontRenderer().drawString(".json", posX + width - 38, posY + 67, Theme.getAsHex(workspace.currentTheme.font), false);
             workspace.getFontRenderer().drawString(I18n.translateToLocal("export.projTexture.name"), posX + 11, posY + 90, Theme.getAsHex(workspace.currentTheme.font), false);
@@ -87,13 +87,14 @@ public class WindowExportBlockJson extends Window
             {
                 this.relativeToBlock = false;
                 this.toggleRelativeToBlockButton.text = I18n.translateToLocal("export.blockjson.absolute");
+                this.toggleCornerAtZeroButton.posY = height - 65;
                 this.toggleCornerAtZeroButton.text = this.cornerAtZero ? I18n.translateToLocal("export.blockjson.corner") : I18n.translateToLocal("export.blockjson.centre");
             }
             else
             {
                 this.relativeToBlock = true;
                 this.toggleRelativeToBlockButton.text = I18n.translateToLocal("export.blockjson.relative");
-                this.toggleCornerAtZeroButton.text = I18n.translateToLocal("export.blockjson.unused");
+                this.toggleCornerAtZeroButton.posY = -1000;
                 this.cornerAtZero = true;
             }
         }

@@ -1014,6 +1014,7 @@ public class GuiWorkspace extends IWorkspace
             }
             else
             {
+                GlStateManager.enableLighting();
                 GlStateManager.disableTexture2D();
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -1021,6 +1022,7 @@ public class GuiWorkspace extends IWorkspace
                 info.model.render(0.0625F, selected, hidden, cameraZoom, false, 1, renderRotationPoint, Tabula.config.renderModelControls == 1);
 
                 GlStateManager.enableTexture2D();
+                GlStateManager.disableLighting();
             }
 
             if(info.ghostModel != null)

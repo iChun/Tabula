@@ -294,10 +294,10 @@ public class WindowAnimate extends Window
         if(!minimized && Tabula.config.animationWarning != 1)
         {
             workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "You can find the link from the About button -iChun").putInMiddleOfScreen());
-            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "Let me know how anims work/suggestions on the GitHub.").putInMiddleOfScreen());
-            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "Anims are saved and do work however.").putInMiddleOfScreen());
-            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "The exporter does not currently export animations").putInMiddleOfScreen());
-            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "I'm currently looking for feedback on the animation UI").putInMiddleOfScreen());
+            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "If you have any feedback, just drop it on GitHub.").putInMiddleOfScreen());
+            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "Mess around with it as you wish.").putInMiddleOfScreen());
+            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "There is no library to play them in-game outside of Tabula.").putInMiddleOfScreen());
+            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "I'm not currently supporting animations.").putInMiddleOfScreen());
             Tabula.config.animationWarning = 1;
             Tabula.config.save();
         }

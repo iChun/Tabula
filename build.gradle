@@ -15,12 +15,12 @@ compileJava {
 }
 
 // Requires iChunUtil to run. Just put iChunUtil-deobf.jar in the /libs/ folder or it won't compile.
-version = "1.12.2-7.0.0"
+version = "1.12.2-7.0.1"
 group = "tabula"
 archivesBaseName = "Tabula"
 
 minecraft {
-    version = "1.12.2-14.23.0.2493"
+    version = "1.12.2-14.23.5.2815"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
@@ -28,7 +28,7 @@ minecraft {
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not allways work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_20170929"
+    mappings = "stable_39"
     makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
@@ -57,5 +57,20 @@ task deobfJar(type: Jar) {
     classifier = 'deobf'
 }
 
+// sign jar
+task signJar(type: SignJar, dependsOn: reobfJar) {
+    onlyIf {
+        project.hasProperty('keyStore')
+    }
+
+    inputFile = jar.archivePath
+    outputFile = jar.archivePath
+
+    keyStore = project.properties.keyStore
+    alias = project.properties.keyStoreAlias
+    storePass = project.properties.keyStorePass
+    keyPass = project.properties.keyStoreKeyPass
+}
+
 // make sure all of these happen when we run build
-build.dependsOn deobfJar
+build.dependsOn deobfJar, signJar
