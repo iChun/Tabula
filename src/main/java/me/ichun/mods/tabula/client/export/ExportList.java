@@ -1,6 +1,7 @@
 package me.ichun.mods.tabula.client.export;
 
 import me.ichun.mods.ichunutil.common.module.tabula.formats.types.Exporter;
+import me.ichun.mods.tabula.client.export.types.ExportBlockJson;
 import me.ichun.mods.tabula.client.export.types.ExportJava;
 import me.ichun.mods.tabula.client.export.types.ExportProjectTexture;
 import me.ichun.mods.tabula.client.export.types.ExportTextureMap;
@@ -13,5 +14,6 @@ public final class ExportList
         add(new ExportTextureMap());
         add(new ExportJava());
         add(new ExportProjectTexture());
+        add(new ExportBlockJson());
     }};
 }
