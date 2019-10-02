@@ -290,19 +290,13 @@ public class WindowAnimate extends Window
     @Override
     public void toggleMinimize()
     {
-        minimized = false;
         super.toggleMinimize();
-        workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "Animation support has been dropped indefinitely -iChun").putInMiddleOfScreen());
-        //        if(!minimized && Tabula.config.animationWarning != 1)
-        //        {
-        //            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "You can find the link from the About button -iChun").putInMiddleOfScreen());
-        //            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "If you have any feedback, just drop it on GitHub.").putInMiddleOfScreen());
-        //            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "Mess around with it as you wish.").putInMiddleOfScreen());
-        //            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "There is no library to play them in-game outside of Tabula.").putInMiddleOfScreen());
-        //            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "I'm not currently supporting animations.").putInMiddleOfScreen());
-        //            Tabula.config.animationWarning = 1;
-        //            Tabula.config.save();
-        //        }
+        if(!minimized && Tabula.config.animationWarning != 1)
+        {
+            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "Animation support has been dropped indefinitely -iChun").putInMiddleOfScreen());
+            Tabula.config.animationWarning = 1;
+            Tabula.config.save();
+        }
     }
 
     @Override

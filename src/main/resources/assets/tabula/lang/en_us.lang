@@ -156,6 +156,7 @@ topdock.wood=Block
 topdock.woodFull=Toggle showing the block
 topdock.autoLayout=Automatically Layout Textures
 topdock.ghostModel=Set Ghost Model
+topdock.openWorkingDir=Open Working Directory
 
 system.playersInSession=Users In Session
 system.editor=Editor

@@ -3,11 +3,14 @@ package me.ichun.mods.tabula.client.gui.window;
 import me.ichun.mods.ichunutil.client.gui.window.IWorkspace;
 import me.ichun.mods.ichunutil.client.gui.window.WindowTopDockBase;
 import me.ichun.mods.ichunutil.client.gui.window.element.Element;
+import me.ichun.mods.ichunutil.client.gui.window.element.ElementButton;
 import me.ichun.mods.ichunutil.client.gui.window.element.ElementButtonTextured;
 import me.ichun.mods.ichunutil.client.gui.window.element.ElementToggle;
+import me.ichun.mods.tabula.client.core.ResourceHelper;
 import me.ichun.mods.tabula.client.gui.GuiWorkspace;
 import me.ichun.mods.tabula.common.Tabula;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 
 public class WindowTopDock extends WindowTopDockBase
@@ -38,13 +41,15 @@ public class WindowTopDock extends WindowTopDockBase
     public static final int ID_GHOST_MODEL = 23;
 
     public static final int ID_WOOD = -1;
+    public static final int ID_OPEN_WORKING_DIR = -2;
 
     public WindowTopDock(IWorkspace parent, int w, int h)
     {
         super(parent, w, h);
 
         //ADD Elements
-        elements.add(new ElementToggle(this, width - 44 - 20, 4, 40, 12, ID_WOOD, true, 1, 0, "topdock.wood", "topdock.woodFull", Tabula.config.renderWorkspaceBlock == 1));
+        elements.add(new ElementToggle(this, width - 144 - 65, 4, 40, 12, ID_WOOD, true, 1, 0, "topdock.wood", "topdock.woodFull", Tabula.config.renderWorkspaceBlock == 1));
+        elements.add(new ElementButton(this, width - 144 - 20, 4, 140, 12, ID_OPEN_WORKING_DIR, true, 1, 0, "topdock.openWorkingDir"));
 
         int button = 0;
         elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_NEW, true, 0, 0, "topdock.new", new ResourceLocation("tabula", "textures/icon/new.png")));
@@ -197,6 +202,10 @@ public class WindowTopDock extends WindowTopDockBase
         {
             Tabula.config.renderWorkspaceBlock = (((ElementToggle)element).toggledState ? 1 : 0);
             Tabula.config.save();
+        }
+        else if(element.id == ID_OPEN_WORKING_DIR)
+        {
+            OpenGlHelper.openFile(ResourceHelper.getWorkRoot());
         }
     }
 }
