@@ -281,6 +281,23 @@ public class WindowControls extends Window
                 for(int k = 0; k < elements.size(); k++)
                 {
                     Element e = elements.get(k);
+
+                    if(e instanceof ElementNumberInput) //This is to prevent crashing when a field is empty
+                    {
+                        ElementNumberInput numIn = (ElementNumberInput)e;
+                        for(int l = 0; l < numIn.textFields.size(); l++)
+                        {
+                            try
+                            {
+                                Double.parseDouble(numIn.textFields.get(l).getText());
+                            }
+                            catch(NumberFormatException ex)
+                            {
+                                numIn.textFields.get(l).setText("0");
+                            }
+                        }
+                    }
+
                     if(e.id == 0)
                     {
                         info.name = ((ElementTextInput)e).textField.getText();
@@ -391,6 +408,22 @@ public class WindowControls extends Window
 
                 for(Element e : elements)
                 {
+                    if(e instanceof ElementNumberInput) //This is to prevent crashing when a field is empty
+                    {
+                        ElementNumberInput numIn = (ElementNumberInput)e;
+                        for(int l = 0; l < numIn.textFields.size(); l++)
+                        {
+                            try
+                            {
+                                Double.parseDouble(numIn.textFields.get(l).getText());
+                            }
+                            catch(NumberFormatException ex)
+                            {
+                                numIn.textFields.get(l).setText("0");
+                            }
+                        }
+                    }
+
                     if(e.id == 0)
                     {
                         name = ((ElementTextInput)e).textField.getText();

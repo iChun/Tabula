@@ -13,8 +13,6 @@ public class ProxyCommon
 
     public void preInit()
     {
-        GameRegistry.registerTileEntity(TileEntityTabulaRasa.class, "Tabula_TabulaRasa");
-
         Tabula.channel = new PacketChannel(Tabula.MOD_NAME, PacketRequestSession.class, PacketBeginSession.class, PacketEndSession.class, PacketAddListener.class, PacketRemoveListener.class,
                 PacketChat.class, PacketChatMessage.class, PacketPingAlive.class, PacketIsEditor.class, PacketRequestHeartbeat.class,
                 PacketHeartbeat.class, PacketProjectFragment.class, PacketCloseProject.class, PacketRequestProject.class, PacketSetCurrentProject.class,

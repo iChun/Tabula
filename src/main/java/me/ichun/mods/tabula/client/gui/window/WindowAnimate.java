@@ -290,25 +290,27 @@ public class WindowAnimate extends Window
     @Override
     public void toggleMinimize()
     {
+        minimized = false;
         super.toggleMinimize();
-        if(!minimized && Tabula.config.animationWarning != 1)
-        {
-            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "You can find the link from the About button -iChun").putInMiddleOfScreen());
-            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "If you have any feedback, just drop it on GitHub.").putInMiddleOfScreen());
-            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "Mess around with it as you wish.").putInMiddleOfScreen());
-            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "There is no library to play them in-game outside of Tabula.").putInMiddleOfScreen());
-            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "I'm not currently supporting animations.").putInMiddleOfScreen());
-            Tabula.config.animationWarning = 1;
-            Tabula.config.save();
-        }
+        workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "Animation support has been dropped indefinitely -iChun").putInMiddleOfScreen());
+        //        if(!minimized && Tabula.config.animationWarning != 1)
+        //        {
+        //            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "You can find the link from the About button -iChun").putInMiddleOfScreen());
+        //            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "If you have any feedback, just drop it on GitHub.").putInMiddleOfScreen());
+        //            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "Mess around with it as you wish.").putInMiddleOfScreen());
+        //            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "There is no library to play them in-game outside of Tabula.").putInMiddleOfScreen());
+        //            workspace.addWindowOnTop(new WindowPopup(workspace, 0, 0, 300, 80, 300, 80, "I'm not currently supporting animations.").putInMiddleOfScreen());
+        //            Tabula.config.animationWarning = 1;
+        //            Tabula.config.save();
+        //        }
     }
-    
+
     @Override
     public void setScissor()
     {
         RendererHelper.startGlScissor(posX, posY + 1, getWidth(), getHeight());
     }
-    
+
     @Override
     public void drawBackground()
     {
@@ -326,13 +328,13 @@ public class WindowAnimate extends Window
             }
         }
     }
-    
+
     @Override
     public void drawTitle()
     {
         if(hasTitle)
         {
-                RendererHelper.drawColourOnScreen(workspace.currentTheme.windowBorder[0], workspace.currentTheme.windowBorder[1], workspace.currentTheme.windowBorder[2], 255, posX, posY + 1, getWidth(), 12, 0);
+            RendererHelper.drawColourOnScreen(workspace.currentTheme.windowBorder[0], workspace.currentTheme.windowBorder[1], workspace.currentTheme.windowBorder[2], 255, posX, posY + 1, getWidth(), 12, 0);
             String titleToRender = I18n.translateToLocal(titleLocale);
             while(titleToRender.length() > 1 && workspace.getFontRenderer().getStringWidth(titleToRender) > getWidth() - (BORDER_SIZE * 2) - workspace.getFontRenderer().getStringWidth("  _"))
             {

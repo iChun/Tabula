@@ -4,6 +4,7 @@ import me.ichun.mods.ichunutil.common.module.tabula.project.ProjectInfo;
 import me.ichun.mods.tabula.client.mainframe.core.ProjectHelper;
 import me.ichun.mods.tabula.common.Tabula;
 import me.ichun.mods.tabula.common.block.BlockTabulaRasa;
+import me.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.GuiButton;
@@ -21,6 +22,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -120,6 +122,8 @@ public class EventHandler
     {
         Tabula.blockTabulaRasa = (new BlockTabulaRasa(Material.CIRCUITS)).setHardness(0.0F).setCreativeTab(CreativeTabs.DECORATIONS).setRegistryName(new ResourceLocation("tabula", "tabularasa")).setTranslationKey("tabula.block.tabularasa");
         event.getRegistry().register(Tabula.blockTabulaRasa);
+
+        GameRegistry.registerTileEntity(TileEntityTabulaRasa.class, new ResourceLocation("tabula", "tabula_rasa"));
     }
 
     @SubscribeEvent
