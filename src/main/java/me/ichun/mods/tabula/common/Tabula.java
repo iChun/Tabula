@@ -28,12 +28,12 @@ import java.io.File;
         certificateFingerprint = iChunUtil.CERT_FINGERPRINT,
         guiFactory = iChunUtil.GUI_CONFIG_FACTORY,
         dependencies = "required-after:ichunutil@[" + iChunUtil.VERSION_MAJOR +".2.0," + (iChunUtil.VERSION_MAJOR + 1) + ".0.0)",
-        acceptableRemoteVersions = "[" + iChunUtil.VERSION_MAJOR +".0.0," + iChunUtil.VERSION_MAJOR + ".1.0)",
+        acceptableRemoteVersions = "[" + iChunUtil.VERSION_MAJOR +".1.0," + iChunUtil.VERSION_MAJOR + ".2.0)",
         acceptedMinecraftVersions = iChunUtil.MC_VERSION_RANGE
 )
 public class Tabula
 {
-    public static final String VERSION = iChunUtil.VERSION_MAJOR + ".0.1";
+    public static final String VERSION = iChunUtil.VERSION_MAJOR + ".1.0";
 
     public static final String MOD_NAME = "Tabula";
     public static final String MOD_ID = "tabula";

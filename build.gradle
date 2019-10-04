@@ -15,12 +15,12 @@ compileJava {
 }
 
 // Requires iChunUtil to run. Just put iChunUtil-deobf.jar in the /libs/ folder or it won't compile.
-version = "1.12.2-7.0.1"
+version = "1.12.2-7.1.0"
 group = "tabula"
 archivesBaseName = "Tabula"
 
 minecraft {
-    version = "1.12.2-14.23.5.2815"
+    version = "1.12.2-14.23.5.2847"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
