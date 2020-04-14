@@ -33,48 +33,48 @@ public class WindowNewProject extends Window<WorkspaceTabula>
         {
             super(parent, "window.newProject.title");
 
-            ElementTextWrapper<?> text = new ElementTextWrapper<>(this);
+            ElementTextWrapper text = new ElementTextWrapper(this);
             text.setNoWrap().setText(I18n.format("window.newProject.projIdent"));
             text.setConstraint(new Constraint(text).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20).top(this, Constraint.Property.Type.TOP, 20));
             elements.add(text);
 
-            ElementTextField<?> textField = new ElementTextField<>(this);
+            ElementTextField textField = new ElementTextField(this);
             textField.setId("modelName");
             textField.setDefaultText("MyFirstModel");
             textField.setConstraint(new Constraint(textField).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20).top(text, Constraint.Property.Type.BOTTOM, 3));
             elements.add(textField);
 
-            text = new ElementTextWrapper<>(this);
+            text = new ElementTextWrapper(this);
             text.setNoWrap().setText(I18n.format("window.newProject.animName"));
             text.setConstraint(new Constraint(text).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20).top(textField, Constraint.Property.Type.BOTTOM, 20));
             elements.add(text);
 
-            textField = new ElementTextField<>(this);
+            textField = new ElementTextField(this);
             textField.setId("author");
             textField.setDefaultText(Minecraft.getInstance().getSession().getUsername());
             textField.setConstraint(new Constraint(textField).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20).top(text, Constraint.Property.Type.BOTTOM, 3));
             elements.add(textField);
 
-            text = new ElementTextWrapper<>(this);
+            text = new ElementTextWrapper(this);
             text.setNoWrap().setText(I18n.format("window.newProject.txDimensions"));
             text.setConstraint(new Constraint(text).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20).top(textField, Constraint.Property.Type.BOTTOM, 20));
             elements.add(text);
 
-            ElementNumberInput<?> numberInput = new ElementNumberInput<>(this, false);
+            ElementNumberInput numberInput = new ElementNumberInput(this, false);
             numberInput.setTooltip(I18n.format("tabula.project.width")).setId("texWidth");
             numberInput.setMin(1).setDefaultText("64");
             numberInput.setWidth(80);
             numberInput.setConstraint(new Constraint(numberInput).left(this, Constraint.Property.Type.LEFT, 20).top(text, Constraint.Property.Type.BOTTOM, 3));
             elements.add(numberInput);
 
-            ElementNumberInput<?> numberInput1 = new ElementNumberInput<>(this, false);
+            ElementNumberInput numberInput1 = new ElementNumberInput(this, false);
             numberInput1.setTooltip(I18n.format("tabula.project.height")).setId("texHeight");
             numberInput1.setMin(1).setDefaultText("32");
             numberInput1.setWidth(80);
             numberInput1.setConstraint(new Constraint(numberInput1).left(numberInput, Constraint.Property.Type.RIGHT, 3));
             elements.add(numberInput1);
 
-            ElementButton<?, ?> button = new ElementButton<>(this, I18n.format("gui.cancel"), elementClickable ->
+            ElementButton<?> button = new ElementButton<>(this, I18n.format("gui.cancel"), elementClickable ->
             {
                 getWorkspace().setFocused(null);
                 getWorkspace().removeWindow(parent);
@@ -83,13 +83,13 @@ public class WindowNewProject extends Window<WorkspaceTabula>
             button.setConstraint(new Constraint(button).bottom(this, Constraint.Property.Type.BOTTOM, 10).right(this, Constraint.Property.Type.RIGHT, 10));
             elements.add(button);
 
-            ElementButton<?, ?> button1 = new ElementButton<>(this, I18n.format("gui.done"), elementClickable ->
+            ElementButton<?> button1 = new ElementButton<>(this, I18n.format("gui.done"), elementClickable ->
             {
                 Project project = new Project();
-                project.modelName = ((ElementTextField<?>)getById("modelName")).getText();
-                project.author = ((ElementTextField<?>)getById("author")).getText();
-                project.texWidth = ((ElementNumberInput<?>)getById("texWidth")).getInt();
-                project.texHeight = ((ElementNumberInput<?>)getById("texHeight")).getInt();
+                project.modelName = ((ElementTextField)getById("modelName")).getText();
+                project.author = ((ElementTextField)getById("author")).getText();
+                project.texWidth = ((ElementNumberInput)getById("texWidth")).getInt();
+                project.texHeight = ((ElementNumberInput)getById("texHeight")).getInt();
                 parent.parent.mainframe.openProject(project);
                 parent.parent.projectChanged(IProjectInfo.ChangeType.PROJECTS);
                 parent.parent.setCurrentProject(((WorkspaceTabula)getWorkspace()).mainframe.getActiveProject());

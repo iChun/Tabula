@@ -7,11 +7,11 @@ import net.minecraft.client.resources.I18n;
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
-public class ElementProjectButton<P extends Fragment, T extends ElementProjectButton> extends ElementClickable<P, T>
+public class ElementProjectButton<T extends ElementProjectButton> extends ElementClickable<T>
 {
     public @Nonnull String text;
 
-    public ElementProjectButton(@Nonnull P parent, String s, Consumer<T> callback)
+    public ElementProjectButton(@Nonnull Fragment parent, String s, Consumer<T> callback)
     {
         super(parent, callback);
         text = I18n.format(s);

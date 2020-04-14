@@ -82,7 +82,7 @@ public class WindowProjectNavigator extends Window<WorkspaceTabula>
             for(int i = 0; i < mainframe.projects.size(); i++)
             {
                 Mainframe.ProjectInfo projectInfo = mainframe.projects.get(i);
-                ElementProjectButton<?, ?> btn = new ElementProjectButton<>(this, projectInfo.project.modelName, elementClickable -> {});
+                ElementProjectButton<?> btn = new ElementProjectButton<>(this, projectInfo.project.modelName, elementClickable -> {});
                 btn.setConstraint(new Constraint(btn).left(last == null ? this : last, last == null ? Constraint.Property.Type.LEFT : Constraint.Property.Type.RIGHT, 0));
                 btn.setWidth(getFontRenderer().getStringWidth(projectInfo.project.modelName) + 14);
                 elements.add(btn);

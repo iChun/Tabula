@@ -103,24 +103,27 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                     //TODO add boxes
                 }
 
-                ElementButtonTextured<?, ?> last;
-                ElementButtonTextured<?, ?> button;
+                ElementButtonTextured<?> last;
+                ElementButtonTextured<?> button;
 
                 button = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/newgroup.png"), elementClickable -> {
                     info.addPart();
-                }).setSize(20, 20).setTooltip(I18n.format("window.modelTree.newGroup"));
+                });
+                button.setSize(20, 20).setTooltip(I18n.format("window.modelTree.newGroup"));
                 button.setConstraint(new Constraint(button).left(this, Constraint.Property.Type.LEFT, 2).bottom(this, Constraint.Property.Type.BOTTOM, spaceBottom));
                 elements.add(last = button);
 
                 button = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/newcube.png"), elementClickable -> {
 
-                }).setSize(20, 20).setTooltip(I18n.format("window.modelTree.newCube"));
+                });
+                button.setSize(20, 20).setTooltip(I18n.format("window.modelTree.newCube"));
                 button.setConstraint(new Constraint(button).left(last, Constraint.Property.Type.RIGHT, 0).bottom(this, Constraint.Property.Type.BOTTOM, spaceBottom));
                 elements.add(last = button);
 
                 button = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/delete.png"), elementClickable -> {
 
-                }).setSize(20, 20).setTooltip(I18n.format("window.modelTree.delete"));
+                });
+                button.setSize(20, 20).setTooltip(I18n.format("window.modelTree.delete"));
                 button.setConstraint(new Constraint(button).left(last, Constraint.Property.Type.RIGHT, 0).bottom(this, Constraint.Property.Type.BOTTOM, spaceBottom));
                 elements.add(last = button);
 

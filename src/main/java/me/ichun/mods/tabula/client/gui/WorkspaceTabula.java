@@ -224,7 +224,7 @@ public class WorkspaceTabula extends Workspace
 
         //RENDER BLOCK
         Fragment<?> fragment = getById("buttonBlockToggle");
-        if(fragment instanceof ElementToggle && ((ElementToggle<?, ?>)fragment).toggleState) //render the block
+        if(fragment instanceof ElementToggle && ((ElementToggle<?>)fragment).toggleState) //render the block
         {
             //TODO fix themes
             //TODO change how this is done
@@ -243,7 +243,7 @@ public class WorkspaceTabula extends Workspace
         }
         //END RENDER BLOCK
         fragment = getById("buttonGridToggle");
-        if(fragment instanceof ElementToggle && ((ElementToggle<?, ?>)fragment).toggleState) //render the block
+        if(fragment instanceof ElementToggle && ((ElementToggle<?>)fragment).toggleState) //render the block
         {
             Minecraft.getInstance().getTextureManager().bindTexture(TEX_GRID_16);
 

@@ -45,25 +45,28 @@ public class WindowTexture extends Window<WorkspaceTabula>
         {
             super(parent, "window.texture.title");
 
-            ElementButtonTextured<?, ?> btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/cleartexture.png"), elementClickable -> {
+            ElementButtonTextured<?> btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/cleartexture.png"), elementClickable -> {
                 //TODO this
-            }).setSize(20, 20).setTooltip(I18n.format("window.texture.clearTexture"));
+            });
+            btn.setSize(20, 20).setTooltip(I18n.format("window.texture.clearTexture"));
             btn.setConstraint(new Constraint(btn).bottom(this, Constraint.Property.Type.BOTTOM, 2).right(this, Constraint.Property.Type.RIGHT, 2));
             elements.add(btn);
 
-            ElementButtonTextured<?, ?> btn1 = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/newtexture.png"), elementClickable -> {
+            ElementButtonTextured<?> btn1 = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/newtexture.png"), elementClickable -> {
                 //TODO this
-            }).setSize(20, 20).setTooltip(I18n.format("window.texture.loadTexture"));
+            });
+            btn1.setSize(20, 20).setTooltip(I18n.format("window.texture.loadTexture"));
             btn1.setConstraint(new Constraint(btn1).bottom(this, Constraint.Property.Type.BOTTOM, 2).right(btn, Constraint.Property.Type.LEFT, 0));
             elements.add(btn1);
 
-            ElementToggle<?, ?> toggle = new ElementToggle<>(this, "window.texture.listenTexture", elementClickable -> {
+            ElementToggle<?> toggle = new ElementToggle<>(this, "window.texture.listenTexture", elementClickable -> {
 
-            }).setToggled(true).setSize(60, 20).setTooltip(I18n.format("window.texture.listenTextureFull"));
+            });
+            toggle.setToggled(true).setSize(60, 20).setTooltip(I18n.format("window.texture.listenTextureFull"));
             toggle.setConstraint(new Constraint(toggle).bottom(this, Constraint.Property.Type.BOTTOM, 2).right(btn1, Constraint.Property.Type.LEFT, 0).left(this, Constraint.Property.Type.LEFT, 2));
             elements.add(toggle);
 
-            ElementTextWrapper<?> text = new ElementTextWrapper<>(this);
+            ElementTextWrapper text = new ElementTextWrapper(this);
             text.setNoWrap().setText("akjshdaskjhd").setConstraint(new Constraint(text).left(this, Constraint.Property.Type.LEFT, 2).bottom(toggle, Constraint.Property.Type.TOP, 1));
             elements.add(text);
 
