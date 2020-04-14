@@ -124,7 +124,7 @@ public class Mainframe
     {
         for(ProjectInfo info : projects)
         {
-            Identifiable id = info.project.getById(ident);
+            Identifiable<?> id = info.project.getById(ident);
             if(id != null)
             {
                 return info;

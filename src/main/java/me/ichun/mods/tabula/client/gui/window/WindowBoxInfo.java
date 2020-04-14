@@ -61,81 +61,81 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
                 }
             };
 
-            ElementTextWrapper text1 = new ElementTextWrapper(this);
+            ElementTextWrapper<?> text1 = new ElementTextWrapper<>(this);
             text1.setNoWrap().setText(I18n.format("window.boxInfo.partName"));
             text1.setConstraint(new Constraint(text1).left(this, Constraint.Property.Type.LEFT, 2).top(this, Constraint.Property.Type.TOP, 2));
             elements.add(text1);
 
-            ElementTextField input = new ElementTextField(this);
+            ElementTextField<?> input = new ElementTextField<>(this);
             input.setDefaultText("").setSize(numberInputWidth * 3, 14).setId("boxName");
             input.setResponder(responder);
             input.setConstraint(new Constraint(input).left(text1, Constraint.Property.Type.LEFT, 2).top(text1, Constraint.Property.Type.BOTTOM, padding));
             elements.add(input);
 
-            ElementTextWrapper text = new ElementTextWrapper(this);
+            ElementTextWrapper<?> text = new ElementTextWrapper<>(this);
             text.setNoWrap().setText(I18n.format("window.controls.dimensions"));
             text.setConstraint(new Constraint(text).left(text1, Constraint.Property.Type.LEFT, 0).top(input, Constraint.Property.Type.BOTTOM, spacing));
             elements.add(text);
 
-            ElementNumberInput num = new ElementNumberInput(this, true);
+            ElementNumberInput<?> num = new ElementNumberInput<>(this, true);
             num.setMaxDec(2).setMin(0).setSize(numberInputWidth, 14).setId("dimX");
             num.setResponder(responder);
             num.setConstraint(new Constraint(num).left(text1, Constraint.Property.Type.LEFT, 2).top(text, Constraint.Property.Type.BOTTOM, padding));
             elements.add(num);
 
-            ElementNumberInput num1 = new ElementNumberInput(this, true);
+            ElementNumberInput<?> num1 = new ElementNumberInput<>(this, true);
             num1.setMaxDec(2).setMin(0).setSize(numberInputWidth, 14).setId("dimY");
             num1.setResponder(responder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
             elements.add(num1);
 
-            ElementNumberInput num2 = new ElementNumberInput(this, true);
+            ElementNumberInput<?> num2 = new ElementNumberInput<>(this, true);
             num2.setMaxDec(2).setMin(0).setSize(numberInputWidth, 14).setId("dimZ");
             num2.setResponder(responder);
             num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
             elements.add(num2);
 
-            text = new ElementTextWrapper(this);
+            text = new ElementTextWrapper<>(this);
             text.setNoWrap().setText(I18n.format("window.controls.offset"));
             text.setConstraint(new Constraint(text).left(text1, Constraint.Property.Type.LEFT, 0).top(num, Constraint.Property.Type.BOTTOM, spacing));
             elements.add(text);
 
-            num = new ElementNumberInput(this, true);
+            num = new ElementNumberInput<>(this, true);
             num.setMaxDec(2).setSize(numberInputWidth, 14).setId("offX");
             num.setResponder(responder);
             num.setConstraint(new Constraint(num).left(text1, Constraint.Property.Type.LEFT, 2).top(text, Constraint.Property.Type.BOTTOM, padding));
             elements.add(num);
 
-            num1 = new ElementNumberInput(this, true);
+            num1 = new ElementNumberInput<>(this, true);
             num1.setMaxDec(2).setSize(numberInputWidth, 14).setId("offY");
             num1.setResponder(responder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
             elements.add(num1);
 
-            num2 = new ElementNumberInput(this, true);
+            num2 = new ElementNumberInput<>(this, true);
             num2.setMaxDec(2).setSize(numberInputWidth, 14).setId("offZ");
             num2.setResponder(responder);
             num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
             elements.add(num2);
 
-            text = new ElementTextWrapper(this);
+            text = new ElementTextWrapper<>(this);
             text.setNoWrap().setText(I18n.format("window.boxInfo.expand"));
             text.setConstraint(new Constraint(text).left(text1, Constraint.Property.Type.LEFT, 0).top(num, Constraint.Property.Type.BOTTOM, spacing));
             elements.add(text);
 
-            num = new ElementNumberInput(this, true);
+            num = new ElementNumberInput<>(this, true);
             num.setMaxDec(2).setSize(numberInputWidth, 14).setId("expX");
             num.setResponder(responder);
             num.setConstraint(new Constraint(num).left(text1, Constraint.Property.Type.LEFT, 2).top(text, Constraint.Property.Type.BOTTOM, padding));
             elements.add(num);
 
-            num1 = new ElementNumberInput(this, true);
+            num1 = new ElementNumberInput<>(this, true);
             num1.setMaxDec(2).setSize(numberInputWidth, 14).setId("expY");
             num1.setResponder(responder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
             elements.add(num1);
 
-            num2 = new ElementNumberInput(this, true);
+            num2 = new ElementNumberInput<>(this, true);
             num2.setMaxDec(2).setSize(numberInputWidth, 14).setId("expZ");
             num2.setResponder(responder);
             num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
@@ -159,19 +159,19 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
             if(currentBox != null)
             {
                 String preUpdate = currentBox.getJsonWithoutChildren();
-                currentBox.name = ((ElementTextField)getById("boxName")).getText();
+                currentBox.name = ((ElementTextField<?>)getById("boxName")).getText();
 
-                currentBox.dimX = (float)((ElementNumberInput)getById("dimX")).getDouble();
-                currentBox.dimY = (float)((ElementNumberInput)getById("dimY")).getDouble();
-                currentBox.dimZ = (float)((ElementNumberInput)getById("dimZ")).getDouble();
+                currentBox.dimX = (float)((ElementNumberInput<?>)getById("dimX")).getDouble();
+                currentBox.dimY = (float)((ElementNumberInput<?>)getById("dimY")).getDouble();
+                currentBox.dimZ = (float)((ElementNumberInput<?>)getById("dimZ")).getDouble();
 
-                currentBox.posX = (float)((ElementNumberInput)getById("offX")).getDouble();
-                currentBox.posY = (float)((ElementNumberInput)getById("offY")).getDouble();
-                currentBox.posZ = (float)((ElementNumberInput)getById("offZ")).getDouble();
+                currentBox.posX = (float)((ElementNumberInput<?>)getById("offX")).getDouble();
+                currentBox.posY = (float)((ElementNumberInput<?>)getById("offY")).getDouble();
+                currentBox.posZ = (float)((ElementNumberInput<?>)getById("offZ")).getDouble();
 
-                currentBox.expandX = (float)((ElementNumberInput)getById("expX")).getDouble();
-                currentBox.expandY = (float)((ElementNumberInput)getById("expY")).getDouble();
-                currentBox.expandZ = (float)((ElementNumberInput)getById("expZ")).getDouble();
+                currentBox.expandX = (float)((ElementNumberInput<?>)getById("expX")).getDouble();
+                currentBox.expandY = (float)((ElementNumberInput<?>)getById("expY")).getDouble();
+                currentBox.expandZ = (float)((ElementNumberInput<?>)getById("expZ")).getDouble();
 
                 String postUpdate = currentBox.getJsonWithoutChildren();
                 if(postUpdate.equals(preUpdate))
@@ -186,36 +186,36 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
             currentBox = null; //set as null first so we don't send updates from updating the text
             if(box != null)
             {
-                ((ElementTextField)getById("boxName")).setText(box.name);
+                ((ElementTextField<?>)getById("boxName")).setText(box.name);
 
-                ((ElementNumberInput)getById("dimX")).setText(String.format(Locale.ENGLISH, "%.2f", box.dimX));
-                ((ElementNumberInput)getById("dimY")).setText(String.format(Locale.ENGLISH, "%.2f", box.dimY));
-                ((ElementNumberInput)getById("dimZ")).setText(String.format(Locale.ENGLISH, "%.2f", box.dimZ));
+                ((ElementNumberInput<?>)getById("dimX")).setText(String.format(Locale.ENGLISH, "%.2f", box.dimX));
+                ((ElementNumberInput<?>)getById("dimY")).setText(String.format(Locale.ENGLISH, "%.2f", box.dimY));
+                ((ElementNumberInput<?>)getById("dimZ")).setText(String.format(Locale.ENGLISH, "%.2f", box.dimZ));
 
-                ((ElementNumberInput)getById("offX")).setText(String.format(Locale.ENGLISH, "%.2f", box.posX));
-                ((ElementNumberInput)getById("offY")).setText(String.format(Locale.ENGLISH, "%.2f", box.posY));
-                ((ElementNumberInput)getById("offZ")).setText(String.format(Locale.ENGLISH, "%.2f", box.posZ));
+                ((ElementNumberInput<?>)getById("offX")).setText(String.format(Locale.ENGLISH, "%.2f", box.posX));
+                ((ElementNumberInput<?>)getById("offY")).setText(String.format(Locale.ENGLISH, "%.2f", box.posY));
+                ((ElementNumberInput<?>)getById("offZ")).setText(String.format(Locale.ENGLISH, "%.2f", box.posZ));
 
-                ((ElementNumberInput)getById("expX")).setText(String.format(Locale.ENGLISH, "%.2f", box.expandX));
-                ((ElementNumberInput)getById("expY")).setText(String.format(Locale.ENGLISH, "%.2f", box.expandY));
-                ((ElementNumberInput)getById("expZ")).setText(String.format(Locale.ENGLISH, "%.2f", box.expandZ));
+                ((ElementNumberInput<?>)getById("expX")).setText(String.format(Locale.ENGLISH, "%.2f", box.expandX));
+                ((ElementNumberInput<?>)getById("expY")).setText(String.format(Locale.ENGLISH, "%.2f", box.expandY));
+                ((ElementNumberInput<?>)getById("expZ")).setText(String.format(Locale.ENGLISH, "%.2f", box.expandZ));
                 currentBox = box;
             }
             else
             {
-                ((ElementTextField)getById("boxName")).setText("");
+                ((ElementTextField<?>)getById("boxName")).setText("");
 
-                ((ElementNumberInput)getById("dimX")).setText("");
-                ((ElementNumberInput)getById("dimY")).setText("");
-                ((ElementNumberInput)getById("dimZ")).setText("");
+                ((ElementNumberInput<?>)getById("dimX")).setText("");
+                ((ElementNumberInput<?>)getById("dimY")).setText("");
+                ((ElementNumberInput<?>)getById("dimZ")).setText("");
 
-                ((ElementNumberInput)getById("offX")).setText("");
-                ((ElementNumberInput)getById("offY")).setText("");
-                ((ElementNumberInput)getById("offZ")).setText("");
+                ((ElementNumberInput<?>)getById("offX")).setText("");
+                ((ElementNumberInput<?>)getById("offY")).setText("");
+                ((ElementNumberInput<?>)getById("offZ")).setText("");
 
-                ((ElementNumberInput)getById("expX")).setText("");
-                ((ElementNumberInput)getById("expY")).setText("");
-                ((ElementNumberInput)getById("expZ")).setText("");
+                ((ElementNumberInput<?>)getById("expX")).setText("");
+                ((ElementNumberInput<?>)getById("expY")).setText("");
+                ((ElementNumberInput<?>)getById("expZ")).setText("");
 
             }
         }

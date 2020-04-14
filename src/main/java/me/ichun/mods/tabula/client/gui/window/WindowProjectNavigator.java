@@ -5,7 +5,6 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.IConstrainable;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.Element;
-import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementButton;
 import me.ichun.mods.ichunutil.client.render.RenderHelper;
 import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
@@ -15,7 +14,7 @@ import me.ichun.mods.tabula.client.tabula.Mainframe;
 import javax.annotation.Nonnull;
 
 public class WindowProjectNavigator extends Window<WorkspaceTabula>
-    implements IProjectInfo
+        implements IProjectInfo
 {
     public WindowProjectNavigator(WorkspaceTabula parent)
     {
@@ -78,12 +77,12 @@ public class WindowProjectNavigator extends Window<WorkspaceTabula>
         {
             elements.clear();
 
-            Mainframe mainframe = ((WorkspaceTabula)getWorkspace()).mainframe;
+            Mainframe mainframe = parentFragment.parent.mainframe;
             IConstrainable last = null;
             for(int i = 0; i < mainframe.projects.size(); i++)
             {
                 Mainframe.ProjectInfo projectInfo = mainframe.projects.get(i);
-                ElementProjectButton btn = new ElementProjectButton(this, projectInfo.project.modelName, elementClickable -> {});
+                ElementProjectButton<?, ?> btn = new ElementProjectButton<>(this, projectInfo.project.modelName, elementClickable -> {});
                 btn.setConstraint(new Constraint(btn).left(last == null ? this : last, last == null ? Constraint.Property.Type.LEFT : Constraint.Property.Type.RIGHT, 0));
                 btn.setWidth(getFontRenderer().getStringWidth(projectInfo.project.modelName) + 14);
                 elements.add(btn);

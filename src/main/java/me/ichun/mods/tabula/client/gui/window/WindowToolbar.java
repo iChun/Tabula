@@ -68,11 +68,11 @@ public class WindowToolbar extends Window<WorkspaceTabula>
         {
             elements.clear();
 
-            ElementButtonTextured last;
-            ElementButtonTextured btn;
+            ElementButtonTextured<?, ?> last;
+            ElementButtonTextured<?, ?> btn;
             //new project
-            btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/new.png"), button -> {
-                WindowNewProject window = new WindowNewProject((WorkspaceTabula)getWorkspace());
+            btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/new.png"), button -> {
+                WindowNewProject window = new WindowNewProject(getWorkspace());
                 window.setWidth((int)(window.getParentWidth() * 0.6D));
                 window.setHeight((int)(window.getParentHeight() * 0.6D));
                 getWorkspace().addWindow(window);
@@ -84,7 +84,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
             elements.add(last = btn);
 
             //open project
-            btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/open.png"), button -> {
+            btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/open.png"), button -> {
                 //TODO this
             }).setSize(20,20).setTooltip(I18n.format("topdock.open"));
             btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
@@ -93,105 +93,105 @@ public class WindowToolbar extends Window<WorkspaceTabula>
             if(info != null)
             {
                 //edit project
-                btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/edit.png"), button -> {
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/edit.png"), button -> {
                     //TODO this
                 }).setSize(20,20).setTooltip(I18n.format("topdock.edit"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //save project
-                btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/save.png"), button -> {
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/save.png"), button -> {
                     //TODO this
                 }).setSize(20,20).setTooltip(I18n.format("topdock.save"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //saveAs project
-                btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/saveas.png"), button -> {
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/saveas.png"), button -> {
                     //TODO this
                 }).setSize(20,20).setTooltip(I18n.format("topdock.saveAs"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //import to project
-                btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/import.png"), button -> {
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/import.png"), button -> {
                     //TODO this
                 }).setSize(20,20).setTooltip(I18n.format("topdock.import"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //importMC to project
-                btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/importmc.png"), button -> {
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/importmc.png"), button -> {
                     //TODO this
                 }).setSize(20,20).setTooltip(I18n.format("topdock.importMC"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //export project
-                btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/export.png"), button -> {
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/export.png"), button -> {
                     //TODO this
                 }).setSize(20,20).setTooltip(I18n.format("topdock.export"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //ghostModel
-                btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/ghostmodel.png"), button -> {
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/ghostmodel.png"), button -> {
                     //TODO this
                 }).setSize(20,20).setTooltip(I18n.format("topdock.ghostModel"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //cut
-                btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/cut.png"), button -> {
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/cut.png"), button -> {
                     //TODO this
                 }).setSize(20,20).setTooltip(I18n.format("topdock.cut"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //copy
-                btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/copy.png"), button -> {
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/copy.png"), button -> {
                     //TODO this
                 }).setSize(20,20).setTooltip(I18n.format("topdock.copy"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //paste
-                btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/paste.png"), button -> {
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/paste.png"), button -> {
                     //TODO this
                 }).setSize(20,20).setTooltip(I18n.format("topdock.paste"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //pasteinplace
-                btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/pasteinplace.png"), button -> {
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/pasteinplace.png"), button -> {
                     //TODO this
                 }).setSize(20,20).setTooltip(I18n.format("topdock.pasteInPlace"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //pasteWithoutChildren
-                btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/pastewithoutchildren.png"), button -> {
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/pastewithoutchildren.png"), button -> {
                     //TODO this
                 }).setSize(20,20).setTooltip(I18n.format("topdock.pasteWithoutChildren"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //autolayout
-                btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/autolayout.png"), button -> {
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/autolayout.png"), button -> {
                     //TODO this
                 }).setSize(20,20).setTooltip(I18n.format("topdock.autoLayout"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //undo
-                btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/undo.png"), button -> {
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/undo.png"), button -> {
                     //TODO this
                 }).setSize(20,20).setTooltip(I18n.format("topdock.undo"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //redo
-                btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/redo.png"), button -> {
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/redo.png"), button -> {
                     //TODO this
                 }).setSize(20,20).setTooltip(I18n.format("topdock.redo"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
@@ -199,18 +199,18 @@ public class WindowToolbar extends Window<WorkspaceTabula>
             }
 
             //Add exit button. last button
-            btn = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/exittabula.png"), button -> {
+            btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/exittabula.png"), button -> {
                 getWorkspace().onClose();
             }).setSize(20,20).setTooltip(I18n.format("topdock.exitTabula"));
             btn.setConstraint(new Constraint(btn).right(this, Constraint.Property.Type.RIGHT, 0));
             elements.add(btn);
 
-            ElementToggle toggle = new ElementToggle(this, "B", elementClickable -> {}).setToggled(true).setSize(20,20).setTooltip(I18n.format("topdock.woodFull"));
+            ElementToggle<?, ?> toggle = new ElementToggle<>(this, "B", elementClickable -> {}).setToggled(true).setSize(20,20).setTooltip(I18n.format("topdock.woodFull"));
             toggle.setId("buttonBlockToggle");
             toggle.setConstraint(new Constraint(toggle).right(btn, Constraint.Property.Type.LEFT, 0));
             elements.add(toggle);
 
-            ElementToggle toggle1 = new ElementToggle(this, "G", elementClickable -> {}).setToggled(true).setSize(20,20).setTooltip(I18n.format("tabula.config.prop.renderGrid.name"));
+            ElementToggle<?, ?> toggle1 = new ElementToggle<>(this, "G", elementClickable -> {}).setToggled(true).setSize(20,20).setTooltip(I18n.format("tabula.config.prop.renderGrid.name"));
             toggle1.setId("buttonGridToggle");
             toggle1.setConstraint(new Constraint(toggle1).right(toggle, Constraint.Property.Type.LEFT, 0));
             elements.add(toggle1);

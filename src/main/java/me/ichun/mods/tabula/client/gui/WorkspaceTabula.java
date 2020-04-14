@@ -7,8 +7,6 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.Fragment;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
 import me.ichun.mods.ichunutil.client.gui.bns.window.WindowDock;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
-import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementNumberInput;
-import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementTextField;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
 import me.ichun.mods.ichunutil.client.render.RenderHelper;
 import me.ichun.mods.ichunutil.common.iChunUtil;
@@ -84,7 +82,7 @@ public class WorkspaceTabula extends Workspace
 
     public void selectBox(Project.Part.Box box)
     {
-        Identifiable id = mainframe.getActiveProject().project.getById(box.parentIdent);
+        Identifiable<?> id = mainframe.getActiveProject().project.getById(box.parentIdent);
         if(id instanceof Project.Part)
         {
             selectPart((Project.Part)id);
@@ -226,7 +224,7 @@ public class WorkspaceTabula extends Workspace
 
         //RENDER BLOCK
         Fragment<?> fragment = getById("buttonBlockToggle");
-        if(fragment instanceof ElementToggle && ((ElementToggle)fragment).toggleState) //render the block
+        if(fragment instanceof ElementToggle && ((ElementToggle<?, ?>)fragment).toggleState) //render the block
         {
             //TODO fix themes
             //TODO change how this is done
@@ -245,7 +243,7 @@ public class WorkspaceTabula extends Workspace
         }
         //END RENDER BLOCK
         fragment = getById("buttonGridToggle");
-        if(fragment instanceof ElementToggle && ((ElementToggle)fragment).toggleState) //render the block
+        if(fragment instanceof ElementToggle && ((ElementToggle<?, ?>)fragment).toggleState) //render the block
         {
             Minecraft.getInstance().getTextureManager().bindTexture(TEX_GRID_16);
 

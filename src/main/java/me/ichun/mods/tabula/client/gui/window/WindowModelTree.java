@@ -34,7 +34,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
             implements IProjectInfo
     {
         public @Nullable Mainframe.ProjectInfo currentInfo = null;
-        public ElementList list;
+        public ElementList<?> list;
 
         public ViewModelTree(@Nonnull WindowModelTree parent)
         {
@@ -66,13 +66,13 @@ public class WindowModelTree extends Window<WorkspaceTabula>
             for(Project.Part part : currentInfo.project.parts)
             {
                 list.addItem(part).addTextWrapper(part.name).setSelectionHandler(item -> {
-                    ((WorkspaceTabula)getWorkspace()).selectPart((Project.Part)item.getObject());
+                    parentFragment.parent.selectPart((Project.Part)item.getObject());
                 });
 
                 for(Project.Part.Box box : part.boxes)
                 {
                     list.addItem(box).addTextWrapper(box.name).setSelectionHandler(item -> {
-                        ((WorkspaceTabula)getWorkspace()).selectBox((Project.Part.Box)item.getObject());
+                        parentFragment.parent.selectBox((Project.Part.Box)item.getObject());
                     });
                 }
             }
@@ -90,7 +90,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                 int spaceBottom = 2;
                 if(list == null)
                 {
-                    list = new ElementList(this);
+                    list = new ElementList<>(this);
                     list.setConstraint(new Constraint(list).bottom(this, Constraint.Property.Type.BOTTOM, 2 + spaceBottom + 20).left(this, Constraint.Property.Type.LEFT, spaceBottom).right(this, Constraint.Property.Type.RIGHT, spaceBottom).top(this, Constraint.Property.Type.TOP, spaceBottom));
                 }
                 elements.add(list);
@@ -103,22 +103,22 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                     //TODO add boxes
                 }
 
-                ElementButtonTextured last;
-                ElementButtonTextured button;
+                ElementButtonTextured<?, ?> last;
+                ElementButtonTextured<?, ?> button;
 
-                button = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/newgroup.png"), elementClickable -> {
+                button = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/newgroup.png"), elementClickable -> {
                     info.addPart();
                 }).setSize(20, 20).setTooltip(I18n.format("window.modelTree.newGroup"));
                 button.setConstraint(new Constraint(button).left(this, Constraint.Property.Type.LEFT, 2).bottom(this, Constraint.Property.Type.BOTTOM, spaceBottom));
                 elements.add(last = button);
 
-                button = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/newcube.png"), elementClickable -> {
+                button = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/newcube.png"), elementClickable -> {
 
                 }).setSize(20, 20).setTooltip(I18n.format("window.modelTree.newCube"));
                 button.setConstraint(new Constraint(button).left(last, Constraint.Property.Type.RIGHT, 0).bottom(this, Constraint.Property.Type.BOTTOM, spaceBottom));
                 elements.add(last = button);
 
-                button = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/delete.png"), elementClickable -> {
+                button = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/delete.png"), elementClickable -> {
 
                 }).setSize(20, 20).setTooltip(I18n.format("window.modelTree.delete"));
                 button.setConstraint(new Constraint(button).left(last, Constraint.Property.Type.RIGHT, 0).bottom(this, Constraint.Property.Type.BOTTOM, spaceBottom));
