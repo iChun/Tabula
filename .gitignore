@@ -1,15 +1,31 @@
-*.class
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
 
-# Package Files #
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
+
+# gradle
+build
+.gradle
+libs
+
+# other
+eclipse
+run
+
+# java
+*.class
 *.war
 *.ear
 
-# IDEA Files #
-*.iml
-/.idea
-
-# Gradle #
-/.gradle
-/build
-/libs
-/src/api
+# Temp
+src/main/java/me/ichun/mods/ichunutil/old
