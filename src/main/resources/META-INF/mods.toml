@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[31,)" #forge version dep
+issueTrackerURL="https://github.com/iChun/Tabula/issues"
+
+[[mods]]
+    modId="tabula"
+    version="${file.jarVersion}" #mandatory
+    displayName="Tabula"
+    displayURL="http://ichun.me/mods/tabula-minecraft-modeler/"
+    authors="iChun"
+    description='''
+    A successor to the modeler Techne, an in-game modeler with SMP support.
+    '''
+
+[[dependencies.tabula]]
+    modId="forge"
+    mandatory=true
+    versionRange="[31,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.tabula]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.15.2,1.16)"
+    ordering="NONE"
+    side="BOTH"
