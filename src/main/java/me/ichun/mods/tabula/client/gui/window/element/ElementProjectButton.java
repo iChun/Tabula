@@ -44,9 +44,8 @@ public class ElementProjectButton<T extends ElementProjectButton> extends Elemen
             }
             //TODO different font colours
             drawString(s, getLeft() + 2, getTop() + (height - getFontRenderer().FONT_HEIGHT) / 2F + 1);
-
-            drawString("X", getRight() - 7, getTop() + (height - getFontRenderer().FONT_HEIGHT) / 2F + 1);
         }
+        drawString("X", getRight() - 7, getTop() + (height - getFontRenderer().FONT_HEIGHT) / 2F + 1);
     }
 
     @Override

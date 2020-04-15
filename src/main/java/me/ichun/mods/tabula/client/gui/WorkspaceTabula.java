@@ -6,12 +6,14 @@ import me.ichun.mods.ichunutil.client.gui.bns.Workspace;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Fragment;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
 import me.ichun.mods.ichunutil.client.gui.bns.window.WindowDock;
+import me.ichun.mods.ichunutil.client.gui.bns.window.WindowPopup;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
 import me.ichun.mods.ichunutil.client.render.RenderHelper;
 import me.ichun.mods.ichunutil.common.iChunUtil;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
+import me.ichun.mods.tabula.client.core.ResourceHelper;
 import me.ichun.mods.tabula.client.gui.window.*;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
 import me.ichun.mods.tabula.common.Tabula;
@@ -23,6 +25,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -67,7 +70,7 @@ public class WorkspaceTabula extends Workspace
         children.stream().filter(child -> child instanceof IProjectInfo).forEach(child -> ((IProjectInfo)child).setCurrentProject(info));
     }
 
-    public boolean selectPart(Project.Part part)
+    public boolean selectPart(Project.Part part) //TODO select the first box when you click on this.... if there is a box
     {
         Window<?> window = getWindowType(WindowPartInfo.class);
         if(window == null)
@@ -82,29 +85,40 @@ public class WorkspaceTabula extends Workspace
 
     public void selectBox(Project.Part.Box box)
     {
-        Identifiable<?> id = mainframe.getActiveProject().project.getById(box.parentIdent);
-        if(id instanceof Project.Part)
+        if(box != null)
         {
-            selectPart((Project.Part)id);
-
-            //we've selected the parent. we can show the selector now.
-            Window<?> window = getWindowType(WindowBoxInfo.class);
-            if(window == null)
+            Identifiable<?> id = mainframe.getActiveProject().project.getById(box.parentIdent);
+            if(id instanceof Project.Part)
             {
-                Window<?> partInfo = getWindowType(WindowPartInfo.class);
-                window = new WindowBoxInfo(this);
-                if(isDocked(partInfo))
-                {
-                    addToDocked(partInfo, window);
-                }
-                else
-                {
-                    addToDock(window, Constraint.Property.Type.LEFT);
-                }
-                window.init();
-            }
+                selectPart((Project.Part)id);
 
-            ((WindowBoxInfo)window).selectBox(box);
+                //we've selected the parent. we can show the selector now.
+                Window<?> window = getWindowType(WindowBoxInfo.class);
+                if(window == null)
+                {
+                    Window<?> partInfo = getWindowType(WindowPartInfo.class);
+                    window = new WindowBoxInfo(this);
+                    if(isDocked(partInfo))
+                    {
+                        addToDocked(partInfo, window);
+                    }
+                    else
+                    {
+                        addToDock(window, Constraint.Property.Type.LEFT);
+                    }
+                    window.init();
+                }
+
+                ((WindowBoxInfo)window).selectBox(box);
+                return;
+            }
+        }
+
+        //box is null, or box has no part parent. Deselect.
+        Window<?> window = getWindowType(WindowBoxInfo.class);
+        if(window != null)
+        {
+            ((WindowBoxInfo)window).selectBox(null);
         }
     }
 
@@ -114,15 +128,13 @@ public class WorkspaceTabula extends Workspace
         super.init();
 
         Project project = new Project();
-        project.modelName = "MyFirstModel";
+        project.name = "MyFirstModel";
         project.author = "sugar tits";
         project.texWidth = 64;
         project.texHeight = 32;
         this.mainframe.openProject(project);
-        this.projectChanged(IProjectInfo.ChangeType.PROJECTS);
-        this.setCurrentProject(this.mainframe.getActiveProject());
 
-        this.mainframe.getActiveProject().addPart();
+        this.mainframe.getActiveProject().addPart(null);
     }
 
     @Override
@@ -232,7 +244,7 @@ public class WorkspaceTabula extends Workspace
             Block block = getTheme().block;
             if(block == null)
             {
-                block = Blocks.OAK_PLANKS;
+                block = Blocks.SPRUCE_PLANKS;
             }
 
             net.minecraft.client.renderer.RenderHelper.setupGuiFlatDiffuseLighting();
@@ -317,12 +329,12 @@ public class WorkspaceTabula extends Workspace
     public void onClose()
     {
         Minecraft mc = Minecraft.getInstance();
+        super.onClose();
         if(oriScale != mc.gameSettings.guiScale)
         {
             mc.gameSettings.guiScale = oriScale;
             mc.updateWindowSize();
         }
-        super.onClose();
     }
 
     public static WorkspaceTabula create(Screen lastScreen)

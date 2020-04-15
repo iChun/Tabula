@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 public class WindowProjectNavigator extends Window<WorkspaceTabula>
         implements IProjectInfo
 {
-    public WindowProjectNavigator(WorkspaceTabula parent)
+    public WindowProjectNavigator(WorkspaceTabula parent) //TODO save popup if closing project with unsaved changes
     {
         super(parent);
         borderSize = () -> 0;
@@ -82,9 +82,9 @@ public class WindowProjectNavigator extends Window<WorkspaceTabula>
             for(int i = 0; i < mainframe.projects.size(); i++)
             {
                 Mainframe.ProjectInfo projectInfo = mainframe.projects.get(i);
-                ElementProjectButton<?> btn = new ElementProjectButton<>(this, projectInfo.project.modelName, elementClickable -> {});
+                ElementProjectButton<?> btn = new ElementProjectButton<>(this, projectInfo.project.name, elementClickable -> {});
                 btn.setConstraint(new Constraint(btn).left(last == null ? this : last, last == null ? Constraint.Property.Type.LEFT : Constraint.Property.Type.RIGHT, 0));
-                btn.setWidth(getFontRenderer().getStringWidth(projectInfo.project.modelName) + 14);
+                btn.setWidth(getFontRenderer().getStringWidth(projectInfo.project.name) + 14);
                 elements.add(btn);
                 last = btn;
             }

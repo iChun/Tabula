@@ -28,7 +28,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
 
         setView(viewPartInfo = new ViewPartInfo(this));
         setId("windowPartInfo");
-        size(150, 230);
+        size(150, 225);
     }
 
     public boolean selectPart(Project.Part part)
@@ -67,7 +67,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             ElementTextField input = new ElementTextField(this);
             input.setDefaultText("").setSize(numberInputWidth * 3, 14).setId("partName");
             input.setResponder(responder);
-            input.setConstraint(new Constraint(input).left(text1, Constraint.Property.Type.LEFT, 2).top(text1, Constraint.Property.Type.BOTTOM, padding));
+            input.setConstraint(new Constraint(input).left(text1, Constraint.Property.Type.LEFT, 2).top(text1, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(input);
 
             ElementTextWrapper text = new ElementTextWrapper(this);
@@ -75,119 +75,135 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             text.setConstraint(new Constraint(text).left(text1, Constraint.Property.Type.LEFT, 0).top(input, Constraint.Property.Type.BOTTOM, spacing));
             elements.add(text);
 
+            ElementSharedSpace space = new ElementSharedSpace(this, ElementScrollBar.Orientation.HORIZONTAL);
+            space.setSize(14, 14).setConstraint(new Constraint(space).left(this, Constraint.Property.Type.LEFT, 4).top(text, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
+            elements.add(space);
+
             ElementNumberInput num = new ElementNumberInput(this, false);
             num.setMin(0).setSize(numberInputWidth, 14).setId("txWidth");
             num.setResponder(responder);
-            num.setConstraint(new Constraint(num).left(text1, Constraint.Property.Type.LEFT, 2).top(text, Constraint.Property.Type.BOTTOM, padding));
-            elements.add(num);
+            num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
+            space.addElement(num);
 
             ElementNumberInput num1 = new ElementNumberInput(this, false);
             num1.setMin(0).setSize(numberInputWidth, 14).setId("txHeight");
             num1.setResponder(responder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
-            elements.add(num1);
+            space.addElement(num1);
 
             ElementToggle<?> btn = new ElementToggle<>(this, "window.partInfo.matchProject", elementClickable -> {
                 updatePart();
             });
             btn.setSize(numberInputWidth - 2, 14).setTooltip(I18n.format("window.partInfo.matchProjectFull"));
             btn.setId("txMatch");
-            btn.setConstraint(new Constraint(btn).left(num1, Constraint.Property.Type.RIGHT, 2).top(num1, Constraint.Property.Type.TOP, 0));
-            elements.add(btn);
+            btn.setConstraint(new Constraint(btn).left(num1, Constraint.Property.Type.RIGHT, 2).top(num1, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
+            space.addElement(btn);
 
             text = new ElementTextWrapper(this);
             text.setNoWrap().setText(I18n.format("window.controls.txOffset"));
             text.setConstraint(new Constraint(text).left(text1, Constraint.Property.Type.LEFT, 0).top(num, Constraint.Property.Type.BOTTOM, spacing));
             elements.add(text);
 
+            space = new ElementSharedSpace(this, ElementScrollBar.Orientation.HORIZONTAL);
+            space.setSize(14, 14).setConstraint(new Constraint(space).left(this, Constraint.Property.Type.LEFT, 4).top(text, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
+            elements.add(space);
+
             num = new ElementNumberInput(this, false);
             num.setMin(0).setSize(numberInputWidth, 14).setId("txOffX");
             num.setResponder(responder);
-            num.setConstraint(new Constraint(num).left(text1, Constraint.Property.Type.LEFT, 2).top(text, Constraint.Property.Type.BOTTOM, padding));
-            elements.add(num);
+            num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
+            space.addElement(num);
 
             num1 = new ElementNumberInput(this, false);
             num1.setMin(0).setSize(numberInputWidth, 14).setId("txOffY");
             num1.setResponder(responder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
-            elements.add(num1);
+            space.addElement(num1);
 
             btn = new ElementToggle<>(this, "window.controls.txMirror", elementClickable -> {
                 updatePart();
             });
             btn.setSize(numberInputWidth - 2, 14).setTooltip(I18n.format("window.controls.txMirrorFull"));
             btn.setId("txMirror");
-            btn.setConstraint(new Constraint(btn).left(num1, Constraint.Property.Type.RIGHT, 2).top(num1, Constraint.Property.Type.TOP, 0));
-            elements.add(btn);
+            btn.setConstraint(new Constraint(btn).left(num1, Constraint.Property.Type.RIGHT, 2).top(num1, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
+            space.addElement(btn);
 
             text = new ElementTextWrapper(this);
             text.setNoWrap().setText(I18n.format("window.controls.position"));
             text.setConstraint(new Constraint(text).left(text1, Constraint.Property.Type.LEFT, 0).top(num, Constraint.Property.Type.BOTTOM, spacing));
             elements.add(text);
 
+            space = new ElementSharedSpace(this, ElementScrollBar.Orientation.HORIZONTAL);
+            space.setSize(14, 14).setConstraint(new Constraint(space).left(this, Constraint.Property.Type.LEFT, 4).top(text, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
+            elements.add(space);
+
             num = new ElementNumberInput(this, true);
             num.setMaxDec(2).setSize(numberInputWidth, 14).setId("posX");
             num.setResponder(responder);
-            num.setConstraint(new Constraint(num).left(text1, Constraint.Property.Type.LEFT, 2).top(text, Constraint.Property.Type.BOTTOM, padding));
-            elements.add(num);
+            num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
+            space.addElement(num);
 
             num1 = new ElementNumberInput(this, true);
             num1.setMaxDec(2).setSize(numberInputWidth, 14).setId("posY");
             num1.setResponder(responder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
-            elements.add(num1);
+            space.addElement(num1);
 
             ElementNumberInput num2 = new ElementNumberInput(this, true);
             num2.setMaxDec(2).setSize(numberInputWidth, 14).setId("posZ");
             num2.setResponder(responder);
-            num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
-            elements.add(num2);
+            num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
+            space.addElement(num2);
 
             text = new ElementTextWrapper(this);
             text.setNoWrap().setText(I18n.format("window.controls.rotation"));
             text.setConstraint(new Constraint(text).left(text1, Constraint.Property.Type.LEFT, 0).top(num, Constraint.Property.Type.BOTTOM, spacing));
             elements.add(text);
 
+            space = new ElementSharedSpace(this, ElementScrollBar.Orientation.HORIZONTAL);
+            space.setSize(14, 14).setConstraint(new Constraint(space).left(this, Constraint.Property.Type.LEFT, 4).top(text, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
+            elements.add(space);
+
             num = new ElementNumberInput(this, true);
             num.setMaxDec(2).setMin(-180).setMax(180).setSize(numberInputWidth, 14).setId("rotX");
             num.setResponder(responder);
-            num.setConstraint(new Constraint(num).left(text1, Constraint.Property.Type.LEFT, 2).top(text, Constraint.Property.Type.BOTTOM, padding));
-            elements.add(num);
+            num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
+            space.addElement(num);
 
             num1 = new ElementNumberInput(this, true);
             num1.setMaxDec(2).setMin(-180).setMax(180).setSize(numberInputWidth, 14).setId("rotY");
             num1.setResponder(responder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
-            elements.add(num1);
+            space.addElement(num1);
 
             num2 = new ElementNumberInput(this, true);
             num2.setMaxDec(2).setMin(-180).setMax(180).setSize(numberInputWidth, 14).setId("rotZ");
             num2.setResponder(responder);
-            num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
-            elements.add(num2);
+            num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
+            space.addElement(num2);
 
             ElementScrollBar<?> scrollBar = new ElementScrollBar<>(this, ElementScrollBar.Orientation.HORIZONTAL, 0.05F);
+            scrollBar.setScrollProg(0.5F);
             scrollBar.setCallback(scroll -> {
                 ((ElementNumberInput)getById("rotX")).setText(String.format(Locale.ENGLISH, "%.2f", (scroll.scrollProg * 360F) - 180F));
             }).setId("scrollX");
-            scrollBar.setScrollProg(0.5F);
-            scrollBar.setConstraint(new Constraint(scrollBar).left(num, Constraint.Property.Type.LEFT, 0).right(num2, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.BOTTOM, spacing));
+            scrollBar.setConstraint(new Constraint(scrollBar).left(num, Constraint.Property.Type.LEFT, 0).right(num2, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.BOTTOM, spacing * 2).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(scrollBar);
 
             ElementScrollBar<?> scrollBar1 = new ElementScrollBar<>(this, ElementScrollBar.Orientation.HORIZONTAL, 0.05F);
+            scrollBar1.setScrollProg(0.5F);
             scrollBar1.setCallback(scroll -> {
                 ((ElementNumberInput)getById("rotY")).setText(String.format(Locale.ENGLISH, "%.2f", (scroll.scrollProg * 360F) - 180F));
             }).setId("scrollY");
-            scrollBar1.setScrollProg(0.5F);
-            scrollBar1.setConstraint(new Constraint(scrollBar1).left(num, Constraint.Property.Type.LEFT, 0).right(num2, Constraint.Property.Type.RIGHT, 0).top(scrollBar, Constraint.Property.Type.BOTTOM, spacing));
+            scrollBar1.setConstraint(new Constraint(scrollBar1).left(num, Constraint.Property.Type.LEFT, 0).right(num2, Constraint.Property.Type.RIGHT, 0).top(scrollBar, Constraint.Property.Type.BOTTOM, spacing).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(scrollBar1);
 
             ElementScrollBar<?> scrollBar2 = new ElementScrollBar<>(this, ElementScrollBar.Orientation.HORIZONTAL, 0.05F);
+            scrollBar2.setScrollProg(0.5F);
             scrollBar2.setCallback(scroll -> {
                 ((ElementNumberInput)getById("rotZ")).setText(String.format(Locale.ENGLISH, "%.2f", (scroll.scrollProg * 360F) - 180F));
             }).setId("scrollZ");
-            scrollBar2.setScrollProg(0.5F);
-            scrollBar2.setConstraint(new Constraint(scrollBar2).left(num, Constraint.Property.Type.LEFT, 0).right(num2, Constraint.Property.Type.RIGHT, 0).top(scrollBar1, Constraint.Property.Type.BOTTOM, spacing));
+            scrollBar2.setConstraint(new Constraint(scrollBar2).left(num, Constraint.Property.Type.LEFT, 0).right(num2, Constraint.Property.Type.RIGHT, 0).top(scrollBar1, Constraint.Property.Type.BOTTOM, spacing).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(scrollBar2);
         }
 
@@ -235,9 +251,9 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
                 currentPart.rotAZ = (float)((ElementNumberInput)getById("rotZ")).getDouble();
 
                 String postUpdate = currentPart.getJsonWithoutChildren();
-                if(postUpdate.equals(preUpdate))
+                if(!postUpdate.equals(preUpdate))
                 {
-                    ((WindowPartInfo)parentFragment).mainframe.updatePart(currentPart);
+                    parentFragment.mainframe.updatePart(currentPart);
                 }
             }
         }

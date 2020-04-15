@@ -12,7 +12,7 @@ public class ConfigClient extends ConfigBase
     //TODO localize these
 
     @CategoryDivider(name = "clientOnly")
-    @Prop(min = -1, max = 5)
+    @Prop(min = -1, max = 8)
     public int forceGuiScale = 2;
 
     @Nonnull

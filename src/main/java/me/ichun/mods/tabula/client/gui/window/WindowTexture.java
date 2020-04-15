@@ -45,14 +45,14 @@ public class WindowTexture extends Window<WorkspaceTabula>
         {
             super(parent, "window.texture.title");
 
-            ElementButtonTextured<?> btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/cleartexture.png"), elementClickable -> {
+            ElementButtonTextured<?> btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/cleartexture.png"), button -> {
                 //TODO this
             });
             btn.setSize(20, 20).setTooltip(I18n.format("window.texture.clearTexture"));
             btn.setConstraint(new Constraint(btn).bottom(this, Constraint.Property.Type.BOTTOM, 2).right(this, Constraint.Property.Type.RIGHT, 2));
             elements.add(btn);
 
-            ElementButtonTextured<?> btn1 = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/newtexture.png"), elementClickable -> {
+            ElementButtonTextured<?> btn1 = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/newtexture.png"), button -> {
                 //TODO this
             });
             btn1.setSize(20, 20).setTooltip(I18n.format("window.texture.loadTexture"));

@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.ZipEntry;
@@ -34,75 +35,74 @@ public class ResourceHelper
         if(!init)
         {
             init = true;
-            workingDir = FMLPaths.MODSDIR.get().resolve(Tabula.MOD_ID);
-            if(!Files.exists(workingDir))
+
+            try
             {
-                try
+                workingDir = FMLPaths.MODSDIR.get().resolve(Tabula.MOD_ID);
+                if(!Files.exists(workingDir)) Files.createDirectory(workingDir);
+
+                savesDir = workingDir.resolve("saves");
+                if(!Files.exists(savesDir)) Files.createDirectory(savesDir);
+
+                texturesDir = workingDir.resolve("textures");
+                if(!Files.exists(texturesDir)) Files.createDirectory(texturesDir);
+
+                exportsDir = workingDir.resolve("export");
+                if(!Files.exists(exportsDir)) Files.createDirectory(exportsDir);
+
+                autosaveDir = workingDir.resolve("autosave");
+                if(!Files.exists(autosaveDir)) Files.createDirectory(autosaveDir);
+
+                themesDir = workingDir.resolve("themes");
+                if(!Files.exists(themesDir)) Files.createDirectory(themesDir);
+
+                //TODO move themes to iChunUtil?
+                File defaultTheme = new File(themesDir.toFile(), "default.json");
+                if(!defaultTheme.exists())
                 {
-                    Files.createDirectory(workingDir);
+                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                    String jsonOutput = gson.toJson(new Theme());
 
-                    savesDir = workingDir.resolve("saves");
-                    if(!Files.exists(savesDir)) Files.createDirectory(savesDir);
-
-                    texturesDir = workingDir.resolve("textures");
-                    if(!Files.exists(texturesDir)) Files.createDirectory(texturesDir);
-
-                    exportsDir = workingDir.resolve("export");
-                    if(!Files.exists(exportsDir)) Files.createDirectory(exportsDir);
-
-                    autosaveDir = workingDir.resolve("autosave");
-                    if(!Files.exists(autosaveDir)) Files.createDirectory(autosaveDir);
-
-                    themesDir = workingDir.resolve("themes");
-                    if(!Files.exists(themesDir)) Files.createDirectory(themesDir);
-
-                    File defaultTheme = new File(themesDir.toFile(), "default.json");
-                    if(!defaultTheme.exists())
+                    try
                     {
-                        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                        String jsonOutput = gson.toJson(new Theme());
-
-                        try
-                        {
-                            FileUtils.writeStringToFile(defaultTheme, jsonOutput, Charset.defaultCharset());
-                        }
-                        catch(IOException e)
-                        {
-                            e.printStackTrace();
-                        }
+                        FileUtils.writeStringToFile(defaultTheme, jsonOutput, StandardCharsets.UTF_8);
                     }
-
-                        InputStream in = Tabula.class.getResourceAsStream("/themes.zip");
-                        if(in != null)
-                        {
-                            ZipInputStream zipStream = new ZipInputStream(in);
-                            ZipEntry entry = null;
-
-                            while((entry = zipStream.getNextEntry()) != null)
-                            {
-                                File file = new File(themesDir.toFile(), entry.getName());
-                                if(file.exists() && file.length() > 3L)
-                                {
-                                    continue;
-                                }
-                                FileOutputStream out = new FileOutputStream(file);
-
-                                byte[] buffer = new byte[8192];
-                                int len;
-                                while((len = zipStream.read(buffer)) != -1)
-                                {
-                                    out.write(buffer, 0, len);
-                                }
-                                out.close();
-                            }
-                            zipStream.close();
-                        }
+                    catch(IOException e)
+                    {
+                        e.printStackTrace();
+                    }
                 }
-                catch(IOException e)
+
+                InputStream in = Tabula.class.getResourceAsStream("/themes.zip");
+                if(in != null)
                 {
-                    Tabula.LOGGER.fatal("Error initialising resources!");
-                    e.printStackTrace();
+                    ZipInputStream zipStream = new ZipInputStream(in);
+                    ZipEntry entry = null;
+
+                    while((entry = zipStream.getNextEntry()) != null)
+                    {
+                        File file = new File(themesDir.toFile(), entry.getName());
+                        if(file.exists() && file.length() > 3L)
+                        {
+                            continue;
+                        }
+                        FileOutputStream out = new FileOutputStream(file);
+
+                        byte[] buffer = new byte[8192];
+                        int len;
+                        while((len = zipStream.read(buffer)) != -1)
+                        {
+                            out.write(buffer, 0, len);
+                        }
+                        out.close();
+                    }
+                    zipStream.close();
                 }
+            }
+            catch(IOException e)
+            {
+                Tabula.LOGGER.fatal("Error initialising resources!");
+                e.printStackTrace();
             }
         }
     }

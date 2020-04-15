@@ -1,13 +1,17 @@
 package me.ichun.mods.tabula.client.gui.window;
 
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
+import me.ichun.mods.ichunutil.client.gui.bns.window.WindowPopup;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementButtonTextured;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
 import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
+import me.ichun.mods.tabula.client.gui.window.popup.WindowEditProject;
 import me.ichun.mods.tabula.client.gui.window.popup.WindowNewProject;
+import me.ichun.mods.tabula.client.gui.window.popup.WindowOpenProject;
+import me.ichun.mods.tabula.client.gui.window.popup.WindowSaveAs;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
@@ -72,13 +76,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
             ElementButtonTextured<?> btn;
             //new project
             btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/new.png"), button -> {
-                WindowNewProject window = new WindowNewProject(getWorkspace());
-                window.setWidth((int)(window.getParentWidth() * 0.6D));
-                window.setHeight((int)(window.getParentHeight() * 0.6D));
-                getWorkspace().addWindow(window);
-                getWorkspace().putInCenter(window);
-                getWorkspace().setFocused(window);
-                window.init();
+                getWorkspace().openWindowInCenter(new WindowNewProject(getWorkspace()), 0.6D, 0.6D);
             });
             btn.setSize(20,20).setTooltip(I18n.format("topdock.new"));
             btn.setConstraint(new Constraint(btn).left(this, Constraint.Property.Type.LEFT, 0));
@@ -86,7 +84,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
 
             //open project
             btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/open.png"), button -> {
-                //TODO this
+                getWorkspace().openWindowInCenter(new WindowOpenProject(getWorkspace()), 0.4D, 0.6D);
             });
             btn.setSize(20,20).setTooltip(I18n.format("topdock.open"));
             btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
@@ -96,7 +94,13 @@ public class WindowToolbar extends Window<WorkspaceTabula>
             {
                 //edit project
                 btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/edit.png"), button -> {
-                    //TODO this
+                    Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
+                    if(info1 != null)
+                    {
+                        WindowEditProject window = new WindowEditProject(getWorkspace(), info1.project);
+                        getWorkspace().openWindowInCenter(window, 0.6D, 0.6D);
+                        window.init();
+                    }
                 });
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.edit"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
@@ -104,7 +108,18 @@ public class WindowToolbar extends Window<WorkspaceTabula>
 
                 //save project
                 btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/save.png"), button -> {
-                    //TODO this
+                    Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
+                    if(info1 != null)
+                    {
+                        if(info1.project.saveFile == null) //we've not saved before. no savefile
+                        {
+                            openSaveAsWindow(info1);
+                        }
+                        else if(!info1.project.save(info1.project.saveFile))
+                        {
+                            WindowPopup.popup(parentFragment.parent, 0.4D, 0.3D, I18n.format("window.saveAs.failed"), null);
+                        }
+                    }
                 });
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.save"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
@@ -112,7 +127,11 @@ public class WindowToolbar extends Window<WorkspaceTabula>
 
                 //saveAs project
                 btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/saveas.png"), button -> {
-                    //TODO this
+                    Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
+                    if(info1 != null)
+                    {
+                        openSaveAsWindow(info1);
+                    }
                 });
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.saveAs"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
@@ -236,6 +255,11 @@ public class WindowToolbar extends Window<WorkspaceTabula>
             elements.add(toggle1);
 
             init();
+        }
+
+        public void openSaveAsWindow(Mainframe.ProjectInfo info)
+        {
+            getWorkspace().openWindowInCenter(new WindowSaveAs(parentFragment.parent, info.project), 0.4D, 0.4D);
         }
     }
 

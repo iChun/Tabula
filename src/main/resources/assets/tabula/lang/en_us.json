@@ -4,6 +4,8 @@
   "tabula.project.width": "Width",
   "tabula.project.height": "Height",
 
+  "tabula.warning.resources": "Something went wrong when initialising. Expect crashes/problems.",
+
   "window.controls.title": "Controls",
   "window.controls.cubeName": "Selected Cube Name",
   "window.controls.dimensions": "Dimensions",

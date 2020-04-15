@@ -11,6 +11,7 @@ import me.ichun.mods.tabula.client.gui.window.WindowTexture;
 
 import javax.annotation.Nonnull;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 
 public class Mainframe
@@ -71,23 +72,56 @@ public class Mainframe
     {
         //TODO what to do when you're not the master??
         //TODO send project to listeners
-        projects.add(new ProjectInfo(this, project));
+
+        //add the project
+        ProjectInfo info = new ProjectInfo(this, project);
+        projects.add(info);
+
+        //switch to view the active project
         activeView = projects.size() - 1;
 
+        //this is the first project you've opened.
         if(projects.size() == 1) // first project
         {
             Window<?> window = new WindowTexture(workspace);
             workspace.addToDock(window, Constraint.Property.Type.RIGHT);
             workspace.addToDocked(window, new WindowModelTree(workspace));
         }
+
+        //Notify!
+        workspace.projectChanged(IProjectInfo.ChangeType.PROJECTS);
+        workspace.setCurrentProject(info);
     }
 
-    public void addPart(ProjectInfo info)
+    public void editProject(Project project) //edited in the UI
+    {
+        //TODO streamline changes
+    }
+
+    public void addPart(ProjectInfo info, Identifiable<?> parent)
     {
         if(info != null)
         {
-            info.project.addPart(); //TODO this receives an object
+            info.project.addPart(parent); //TODO this receives an object
             workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+        }
+    }
+
+    public void addBox(ProjectInfo info, Identifiable<?> parent)
+    {
+        if(info != null)
+        {
+            info.project.addBox(parent); //TODO this receives an object
+            workspace.projectChanged(IProjectInfo.ChangeType.PARTS); //TODO change box?
+        }
+    }
+
+    public void delete(ProjectInfo info, Identifiable<?> child) //parent should not be null
+    {
+        if(info != null)
+        {
+            info.project.delete(child); //TODO this receives an object
+            workspace.projectChanged(IProjectInfo.ChangeType.PARTS); //TODO change box?
         }
     }
 
@@ -95,14 +129,21 @@ public class Mainframe
     {
         //TODO find the project this is from
         //TODO regenerate the model
+        //TODO should we be refreshing everything every time???
+        part.markDirty();
+        workspace.projectChanged(IProjectInfo.ChangeType.PARTS); //TODO change box?
     }
 
     public void updateBox(Project.Part.Box box)
     {
         //TODO this
         //TODO regenerate the model
+        //TODO should we be refreshing everything every time???
+        box.markDirty();
+        workspace.projectChanged(IProjectInfo.ChangeType.PARTS); //TODO change box?
     }
 
+    //WHEN SHOULD WE SEND OUT SERVER STUFF?
 
     //LOCAL
     public Camera getCamera()
@@ -152,14 +193,24 @@ public class Mainframe
             this.camera = new Camera();
         }
 
-        public void tick()
+        public void tick()  //TODO autosaves?
         {
             camera.tick();
         }
 
-        public void addPart()
+        public void addPart(Identifiable<?> parent)
         {
-            mainframe.addPart(this);
+            mainframe.addPart(this, parent);
+        }
+
+        public void addBox(Identifiable<?> parent)
+        {
+            mainframe.addBox(this, parent);
+        }
+
+        public void delete(Identifiable<?> child)
+        {
+            mainframe.delete(this, child);
         }
     }
 
