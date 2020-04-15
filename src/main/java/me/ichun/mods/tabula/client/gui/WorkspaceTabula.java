@@ -6,14 +6,12 @@ import me.ichun.mods.ichunutil.client.gui.bns.Workspace;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Fragment;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
 import me.ichun.mods.ichunutil.client.gui.bns.window.WindowDock;
-import me.ichun.mods.ichunutil.client.gui.bns.window.WindowPopup;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
 import me.ichun.mods.ichunutil.client.render.RenderHelper;
 import me.ichun.mods.ichunutil.common.iChunUtil;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
-import me.ichun.mods.tabula.client.core.ResourceHelper;
 import me.ichun.mods.tabula.client.gui.window.*;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
 import me.ichun.mods.tabula.common.Tabula;
@@ -25,16 +23,17 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class WorkspaceTabula extends Workspace
-    implements IProjectInfo
+        implements IProjectInfo
 {
     public static final ResourceLocation TEX_GRID_16 = new ResourceLocation("tabula", "textures/workspace/grid16.png");
     public static final ResourceLocation TEX_COMPASS_BASE = new ResourceLocation("tabula", "textures/workspace/orientationbase.png");
@@ -182,7 +181,7 @@ public class WorkspaceTabula extends Workspace
         RenderSystem.matrixMode(GL11.GL_MODELVIEW);
         RenderSystem.loadIdentity();
 
-        renderCompass();
+        renderCompass(partialTick);
 
         renderWindows(mouseX, mouseY, partialTick);
 
@@ -198,11 +197,11 @@ public class WorkspaceTabula extends Workspace
     @Override
     public void renderBackground()
     {
-//        if(renderMinecraftStyle())
-//        {
-//            this.renderBackground(0);
-//        }
-//        else
+        //        if(renderMinecraftStyle())
+        //        {
+        //            this.renderBackground(0);
+        //        }
+        //        else
         {
             RenderSystem.clearColor((float)getTheme().workspaceBackground[0] / 255F, (float)getTheme().workspaceBackground[1] / 255F, (float)getTheme().workspaceBackground[2] / 255F, 255F);
             RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
@@ -264,7 +263,6 @@ public class WorkspaceTabula extends Workspace
             int light1 = 15728880 >> 16 & 65535;
             int light2 = 15728880 & 65535;
 
-
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
@@ -304,10 +302,84 @@ public class WorkspaceTabula extends Workspace
         RenderSystem.rotatef(-38F + (cam.rendYawPrev + (cam.rendYaw - cam.rendYawPrev) * partialTick), 0.0F, 1.0F, 0.0F);
     }
 
-    public void renderCompass()
+    public void renderCompass(float partialTick)
     {
-        Block block = Blocks.FURNACE;
+        RenderSystem.pushMatrix();
 
+        Mainframe.Camera cam = mainframe.getCamera();
+
+        double right = width;
+        double bottom = height;
+        for(Map.Entry<ArrayList<Window<?>>, Constraint.Property.Type> e : getDock().docked.entrySet())
+        {
+            for(Window<?> key : e.getKey())
+            {
+                Constraint.Property.Type value = e.getValue();
+                switch(value)
+                {
+                    case RIGHT:
+                    {
+                        if(key.getLeft() < right)
+                        {
+                            right = key.getLeft();
+                        }
+                        break;
+                    }
+                    case BOTTOM:
+                    {
+                        if(key.getTop() < bottom)
+                        {
+                            bottom = key.getTop();
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        RenderSystem.translated(right - 20F, bottom - 20F, 3000F);
+        float scale = 15F;
+        RenderSystem.scalef(scale, scale, scale);
+        RenderSystem.scalef(-1.0F, 1.0F, 1.0F);
+        RenderSystem.rotatef(-15F + (cam.rendPitchPrev + (cam.rendPitch - cam.rendPitchPrev) * partialTick) + 180F, 1.0F, 0.0F, 0.0F);
+        RenderSystem.rotatef(-38F + (cam.rendYawPrev + (cam.rendYaw - cam.rendYawPrev) * partialTick), 0.0F, 1.0F, 0.0F);
+
+        RenderSystem.pushMatrix();
+        Block block = Blocks.FURNACE;
+        net.minecraft.client.renderer.RenderHelper.setupGuiFlatDiffuseLighting();
+        RenderHelper.renderBakedModel(Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModel(block.getDefaultState()), new ItemStack(block));
+        net.minecraft.client.renderer.RenderHelper.setupGui3DDiffuseLighting();
+        RenderSystem.popMatrix();
+
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        int light1 = 15728880 >> 16 & 65535;
+        int light2 = 15728880 & 65535;
+
+        bindTexture(TEX_COMPASS_BASE);
+        double dist = 0.125D;
+        double pX = -1D - dist;
+        double pY = -0.500125D;
+        double pZ = -1D - dist;
+        double w = 2 + (dist * 2);
+        double l = 2 + (dist * 2);
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR_TEX_LIGHTMAP);
+        bufferbuilder.pos(pX, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex(0.0F, 1.0F).lightmap(light1, light2).endVertex();
+        bufferbuilder.pos(pX + w, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex(1.0F, 1.0F).lightmap(light1, light2).endVertex();
+        bufferbuilder.pos(pX + w, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(1.0F, 0.0F).lightmap(light1, light2).endVertex();
+        bufferbuilder.pos(pX	  , pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(0.0F, 0.0F).lightmap(light1, light2).endVertex();
+        bufferbuilder.pos(pX + w, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex(1.0F, 1.0F).lightmap(light1, light2).endVertex();
+        bufferbuilder.pos(pX	  , pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex(0.0F, 1.0F).lightmap(light1, light2).endVertex();
+        bufferbuilder.pos(pX	  , pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(0.0F, 0.0F).lightmap(light1, light2).endVertex();
+        bufferbuilder.pos(pX + w, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(1.0F, 0.0F).lightmap(light1, light2).endVertex();
+        tessellator.draw();
+
+        RenderSystem.disableBlend();
+
+        RenderSystem.popMatrix();
     }
 
     @Override

@@ -96,19 +96,6 @@ public class GuiWorkspace extends IWorkspace
 
     public boolean init;
 
-    public float cameraZoom = 1.0F;
-    public int cameraZoomInertia = 0;
-    public float cameraZoomPerScroll = 0.05F;
-
-    public float cameraFov = 30F;
-    public int cameraFovInertia = 0;
-    public float cameraFovPerScroll = 1F;
-
-    public float cameraYaw;
-    public float cameraPitch;
-    public float cameraOffsetX;
-    public float cameraOffsetY;
-
     public boolean clicked;
     public int prevMouseX;
     public int prevMouseY;
@@ -942,53 +929,7 @@ public class GuiWorkspace extends IWorkspace
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.loadIdentity();
 
-        GlStateManager.pushMatrix();
-
-        block = Blocks.FURNACE;
-        //        Block block = Blocks.diamond_ore;
-
-        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-
-        GlStateManager.translate(width - (levels.get(1).isEmpty() ? 15F : 15F + levels.get(1).get(0).width), height - 15F - windowAnimate.getHeight(), 3000F);
-        float scale = 15F;
-        GlStateManager.scale(scale, scale, scale);
-        GlStateManager.scale(-1.0F, 1.0F, 1.0F);
-        GlStateManager.rotate(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
-        GlStateManager.rotate(-38F + cameraYaw, 0.0F, 1.0F, 0.0F);
-
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(2.0F, 2.0F, 2.0F);
-        mc.getRenderItem().renderItem(new ItemStack(block, 1), ItemCameraTransforms.TransformType.FIXED);
-        GlStateManager.popMatrix();
-
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-        Minecraft.getMinecraft().getTextureManager().bindTexture(orientationBase);
-        double dist = 0.125D;
-        double pX = -1D - dist;
-        double pY = -0.500125D;
-        double pZ = -1D - dist;
-        double w = 2 + (dist * 2);
-        double l = 2 + (dist * 2);
-        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
-        bufferbuilder.pos(pX, pY, pZ + l).tex(0.0D, 1.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-        bufferbuilder.pos(pX + w, pY, pZ + l).tex(1.0D, 1.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-        bufferbuilder.pos(pX + w, pY, pZ).tex(1.0D, 0.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-        bufferbuilder.pos(pX	  , pY, pZ).tex(0.0D, 0.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-        bufferbuilder.pos(pX + w, pY, pZ + l).tex(1.0D, 1.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-        bufferbuilder.pos(pX	  , pY, pZ + l).tex(0.0D, 1.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-        bufferbuilder.pos(pX	  , pY, pZ).tex(0.0D, 0.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-        bufferbuilder.pos(pX + w, pY, pZ).tex(1.0D, 0.0D).lightmap(light1, light2).color(1.0F, 1.0F, 1.0F, 0.5F).endVertex();
-        tessellator.draw();
-
-        GlStateManager.disableBlend();
-
-        RenderHelper.disableStandardItemLighting();
-
-        GlStateManager.disableLighting();
-
-        GlStateManager.popMatrix();
+        //Render Compass
     }
 
     //only group parts. not actual individual cubes

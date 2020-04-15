@@ -98,6 +98,16 @@ public class Mainframe
         //TODO streamline changes
     }
 
+    public void importProject(@Nonnull Project project, boolean texture)
+    {
+        ProjectInfo info = getActiveProject();
+        if(info != null)
+        {
+            info.project.importProject(project, texture);
+            workspace.projectChanged(IProjectInfo.ChangeType.PROJECT);
+        }
+    }
+
     public void addPart(ProjectInfo info, Identifiable<?> parent)
     {
         if(info != null)
