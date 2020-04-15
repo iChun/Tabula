@@ -1,28 +1,32 @@
 package me.ichun.mods.tabula.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import me.ichun.mods.ichunutil.client.gui.bns.Workspace;
-import me.ichun.mods.ichunutil.client.gui.bns.window.Fragment;
-import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
-import me.ichun.mods.ichunutil.client.gui.bns.window.WindowDock;
+import me.ichun.mods.ichunutil.client.gui.bns.window.*;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
+import me.ichun.mods.ichunutil.client.model.ModelTabula;
 import me.ichun.mods.ichunutil.client.render.RenderHelper;
 import me.ichun.mods.ichunutil.common.iChunUtil;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.gui.window.*;
+import me.ichun.mods.tabula.client.gui.window.popup.WindowSaveAs;
+import me.ichun.mods.tabula.client.gui.window.popup.WindowSaveOverwrite;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
 import me.ichun.mods.tabula.common.Tabula;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.entity.model.PigModel;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -42,6 +46,8 @@ public class WorkspaceTabula extends Workspace
     public final int oriScale;
     public final WindowToolbar windowToolbar;
 
+    public boolean closing;
+
     private WorkspaceTabula(Screen lastScreen, Mainframe mainframe, int oriScale)
     {
         super(lastScreen, new TranslationTextComponent("tabula.name"), iChunUtil.configClient.guiStyleMinecraft);
@@ -57,16 +63,58 @@ public class WorkspaceTabula extends Workspace
     @Override
     public void setCurrentProject(Mainframe.ProjectInfo info)
     {
-        Window<?> window = getWindowType(WindowProjectNavigator.class);
-        if(window == null)
+        if(info != null)
         {
-            window = new WindowProjectNavigator(this);
-            addToDock(window, Constraint.Property.Type.TOP);
-            window.init();
+            Window<?> window = getWindowType(WindowProjectNavigator.class);
+            if(window == null)
+            {
+                window = new WindowProjectNavigator(this);
+                addToDock(window, Constraint.Property.Type.TOP);
+                window.init();
+            }
         }
 
         List<Window<?>> children = children();
         children.stream().filter(child -> child instanceof IProjectInfo).forEach(child -> ((IProjectInfo)child).setCurrentProject(info));
+    }
+
+    public void closeProject(Mainframe.ProjectInfo projectInfo)
+    {
+        if(projectInfo.project.isDirty) //interrupt with prompts
+        {
+            WindowYesNoCancel window = new WindowYesNoCancel(this, "window.notSaved.title", I18n.format("window.notSaved.save"), workspace -> {
+                if(projectInfo.project.saveFile == null) //we've not saved before. no savefile
+                {
+                    openWindowInCenter(new WindowSaveAs(this, projectInfo.project), 0.4D, 0.4D);
+                }
+                else
+                {
+                    boolean save = projectInfo.project.save(projectInfo.project.saveFile);
+                    if(save)
+                    {
+                        closeProject(projectInfo);
+                    }
+                    else
+                    {
+                        WindowPopup.popup(this, 0.4D, 0.3D, I18n.format("window.saveAs.failed"), null);
+                        closing = false; //disable closing (if we are)
+                    }
+                }
+            }, workspace ->
+            {
+                projectInfo.project.isDirty = false;
+                mainframe.closeProject(projectInfo);
+            }, //do nothing. we're not saving.
+                    workspace -> {
+                        closing = false; //disable closing (if we are)
+                    });
+            window.setId("windowClosingPrompt");
+            openWindowInCenter(window, 0.6D, 0.6D);
+        }
+        else
+        {
+            mainframe.closeProject(projectInfo);
+        }
     }
 
     public boolean selectPart(Project.Part part) //TODO select the first box when you click on this.... if there is a box
@@ -86,7 +134,7 @@ public class WorkspaceTabula extends Workspace
     {
         if(box != null)
         {
-            Identifiable<?> id = mainframe.getActiveProject().project.getById(box.parentIdent);
+            Identifiable<?> id = box.parent;
             if(id instanceof Project.Part)
             {
                 selectPart((Project.Part)id);
@@ -141,6 +189,15 @@ public class WorkspaceTabula extends Workspace
     {
         super.tick();
         mainframe.tick();
+
+        if(closing)
+        {
+            if(!(getById("windowClosingPrompt") != null || getWindowType(WindowSaveAs.class) != null || getWindowType(WindowSaveOverwrite.class) != null) && !mainframe.projects.isEmpty())
+            {
+                closeProject(mainframe.getActiveProject());
+            }
+            onClose();
+        }
     }
 
     @Override
@@ -253,6 +310,9 @@ public class WorkspaceTabula extends Workspace
             net.minecraft.client.renderer.RenderHelper.setupGui3DDiffuseLighting();
         }
         //END RENDER BLOCK
+
+        renderModel(partialTick);
+
         fragment = getById("buttonGridToggle");
         if(fragment instanceof ElementToggle && ((ElementToggle<?>)fragment).toggleState) //render the block
         {
@@ -284,6 +344,47 @@ public class WorkspaceTabula extends Workspace
             tessellator.draw();
 
             RenderSystem.disableBlend();
+        }
+    }
+
+    public void renderModel(float partialTick)
+    {
+        Mainframe.ProjectInfo info = mainframe.getActiveProject();
+        if(info != null)
+        {
+            net.minecraft.client.renderer.RenderHelper.setupGuiFlatDiffuseLighting();
+
+            RenderSystem.enableRescaleNormal();
+            RenderSystem.enableAlphaTest();
+            RenderSystem.defaultAlphaFunc();
+            RenderSystem.enableBlend();
+            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+
+            MatrixStack stack = new MatrixStack();
+
+            stack.translate(0F, 2.0005F, 0F);
+            stack.scale(-1F, -1F, 1F);
+
+            IRenderTypeBuffer.Impl bufferSource = minecraft.getRenderTypeBuffers().getBufferSource();
+
+            RenderType type = ModelTabula.RENDER_MODEL_NO_TEXTURE;
+            if(info.project.getBufferedTexture() != null)
+            {
+                type = RenderType.getEntityTranslucent(info.project.getBufferedTextureResourceLocation());
+            }
+
+            IVertexBuilder ivertexbuilder = bufferSource.getBuffer(type);
+            info.project.getModel().render(stack, ivertexbuilder, 15728880, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+
+            bufferSource.finish();
+
+            net.minecraft.client.renderer.RenderHelper.setupGui3DDiffuseLighting();
+
+            RenderSystem.enableDepthTest();
+            RenderSystem.disableAlphaTest();
+            RenderSystem.disableRescaleNormal();
+
+            RenderSystem.enableTexture();
         }
     }
 
@@ -400,13 +501,22 @@ public class WorkspaceTabula extends Workspace
     @Override
     public void onClose()
     {
-        Minecraft mc = Minecraft.getInstance();
-        super.onClose();
-        if(oriScale != mc.gameSettings.guiScale)
+        closing = true;
+        if(canClose())
         {
-            mc.gameSettings.guiScale = oriScale;
-            mc.updateWindowSize();
+            Minecraft mc = Minecraft.getInstance();
+            super.onClose();
+            if(oriScale != mc.gameSettings.guiScale)
+            {
+                mc.gameSettings.guiScale = oriScale;
+                mc.updateWindowSize();
+            }
         }
+    }
+
+    public boolean canClose()
+    {
+        return mainframe.projects.isEmpty();
     }
 
     public static WorkspaceTabula create(Screen lastScreen)

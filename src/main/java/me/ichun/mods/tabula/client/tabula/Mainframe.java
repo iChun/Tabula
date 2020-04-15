@@ -89,8 +89,8 @@ public class Mainframe
         }
 
         //Notify!
-        workspace.projectChanged(IProjectInfo.ChangeType.PROJECTS);
         workspace.setCurrentProject(info);
+        workspace.projectChanged(IProjectInfo.ChangeType.PROJECTS);
     }
 
     public void editProject(Project project) //edited in the UI
@@ -105,6 +105,35 @@ public class Mainframe
         {
             info.project.importProject(project, texture);
             workspace.projectChanged(IProjectInfo.ChangeType.PROJECT);
+        }
+    }
+
+    public void closeProject(ProjectInfo info)
+    {
+        if(info == getActiveProject())
+        {
+            activeView--;
+            if(activeView < 0 && !projects.isEmpty())
+            {
+                activeView = 0;
+            }
+            info.project.destroy();
+            projects.remove(info);
+        }
+        workspace.setCurrentProject(getActiveProject());
+        workspace.projectChanged(IProjectInfo.ChangeType.PROJECTS);
+    }
+
+    public void setActiveProject(ProjectInfo info)
+    {
+        for(int i = 0; i < projects.size(); i++)
+        {
+            if(projects.get(i) == info)
+            {
+                activeView = i;
+                workspace.setCurrentProject(info);
+                workspace.projectChanged(IProjectInfo.ChangeType.PROJECTS);
+            }
         }
     }
 

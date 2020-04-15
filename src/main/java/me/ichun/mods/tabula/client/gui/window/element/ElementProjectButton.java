@@ -1,20 +1,26 @@
 package me.ichun.mods.tabula.client.gui.window.element;
 
+import me.ichun.mods.ichunutil.client.gui.bns.Theme;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Fragment;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementClickable;
+import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
+import me.ichun.mods.tabula.client.tabula.Mainframe;
 import net.minecraft.client.resources.I18n;
+import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class ElementProjectButton<T extends ElementProjectButton> extends ElementClickable<T>
 {
-    public @Nonnull String text;
+    @Nonnull
+    public final Mainframe.ProjectInfo projectInfo;
 
-    public ElementProjectButton(@Nonnull Fragment parent, String s, Consumer<T> callback)
+    public ElementProjectButton(@Nonnull Fragment parent, @Nonnull Mainframe.ProjectInfo projectInfo, Consumer<T> callback)
     {
         super(parent, callback);
-        text = I18n.format(s);
+        this.projectInfo = projectInfo;
     }
 
     @Override
@@ -31,21 +37,30 @@ public class ElementProjectButton<T extends ElementProjectButton> extends Elemen
             int[] colour = parentFragment.isDragging() && parentFragment.getFocused() == this ? getTheme().elementButtonClick : hover ? getTheme().elementProjectTabHover : getTheme().elementTreeItemBg;
             fill(colour, 0);
         }
-        if(!text.isEmpty())
+        int[] fontClr = getTheme().fontDim;
+        Mainframe.ProjectInfo info = ((WorkspaceTabula)getWorkspace()).mainframe.getActiveProject();
+        if(info != null)
         {
-            String s = reString(text, width - 12);
-            if(s.equals(text))
+            if(info == projectInfo) //this is active
             {
-                setTooltip(null);
+                fontClr = getTheme().font;
             }
-            else
+            else if(projectInfo.project.isDirty)
             {
-                setTooltip(text);
+                fontClr = getTheme().fontChat;
             }
-            //TODO different font colours
-            drawString(s, getLeft() + 2, getTop() + (height - getFontRenderer().FONT_HEIGHT) / 2F + 1);
         }
-        drawString("X", getRight() - 7, getTop() + (height - getFontRenderer().FONT_HEIGHT) / 2F + 1);
+        if(!projectInfo.project.name.isEmpty())
+        {
+            String s = reString(projectInfo.project.name, width - 14);
+            if(projectInfo.project.isDirty)
+            {
+                s = s + "*";
+            }
+
+            drawString(s, getLeft() + 2, getTop() + (height - getFontRenderer().FONT_HEIGHT) / 2F + 1, Theme.getAsHex(fontClr));
+        }
+        drawString("X", getRight() - 7, getTop() + (height - getFontRenderer().FONT_HEIGHT) / 2F + 1, Theme.getAsHex(isOverX(mouseX, mouseY) ? getTheme().font : getTheme().fontDim));
     }
 
     @Override
@@ -53,20 +68,35 @@ public class ElementProjectButton<T extends ElementProjectButton> extends Elemen
     {
         boolean flag = super.mouseReleased(mouseX, mouseY, button); // unsets dragging;
         parentFragment.setFocused(null); //we're a one time click, stop focusing on us
-        if(isMouseOver(mouseX, mouseY) && button == 0) //lmb //TODO close project
+        if(isMouseOver(mouseX, mouseY)) //lmb //TODO close project
         {
-            trigger();
+            trigger(); //Switch to this project anyway
+
+            if(isOverX(mouseX, mouseY) || button == GLFW.GLFW_MOUSE_BUTTON_MIDDLE)
+            {
+                ((WorkspaceTabula)getWorkspace()).closeProject(projectInfo);
+            }
         }
         return flag;
     }
 
     public boolean isOverX(double mouseX, double mouseY)
     {
-        return parentFragment.isMouseOver(mouseX, mouseY) && isMouseBetween(mouseX, getLeft() + width - 5, getLeft() + width) && isMouseBetween(mouseY, getTop(), getTop() + height);
+        return parentFragment.isMouseOver(mouseX, mouseY) && isMouseBetween(mouseX, getLeft() + width - 10, getLeft() + width) && isMouseBetween(mouseY, getTop(), getTop() + height);
+    }
+
+    @Nullable
+    @Override
+    public String tooltip(double mouseX, double mouseY)
+    {
+        return projectInfo.project.name + " - " + projectInfo.project.author;
     }
 
     @Override
-    public void onClickRelease() {} //we don't do anything, we're a static button
+    public void onClickRelease()
+    {
+        ((WorkspaceTabula)getWorkspace()).mainframe.setActiveProject(projectInfo);
+    }
 
     @Override
     public int getMinWidth()

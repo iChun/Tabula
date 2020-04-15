@@ -114,7 +114,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
         @Override
         public void projectChanged(ChangeType type)
         {
-            if(type == ChangeType.PARTS)
+            if(type == ChangeType.PARTS || type == ChangeType.PROJECTS  || type == ChangeType.PROJECT)
             {
                 updateList();
             }
@@ -133,7 +133,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
             }
 
             selected = getSelectedElement();
-            if(selected == null) //we haven't selected something... or it was deleted
+            if(selected == null && currentInfo != null) //we haven't selected something... or it was deleted
             {
                 parentFragment.parent.selectPart(null);
                 parentFragment.parent.selectBox(null);

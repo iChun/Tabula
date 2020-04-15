@@ -8,10 +8,7 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementButtonT
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
 import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
-import me.ichun.mods.tabula.client.gui.window.popup.WindowEditProject;
-import me.ichun.mods.tabula.client.gui.window.popup.WindowNewProject;
-import me.ichun.mods.tabula.client.gui.window.popup.WindowOpenProject;
-import me.ichun.mods.tabula.client.gui.window.popup.WindowSaveAs;
+import me.ichun.mods.tabula.client.gui.window.popup.*;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
@@ -97,9 +94,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                     Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
                     if(info1 != null)
                     {
-                        WindowEditProject window = new WindowEditProject(getWorkspace(), info1.project);
-                        getWorkspace().openWindowInCenter(window, 0.6D, 0.6D);
-                        window.init();
+                        getWorkspace().openWindowInCenter(new WindowEditProject(getWorkspace(), info1.project), 0.6D, 0.6D);
                     }
                 });
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.edit"));
@@ -139,7 +134,11 @@ public class WindowToolbar extends Window<WorkspaceTabula>
 
                 //import to project
                 btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/import.png"), button -> {
-                    //TODO this
+                    Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
+                    if(info1 != null)
+                    {
+                        getWorkspace().openWindowInCenter(new WindowImportProject(getWorkspace()), 0.4D, 0.6D);
+                    }
                 });
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.import"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));

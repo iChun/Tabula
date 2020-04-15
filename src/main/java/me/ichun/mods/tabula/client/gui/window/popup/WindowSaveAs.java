@@ -50,14 +50,13 @@ public class WindowSaveAs extends Window<WorkspaceTabula>
 
             ElementButton<?> button = new ElementButton<>(this, I18n.format("gui.cancel"), elementClickable ->
             {
-                parent.parent.setFocused(null);
                 parent.parent.removeWindow(parent);
             });
             button.setSize(60, 20);
             button.setConstraint(new Constraint(button).bottom(this, Constraint.Property.Type.BOTTOM, 10).right(this, Constraint.Property.Type.RIGHT, 10));
             elements.add(button);
 
-            ElementButton<?> button1 = new ElementButton<>(this, I18n.format("gui.done"), button2 ->
+            ElementButton<?> button1 = new ElementButton<>(this, I18n.format("gui.ok"), button2 ->
             {
                 String fileName = ((ElementTextField)getById("fileName")).getText();
                 if(!fileName.isEmpty())

@@ -4,6 +4,7 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.*;
+import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
@@ -28,7 +29,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
 
         setView(viewPartInfo = new ViewPartInfo(this));
         setId("windowPartInfo");
-        size(150, 225);
+        size(180, 225);
     }
 
     public boolean selectPart(Project.Part part)
@@ -211,12 +212,27 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
         public void setCurrentProject(Mainframe.ProjectInfo info)
         {
             currentInfo = info;
+            selectPart(null);
         }
 
         @Override
         public void projectChanged(ChangeType type)
         {
-            //TODO deselect everything is null.
+            if(currentInfo != null && currentPart != null)
+            {
+                Identifiable<?> identifiable = currentInfo.project.getById(currentPart.identifier);
+                if(identifiable instanceof Project.Part.Box)
+                {
+                    if(identifiable != currentPart)
+                    {
+                        selectPart((Project.Part)identifiable);
+                    }
+                }
+                else
+                {
+                    selectPart(null);
+                }
+            }
         }
 
         public void updatePart()

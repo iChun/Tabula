@@ -52,7 +52,7 @@ public class WindowSaveOverwrite extends Window<WorkspaceTabula>
             button.setConstraint(new Constraint(button).bottom(this, Constraint.Property.Type.BOTTOM, 10).right(this, Constraint.Property.Type.RIGHT, 10));
             elements.add(button);
 
-            ElementButton<?> button1 = new ElementButton<>(this, I18n.format("gui.done"), button2 ->
+            ElementButton<?> button1 = new ElementButton<>(this, I18n.format("gui.ok"), button2 ->
             {
                 parent.parent.removeWindow(parent);
 

@@ -9,7 +9,6 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.*;
 import me.ichun.mods.ichunutil.common.module.tabula.formats.ImportList;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.core.ResourceHelper;
-import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
@@ -19,21 +18,21 @@ import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.TreeSet;
 
-public class WindowOpenProject extends Window<WorkspaceTabula>
+public class WindowImportProject extends Window<WorkspaceTabula>
 {
-    public WindowOpenProject(WorkspaceTabula parent)
+    public WindowImportProject(WorkspaceTabula parent)
     {
         super(parent);
 
-        setView(new ViewOpenProject(this));
+        setView(new ViewImportProject(this));
         disableDockingEntirely();
     }
 
-    public static class ViewOpenProject extends View<WindowOpenProject>
+    public static class ViewImportProject extends View<WindowImportProject>
     {
-        public ViewOpenProject(@Nonnull WindowOpenProject parent)
+        public ViewImportProject(@Nonnull WindowImportProject parent)
         {
-            super(parent, "window.open.title");
+            super(parent, "window.import.title");
 
             ElementScrollBar<?> sv = new ElementScrollBar<>(this, ElementScrollBar.Orientation.VERTICAL, 0.6F);
             sv.setConstraint(new Constraint(sv).top(this, Constraint.Property.Type.TOP, 0)
@@ -78,6 +77,11 @@ public class WindowOpenProject extends Window<WorkspaceTabula>
             openDir.setConstraint(new Constraint(openDir).bottom(this, Constraint.Property.Type.BOTTOM, 10).left(this, Constraint.Property.Type.LEFT, 10));
             elements.add(openDir);
 
+            ElementToggle<?> toggle = new ElementToggle<>(this, "window.import.texture", btn -> {});
+            toggle.setToggled(true).setTooltip(I18n.format("window.import.textureFull")).setSize(60, 20).setId("buttonTexture");
+            toggle.setConstraint(new Constraint(toggle).bottom(this, Constraint.Property.Type.BOTTOM, 10).left(openDir, Constraint.Property.Type.RIGHT, 10));
+            elements.add(toggle);
+
             ElementButton<?> button = new ElementButton<>(this, I18n.format("gui.cancel"), btn ->
             {
                 getWorkspace().removeWindow(parent);
@@ -113,7 +117,7 @@ public class WindowOpenProject extends Window<WorkspaceTabula>
             }
             else
             {
-                parentFragment.parent.mainframe.openProject(project);
+                parentFragment.parent.mainframe.importProject(project, ((ElementToggle)getById("buttonTexture")).toggleState);
             }
         }
     }

@@ -4,6 +4,7 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.*;
+import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
@@ -28,7 +29,7 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
 
         setView(viewBoxInfo = new ViewBoxInfo(this));
         setId("windowBoxInfo");
-        size(150, 150);
+        size(180, 150);
     }
 
     public void selectBox(Project.Part.Box box)
@@ -99,7 +100,7 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
 
             text = new ElementTextWrapper(this);
             text.setNoWrap().setText(I18n.format("window.controls.offset"));
-            text.setConstraint(new Constraint(text).left(text1, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.BOTTOM, spacing));
+            text.setConstraint(new Constraint(text).left(text1, Constraint.Property.Type.LEFT, 0).top(num, Constraint.Property.Type.BOTTOM, spacing));
             elements.add(text);
 
             space = new ElementSharedSpace(this, ElementScrollBar.Orientation.HORIZONTAL);
@@ -156,12 +157,27 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
         public void setCurrentProject(Mainframe.ProjectInfo info)
         {
             currentInfo = info;
+            selectBox(null);
         }
 
         @Override
         public void projectChanged(ChangeType type)
         {
-            //TODO deselect everything is null.
+            if(currentInfo != null && currentBox != null)
+            {
+                Identifiable<?> identifiable = currentInfo.project.getById(currentBox.identifier);
+                if(identifiable instanceof Project.Part.Box)
+                {
+                    if(identifiable != currentBox)
+                    {
+                        selectBox((Project.Part.Box)identifiable);
+                    }
+                }
+                else
+                {
+                    selectBox(null);
+                }
+            }
         }
 
         public void updateBox()
