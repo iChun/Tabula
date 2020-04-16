@@ -48,6 +48,10 @@ public class WindowInputReceiver extends Window<WorkspaceTabula>
     {
         if(isMouseOver(mouseX, mouseY))
         {
+            if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT)
+            {
+                parent.selecting = true;
+            }
             parent.setDragging(true);
             return true;
         }

@@ -8,6 +8,7 @@ import me.ichun.mods.ichunutil.client.gui.bns.Workspace;
 import me.ichun.mods.ichunutil.client.gui.bns.window.*;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
+import me.ichun.mods.ichunutil.client.model.ModelHelper;
 import me.ichun.mods.ichunutil.client.model.ModelTabula;
 import me.ichun.mods.ichunutil.client.render.RenderHelper;
 import me.ichun.mods.ichunutil.common.iChunUtil;
@@ -23,15 +24,17 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.entity.model.PigModel;
+import net.minecraft.client.renderer.entity.model.SpiderModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +49,7 @@ public class WorkspaceTabula extends Workspace
     public final int oriScale;
     public final WindowToolbar windowToolbar;
 
+    public boolean selecting;
     public boolean closing;
 
     private WorkspaceTabula(Screen lastScreen, Mainframe mainframe, int oriScale)
@@ -174,14 +178,19 @@ public class WorkspaceTabula extends Workspace
     {
         super.init();
 
-        Project project = new Project();
-        project.name = "MyFirstModel";
-        project.author = "sugar tits";
-        project.texWidth = 64;
-        project.texHeight = 32;
+        SpiderModel model = new SpiderModel();
+        model.isChild = false;
+        model.setRotationAngles(null, 0F, 0F ,0F, 0F, 0F);
+        Project project = ModelHelper.convertModelToProject(model);
+
+        //        Project project = new Project();
+        //        project.name = "MyFirstModel";
+        //        project.author = "sugar tits";
+        //        project.texWidth = 64;
+        //        project.texHeight = 32;
         this.mainframe.openProject(project);
 
-        this.mainframe.getActiveProject().addPart(null);
+        //        this.mainframe.getActiveProject().addPart(null);
     }
 
     @Override
@@ -214,6 +223,12 @@ public class WorkspaceTabula extends Workspace
         RenderSystem.enableDepthTest();
         RenderSystem.depthFunc(GL11.GL_LEQUAL);
         RenderSystem.depthMask(true);
+
+        if(selecting)
+        {
+            findSelection(mouseX, mouseY, partialTick);
+//            selecting = false;
+        }
 
         renderBackground();
 
@@ -251,18 +266,59 @@ public class WorkspaceTabula extends Workspace
         RenderSystem.disableDepthTest();
     }
 
+    public void findSelection(int mouseX, int mouseY, float partialTick)
+    {
+        RenderSystem.clearColor(0F, 0F, 0F, 255F);
+        RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
+
+        RenderSystem.pushMatrix();
+
+
+        //Set up projection for workspace
+        Mainframe.Camera cam = mainframe.getCamera();
+        RenderSystem.matrixMode(GL11.GL_PROJECTION);
+        RenderSystem.loadIdentity();
+        RenderSystem.multMatrix(Matrix4f.perspective((cam.rendFovPrev + (cam.rendFov - cam.rendFovPrev) * partialTick), (float)minecraft.getMainWindow().getFramebufferWidth() / (float)minecraft.getMainWindow().getFramebufferHeight(), 1F, 10000F));
+        RenderSystem.matrixMode(GL11.GL_MODELVIEW);
+        RenderSystem.loadIdentity();
+
+        RenderSystem.pushMatrix();
+
+        //from renderWorkspace
+        setupCamera(partialTick);
+        renderModel(true);
+
+        Mainframe.ProjectInfo info = mainframe.getActiveProject();
+        if(info != null)
+        {
+            FloatBuffer buffer = BufferUtils.createFloatBuffer(3);
+            GL11.glReadPixels((int)minecraft.mouseHelper.getMouseX(), (int)(minecraft.getMainWindow().getHeight() - minecraft.mouseHelper.getMouseY()), 1, 1, GL11.GL_RGB, GL11.GL_FLOAT, buffer);
+
+            ModelTabula model = info.project.getModel();
+            Project.Part.Box box = model.getSelectedBox((int)(buffer.get() * 255), (int)(buffer.get() * 255), (int)(buffer.get() * 255));
+            if(box != null)
+            {
+                //TODO do something
+            }
+        }
+
+        //Reset our perspective, and set up for drawing windows.
+        RenderSystem.popMatrix();
+
+        RenderSystem.matrixMode(GL11.GL_PROJECTION);
+        RenderSystem.loadIdentity();
+        RenderSystem.ortho(0.0D, minecraft.getMainWindow().getFramebufferWidth() / minecraft.getMainWindow().getGuiScaleFactor(), minecraft.getMainWindow().getFramebufferHeight() / minecraft.getMainWindow().getGuiScaleFactor(), 0.0D, -5000.0D, 5000.0D);
+        RenderSystem.matrixMode(GL11.GL_MODELVIEW);
+        RenderSystem.loadIdentity();
+
+        RenderSystem.popMatrix();
+    }
+
     @Override
     public void renderBackground()
     {
-        //        if(renderMinecraftStyle())
-        //        {
-        //            this.renderBackground(0);
-        //        }
-        //        else
-        {
-            RenderSystem.clearColor((float)getTheme().workspaceBackground[0] / 255F, (float)getTheme().workspaceBackground[1] / 255F, (float)getTheme().workspaceBackground[2] / 255F, 255F);
-            RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
-        }
+        RenderSystem.clearColor((float)getTheme().workspaceBackground[0] / 255F, (float)getTheme().workspaceBackground[1] / 255F, (float)getTheme().workspaceBackground[2] / 255F, 255F);
+        RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
 
         RenderSystem.pushMatrix();
     }
@@ -311,7 +367,7 @@ public class WorkspaceTabula extends Workspace
         }
         //END RENDER BLOCK
 
-        renderModel(partialTick);
+        renderModel(false);
 
         fragment = getById("buttonGridToggle");
         if(fragment instanceof ElementToggle && ((ElementToggle<?>)fragment).toggleState) //render the block
@@ -347,7 +403,7 @@ public class WorkspaceTabula extends Workspace
         }
     }
 
-    public void renderModel(float partialTick)
+    public void renderModel(boolean selection)
     {
         Mainframe.ProjectInfo info = mainframe.getActiveProject();
         if(info != null)
@@ -366,16 +422,22 @@ public class WorkspaceTabula extends Workspace
             stack.scale(-1F, -1F, 1F);
 
             IRenderTypeBuffer.Impl bufferSource = minecraft.getRenderTypeBuffers().getBufferSource();
-
-            RenderType type = ModelTabula.RENDER_MODEL_NO_TEXTURE;
-            if(info.project.getBufferedTexture() != null)
+            if(selection)
             {
-                type = RenderType.getEntityTranslucent(info.project.getBufferedTextureResourceLocation());
+                IVertexBuilder ivertexbuilder = bufferSource.getBuffer(ModelTabula.RENDER_MODEL_FLAT);
+                info.project.getModel().renderForSelection(stack, ivertexbuilder);
             }
+            else
+            {
+                RenderType type = ModelTabula.RENDER_MODEL_NO_TEXTURE;
+                if(info.project.getBufferedTexture() != null)
+                {
+                    type = RenderType.getEntityTranslucent(info.project.getBufferedTextureResourceLocation());
+                }
 
-            IVertexBuilder ivertexbuilder = bufferSource.getBuffer(type);
-            info.project.getModel().render(stack, ivertexbuilder, 15728880, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
-
+                IVertexBuilder ivertexbuilder = bufferSource.getBuffer(type);
+                info.project.getModel().render(stack, ivertexbuilder, 15728880, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+            }
             bufferSource.finish();
 
             net.minecraft.client.renderer.RenderHelper.setupGui3DDiffuseLighting();

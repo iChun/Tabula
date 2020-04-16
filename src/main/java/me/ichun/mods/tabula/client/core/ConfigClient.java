@@ -15,6 +15,9 @@ public class ConfigClient extends ConfigBase
     @Prop(min = -1, max = 8)
     public int forceGuiScale = 2;
 
+    @Prop
+    public boolean animateImports = true;
+
     @Nonnull
     @Override
     public String getModId()

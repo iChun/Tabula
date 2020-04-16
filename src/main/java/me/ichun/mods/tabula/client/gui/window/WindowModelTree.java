@@ -88,6 +88,15 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                     Identifiable<?> selected = getSelectedElement();
                     if(selected != null)
                     {
+                        if(selected instanceof Project.Part)
+                        {
+                            Project.Part part = (Project.Part)selected;
+                            if(part.boxes.size() == 1)
+                            {
+                                currentInfo.delete(part.boxes.get(0));
+                                return;
+                            }
+                        }
                         currentInfo.delete(selected);
                     }
                 }
@@ -158,9 +167,13 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                         item.selected = true;
                         list.setFocused(item);
                         parentFragment.parent.selectPart(part);
+                        if(part.boxes.size() == 1)
+                        {
+                            parentFragment.parent.selectBox(part.boxes.get(0));
+                        }
                     }
 
-                    ElementTexture texture = new ElementTexture(item, TEX_PART);
+                    ElementTexture texture = new ElementTexture(item, part.boxes.size() == 1 ? TEX_BOX : TEX_PART);
                     texture.setConstraint(new Constraint(texture).left(item, Constraint.Property.Type.LEFT, indent).top(item, Constraint.Property.Type.TOP, item.getBorderSize()).bottom(item, Constraint.Property.Type.BOTTOM, item.getBorderSize()));
                     texture.setSize(14, 14);
                     item.addElement(texture);
@@ -172,7 +185,12 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                     item.setSelectionHandler(itemPart -> {
                         if(itemPart.selected)
                         {
-                            parentFragment.parent.selectPart(itemPart.getObject());
+                            Project.Part part1 = itemPart.getObject();
+                            parentFragment.parent.selectPart(part1);
+                            if(part1.boxes.size() == 1)
+                            {
+                                parentFragment.parent.selectBox(part1.boxes.get(0));
+                            }
                         }
                         else
                         {
@@ -181,7 +199,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                     });
 
                     int newIndent = indent + 10;
-                    if(!part.boxes.isEmpty())
+                    if(part.boxes.size() > 1)
                     {
                         populateList(list, part.boxes, newIndent, selected);
                     }

@@ -222,8 +222,8 @@ public class Mainframe
         @Nonnull
         public final Camera camera;
 
-        public BufferedImage bufferedTexture;
-        public int bufferedTextureId = -1;
+        public Project.Part selectedPart;
+        public Project.Part.Box selectedBox;
 
         public ProjectInfo(@Nonnull Mainframe mainframe, Project project)
         {

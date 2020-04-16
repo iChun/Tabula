@@ -41,8 +41,6 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             implements IProjectInfo
     {
         public @Nullable Mainframe.ProjectInfo currentInfo = null;
-        @Nullable
-        public Project.Part currentPart = null;
 
         public ViewPartInfo(@Nonnull WindowPartInfo parent)
         {
@@ -212,64 +210,61 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
         public void setCurrentProject(Mainframe.ProjectInfo info)
         {
             currentInfo = info;
-            selectPart(null);
+            if(currentInfo != null)
+            {
+                selectPart(currentInfo.selectedPart);
+            }
+            else
+            {
+                selectPart(null);
+            }
         }
 
         @Override
         public void projectChanged(ChangeType type)
         {
-            if(currentInfo != null && currentPart != null)
+            //TODO aren't we supposed to filter by parts?
+            if(currentInfo != null)
             {
-                Identifiable<?> identifiable = currentInfo.project.getById(currentPart.identifier);
-                if(identifiable instanceof Project.Part.Box)
-                {
-                    if(identifiable != currentPart)
-                    {
-                        selectPart((Project.Part)identifiable);
-                    }
-                }
-                else
-                {
-                    selectPart(null);
-                }
+                selectPart(currentInfo.selectedPart);
             }
         }
 
         public void updatePart()
         {
-            if(currentPart != null)
+            if(currentInfo != null && currentInfo.selectedPart != null)
             {
-                String preUpdate = currentPart.getJsonWithoutChildren();
+                String preUpdate = currentInfo.selectedPart.getJsonWithoutChildren();
 
-                currentPart.name = ((ElementTextField)getById("partName")).getText();
+                currentInfo.selectedPart.name = ((ElementTextField)getById("partName")).getText();
 
                 if(((ElementToggle<?>)getById("txMatch")).toggleState)
                 {
-                    currentPart.matchProject = true;
+                    currentInfo.selectedPart.matchProject = true;
                 }
                 else
                 {
-                    currentPart.matchProject = false;
-                    currentPart.texWidth = ((ElementNumberInput)getById("txWidth")).getInt();
-                    currentPart.texHeight = ((ElementNumberInput)getById("txHeight")).getInt();
+                    currentInfo.selectedPart.matchProject = false;
+                    currentInfo.selectedPart.texWidth = ((ElementNumberInput)getById("txWidth")).getInt();
+                    currentInfo.selectedPart.texHeight = ((ElementNumberInput)getById("txHeight")).getInt();
                 }
 
-                currentPart.texOffX = ((ElementNumberInput)getById("txOffX")).getInt();
-                currentPart.texOffY = ((ElementNumberInput)getById("txOffY")).getInt();
-                currentPart.mirror = ((ElementToggle<?>)getById("txMirror")).toggleState;
+                currentInfo.selectedPart.texOffX = ((ElementNumberInput)getById("txOffX")).getInt();
+                currentInfo.selectedPart.texOffY = ((ElementNumberInput)getById("txOffY")).getInt();
+                currentInfo.selectedPart.mirror = ((ElementToggle<?>)getById("txMirror")).toggleState;
 
-                currentPart.rotPX = (float)((ElementNumberInput)getById("posX")).getDouble();
-                currentPart.rotPY = (float)((ElementNumberInput)getById("posY")).getDouble();
-                currentPart.rotPZ = (float)((ElementNumberInput)getById("posZ")).getDouble();
+                currentInfo.selectedPart.rotPX = (float)((ElementNumberInput)getById("posX")).getDouble();
+                currentInfo.selectedPart.rotPY = (float)((ElementNumberInput)getById("posY")).getDouble();
+                currentInfo.selectedPart.rotPZ = (float)((ElementNumberInput)getById("posZ")).getDouble();
 
-                currentPart.rotAX = (float)((ElementNumberInput)getById("rotX")).getDouble();
-                currentPart.rotAY = (float)((ElementNumberInput)getById("rotY")).getDouble();
-                currentPart.rotAZ = (float)((ElementNumberInput)getById("rotZ")).getDouble();
+                currentInfo.selectedPart.rotAX = (float)((ElementNumberInput)getById("rotX")).getDouble();
+                currentInfo.selectedPart.rotAY = (float)((ElementNumberInput)getById("rotY")).getDouble();
+                currentInfo.selectedPart.rotAZ = (float)((ElementNumberInput)getById("rotZ")).getDouble();
 
-                String postUpdate = currentPart.getJsonWithoutChildren();
+                String postUpdate = currentInfo.selectedPart.getJsonWithoutChildren();
                 if(!postUpdate.equals(preUpdate))
                 {
-                    parentFragment.mainframe.updatePart(currentPart);
+                    parentFragment.mainframe.updatePart(currentInfo.selectedPart);
                 }
             }
         }
