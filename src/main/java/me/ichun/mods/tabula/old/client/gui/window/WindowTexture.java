@@ -65,48 +65,6 @@ public class WindowTexture extends Window
             double w1 = (project.textureWidth * max);
             double h1 = (project.textureHeight * max);
 
-            RendererHelper.drawColourOnScreen(200, 200, 200, 255, pX, pY, w1, h1, 0D);
-
-            if(image != null)
-            {
-                GlStateManager.bindTexture(imageId);
-                Tessellator tessellator = Tessellator.getInstance();
-                BufferBuilder bufferbuilder = tessellator.getBuffer();
-                bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-                bufferbuilder.pos(pX		, pY + h1	, 0).tex(0.0D, 1.0D).endVertex();
-                bufferbuilder.pos(pX + w1, pY + h1	, 0).tex(1.0D, 1.0D).endVertex();
-                bufferbuilder.pos(pX + w1, pY			, 0).tex(1.0D, 0.0D).endVertex();
-                bufferbuilder.pos(pX		, pY			, 0).tex(0.0D, 0.0D).endVertex();
-                tessellator.draw();
-            }
-
-            RendererHelper.endGlScissor();
-            RendererHelper.startGlScissor((int)pX, (int)pY, (int)w1, (int)h1);
-
-            GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.00625F);
-
-            for(ElementListTree.Tree tree : ((GuiWorkspace)workspace).windowModelTree.modelList.trees)
-            {
-                if(tree.attachedObject instanceof CubeInfo)
-                {
-                    CubeInfo info = (CubeInfo)tree.attachedObject;
-                    int alpha = tree.selected ? 125 : 25;
-                    double ratio = (project.textureWidth / w1);
-                    RendererHelper.drawColourOnScreen(255, 0, 0, alpha, pX + info.txOffset[0] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio                                                                                               , info.dimensions[2] / ratio, info.dimensions[1] / ratio, 0D);
-                    RendererHelper.drawColourOnScreen(0, 0, 255, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio                                                                  , info.dimensions[0] / ratio, info.dimensions[1] / ratio, 0D);
-                    RendererHelper.drawColourOnScreen(170, 0, 0, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio + info.dimensions[0] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio                                     , info.dimensions[2] / ratio, info.dimensions[1] / ratio, 0D);
-                    RendererHelper.drawColourOnScreen(0, 0, 170, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio + info.dimensions[0] / ratio  + info.dimensions[2] / ratio, pY + info.txOffset[1] / ratio + info.dimensions[2] / ratio       , info.dimensions[0] / ratio, info.dimensions[1] / ratio, 0D);
-                    RendererHelper.drawColourOnScreen(0, 255, 0, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio, pY + info.txOffset[1] / ratio                                                                                               , info.dimensions[0] / ratio, info.dimensions[2] / ratio, 0D);
-                    RendererHelper.drawColourOnScreen(0, 170, 0, alpha, pX + info.txOffset[0] / ratio + info.dimensions[2] / ratio + info.dimensions[0] / ratio, pY + info.txOffset[1] / ratio                                                                  , info.dimensions[0] / ratio, info.dimensions[2] / ratio, 0D);
-                }
-            }
-
-            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-            GlStateManager.disableBlend();
-
             RendererHelper.endGlScissor();
             if(this.isTab)
             {

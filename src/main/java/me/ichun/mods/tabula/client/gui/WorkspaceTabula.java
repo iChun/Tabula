@@ -3,7 +3,6 @@ package me.ichun.mods.tabula.client.gui;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 import me.ichun.mods.ichunutil.client.gui.bns.Workspace;
 import me.ichun.mods.ichunutil.client.gui.bns.window.*;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
@@ -12,7 +11,6 @@ import me.ichun.mods.ichunutil.client.model.ModelHelper;
 import me.ichun.mods.ichunutil.client.model.ModelTabula;
 import me.ichun.mods.ichunutil.client.render.RenderHelper;
 import me.ichun.mods.ichunutil.common.iChunUtil;
-import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.gui.window.*;
 import me.ichun.mods.tabula.client.gui.window.popup.WindowSaveAs;
@@ -23,9 +21,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.model.SpiderModel;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -237,7 +236,7 @@ public class WorkspaceTabula extends Workspace
         if(selecting)
         {
             findSelection(mouseX, mouseY, partialTick);
-                        selecting = false;
+            selecting = false;
         }
 
         renderBackground();
@@ -428,24 +427,14 @@ public class WorkspaceTabula extends Workspace
             stack.translate(0F, 2.0005F, 0F);
             stack.scale(-1F, -1F, 1F);
 
-            IRenderTypeBuffer.Impl bufferSource = minecraft.getRenderTypeBuffers().getBufferSource();
             if(selection)
             {
-                IVertexBuilder ivertexbuilder = bufferSource.getBuffer(ModelTabula.RENDER_MODEL_FLAT);
-                info.project.getModel().renderForSelection(stack, ivertexbuilder);
+                info.project.getModel().renderForSelection(stack);
             }
             else
             {
-                RenderType type = ModelTabula.RENDER_MODEL_NO_TEXTURE;
-                if(info.project.getBufferedTexture() != null)
-                {
-                    type = RenderType.getEntityTranslucent(info.project.getBufferedTextureResourceLocation());
-                }
-
-                IVertexBuilder ivertexbuilder = bufferSource.getBuffer(type);
-                info.project.getModel().render(stack, ivertexbuilder, info.getSelectedPart(), info.getSelectedBox());
+                info.project.getModel().render(stack, info.getSelectedPart(), info.getSelectedBox());
             }
-            bufferSource.finish();
 
             net.minecraft.client.renderer.RenderHelper.setupGui3DDiffuseLighting();
 

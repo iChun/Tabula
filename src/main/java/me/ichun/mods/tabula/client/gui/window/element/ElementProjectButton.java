@@ -5,17 +5,10 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.Fragment;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementClickable;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
-import net.jodah.typetools.TypeResolver;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.EntityType;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.reflect.Type;
-import java.util.Map;
 import java.util.function.Consumer;
 
 public class ElementProjectButton<T extends ElementProjectButton> extends ElementClickable<T>

@@ -8,7 +8,6 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementNumberI
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementTextField;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementTextWrapper;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
-import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;

@@ -1,16 +1,12 @@
 package me.ichun.mods.tabula.client.gui.window.popup;
 
-import me.ichun.mods.ichunutil.client.gui.bns.window.Fragment;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
-import me.ichun.mods.ichunutil.client.gui.bns.window.WindowEditList;
 import me.ichun.mods.ichunutil.client.gui.bns.window.WindowPopup;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementButton;
-import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementTextField;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementTextWrapper;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
-import me.ichun.mods.tabula.client.core.ResourceHelper;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import net.minecraft.client.resources.I18n;
 

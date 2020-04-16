@@ -81,7 +81,7 @@ public class Mainframe
         activeView = projects.size() - 1;
 
         //this is the first project you've opened.
-        if(projects.size() == 1) // first project
+        if(projects.size() == 1 && workspace.getWindowType(WindowTexture.class) == null) // first project
         {
             Window<?> window = new WindowTexture(workspace);
             workspace.addToDock(window, Constraint.Property.Type.RIGHT);
@@ -91,6 +91,7 @@ public class Mainframe
         //Notify!
         workspace.setCurrentProject(info);
         workspace.projectChanged(IProjectInfo.ChangeType.PROJECTS);
+        workspace.projectChanged(IProjectInfo.ChangeType.PROJECT);
     }
 
     public void editProject(Project project) //edited in the UI
@@ -114,7 +115,8 @@ public class Mainframe
 
     public void closeProject(ProjectInfo info)
     {
-        if(info == getActiveProject())
+        boolean currentProject = info == getActiveProject();
+        if(currentProject)
         {
             activeView--;
             if(activeView < 0 && !projects.isEmpty())
@@ -126,6 +128,11 @@ public class Mainframe
         }
         workspace.setCurrentProject(getActiveProject());
         workspace.projectChanged(IProjectInfo.ChangeType.PROJECTS);
+
+        if(currentProject)
+        {
+            workspace.projectChanged(IProjectInfo.ChangeType.PROJECT);
+        }
     }
 
     public void setActiveProject(ProjectInfo info)
@@ -186,6 +193,15 @@ public class Mainframe
         workspace.projectChanged(IProjectInfo.ChangeType.PARTS); //TODO change box?
     }
 
+    public void setImage(ProjectInfo info, BufferedImage image)
+    {
+        if(info != null)
+        {
+            info.project.setBufferedTexture(image);
+            workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
+        }
+    }
+
     //WHEN SHOULD WE SEND OUT SERVER STUFF?
 
     //LOCAL
@@ -228,6 +244,9 @@ public class Mainframe
 
         private Project.Part selectedPart;
         private Project.Part.Box selectedBox;
+
+        public File textureFile;
+        public String textureFileMd5;
 
         public ProjectInfo(@Nonnull Mainframe mainframe, Project project)
         {
