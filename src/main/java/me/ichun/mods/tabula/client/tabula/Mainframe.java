@@ -104,7 +104,11 @@ public class Mainframe
         if(info != null)
         {
             info.project.importProject(project, texture);
-            workspace.projectChanged(IProjectInfo.ChangeType.PROJECT);
+            if(texture)
+            {
+                workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
+            }
+            workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
         }
     }
 
@@ -132,7 +136,7 @@ public class Mainframe
             {
                 activeView = i;
                 workspace.setCurrentProject(info);
-                workspace.projectChanged(IProjectInfo.ChangeType.PROJECTS);
+                workspace.projectChanged(IProjectInfo.ChangeType.PROJECT);
             }
         }
     }
@@ -222,8 +226,8 @@ public class Mainframe
         @Nonnull
         public final Camera camera;
 
-        public Project.Part selectedPart;
-        public Project.Part.Box selectedBox;
+        private Project.Part selectedPart;
+        private Project.Part.Box selectedBox;
 
         public ProjectInfo(@Nonnull Mainframe mainframe, Project project)
         {
@@ -250,6 +254,35 @@ public class Mainframe
         public void delete(Identifiable<?> child)
         {
             mainframe.delete(this, child);
+        }
+
+        public Project.Part getSelectedPart()
+        {
+            return selectedPart;
+        }
+
+        public Project.Part.Box getSelectedBox()
+        {
+            return selectedBox;
+        }
+
+        public void selectPart(Project.Part part)
+        {
+            if(part == null) //deselect the box first
+            {
+                selectBox(null);
+            }
+
+            selectedPart = part;
+
+            mainframe.workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+        }
+
+        public void selectBox(Project.Part.Box box)
+        {
+            selectedBox = box;
+
+            mainframe.workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
         }
     }
 

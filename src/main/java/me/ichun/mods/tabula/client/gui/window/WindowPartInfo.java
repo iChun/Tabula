@@ -29,12 +29,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
 
         setView(viewPartInfo = new ViewPartInfo(this));
         setId("windowPartInfo");
-        size(150, 225);
-    }
-
-    public boolean selectPart(Project.Part part)
-    {
-        return viewPartInfo.selectPart(part);
+        size(180, 225);
     }
 
     public static class ViewPartInfo extends View<WindowPartInfo>
@@ -42,7 +37,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
     {
         public @Nullable Mainframe.ProjectInfo currentInfo = null;
         @Nullable
-        public Project.Part currentPart = null;
+        private Project.Part currentPart = null;
 
         public ViewPartInfo(@Nonnull WindowPartInfo parent)
         {
@@ -206,27 +201,24 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             }).setId("scrollZ");
             scrollBar2.setConstraint(new Constraint(scrollBar2).left(num, Constraint.Property.Type.LEFT, 0).right(num2, Constraint.Property.Type.RIGHT, 0).top(scrollBar1, Constraint.Property.Type.BOTTOM, spacing).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(scrollBar2);
+
+            currentInfo = parent.parent.mainframe.getActiveProject();
         }
 
         @Override
         public void setCurrentProject(Mainframe.ProjectInfo info)
         {
             currentInfo = info;
-            selectPart(null);
         }
 
         @Override
         public void projectChanged(ChangeType type)
         {
-            if(currentPart != null)
+            if(type == ChangeType.PROJECT || type == ChangeType.PARTS)
             {
-                Identifiable<?> identifiable = currentInfo.project.getById(currentPart.identifier);
-                if(identifiable instanceof Project.Part.Box)
+                if(currentInfo != null)
                 {
-                    if(identifiable != currentPart)
-                    {
-                        selectPart((Project.Part)identifiable);
-                    }
+                    selectPart(currentInfo.getSelectedPart());
                 }
                 else
                 {
@@ -235,7 +227,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             }
         }
 
-        public void updatePart()
+        private void updatePart()
         {
             if(currentPart != null)
             {
@@ -274,7 +266,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             }
         }
 
-        public boolean selectPart(Project.Part part)
+        private boolean selectPart(Project.Part part)
         {
             currentPart = null;
             if(part != null)

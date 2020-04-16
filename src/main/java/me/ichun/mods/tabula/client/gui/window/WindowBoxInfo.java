@@ -32,16 +32,11 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
         size(180, 150);
     }
 
-    public void selectBox(Project.Part.Box box)
-    {
-        viewBoxInfo.selectBox(box);
-    }
-
     public static class ViewBoxInfo extends View<WindowBoxInfo>
             implements IProjectInfo
     {
         public @Nullable Mainframe.ProjectInfo currentInfo = null;
-        public @Nullable
+        private @Nullable
         Project.Part.Box currentBox = null;
 
         public ViewBoxInfo(@Nonnull WindowBoxInfo parent)
@@ -151,27 +146,24 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
             num2.setResponder(responder);
             num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
             space.addElement(num2);
+
+            currentInfo = parent.parent.mainframe.getActiveProject();
         }
 
         @Override
         public void setCurrentProject(Mainframe.ProjectInfo info)
         {
             currentInfo = info;
-            selectBox(null);
         }
 
         @Override
         public void projectChanged(ChangeType type)
         {
-            if(currentInfo != null && currentBox != null)
+            if(type == ChangeType.PROJECT || type == ChangeType.PARTS)
             {
-                Identifiable<?> identifiable = currentInfo.project.getById(currentBox.identifier);
-                if(identifiable instanceof Project.Part.Box)
+                if(currentInfo != null)
                 {
-                    if(identifiable != currentBox)
-                    {
-                        selectBox((Project.Part.Box)identifiable);
-                    }
+                    selectBox(currentInfo.getSelectedBox());
                 }
                 else
                 {
@@ -180,7 +172,7 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
             }
         }
 
-        public void updateBox()
+        private void updateBox()
         {
             if(currentBox != null)
             {
@@ -207,7 +199,7 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
             }
         }
 
-        public void selectBox(Project.Part.Box box)
+        private void selectBox(Project.Part.Box box)
         {
             currentBox = null; //set as null first so we don't send updates from updating the text
             if(box != null)

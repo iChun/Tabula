@@ -123,7 +123,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
         @Override
         public void projectChanged(ChangeType type)
         {
-            if(type == ChangeType.PARTS || type == ChangeType.PROJECTS  || type == ChangeType.PROJECT)
+            if(type == ChangeType.PARTS || type == ChangeType.PROJECT)
             {
                 updateList();
             }
@@ -131,28 +131,24 @@ public class WindowModelTree extends Window<WorkspaceTabula>
 
         public void updateList()
         {
-            Identifiable<?> selected = getSelectedElement();
-
+            if(list.getFocused() instanceof ElementList.Item)
+            {
+                ElementList.Item focused = (ElementList.Item)list.getFocused();
+                focused.selected = false;
+            }
             list.setFocused(null);
             list.items.clear(); //TODO automatically select box.
 
             if(currentInfo != null)
             {
-                populateList(list, currentInfo.project.parts, 0, selected);
-            }
-
-            selected = getSelectedElement();
-            if(selected == null && currentInfo != null) //we haven't selected something... or it was deleted
-            {
-                parentFragment.parent.selectPart(null);
-                parentFragment.parent.selectBox(null);
+                populateList(currentInfo, list, currentInfo.project.parts, 0);
             }
 
             list.init();
             list.init();
         }
 
-        public void populateList(ElementList<?> list, ArrayList<? extends Identifiable<?>> identifiables, int indent, Identifiable<?> selected)
+        public void populateList(@Nonnull Mainframe.ProjectInfo info, @Nonnull ElementList<?> list, ArrayList<? extends Identifiable<?>> identifiables, int indent)
         {
             for(Identifiable<?> identifiable : identifiables)
             {
@@ -162,15 +158,10 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                     ElementList.Item<Project.Part> item = new ElementList.Item<>(list, part);;
                     list.items.add(item);
                     item.constraint = Constraint.sizeOnly(item);
-                    if(selected != null && selected.identifier.equals(part.identifier))
+                    if(info.getSelectedPart() != null && info.getSelectedPart().identifier.equals(part.identifier)) //this is the selected part
                     {
                         item.selected = true;
                         list.setFocused(item);
-                        parentFragment.parent.selectPart(part);
-                        if(part.boxes.size() == 1)
-                        {
-                            parentFragment.parent.selectBox(part.boxes.get(0));
-                        }
                     }
 
                     ElementTexture texture = new ElementTexture(item, part.boxes.size() == 1 ? TEX_BOX : TEX_PART);
@@ -201,11 +192,11 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                     int newIndent = indent + 10;
                     if(part.boxes.size() > 1)
                     {
-                        populateList(list, part.boxes, newIndent, selected);
+                        populateList(info, list, part.boxes, newIndent);
                     }
                     if(!part.children.isEmpty())
                     {
-                        populateList(list, part.children, newIndent, selected);
+                        populateList(info, list, part.children, newIndent);
                     }
                 }
                 else if(identifiable instanceof Project.Part.Box)
@@ -215,11 +206,10 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                     ElementList.Item<Project.Part.Box> item = new ElementList.Item<>(list, box);
                     list.items.add(item);
                     item.constraint = Constraint.sizeOnly(item);
-                    if(selected != null && selected.identifier.equals(box.identifier))
+                    if(info.getSelectedBox() != null && info.getSelectedBox().identifier.equals(box.identifier)) //this is the selected part
                     {
                         item.selected = true;
                         list.setFocused(item);
-                        parentFragment.parent.selectBox(box);
                     }
 
                     ElementTexture texture = new ElementTexture(item, TEX_BOX);

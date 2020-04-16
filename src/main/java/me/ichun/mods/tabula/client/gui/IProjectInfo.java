@@ -11,6 +11,10 @@ public interface IProjectInfo
     //because I'm lazy
     List<? extends IGuiEventListener> children();
 
+    /**
+     * Called before projectChanged(PROJECT) (ideally)
+     * @param info
+     */
     default void setCurrentProject(@Nullable Mainframe.ProjectInfo info)
     {
         children().stream().filter(child -> child instanceof IProjectInfo).forEach(child -> ((IProjectInfo)child).setCurrentProject(info));
@@ -23,10 +27,9 @@ public interface IProjectInfo
 
     public enum ChangeType
     {
-        PROJECTS,
-        PROJECT,
+        PROJECTS, // When the number of opened projects change
+        PROJECT, // When the current project changes
         PARTS,
-        TEXTURE,
-        MODEL
+        TEXTURE
     }
 }

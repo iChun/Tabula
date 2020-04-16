@@ -121,33 +121,45 @@ public class WorkspaceTabula extends Workspace
         }
     }
 
-    public boolean selectPart(Project.Part part) //TODO select the first box when you click on this.... if there is a box
+    public void selectPart(Project.Part part)
     {
-        Window<?> window = getWindowType(WindowPartInfo.class);
-        if(window == null)
-        {
-            window = new WindowPartInfo(this);
-            addToDock(window, Constraint.Property.Type.LEFT);
-            window.init();
-        }
+        Mainframe.ProjectInfo currentProject = mainframe.getActiveProject();
 
-        return ((WindowPartInfo)window).selectPart(part);
+        if(currentProject != null)
+        {
+            if(part != null)
+            {
+                //check to see if WindowPartInfo exists, if not, add it.
+                Window<?> window = getWindowType(WindowPartInfo.class);
+                if(window == null)
+                {
+                    window = new WindowPartInfo(this);
+                    addToDock(window, Constraint.Property.Type.LEFT);
+                    window.init();
+                }
+            }
+
+            currentProject.selectPart(part);
+        }
     }
 
     public void selectBox(Project.Part.Box box)
     {
-        if(box != null)
-        {
-            Identifiable<?> id = box.parent;
-            if(id instanceof Project.Part)
-            {
-                selectPart((Project.Part)id);
+        Mainframe.ProjectInfo currentProject = mainframe.getActiveProject();
 
-                //we've selected the parent. we can show the selector now.
+        if(currentProject != null)
+        {
+            if(box != null && box.parent instanceof Project.Part)
+            {
+                //select this poor child's parent first
+                selectPart((Project.Part)box.parent);
+
+                //we've selected the parent
+                //check to see if WindowBoxInfo exists, if not, add it.
                 Window<?> window = getWindowType(WindowBoxInfo.class);
                 if(window == null)
                 {
-                    Window<?> partInfo = getWindowType(WindowPartInfo.class);
+                    Window<?> partInfo = getWindowType(WindowPartInfo.class); //shouldn't be null, we just checked for it!
                     window = new WindowBoxInfo(this);
                     if(isDocked(partInfo))
                     {
@@ -160,18 +172,16 @@ public class WorkspaceTabula extends Workspace
                     window.init();
                 }
 
-                ((WindowBoxInfo)window).selectBox(box);
-                return;
+                currentProject.selectBox(box);
+            }
+            else //select null.
+            {
+                currentProject.selectPart(null);
+                currentProject.selectBox(null);
             }
         }
-
-        //box is null, or box has no part parent. Deselect.
-        Window<?> window = getWindowType(WindowBoxInfo.class);
-        if(window != null)
-        {
-            ((WindowBoxInfo)window).selectBox(null);
-        }
     }
+
 
     @Override
     protected void init()
@@ -227,7 +237,7 @@ public class WorkspaceTabula extends Workspace
         if(selecting)
         {
             findSelection(mouseX, mouseY, partialTick);
-//            selecting = false;
+                        selecting = false;
         }
 
         renderBackground();
@@ -296,10 +306,7 @@ public class WorkspaceTabula extends Workspace
 
             ModelTabula model = info.project.getModel();
             Project.Part.Box box = model.getSelectedBox((int)(buffer.get() * 255), (int)(buffer.get() * 255), (int)(buffer.get() * 255));
-            if(box != null)
-            {
-                //TODO do something
-            }
+            selectBox(box);
         }
 
         //Reset our perspective, and set up for drawing windows.
@@ -436,7 +443,7 @@ public class WorkspaceTabula extends Workspace
                 }
 
                 IVertexBuilder ivertexbuilder = bufferSource.getBuffer(type);
-                info.project.getModel().render(stack, ivertexbuilder, 15728880, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+                info.project.getModel().render(stack, ivertexbuilder, info.getSelectedPart(), info.getSelectedBox());
             }
             bufferSource.finish();
 
