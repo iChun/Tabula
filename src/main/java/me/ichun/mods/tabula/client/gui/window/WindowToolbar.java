@@ -81,7 +81,9 @@ public class WindowToolbar extends Window<WorkspaceTabula>
 
             //open project
             btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/open.png"), button -> {
-                getWorkspace().openWindowInCenter(new WindowOpenProject(getWorkspace()), 0.4D, 0.6D);
+                Window<?> window = new WindowOpenProject(getWorkspace());
+                getWorkspace().openWindowInCenter(window, 0.4D, 0.6D);
+                window.init();
             });
             btn.setSize(20,20).setTooltip(I18n.format("topdock.open"));
             btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
@@ -137,7 +139,9 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                     Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
                     if(info1 != null)
                     {
-                        getWorkspace().openWindowInCenter(new WindowImportProject(getWorkspace()), 0.4D, 0.6D);
+                        Window<?> window = new WindowImportProject(getWorkspace());
+                        getWorkspace().openWindowInCenter(window, 0.4D, 0.6D);
+                        window.init();
                     }
                 });
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.import"));

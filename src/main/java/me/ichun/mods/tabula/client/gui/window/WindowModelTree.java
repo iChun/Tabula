@@ -9,6 +9,7 @@ import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
@@ -28,7 +29,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
 
         setView(new ViewModelTree(this));
         setId("windowModelTree");
-        size(104, 200);
+        size(140, 200);
     }
 
     public static class ViewModelTree extends View<WindowModelTree>
@@ -61,7 +62,16 @@ public class WindowModelTree extends Window<WorkspaceTabula>
             );
             elements.add(sh);
 
-            list = new ElementList<>(this).setScrollHorizontal(sh).setScrollVertical(sv);
+            list = new ElementList<>(this).setScrollHorizontal(sh).setScrollVertical(sv)
+            .setDragHandler((item, item2) ->
+            {
+                parent.mainframe.handleDragged(((Identifiable<?>)item.getObject()), ((Identifiable<?>)item2.getObject()));
+            })
+            .setRearrangeHandler((item, integer) -> 
+            {
+                parent.mainframe.handleRearrange(list.items, ((Identifiable<?>)item.getObject()), integer);
+            })
+            ;
             list.setConstraint(new Constraint(list).bottom(sh, Constraint.Property.Type.TOP, 0).left(this, Constraint.Property.Type.LEFT, spaceBottom).right(sv, Constraint.Property.Type.LEFT, 0).top(this, Constraint.Property.Type.TOP, spaceBottom));
             elements.add(list);
 
@@ -91,7 +101,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                         if(selected instanceof Project.Part)
                         {
                             Project.Part part = (Project.Part)selected;
-                            if(part.boxes.size() == 1)
+                            if(part.boxes.size() == 1 && !Screen.hasShiftDown())
                             {
                                 currentInfo.delete(part.boxes.get(0));
                                 return;
@@ -133,11 +143,11 @@ public class WindowModelTree extends Window<WorkspaceTabula>
         {
             if(list.getFocused() instanceof ElementList.Item)
             {
-                ElementList.Item focused = (ElementList.Item)list.getFocused();
+                ElementList.Item<?> focused = (ElementList.Item<?>)list.getFocused();
                 focused.selected = false;
             }
             list.setFocused(null);
-            list.items.clear(); //TODO automatically select box.
+            list.items.clear();
 
             if(currentInfo != null)
             {
@@ -160,6 +170,13 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                     item.constraint = Constraint.sizeOnly(item);
                     if(info.getSelectedPart() != null && info.getSelectedPart().identifier.equals(part.identifier)) //this is the selected part
                     {
+                        if(list.getFocused() instanceof ElementList.Item)
+                        {
+                            ElementList.Item<?> focused = (ElementList.Item<?>)list.getFocused();
+                            focused.selected = false;
+                        }
+                        list.setFocused(null);
+
                         item.selected = true;
                         list.setFocused(item);
                     }
@@ -208,6 +225,13 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                     item.constraint = Constraint.sizeOnly(item);
                     if(info.getSelectedBox() != null && info.getSelectedBox().identifier.equals(box.identifier)) //this is the selected part
                     {
+                        if(list.getFocused() instanceof ElementList.Item)
+                        {
+                            ElementList.Item<?> focused = (ElementList.Item<?>)list.getFocused();
+                            focused.selected = false;
+                        }
+                        list.setFocused(null);
+
                         item.selected = true;
                         list.setFocused(item);
                     }

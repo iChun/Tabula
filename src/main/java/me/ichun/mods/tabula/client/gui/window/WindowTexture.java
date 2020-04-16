@@ -34,7 +34,7 @@ public class WindowTexture extends Window<WorkspaceTabula>
 
         setView(new ViewTexture(this));
         setId("windowTexture");
-        size(104, 100);
+        size(140, 122);
     }
 
     public static class ViewTexture extends View<WindowTexture>

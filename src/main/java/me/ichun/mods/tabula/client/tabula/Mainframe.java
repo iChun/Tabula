@@ -2,6 +2,7 @@ package me.ichun.mods.tabula.client.tabula;
 
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
+import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementList;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.gui.IProjectInfo;
@@ -13,6 +14,7 @@ import javax.annotation.Nonnull;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Mainframe
 {
@@ -201,6 +203,107 @@ public class Mainframe
             workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
         }
     }
+
+    public void handleDragged(Identifiable<?> object, Identifiable<?> object1)
+    {
+        Project.Part draggedOnto = null;
+        if(object1 instanceof Project.Part) // the item we dragged onto
+        {
+            draggedOnto = ((Project.Part)object1);
+        }
+        else if(object1 instanceof Project.Part.Box)
+        {
+            draggedOnto = ((Project.Part)((Project.Part.Box)object1).parent);
+        }
+
+        if(draggedOnto != null)
+        {
+            if(object instanceof Project.Part)
+            {
+                Project.Part part = (Project.Part)object;
+                part.parent.disown(part);
+                draggedOnto.adopt(part);
+            }
+            else if(object instanceof Project.Part.Box)
+            {
+                Project.Part.Box box = (Project.Part.Box)object;
+                box.parent.disown(box);
+                draggedOnto.adopt(box);
+            }
+            Project project = draggedOnto.getProject();
+            if(getActiveProject() != null && project == getActiveProject().project)
+            {
+                project.markDirty();
+                workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+            }
+        }
+    }
+
+    public void handleRearrange(List<ElementList.Item<?>> items, Identifiable<?> child, int oldIndex)
+    {
+        Project project = child.getProject();
+        if(getActiveProject() != null && project == getActiveProject().project)
+        {
+            Identifiable<?> lastItem = null;
+            for(int i = 0; i < items.size(); i++)
+            {
+                ElementList.Item<?> item = items.get(i);
+                if(item.getObject() == child)
+                {
+                    //we found it!
+                    if(i == items.size() - 1)//we're the last object.
+                    {
+                        lastItem = null;
+                    }
+                    break;
+                }
+                else
+                {
+                    lastItem = (Identifiable<?>)item.getObject();
+                }
+            }
+
+            if(lastItem == null) // attach to the project
+            {
+                if(child instanceof Project.Part.Box)
+                {
+                    child.parent.parent.disown(child.parent);
+
+                    if(items.get(0).getObject() == child) // first
+                    {
+                        project.parts.add(0, (Project.Part)child.parent);
+                        child.parent.parent = project;
+                    }
+                    else
+                    {
+                        project.adopt(child.parent);
+                    }
+                }
+                else
+                {
+                    child.parent.disown(child);
+
+                    if(items.get(0).getObject() == child) // first
+                    {
+                        project.parts.add(0, (Project.Part)child);
+                        child.parent = project;
+                    }
+                    else
+                    {
+                        project.adopt(child);
+                    }
+                }
+            }
+            else
+            {
+                project.rearrange(lastItem, child);
+            }
+
+            project.markDirty();
+            workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+        }
+    }
+
 
     //WHEN SHOULD WE SEND OUT SERVER STUFF?
 
