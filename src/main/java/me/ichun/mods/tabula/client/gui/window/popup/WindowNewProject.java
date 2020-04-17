@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
 import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
 public class WindowNewProject extends Window<WorkspaceTabula>
 {
@@ -30,6 +31,13 @@ public class WindowNewProject extends Window<WorkspaceTabula>
         {
             super(parent, "window.newProject.title");
 
+            Consumer<String> enterResponder = s -> {
+                if(!s.isEmpty())
+                {
+                    submit();
+                }
+            };
+
             ElementTextWrapper text = new ElementTextWrapper(this);
             text.setNoWrap().setText(I18n.format("window.newProject.projIdent"));
             text.setConstraint(new Constraint(text).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20).top(this, Constraint.Property.Type.TOP, 20));
@@ -37,7 +45,7 @@ public class WindowNewProject extends Window<WorkspaceTabula>
 
             ElementTextField textField = new ElementTextField(this);
             textField.setId("modelName");
-            textField.setDefaultText("MyFirstModel");
+            textField.setDefaultText("MyFirstModel").setEnterResponder(enterResponder);
             textField.setConstraint(new Constraint(textField).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20).top(text, Constraint.Property.Type.BOTTOM, 3));
             elements.add(textField);
 
@@ -48,7 +56,7 @@ public class WindowNewProject extends Window<WorkspaceTabula>
 
             textField = new ElementTextField(this);
             textField.setId("author");
-            textField.setDefaultText(Minecraft.getInstance().getSession().getUsername());
+            textField.setDefaultText(Minecraft.getInstance().getSession().getUsername()).setEnterResponder(enterResponder);
             textField.setConstraint(new Constraint(textField).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20).top(text, Constraint.Property.Type.BOTTOM, 3));
             elements.add(textField);
 
@@ -79,28 +87,30 @@ public class WindowNewProject extends Window<WorkspaceTabula>
             button.setConstraint(new Constraint(button).bottom(this, Constraint.Property.Type.BOTTOM, 10).right(this, Constraint.Property.Type.RIGHT, 10));
             elements.add(button);
 
-            ElementButton<?> button1 = new ElementButton<>(this, I18n.format("gui.ok"), elementClickable ->
-            {
-                Project project = new Project();
-                project.name = ((ElementTextField)getById("modelName")).getText();
-                if(project.name.isEmpty())
-                {
-                    project.name = "NewProject";
-                }
-                project.author = ((ElementTextField)getById("author")).getText();
-                if(project.author.isEmpty())
-                {
-                    project.author = "Undefined";
-                }
-                project.texWidth = ((ElementNumberInput)getById("texWidth")).getInt();
-                project.texHeight = ((ElementNumberInput)getById("texHeight")).getInt();
-                project.markDirty();
-                parent.parent.mainframe.openProject(project);
-                getWorkspace().removeWindow(parent);
-            });
+            ElementButton<?> button1 = new ElementButton<>(this, I18n.format("gui.ok"), elementClickable -> submit());
             button1.setSize(60, 20);
             button1.setConstraint(new Constraint(button1).right(button, Constraint.Property.Type.LEFT, 10));
             elements.add(button1);
+        }
+
+        public void submit()
+        {
+            Project project = new Project();
+            project.name = ((ElementTextField)getById("modelName")).getText();
+            if(project.name.isEmpty())
+            {
+                project.name = "NewProject";
+            }
+            project.author = ((ElementTextField)getById("author")).getText();
+            if(project.author.isEmpty())
+            {
+                project.author = "Undefined";
+            }
+            project.texWidth = ((ElementNumberInput)getById("texWidth")).getInt();
+            project.texHeight = ((ElementNumberInput)getById("texHeight")).getInt();
+            project.markDirty();
+            parentFragment.parent.mainframe.openProject(project);
+            getWorkspace().removeWindow(parentFragment);
         }
     }
 }

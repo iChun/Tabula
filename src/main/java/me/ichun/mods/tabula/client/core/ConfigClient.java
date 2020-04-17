@@ -18,6 +18,9 @@ public class ConfigClient extends ConfigBase
     @Prop
     public boolean animateImports = true;
 
+    @Prop(min = 0, max = 10)
+    public int guiMaxDecimals = 2;
+
     @Nonnull
     @Override
     public String getModId()

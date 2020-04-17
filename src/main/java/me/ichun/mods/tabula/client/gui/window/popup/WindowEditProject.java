@@ -12,6 +12,7 @@ import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import net.minecraft.client.resources.I18n;
 
 import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
 public class WindowEditProject extends Window<WorkspaceTabula>
 {
@@ -33,6 +34,13 @@ public class WindowEditProject extends Window<WorkspaceTabula>
             super(parent, "window.editProject.title");
             this.project = project;
 
+            Consumer<String> enterResponder = s -> {
+                if(!s.isEmpty())
+                {
+                    submit();
+                }
+            };
+
             ElementTextWrapper text = new ElementTextWrapper(this);
             text.setNoWrap().setText(I18n.format("window.newProject.projIdent"));
             text.setConstraint(new Constraint(text).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20).top(this, Constraint.Property.Type.TOP, 20));
@@ -40,7 +48,7 @@ public class WindowEditProject extends Window<WorkspaceTabula>
 
             ElementTextField textField = new ElementTextField(this);
             textField.setId("modelName");
-            textField.setDefaultText(project.name).setHeight(14);
+            textField.setDefaultText(project.name).setEnterResponder(enterResponder).setHeight(14);
             textField.setConstraint(new Constraint(textField).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20).top(text, Constraint.Property.Type.BOTTOM, 3));
             elements.add(textField);
 
@@ -51,7 +59,7 @@ public class WindowEditProject extends Window<WorkspaceTabula>
 
             textField = new ElementTextField(this);
             textField.setId("author");
-            textField.setDefaultText(project.author).setHeight(14);
+            textField.setDefaultText(project.author).setEnterResponder(enterResponder).setHeight(14);
             textField.setConstraint(new Constraint(textField).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20).top(text, Constraint.Property.Type.BOTTOM, 3));
             elements.add(textField);
 
@@ -109,16 +117,21 @@ public class WindowEditProject extends Window<WorkspaceTabula>
 
             ElementButton<?> button1 = new ElementButton<>(this, I18n.format("gui.done"), button2 ->
             {
-                project.name = ((ElementTextField)getById("modelName")).getText();
-                project.author = ((ElementTextField)getById("author")).getText();
-                project.texWidth = ((ElementNumberInput)getById("texWidth")).getInt();
-                project.texHeight = ((ElementNumberInput)getById("texHeight")).getInt();
-                parent.parent.mainframe.editProject(project);
-                parent.parent.removeWindow(parent);
+                submit();
             });
             button1.setSize(60, 20);
             button1.setConstraint(new Constraint(button1).right(button, Constraint.Property.Type.LEFT, 10));
             elements.add(button1);
+        }
+
+        public void submit()
+        {
+            project.name = ((ElementTextField)getById("modelName")).getText();
+            project.author = ((ElementTextField)getById("author")).getText();
+            project.texWidth = ((ElementNumberInput)getById("texWidth")).getInt();
+            project.texHeight = ((ElementNumberInput)getById("texHeight")).getInt();
+            parentFragment.parent.mainframe.editProject(project);
+            parentFragment.parent.removeWindow(parentFragment);
         }
     }
 

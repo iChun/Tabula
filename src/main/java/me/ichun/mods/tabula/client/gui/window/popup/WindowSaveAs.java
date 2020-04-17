@@ -42,7 +42,9 @@ public class WindowSaveAs extends Window<WorkspaceTabula>
 
             ElementTextField textField = new ElementTextField(this);
             textField.setId("fileName");
-            textField.setValidator(ElementTextField.FILE_SAFE);
+            textField.setValidator(ElementTextField.FILE_SAFE).setEnterResponder(s -> {
+                submit();
+            });
             textField.setDefaultText(project.name).setHeight(14);
             textField.setConstraint(new Constraint(textField).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20).top(text, Constraint.Property.Type.BOTTOM, 3));
             elements.add(textField);
@@ -57,34 +59,39 @@ public class WindowSaveAs extends Window<WorkspaceTabula>
 
             ElementButton<?> button1 = new ElementButton<>(this, I18n.format("gui.ok"), button2 ->
             {
-                String fileName = ((ElementTextField)getById("fileName")).getText();
-                if(!fileName.isEmpty())
-                {
-                    if(!fileName.endsWith(".tbl"))
-                    {
-                        fileName = fileName + ".tbl";
-                    }
-
-                    File file = new File(ResourceHelper.getSavesDir().toFile(), fileName);
-
-                    if(file.exists())
-                    {
-                        getWorkspace().openWindowInCenter(new WindowSaveOverwrite(getWorkspace(), project, file), 0.6D, 0.8D);
-                    }
-                    else
-                    {
-                        parent.parent.removeWindow(parent);
-
-                        if(!project.save(file))
-                        {
-                            WindowPopup.popup(parentFragment.parent, 0.4D, 0.3D, I18n.format("window.saveAs.failed"), null);
-                        }
-                    }
-                }
+                submit();
             });
             button1.setSize(60, 20);
             button1.setConstraint(new Constraint(button1).right(button, Constraint.Property.Type.LEFT, 10));
             elements.add(button1);
+        }
+
+        public void submit()
+        {
+            String fileName = ((ElementTextField)getById("fileName")).getText();
+            if(!fileName.isEmpty())
+            {
+                if(!fileName.endsWith(".tbl"))
+                {
+                    fileName = fileName + ".tbl";
+                }
+
+                File file = new File(ResourceHelper.getSavesDir().toFile(), fileName);
+
+                if(file.exists())
+                {
+                    getWorkspace().openWindowInCenter(new WindowSaveOverwrite(getWorkspace(), project, file), 0.6D, 0.8D);
+                }
+                else
+                {
+                    parentFragment.parent.removeWindow(parentFragment);
+
+                    if(!project.save(file))
+                    {
+                        WindowPopup.popup(parentFragment.parent, 0.4D, 0.3D, I18n.format("window.saveAs.failed"), null);
+                    }
+                }
+            }
         }
     }
 

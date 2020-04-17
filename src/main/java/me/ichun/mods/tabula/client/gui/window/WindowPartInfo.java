@@ -8,6 +8,7 @@ import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
+import me.ichun.mods.tabula.common.Tabula;
 import net.minecraft.client.resources.I18n;
 
 import javax.annotation.Nonnull;
@@ -133,19 +134,19 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             elements.add(space);
 
             num = new ElementNumberInput(this, true);
-            num.setMaxDec(2).setSize(numberInputWidth, 14).setId("posX");
+            num.setMaxDec(Tabula.configClient.guiMaxDecimals).setSize(numberInputWidth, 14).setId("posX");
             num.setResponder(responder);
             num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num);
 
             num1 = new ElementNumberInput(this, true);
-            num1.setMaxDec(2).setSize(numberInputWidth, 14).setId("posY");
+            num1.setMaxDec(Tabula.configClient.guiMaxDecimals).setSize(numberInputWidth, 14).setId("posY");
             num1.setResponder(responder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num1);
 
             ElementNumberInput num2 = new ElementNumberInput(this, true);
-            num2.setMaxDec(2).setSize(numberInputWidth, 14).setId("posZ");
+            num2.setMaxDec(Tabula.configClient.guiMaxDecimals).setSize(numberInputWidth, 14).setId("posZ");
             num2.setResponder(responder);
             num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
             space.addElement(num2);
@@ -160,19 +161,19 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             elements.add(space);
 
             num = new ElementNumberInput(this, true);
-            num.setMaxDec(2).setMin(-180).setMax(180).setSize(numberInputWidth, 14).setId("rotX");
+            num.setMaxDec(Tabula.configClient.guiMaxDecimals).setMin(-180).setMax(180).setSize(numberInputWidth, 14).setId("rotX");
             num.setResponder(responder);
             num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num);
 
             num1 = new ElementNumberInput(this, true);
-            num1.setMaxDec(2).setMin(-180).setMax(180).setSize(numberInputWidth, 14).setId("rotY");
+            num1.setMaxDec(Tabula.configClient.guiMaxDecimals).setMin(-180).setMax(180).setSize(numberInputWidth, 14).setId("rotY");
             num1.setResponder(responder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num1);
 
             num2 = new ElementNumberInput(this, true);
-            num2.setMaxDec(2).setMin(-180).setMax(180).setSize(numberInputWidth, 14).setId("rotZ");
+            num2.setMaxDec(Tabula.configClient.guiMaxDecimals).setMin(-180).setMax(180).setSize(numberInputWidth, 14).setId("rotZ");
             num2.setResponder(responder);
             num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
             space.addElement(num2);
@@ -265,8 +266,13 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             }
         }
 
-        private boolean selectPart(Project.Part part)
+        private void selectPart(Project.Part part)
         {
+            if(currentPart == part)
+            {
+                return;
+            }
+
             currentPart = null;
             if(part != null)
             {
@@ -324,7 +330,6 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
                 ((ElementScrollBar<?>)getById("scrollY")).setScrollProg(0.5F);
                 ((ElementScrollBar<?>)getById("scrollZ")).setScrollProg(0.5F);
             }
-            return true;
         }
     }
 }
