@@ -86,7 +86,6 @@ public class WindowEditProject extends Window<WorkspaceTabula>
                         }
                     }
                     parent.parent.mainframe.editProject(project);
-                    parent.parent.projectChanged(IProjectInfo.ChangeType.PROJECT);
                 });
                 window.setId("windowEditProjectMeta");
                 getWorkspace().openWindowInCenter(window, 0.6D, 0.8D);
@@ -115,7 +114,6 @@ public class WindowEditProject extends Window<WorkspaceTabula>
                 project.texWidth = ((ElementNumberInput)getById("texWidth")).getInt();
                 project.texHeight = ((ElementNumberInput)getById("texHeight")).getInt();
                 parent.parent.mainframe.editProject(project);
-                parent.parent.projectChanged(IProjectInfo.ChangeType.PROJECT);
                 parent.parent.removeWindow(parent);
             });
             button1.setSize(60, 20);

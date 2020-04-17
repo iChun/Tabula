@@ -98,7 +98,8 @@ public class Mainframe
 
     public void editProject(Project project) //edited in the UI
     {
-        //TODO streamline changes
+        project.markDirty();
+        workspace.projectChanged(IProjectInfo.ChangeType.PROJECT);
     }
 
     public void importProject(@Nonnull Project project, boolean texture)
@@ -156,7 +157,7 @@ public class Mainframe
     {
         if(info != null)
         {
-            info.project.addPart(parent); //TODO this receives an object
+            info.project.addPart(parent);
             workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
         }
     }
@@ -165,8 +166,8 @@ public class Mainframe
     {
         if(info != null)
         {
-            info.project.addBox(parent); //TODO this receives an object
-            workspace.projectChanged(IProjectInfo.ChangeType.PARTS); //TODO change box?
+            info.project.addBox(parent);
+            workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
         }
     }
 
@@ -174,27 +175,21 @@ public class Mainframe
     {
         if(info != null)
         {
-            info.project.delete(child); //TODO this receives an object
-            workspace.projectChanged(IProjectInfo.ChangeType.PARTS); //TODO change box?
+            info.project.delete(child);
+            workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
         }
     }
 
     public void updatePart(Project.Part part)
     {
-        //TODO find the project this is from
-        //TODO regenerate the model
-        //TODO should we be refreshing everything every time???
         part.markDirty();
-        workspace.projectChanged(IProjectInfo.ChangeType.PARTS); //TODO change box?
+        workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
     }
 
     public void updateBox(Project.Part.Box box)
     {
-        //TODO this
-        //TODO regenerate the model
-        //TODO should we be refreshing everything every time???
         box.markDirty();
-        workspace.projectChanged(IProjectInfo.ChangeType.PARTS); //TODO change box?
+        workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
     }
 
     public void setImage(ProjectInfo info, BufferedImage image)

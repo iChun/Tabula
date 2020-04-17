@@ -208,12 +208,12 @@ public class WindowTexture extends Window<WorkspaceTabula>
                     Project.Part part = (Project.Part)box.parent;
                     int alpha = parentFragment.currentInfo.getSelectedBox() == box ? 125 : 30;
                     double ratio = (project.texWidth / w1);
-                    RenderHelper.drawColour(255, 0, 0, alpha, pX + part.texOffX / ratio, pY + part.texOffY / ratio + box.dimZ / ratio                                                           , box.dimZ / ratio, box.dimY / ratio, 0D);
-                    RenderHelper.drawColour(0, 0, 255, alpha, pX + part.texOffX / ratio + box.dimZ / ratio, pY + part.texOffY / ratio + box.dimZ / ratio                                        , box.dimX / ratio, box.dimY / ratio, 0D);
-                    RenderHelper.drawColour(170, 0, 0, alpha, pX + part.texOffX / ratio + box.dimZ / ratio + box.dimX / ratio, pY + part.texOffY / ratio + box.dimZ / ratio                     , box.dimZ / ratio, box.dimY / ratio, 0D);
-                    RenderHelper.drawColour(0, 0, 170, alpha, pX + part.texOffX / ratio + box.dimZ / ratio + box.dimX / ratio  + box.dimZ / ratio, pY + part.texOffY / ratio + box.dimZ / ratio , box.dimX / ratio, box.dimY / ratio, 0D);
-                    RenderHelper.drawColour(0, 255, 0, alpha, pX + part.texOffX / ratio + box.dimZ / ratio, pY + part.texOffY / ratio                                                           , box.dimX / ratio, box.dimZ / ratio, 0D);
-                    RenderHelper.drawColour(0, 170, 0, alpha, pX + part.texOffX / ratio + box.dimZ / ratio + box.dimX / ratio, pY + part.texOffY / ratio                                        , box.dimX / ratio, box.dimZ / ratio, 0D);
+                    RenderHelper.drawColour(255, 0, 0, alpha, pX + (part.texOffX + box.texOffX) / ratio                                                          , pY + (part.texOffY + box.texOffY) / ratio + box.dimZ / ratio, box.dimZ / ratio, box.dimY / ratio, 0D);
+                    RenderHelper.drawColour(0, 0, 255, alpha, pX + (part.texOffX + box.texOffX) / ratio + box.dimZ / ratio                                       , pY + (part.texOffY + box.texOffY) / ratio + box.dimZ / ratio, box.dimX / ratio, box.dimY / ratio, 0D);
+                    RenderHelper.drawColour(170, 0, 0, alpha, pX + (part.texOffX + box.texOffX) / ratio + box.dimZ / ratio + box.dimX / ratio                    , pY + (part.texOffY + box.texOffY) / ratio + box.dimZ / ratio, box.dimZ / ratio, box.dimY / ratio, 0D);
+                    RenderHelper.drawColour(0, 0, 170, alpha, pX + (part.texOffX + box.texOffX) / ratio + box.dimZ / ratio + box.dimX / ratio  + box.dimZ / ratio, pY + (part.texOffY + box.texOffY) / ratio + box.dimZ / ratio, box.dimX / ratio, box.dimY / ratio, 0D);
+                    RenderHelper.drawColour(0, 255, 0, alpha, pX + (part.texOffX + box.texOffX) / ratio + box.dimZ / ratio                                       , pY + (part.texOffY + box.texOffY) / ratio                   , box.dimX / ratio, box.dimZ / ratio, 0D);
+                    RenderHelper.drawColour(0, 170, 0, alpha, pX + (part.texOffX + box.texOffX) / ratio + box.dimZ / ratio + box.dimX / ratio                    , pY + (part.texOffY + box.texOffY) / ratio                   , box.dimX / ratio, box.dimZ / ratio, 0D);
 
                 }
 

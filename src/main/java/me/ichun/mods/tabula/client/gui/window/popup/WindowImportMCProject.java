@@ -487,8 +487,10 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
         {
             parentFragment.parent.removeWindow(parentFragment);
 
+            boolean texture = ((ElementToggle)getById("buttonTexture")).toggleState;
+
             Project project = ModelHelper.convertModelToProject(model.model);
-            if(model.texture != null)
+            if(texture && model.texture != null)
             {
                 try
                 {
@@ -510,7 +512,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
             }
             else
             {
-                parentFragment.parent.mainframe.importProject(project, ((ElementToggle)getById("buttonTexture")).toggleState);
+                parentFragment.parent.mainframe.importProject(project, texture);
             }
         }
     }

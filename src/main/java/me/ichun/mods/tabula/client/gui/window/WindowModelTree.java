@@ -1,6 +1,8 @@
 package me.ichun.mods.tabula.client.gui.window;
 
+import me.ichun.mods.ichunutil.client.gui.bns.Theme;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
+import me.ichun.mods.ichunutil.client.gui.bns.window.WindowEditList;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.*;
@@ -43,7 +45,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
 
         public ViewModelTree(@Nonnull WindowModelTree parent)
         {
-            super(parent, "window.modelTree.title"); //TODO update buttons based on the project
+            super(parent, "window.modelTree.title");
 
             int spaceBottom = 2;
             int bottomSpace = 2 + spaceBottom + 20;
@@ -59,7 +61,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
             sh.setConstraint(new Constraint(sh).left(this, Constraint.Property.Type.LEFT, spaceBottom)
                     .bottom(this, Constraint.Property.Type.BOTTOM, bottomSpace)
                     .right(sv, Constraint.Property.Type.LEFT, 0)
-            );
+            ); //TODO test the horizontal scroll bar.
             elements.add(sh);
 
             list = new ElementList<>(this).setScrollHorizontal(sh).setScrollVertical(sv)
@@ -101,7 +103,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                         if(selected instanceof Project.Part)
                         {
                             Project.Part part = (Project.Part)selected;
-                            if(part.boxes.size() == 1 && !Screen.hasShiftDown())
+                            if(part.boxes.size() == 1 && Screen.hasShiftDown()) //if shift is held, delete just the box.
                             {
                                 currentInfo.delete(part.boxes.get(0));
                                 return;
@@ -115,12 +117,29 @@ public class WindowModelTree extends Window<WorkspaceTabula>
             button.setConstraint(new Constraint(button).left(last, Constraint.Property.Type.RIGHT, 0).bottom(this, Constraint.Property.Type.BOTTOM, spaceBottom));
             elements.add(last = button);
 
-            //
-            //                button = new ElementButtonTextured(this, new ResourceLocation("tabula", "textures/icon/editmeta.png"), elementClickable -> {
-            //
-            //                }).setSize(20, 20).setTooltip(I18n.format("window.modelTree.editMeta"));
-            //                button.setConstraint(new Constraint(button).left(last, Constraint.Property.Type.RIGHT, 0).bottom(this, Constraint.Property.Type.BOTTOM, spaceBottom));
-            //                elements.add(last = button);
+            button = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/editmeta.png"), elementClickable -> {
+                if(currentInfo != null)
+                {
+                    WindowEditList<?> window = new WindowEditList<>(getWorkspace(), "window.modelTree.editMeta", currentInfo.getSelectedPart().notes, s -> true, list1 -> {
+                        currentInfo.getSelectedPart().notes.clear();
+                        for(ElementList.Item<?> item1 : list1.items)
+                        {
+                            ElementTextField oriText = (ElementTextField)item1.elements.get(0);
+                            if(!oriText.getText().isEmpty())
+                            {
+                                currentInfo.getSelectedPart().notes.add(oriText.getText());
+                            }
+                        }
+                        parentFragment.mainframe.updatePart(currentInfo.getSelectedPart());
+                    });
+                    window.setId("windowEditPartMeta");
+                    getWorkspace().openWindowInCenter(window, 0.6D, 0.8D);
+                    window.init();
+                }
+            });
+            button.setSize(20, 20).setTooltip(I18n.format("window.modelTree.editMeta")).setId("editPartMeta");
+            button.setConstraint(new Constraint(button).left(last, Constraint.Property.Type.RIGHT, 0).bottom(this, Constraint.Property.Type.BOTTOM, spaceBottom));
+            elements.add(last = button);
         }
 
         @Override
@@ -148,6 +167,12 @@ public class WindowModelTree extends Window<WorkspaceTabula>
             }
             list.setFocused(null);
             list.items.clear();
+
+            Window<?> window = parentFragment.parent.getById("windowEditPartMeta");
+            if(window != null)
+            {
+                parentFragment.parent.removeWindow(window);
+            }
 
             if(currentInfo != null)
             {
@@ -187,6 +212,10 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                     item.addElement(texture);
 
                     ElementTextWrapper wrapper = new ElementTextWrapper(item).setText(part.name);
+                    if(!part.showModel)
+                    {
+                        wrapper.setColor(Theme.getAsHex(getTheme().fontDim));
+                    }
                     wrapper.setNoWrap().setConstraint(Constraint.matchParent(wrapper, item, item.getBorderSize()).left(item, Constraint.Property.Type.LEFT, indent + texture.getWidth()).bottom(null, Constraint.Property.Type.BOTTOM, 0));
                     item.addElement(wrapper);
 
@@ -203,7 +232,17 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                         else
                         {
                             parentFragment.parent.selectPart(null);
+
+                            Window<?> window = parentFragment.parent.getById("windowEditPartMeta");
+                            if(window != null)
+                            {
+                                parentFragment.parent.removeWindow(window);
+                            }
                         }
+                    });
+                    item.setRightClickConsumer((mouseX, mouseY, itemObj) -> {
+                        itemObj.getObject().showModel = !itemObj.getObject().showModel;
+                        parentFragment.mainframe.updatePart(itemObj.getObject());
                     });
 
                     int newIndent = indent + 10;

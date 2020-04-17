@@ -146,6 +146,29 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
             num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
             space.addElement(num2);
 
+            text = new ElementTextWrapper(this);
+            text.setNoWrap().setText(I18n.format("window.controls.txOffset"));
+            text.setConstraint(new Constraint(text).left(text1, Constraint.Property.Type.LEFT, 0).top(num, Constraint.Property.Type.BOTTOM, spacing));
+            elements.add(text);
+
+            space = new ElementSharedSpace(this, ElementScrollBar.Orientation.HORIZONTAL);
+            space.setSize(14, 14).setConstraint(new Constraint(space).left(this, Constraint.Property.Type.LEFT, 4).top(text, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
+            elements.add(space);
+
+            num = new ElementNumberInput(this, false);
+            num.setSize(numberInputWidth, 14).setId("texX");
+            num.setResponder(responder);
+            num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
+            space.addElement(num);
+
+            num1 = new ElementNumberInput(this, false);
+            num1.setSize(numberInputWidth, 14).setId("texY");
+            num1.setResponder(responder);
+            num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0));
+            space.addElement(num1);
+
+            space.addElement(new ElementPadding(this, 0, 14));
+
             currentInfo = parent.parent.mainframe.getActiveProject();
         }
 
@@ -190,6 +213,9 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
                 currentBox.expandY = (float)((ElementNumberInput)getById("expY")).getDouble();
                 currentBox.expandZ = (float)((ElementNumberInput)getById("expZ")).getDouble();
 
+                currentBox.texOffX = ((ElementNumberInput)getById("texX")).getInt();
+                currentBox.texOffY = ((ElementNumberInput)getById("texY")).getInt();
+
                 String postUpdate = currentBox.getJsonWithoutChildren();
                 if(!postUpdate.equals(preUpdate))
                 {
@@ -216,6 +242,9 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
                 ((ElementNumberInput)getById("expX")).setText(String.format(Locale.ENGLISH, "%.2f", box.expandX));
                 ((ElementNumberInput)getById("expY")).setText(String.format(Locale.ENGLISH, "%.2f", box.expandY));
                 ((ElementNumberInput)getById("expZ")).setText(String.format(Locale.ENGLISH, "%.2f", box.expandZ));
+
+                ((ElementNumberInput)getById("texX")).setText(Integer.toString(box.texOffX));
+                ((ElementNumberInput)getById("texY")).setText(Integer.toString(box.texOffY));
                 currentBox = box;
             }
             else
@@ -234,6 +263,8 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
                 ((ElementNumberInput)getById("expY")).setText("");
                 ((ElementNumberInput)getById("expZ")).setText("");
 
+                ((ElementNumberInput)getById("texX")).setText("");
+                ((ElementNumberInput)getById("texY")).setText("");
             }
         }
     }
