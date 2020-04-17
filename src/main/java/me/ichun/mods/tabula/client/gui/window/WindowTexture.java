@@ -61,6 +61,8 @@ public class WindowTexture extends Window<WorkspaceTabula>
             btn.setConstraint(new Constraint(btn).bottom(this, Constraint.Property.Type.BOTTOM, 2).right(this, Constraint.Property.Type.RIGHT, 2));
             elements.add(btn);
 
+            //TODO button to hide/disable texture temporarily.
+
             ElementButtonTextured<?> btn1 = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/newtexture.png"), button -> {
                 getWorkspace().openWindowInCenter(new WindowNewTexture(getWorkspace(), currentInfo), 0.4D, 0.6D);
             });

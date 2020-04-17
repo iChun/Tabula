@@ -109,6 +109,8 @@ public class Mainframe
             info.project.importProject(project, texture);
             if(texture)
             {
+                info.textureFile = null;
+                info.textureFileMd5 = null;
                 workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
             }
             workspace.projectChanged(IProjectInfo.ChangeType.PARTS);

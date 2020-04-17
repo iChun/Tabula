@@ -83,7 +83,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             ElementNumberInput num1 = new ElementNumberInput(this, false);
             num1.setMin(0).setSize(numberInputWidth, 14).setId("txHeight");
             num1.setResponder(responder);
-            num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
+            num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num1);
 
             ElementToggle<?> btn = new ElementToggle<>(this, "window.partInfo.matchProject", elementClickable -> {
@@ -104,15 +104,15 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             elements.add(space);
 
             num = new ElementNumberInput(this, false);
-            num.setMin(0).setSize(numberInputWidth, 14).setId("txOffX");
+            num.setSize(numberInputWidth, 14).setId("txOffX");
             num.setResponder(responder);
             num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num);
 
             num1 = new ElementNumberInput(this, false);
-            num1.setMin(0).setSize(numberInputWidth, 14).setId("txOffY");
+            num1.setSize(numberInputWidth, 14).setId("txOffY");
             num1.setResponder(responder);
-            num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
+            num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num1);
 
             btn = new ElementToggle<>(this, "window.controls.txMirror", elementClickable -> {
@@ -141,13 +141,13 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             num1 = new ElementNumberInput(this, true);
             num1.setMaxDec(2).setSize(numberInputWidth, 14).setId("posY");
             num1.setResponder(responder);
-            num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
+            num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num1);
 
             ElementNumberInput num2 = new ElementNumberInput(this, true);
             num2.setMaxDec(2).setSize(numberInputWidth, 14).setId("posZ");
             num2.setResponder(responder);
-            num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
+            num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
             space.addElement(num2);
 
             text = new ElementTextWrapper(this);
@@ -168,13 +168,13 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             num1 = new ElementNumberInput(this, true);
             num1.setMaxDec(2).setMin(-180).setMax(180).setSize(numberInputWidth, 14).setId("rotY");
             num1.setResponder(responder);
-            num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0));
+            num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num1);
 
             num2 = new ElementNumberInput(this, true);
             num2.setMaxDec(2).setMin(-180).setMax(180).setSize(numberInputWidth, 14).setId("rotZ");
             num2.setResponder(responder);
-            num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
+            num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
             space.addElement(num2);
 
             ElementScrollBar<?> scrollBar = new ElementScrollBar<>(this, ElementScrollBar.Orientation.HORIZONTAL, 0.05F);

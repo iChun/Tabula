@@ -150,7 +150,13 @@ public class WindowToolbar extends Window<WorkspaceTabula>
 
                 //importMC to project
                 btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/importmc.png"), button -> {
-                    //TODO this
+                    Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
+                    if(info1 != null)
+                    {
+                        Window<?> window = new WindowImportMCProject(getWorkspace());
+                        getWorkspace().openWindowInCenter(window, 0.4D, 0.6D);
+                        window.init();
+                    }
                 });
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.importMC"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
