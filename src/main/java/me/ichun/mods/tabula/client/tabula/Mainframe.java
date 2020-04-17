@@ -352,6 +352,7 @@ public class Mainframe
 
         public File textureFile;
         public String textureFileMd5;
+        public boolean hideTexture;
 
         public ProjectInfo(@Nonnull Mainframe mainframe, Project project)
         {

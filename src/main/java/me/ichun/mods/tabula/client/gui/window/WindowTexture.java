@@ -4,10 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
-import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.Element;
-import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementButtonTextured;
-import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementTextWrapper;
-import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
+import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.*;
 import me.ichun.mods.ichunutil.client.render.RenderHelper;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.ichunutil.common.util.IOUtil;
@@ -64,17 +61,30 @@ public class WindowTexture extends Window<WorkspaceTabula>
             //TODO button to hide/disable texture temporarily.
 
             ElementButtonTextured<?> btn1 = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/newtexture.png"), button -> {
-                getWorkspace().openWindowInCenter(new WindowNewTexture(getWorkspace(), currentInfo), 0.4D, 0.6D);
+                if(currentInfo != null)
+                {
+                    getWorkspace().openWindowInCenter(new WindowNewTexture(getWorkspace(), currentInfo), 0.4D, 0.6D);
+                }
             });
             btn1.setSize(20, 20).setTooltip(I18n.format("window.texture.loadTexture"));
             btn1.setConstraint(new Constraint(btn1).bottom(this, Constraint.Property.Type.BOTTOM, 2).right(btn, Constraint.Property.Type.LEFT, 0));
             elements.add(btn1);
 
+            ElementToggleTextured<?> btn2 = new ElementToggleTextured<>(this, I18n.format("window.texture.hideTexture"), new ResourceLocation("tabula", "textures/icon/hidetexture.png"), button -> {
+                if(currentInfo != null)
+                {
+                    currentInfo.hideTexture = button.toggleState;
+                }
+            });
+            btn2.setSize(20, 20).setId("buttonHideTexture");
+            btn2.setConstraint(new Constraint(btn2).bottom(this, Constraint.Property.Type.BOTTOM, 2).right(btn1, Constraint.Property.Type.LEFT, 0));
+            elements.add(btn2);
+
             ElementToggle<?> toggle = new ElementToggle<>(this, "window.texture.listenTexture", elementClickable -> {
                 listenTime = 0;
             });
             toggle.setToggled(true).setSize(60, 20).setTooltip(I18n.format("window.texture.listenTextureFull")).setId("elementListenTex");
-            toggle.setConstraint(new Constraint(toggle).bottom(this, Constraint.Property.Type.BOTTOM, 2).right(btn1, Constraint.Property.Type.LEFT, 0).left(this, Constraint.Property.Type.LEFT, 2));
+            toggle.setConstraint(new Constraint(toggle).bottom(this, Constraint.Property.Type.BOTTOM, 2).right(btn2, Constraint.Property.Type.LEFT, 0).left(this, Constraint.Property.Type.LEFT, 2));
             elements.add(toggle);
 
             ElementTextWrapper text = new ElementTextWrapper(this);
@@ -146,6 +156,7 @@ public class WindowTexture extends Window<WorkspaceTabula>
                     {
                         ((ElementTextWrapper)getById("elementTextWrapper")).setText(I18n.format(currentInfo.project.getBufferedTexture() != null ? "window.texture.remoteTexture" : "window.texture.noTexture"));
                     }
+                    ((ElementToggleTextured)getById("buttonHideTexture")).setToggled(currentInfo.hideTexture);
                 }
             }
         }

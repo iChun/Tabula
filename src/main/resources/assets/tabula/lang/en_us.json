@@ -39,6 +39,7 @@
   "window.texture.listenTextureFull": "Listen for texture changes (If the texture is yours)",
   "window.texture.remoteTexture": "Remote Texture",
   "window.texture.noTexture": "No Texture",
+  "window.texture.hideTexture": "Hide Texture",
 
   "window.partInfo.title": "Part Info",
   "window.partInfo.partName": "Part Name",

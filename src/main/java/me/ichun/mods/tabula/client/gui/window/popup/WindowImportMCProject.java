@@ -1,5 +1,6 @@
 package me.ichun.mods.tabula.client.gui.window.popup;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import me.ichun.mods.ichunutil.client.gui.bns.Workspace;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
@@ -12,11 +13,14 @@ import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.client.renderer.model.Model;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.resources.I18n;
@@ -101,7 +105,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
     }
 
     private static boolean hasInit;
-    public static void initModels()
+    public static <T extends LivingEntity> void initModels()
     {
         if(!hasInit)
         {
@@ -221,6 +225,26 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                                 {
                                     //we found a model.
                                     Model model = (Model)f.get(entityRenderer);
+
+                                    if(model instanceof EntityModel)
+                                    {
+                                        EntityModel entityModel = (EntityModel)model;
+                                        try
+                                        {
+                                            entityModel.setLivingAnimations(instance, 0F, 0F, 0F);
+                                        }
+                                        catch(Throwable ignored){}
+                                        try
+                                        {
+                                            entityModel.setRotationAngles(instance, 0F, 0F, 0F, 0F, 0F);
+                                        }
+                                        catch(Throwable ignored){}
+                                        try
+                                        {
+                                            entityModel.render(new MatrixStack(), Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer(RenderType.getCutout()), 15728880, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 0F);
+                                        }
+                                        catch(Throwable ignored){}
+                                    }
 
                                     MODELS.add(new ModelInfo(texLoc, model, entityRenderer));
                                 }

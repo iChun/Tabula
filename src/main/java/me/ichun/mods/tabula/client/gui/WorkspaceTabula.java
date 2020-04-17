@@ -7,6 +7,7 @@ import me.ichun.mods.ichunutil.client.gui.bns.Workspace;
 import me.ichun.mods.ichunutil.client.gui.bns.window.*;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
+import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggleTextured;
 import me.ichun.mods.ichunutil.client.model.ModelHelper;
 import me.ichun.mods.ichunutil.client.model.ModelTabula;
 import me.ichun.mods.ichunutil.client.render.RenderHelper;
@@ -433,7 +434,7 @@ public class WorkspaceTabula extends Workspace
             }
             else
             {
-                info.project.getModel().render(stack, info.getSelectedPart(), info.getSelectedBox());
+                info.project.getModel().render(stack, info.getSelectedPart(), info.getSelectedBox(), info.hideTexture);
             }
 
             net.minecraft.client.renderer.RenderHelper.setupGui3DDiffuseLighting();
