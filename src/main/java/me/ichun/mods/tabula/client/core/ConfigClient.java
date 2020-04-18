@@ -30,7 +30,13 @@ public class ConfigClient extends ConfigBase
     public boolean renderWorkspaceGrid = true;
 
     @Prop
+    public double workspaceGridSize = 7.25D;
+
+    @Prop
     public boolean ignoreOldTabulaWarning = false;
+
+    @Prop
+    public boolean disableAutosaves = true;
 
     @Prop(min = 0, max = 200)
     public int maximumUndoStates = 40;

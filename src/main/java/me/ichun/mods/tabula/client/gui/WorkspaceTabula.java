@@ -502,21 +502,22 @@ public class WorkspaceTabula extends Workspace
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
 
-            double dist = 0.125D;
-            double pX = -3.495D - dist;
+            double dist = Tabula.configClient.workspaceGridSize;
+            float halfDist = (float)(dist / 2);
+            double pX = -(dist / 2) - 0.005D;
             double pY = 0.500125D;
-            double pZ = -3.495D - dist;
-            double w = 7 + (dist * 2);
-            double l = 7 + (dist * 2);
+            double pZ = -(dist / 2) - 0.005D;
+            double w = dist;
+            double l = dist;
             bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR_TEX_LIGHTMAP);
-            bufferbuilder.pos(pX, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex(-0.125F, 7.125F).lightmap(light1, light2).endVertex();
-            bufferbuilder.pos(pX + w, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex(7.125F, 7.125F).lightmap(light1, light2).endVertex();
-            bufferbuilder.pos(pX + w, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(7.125F, -0.125F).lightmap(light1, light2).endVertex();
-            bufferbuilder.pos(pX, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(-0.125F, -0.125F).lightmap(light1, light2).endVertex();
-            bufferbuilder.pos(pX + w, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex(7.125F, 7.125F).lightmap(light1, light2).endVertex();
-            bufferbuilder.pos(pX, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex(-0.125F, 7.125F).lightmap(light1, light2).endVertex();
-            bufferbuilder.pos(pX, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(-0.125F, -0.125F).lightmap(light1, light2).endVertex();
-            bufferbuilder.pos(pX + w, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(7.125F, -0.125F).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(pX, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex((-halfDist + 0.5F), (halfDist + 0.5F)).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(pX + w, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex((halfDist + 0.5F), (halfDist + 0.5F)).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(pX + w, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex((halfDist + 0.5F), (-halfDist + 0.5F)).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(pX, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex((-halfDist + 0.5F), (-halfDist + 0.5F)).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(pX + w, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex((halfDist + 0.5F), (halfDist + 0.5F)).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(pX, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex((-halfDist + 0.5F), (halfDist + 0.5F)).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(pX, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex((-halfDist + 0.5F), (-halfDist + 0.5F)).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(pX + w, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex((halfDist + 0.5F), (-halfDist + 0.5F)).lightmap(light1, light2).endVertex();
             tessellator.draw();
 
             RenderSystem.disableBlend();

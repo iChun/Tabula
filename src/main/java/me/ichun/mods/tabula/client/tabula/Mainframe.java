@@ -5,11 +5,13 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementList;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
+import me.ichun.mods.tabula.client.core.ResourceHelper;
 import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.client.gui.window.WindowModelTree;
 import me.ichun.mods.tabula.client.gui.window.WindowTexture;
 import me.ichun.mods.tabula.common.Tabula;
+import net.minecraft.util.Util;
 
 import javax.annotation.Nonnull;
 import java.awt.image.BufferedImage;
@@ -402,6 +404,8 @@ public class Mainframe
         public ArrayList<State> states = new ArrayList<>();
         public int stateIndex = -1;
 
+        public int autosaveTimer;
+
         public ProjectInfo(@Nonnull Mainframe mainframe, Project project)
         {
             this.mainframe = mainframe;
@@ -428,6 +432,63 @@ public class Mainframe
                         states.remove(0);
                     }
                     stateIndex = states.size() - 1; //put state at max
+                }
+            }
+            if(!Tabula.configClient.disableAutosaves)
+            {
+                autosaveTimer++;
+                if(autosaveTimer > 5 * 60 * 20) //5 minutes
+                {
+                    autosaveTimer = 0;
+
+                    if(stateIndex >= 0 && stateIndex < states.size())
+                    {
+                        State state = states.get(stateIndex);
+                        if(!state.autosaved)
+                        {
+                            state.autosaved = true;
+
+                            File file = new File(ResourceHelper.getAutosaveDir().toFile(), project.name + "-Autosave-" + Util.millisecondsSinceEpoch() + ".tbl");
+
+                            File projFile = project.saveFile;
+                            boolean projDirt = project.isDirty;
+                            if(project.save(file))
+                            {
+                                project.saveFile = projFile;
+                                project.isDirty = projDirt;
+
+                                //get the last few files in this name, delete them off.
+                                long timestamp = 0;
+                                File oldestAutosave = null;
+                                int count = 0;
+                                File[] files = ResourceHelper.getAutosaveDir().toFile().listFiles();
+                                for(File save : files)
+                                {
+                                    if(!save.isDirectory() && save.getName().endsWith(".tbl") && save.getName().startsWith(project.name + "-Autosave-"))
+                                    {
+                                        count++;
+                                        String stamp = save.getName().substring((project.name + "-Autosave-").length(), save.getName().length() - 4);//remove the ".tbl"
+                                        try
+                                        {
+                                            long time = Long.parseLong(stamp);
+                                            if(time < timestamp || timestamp == 0)
+                                            {
+                                                timestamp = time;
+                                                oldestAutosave = save;
+                                            }
+                                        }
+                                        catch(NumberFormatException e)
+                                        {
+                                        }
+                                    }
+                                }
+                                if(oldestAutosave != null && count > 10)
+                                {
+                                    oldestAutosave.delete();
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -485,6 +546,8 @@ public class Mainframe
             Project project = Project.SIMPLE_GSON.fromJson(state.project, Project.class);
             if(project != null)
             {
+                state.autosaved = false;
+
                 this.project.transferTransients(project);
                 project.setBufferedTexture(state.image);
 
