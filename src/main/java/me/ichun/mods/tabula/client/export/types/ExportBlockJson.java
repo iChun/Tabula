@@ -1,16 +1,18 @@
-package me.ichun.mods.tabula.old.client.export.types;
+package me.ichun.mods.tabula.client.export.types;
 
-import me.ichun.mods.ichunutil.client.gui.window.IWorkspace;
+import me.ichun.mods.ichunutil.client.gui.bns.Workspace;
 import me.ichun.mods.ichunutil.common.module.tabula.formats.types.Exporter;
-import me.ichun.mods.ichunutil.common.module.tabula.project.ProjectInfo;
-import me.ichun.mods.ichunutil.common.module.tabula.project.components.CubeInfo;
-import me.ichun.mods.tabula.old.client.core.ResourceHelper;
-import me.ichun.mods.tabula.old.client.gui.window.WindowExportBlockJson;
-import me.ichun.mods.tabula.old.common.Tabula;
+import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
+import me.ichun.mods.tabula.client.core.ResourceHelper;
+import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
+import me.ichun.mods.tabula.client.gui.window.popup.WindowExportBlockJson;
+import me.ichun.mods.tabula.common.Tabula;
+import net.minecraft.client.resources.I18n;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,14 +24,28 @@ public class ExportBlockJson extends Exporter
 
     public ExportBlockJson()
     {
-        super("export.blockjson.name");
+        super(I18n.format("export.blockjson.name"));
         errors = new StringBuilder();
     }
+
+    @Override
+    public String getId()
+    {
+        return "blockJson";
+    }
+
 
     public StringBuilder errors;
 
     @Override
-    public boolean export(ProjectInfo info, Object... params)
+    public boolean override(Workspace workspace, Project project)
+    {
+        workspace.openWindowInCenter(new WindowExportBlockJson(((WorkspaceTabula)workspace), project), 0.6D, 0.6D);
+        return true;
+    }
+
+    @Override
+    public boolean export(Project project, Object... params)
     {
         Object modid = params[0];
         Object filename = params[1];
@@ -39,19 +55,19 @@ public class ExportBlockJson extends Exporter
         int xAdjust = cornerAtZero ? 0 : 8;
         int yAdjust = relativeToBlock ? 24 : 0;
         int zAdjust = cornerAtZero ? 0 : 8;
-        this.textureWidth = info.textureWidth;
-        this.textureHeight = info.textureHeight;
+        this.textureWidth = project.texWidth;
+        this.textureHeight = project.texHeight;
 
-        File file = new File(ResourceHelper.getExportsDir(), filename + ".json");
+        File file = new File(ResourceHelper.getExportsDir().toFile(), filename + ".json");
 
         StringBuilder sb = new StringBuilder();
         errors = new StringBuilder();
 
-        ArrayList<CubeInfo> allCubes = info.getAllCubes();
+        ArrayList<Project.Part.Box> allCubes = project.getAllBoxes();
 
-        HashMap<CubeInfo, String> cubeFieldMap = new HashMap<>();
+        HashMap<Project.Part.Box, String> cubeFieldMap = new HashMap<>();
 
-        sb.append("{   \"__comment\": " + "\"" + info.modelName + " - " + info.authorName + ", ");
+        sb.append("{   \"__comment\": " + "\"" + project.name + " - " + project.author + ", ");
         sb.append("created using Tabula " + Tabula.VERSION + "\",\n");
         sb.append("    \"parent\": \"minecraft:block/block\",\n");
         sb.append("    \"ambientocclusion\": false,\n");
@@ -59,7 +75,7 @@ public class ExportBlockJson extends Exporter
         sb.append("        \"particle\": \"" + modid + ":blocks/" + texturename + "\"\n");
         sb.append("    },\n");
         sb.append("    \"elements\": [\n");
-        for(CubeInfo cube : allCubes)
+        for(Project.Part.Box cube : allCubes)
         {
             int count = 0;
             while(count == 0 && cubeFieldMap.containsValue(getFieldName(cube)) || count != 0 && cubeFieldMap.containsValue(getFieldName(cube) + "_" + count))
@@ -73,33 +89,33 @@ public class ExportBlockJson extends Exporter
             }
             cubeFieldMap.put(cube, fieldName);
         }
-        for(Map.Entry<CubeInfo, String> e : cubeFieldMap.entrySet())
+        for(Map.Entry<Project.Part.Box, String> e : cubeFieldMap.entrySet())
         {
-            CubeInfo cube = e.getKey();
+            Project.Part.Box cube = e.getKey();
             String field = e.getValue();
-            Object parent = info.getObjectByIdent(cube.parentIdentifier);
+            Project.Part parent = (Project.Part)cube.parent;
             //Obtain parent cube if there is one
-            CubeInfo parentCube = parent instanceof CubeInfo ? (CubeInfo) parent : null;
+            Project.Part parentCube = cube.parent.parent instanceof Project.Part ? (Project.Part) cube.parent.parent : null;
             //Extract data for the JSON
-            int x = (int) cube.position[0];
-            int y = (int) -cube.position[1];
-            int z = (int) cube.position[2];
+            int x = (int) parent.rotPX;
+            int y = (int) -parent.rotPY;
+            int z = (int) parent.rotPZ;
             //Add x, y and z of parent if there is one
             if(parentCube != null)
             {
-                x += (int) parentCube.position[0];
-                y -= (int) parentCube.position[1];
-                z += (int) parentCube.position[2];
+                x += (int) parentCube.rotPX;
+                y -= (int) parentCube.rotPY;
+                z += (int) parentCube.rotPZ;
             }
-            int xLen = cube.dimensions[0];
-            int yLen = cube.dimensions[1];
-            int zLen = cube.dimensions[2];
+            int xLen = (int)cube.dimX;
+            int yLen = (int)cube.dimY;
+            int zLen = (int)cube.dimZ;
             //x + (int) cube.offset[0] outputs a mirror image on the z axis
-            int xstart = x - xLen - (int) cube.offset[0] + xAdjust;
-            int ystart = y - yLen - (int) cube.offset[1] + yAdjust;
-            int zstart = z + (int) cube.offset[2] + zAdjust;
-            int u = cube.txOffset[0];
-            int v = cube.txOffset[1];
+            int xstart = x - xLen - (int) cube.posX + xAdjust;
+            int ystart = y - yLen - (int) cube.posY + yAdjust;
+            int zstart = z + (int) cube.posZ + zAdjust;
+            int u = parent.texOffX + cube.texOffX;
+            int v = parent.texOffY + cube.texOffY;
             String axis;
             double angle;
             //Validate data for the JSON
@@ -110,15 +126,15 @@ public class ExportBlockJson extends Exporter
             this.rangeCheck(field, "cube end x", xstart + xLen, -16, 32);
             this.rangeCheck(field, "cube end y", ystart + yLen, -16, 32);
             this.rangeCheck(field, "cube end z", zstart + zLen, -16, 32);
-            double rotX = cube.rotation[0];
-            double rotY = cube.rotation[1];
-            double rotZ = cube.rotation[2];
+            double rotX = parent.rotAX;
+            double rotY = parent.rotAY;
+            double rotZ = parent.rotAZ;
             //Add rotation of parent if there is one
             if(parentCube != null)
             {
-                rotX += parentCube.rotation[0];
-                rotY += parentCube.rotation[1];
-                rotZ += parentCube.rotation[2];
+                rotX += parentCube.rotAX;
+                rotY += parentCube.rotAY;
+                rotZ += parentCube.rotAZ;
             }
             axis = this.getAxis(field, rotX, rotY, rotZ);
             angle = this.getAngle(field, axis, rotX, rotY, rotZ);
@@ -152,7 +168,7 @@ public class ExportBlockJson extends Exporter
         try
         {
             if(errors.length() == 0) {
-                FileUtils.writeStringToFile(file, sb.toString());
+                FileUtils.writeStringToFile(file, sb.toString(), StandardCharsets.UTF_8);
                 return true;
             }
             else {
@@ -166,23 +182,10 @@ public class ExportBlockJson extends Exporter
         }
     }
 
-    public String getFieldName(CubeInfo cube)
+    public String getFieldName(Project.Part.Box cube)
     {
-        String name = cube.name.replaceAll("[^A-Za-z0-9_$]", "");
+        String name = cube.parent.name.replaceAll("[^A-Za-z0-9_$]", "");
         return name;
-    }
-
-    @Override
-    public boolean override(IWorkspace workspace)
-    {
-        workspace.addWindowOnTop(new WindowExportBlockJson(workspace, workspace.width / 2 - 100, workspace.height / 2 - 80, 400, 230, 200, 230).putInMiddleOfScreen());
-        return true;
-    }
-
-    @Override
-    public boolean localizable()
-    {
-        return true;
     }
 
     private void rangeCheck(String cubeName, String valueName, double value, double min, double max) {
