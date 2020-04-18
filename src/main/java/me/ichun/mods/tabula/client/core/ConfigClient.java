@@ -32,6 +32,9 @@ public class ConfigClient extends ConfigBase
     @Prop
     public boolean ignoreOldTabulaWarning = false;
 
+    @Prop(min = 0, max = 200)
+    public int maximumUndoStates = 40;
+
     @CategoryDivider(name = "multiplayer")
     @Prop
     public boolean chatSound = true;

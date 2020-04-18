@@ -367,80 +367,6 @@ public class GuiWorkspace extends IWorkspace
 
         ScaledResolution resolution = new ScaledResolution(mc);
 
-        if (Mouse.isButtonDown(0) && !mouseLeftDown)
-        {
-            //Render the "furnace"
-            GlStateManager.matrixMode(GL11.GL_PROJECTION);
-            GlStateManager.loadIdentity();
-            GlStateManager.ortho(0.0D, resolution.getScaledWidth_double(), resolution.getScaledHeight_double(), 0.0D, -5000.0D, 5000.0D);
-            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-            GlStateManager.loadIdentity();
-            GlStateManager.pushMatrix();
-            Minecraft.getMinecraft().renderEngine.bindTexture(txVoxel);
-            GlStateManager.translate(width - (levels.get(1).isEmpty() ? 15F : 15F + levels.get(1).get(0).width), height - 15F - windowAnimate.getHeight(), 3000F);
-            float scale = 15F;
-            GlStateManager.scale(scale, scale, scale);
-            GlStateManager.scale(-1.0F, 1.0F, 1.0F);
-            GlStateManager.rotate(-15F + cameraPitch + 180F, 1.0F, 0.0F, 0.0F);
-            GlStateManager.rotate(-38F + cameraYaw, 0.0F, 1.0F, 0.0F);
-            float scale1 = 16F;
-            GlStateManager.scale(scale1, scale1, scale1);
-            GlStateManager.clearColor(0F, 0F, 0F, 255F);
-            GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT);
-            voxel.render(0.0625F);
-            FloatBuffer buffer = BufferUtils.createFloatBuffer(3);
-            GL11.glReadPixels(Mouse.getX(), Mouse.getY(), 1, 1, GL11.GL_RGB, GL11.GL_FLOAT, buffer);
-            int blue = Math.round(buffer.get(2) * 255F);
-            if(blue > 0)
-            {
-                blue -= 250;
-                if(blue <= 1)
-                {
-                    cameraYaw = 0F;
-                }
-                else
-                {
-                    cameraPitch = 0F;
-                }
-                switch(blue)
-                {
-                    case 0:
-                    {
-                        cameraPitch = 90F;
-                        break;
-                    }
-                    case 1:
-                    {
-                        cameraPitch = -90F;
-                        break;
-                    }
-                    case 2:
-                    {
-                        cameraYaw = 90F;
-                        break;
-                    }
-                    case 3:
-                    {
-                        cameraYaw = 270F;
-                        break;
-                    }
-                    case 4:
-                    {
-                        cameraYaw = 180F;
-                        break;
-                    }
-                    case 5:
-                    {
-                        cameraYaw = 0F;
-                        break;
-                    }
-                }
-                cameraPitch += 15F;
-                cameraYaw += 38F;
-            }
-            GlStateManager.popMatrix();
-        }
-
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.loadIdentity();
         Project.gluPerspective(cameraFov, (float)(resolution.getScaledWidth_double() / resolution.getScaledHeight_double()), 1F, 10000F);
@@ -448,10 +374,6 @@ public class GuiWorkspace extends IWorkspace
         GlStateManager.loadIdentity();
         GlStateManager.clearColor(0F, 0F, 0F, 255F);
         GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT);
-
-        if (Mouse.isButtonDown(0) && !mouseLeftDown) {
-            modelSelector.onClick(mouseX, mouseY);
-        }
 
         GlStateManager.clearColor((float)currentTheme.workspaceBackground[0] / 255F, (float)currentTheme.workspaceBackground[1] / 255F, (float)currentTheme.workspaceBackground[2] / 255F, 255F);
         GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -486,41 +408,6 @@ public class GuiWorkspace extends IWorkspace
             }
             if(GuiScreen.isCtrlKeyDown())
             {
-                if(Keyboard.isKeyDown(Keyboard.KEY_X) && !keyXDown)
-                {
-                    cut();
-                }
-                if(Keyboard.isKeyDown(Keyboard.KEY_C) && !keyCDown)
-                {
-                    copy();
-                }
-                if(Keyboard.isKeyDown(Keyboard.KEY_V) && !keyVDown && cubeCopied != null)
-                {
-                    paste(GuiScreen.isShiftKeyDown(), true);
-                }
-                if(Keyboard.isKeyDown(Keyboard.KEY_Z) && !keyZDown || Keyboard.isKeyDown(Keyboard.KEY_Y) && !keyYDown)
-                {
-                    switchState(Keyboard.isKeyDown(Keyboard.KEY_Y) || !GuiScreen.isShiftKeyDown());
-                }
-                if(Keyboard.isKeyDown(Keyboard.KEY_S) && !keySDown)
-                {
-                    if(GuiScreen.isShiftKeyDown())
-                    {
-                        this.addWindowOnTop(new WindowSaveAs(this, 0, 0, 200, 100, 200, 100, false).putInMiddleOfScreen());
-                    }
-                    else
-                    {
-                        save(false);
-                    }
-                }
-                if(Keyboard.isKeyDown(Keyboard.KEY_N) && !keyNDown)
-                {
-                    this.addWindowOnTop(new WindowNewProject(this, this.width / 2 - 100, this.height / 2 - 80, 200, 160, 200, 160).putInMiddleOfScreen());
-                }
-                if(Keyboard.isKeyDown(Keyboard.KEY_O) && !keyODown)
-                {
-                    this.addWindowOnTop(new WindowOpenProject(this, this.width / 2 - 130, this.height / 2 - 160, 260, 320, 240, 160).putInMiddleOfScreen());
-                }
                 if(Keyboard.isKeyDown(Keyboard.KEY_TAB) && !keyTabDown)
                 {
                     if(!projectManager.projects.isEmpty())

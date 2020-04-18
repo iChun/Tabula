@@ -47,10 +47,6 @@ public class WindowTopDock extends WindowTopDockBase
     {
         super(parent, w, h);
 
-        //ADD Elements
-        elements.add(new ElementToggle(this, width - 144 - 65, 4, 40, 12, ID_WOOD, true, 1, 0, "topdock.wood", "topdock.woodFull", Tabula.config.renderWorkspaceBlock == 1));
-        elements.add(new ElementButton(this, width - 144 - 20, 4, 140, 12, ID_OPEN_WORKING_DIR, true, 1, 0, "topdock.openWorkingDir"));
-
         int button = 0;
         if(((GuiWorkspace)workspace).host != null)
         {

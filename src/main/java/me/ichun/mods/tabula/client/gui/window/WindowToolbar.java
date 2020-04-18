@@ -7,6 +7,8 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementButtonTextured;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
+import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;
+import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.client.gui.window.popup.*;
@@ -143,57 +145,43 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                 elements.add(last = btn);
 
                 //cut
-                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/cut.png"), button -> {
-                    //TODO this
-                });
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/cut.png"), button -> cut());
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.cut"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //copy
-                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/copy.png"), button -> {
-                    //TODO this
-                });
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/copy.png"), button -> copy());
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.copy"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //paste
-                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/paste.png"), button -> {
-                    //TODO this
-                });
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/paste.png"), button -> paste(false, false));
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.paste"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //pasteinplace
-                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/pasteinplace.png"), button -> {
-                    //TODO this
-                });
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/pasteinplace.png"), button -> paste(false, true));
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.pasteInPlace"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //pasteWithoutChildren
-                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/pastewithoutchildren.png"), button -> {
-                    //TODO this
-                });
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/pastewithoutchildren.png"), button -> paste(true, false));
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.pasteWithoutChildren"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //undo
-                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/undo.png"), button -> {
-                    //TODO this
-                });
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/undo.png"), button -> undo());
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.undo"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //redo
-                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/redo.png"), button -> {
-                    //TODO this
-                });
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/redo.png"), button -> redo());
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.redo"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
@@ -254,9 +242,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
 
 
             //Add exit button. last button
-            btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/exittabula.png"), button -> {
-                getWorkspace().onClose();
-            });
+            btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/exittabula.png"), button -> getWorkspace().onClose());
             btn.setSize(20,20).setTooltip(I18n.format("topdock.exitTabula"));
             btn.setConstraint(new Constraint(btn).right(this, Constraint.Property.Type.RIGHT, 0));
             elements.add(btn);
@@ -335,7 +321,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
             if(info1 != null)
             {
                 Window<?> window = new WindowImportMCProject(getWorkspace());
-                getWorkspace().openWindowInCenter(window, 0.4D, 0.6D);
+                getWorkspace().openWindowInCenter(window, 0.4D, 0.8D);
                 window.init();
             }
         }
@@ -359,6 +345,83 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                 Window<?> window = new WindowGhostProject(getWorkspace());
                 getWorkspace().openWindowInCenter(window, 0.4D, 0.6D);
                 window.init();
+            }
+        }
+
+        public void undo()
+        {
+            Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
+            if(info1 != null)
+            {
+                parentFragment.parent.mainframe.changeState(info1, false);
+            }
+        }
+
+        public void redo()
+        {
+            Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
+            if(info1 != null)
+            {
+                parentFragment.parent.mainframe.changeState(info1, true);
+            }
+        }
+
+        public void cut()
+        {
+            Mainframe.ProjectInfo info = parentFragment.parent.mainframe.getActiveProject();
+            if(info != null)
+            {
+                Identifiable<?> selected = info.getSelectedPart() != null ? info.getSelectedPart() : info.getSelectedBox();
+                if(selected != null)
+                {
+                    info.createState();
+                    info.delete(selected);
+                    selected.parent = null; //orphan this child
+                    selected.witnessProtectionProgramme(); //and give it a new identity
+                    parentFragment.parent.clipboard = selected;
+                    info.createState();
+                }
+            }
+        }
+
+        public void copy()
+        {
+            Mainframe.ProjectInfo info = parentFragment.parent.mainframe.getActiveProject();
+            if(info != null)
+            {
+                Identifiable<?> selected = info.getSelectedPart() != null ? info.getSelectedPart() : info.getSelectedBox();
+                if(selected != null)
+                {
+                    Identifiable<?> clone = (Identifiable<?>)selected.clone();
+                    clone.witnessProtectionProgramme();
+                    parentFragment.parent.clipboard = clone;
+                }
+            }
+        }
+
+        public void paste(boolean sterile, boolean inPlace)
+        {
+            Mainframe.ProjectInfo info = parentFragment.parent.mainframe.getActiveProject();
+            if(info != null)
+            {
+                Identifiable<?> clone = (Identifiable<?>)parentFragment.parent.clipboard.clone();
+                clone.witnessProtectionProgramme();
+                if(clone instanceof Project.Part)
+                {
+                    if(!inPlace)
+                    {
+                        ((Project.Part)clone).resetPositions();
+                    }
+                    if(sterile)
+                    {
+                        ((Project.Part)clone).children.clear();
+                    }
+                    info.addPart(info.getSelectedPart() != null ? info.getSelectedPart() : info.getSelectedBox() != null ? info.getSelectedBox() : info.project, (Project.Part)clone);
+                }
+                else if(clone instanceof Project.Part.Box)
+                {
+                    info.addBox(info.getSelectedPart() != null ? info.getSelectedPart() : info.getSelectedBox() != null ? info.getSelectedBox() : info.project, (Project.Part.Box)clone);
+                }
             }
         }
     }

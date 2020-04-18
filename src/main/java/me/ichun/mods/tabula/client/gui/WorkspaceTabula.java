@@ -2,6 +2,7 @@ package me.ichun.mods.tabula.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import me.ichun.mods.ichunutil.client.gui.bns.Workspace;
 import me.ichun.mods.ichunutil.client.gui.bns.window.*;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
@@ -10,20 +11,21 @@ import me.ichun.mods.ichunutil.client.model.ModelHelper;
 import me.ichun.mods.ichunutil.client.model.ModelTabula;
 import me.ichun.mods.ichunutil.client.render.RenderHelper;
 import me.ichun.mods.ichunutil.common.iChunUtil;
+import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.gui.window.*;
 import me.ichun.mods.tabula.client.gui.window.popup.WindowSaveAs;
 import me.ichun.mods.tabula.client.gui.window.popup.WindowSaveOverwrite;
+import me.ichun.mods.tabula.client.model.ModelVoxel;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
 import me.ichun.mods.tabula.common.Tabula;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.model.SpiderModel;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -48,8 +50,12 @@ public class WorkspaceTabula extends Workspace
     public final int oriScale;
     public final WindowToolbar windowToolbar;
 
+    public final ModelVoxel modelVoxel = new ModelVoxel();
+
     public boolean selecting;
     public boolean closing;
+
+    public Identifiable<?> clipboard = null;
 
     private WorkspaceTabula(Screen lastScreen, Mainframe mainframe, int oriScale)
     {
@@ -239,6 +245,8 @@ public class WorkspaceTabula extends Workspace
             selecting = false;
         }
 
+//        RenderSystem.pushMatrix();
+
         renderBackground();
 
         //Set up projection for workspace
@@ -318,6 +326,115 @@ public class WorkspaceTabula extends Workspace
         RenderSystem.loadIdentity();
 
         RenderSystem.popMatrix();
+
+        RenderSystem.pushMatrix();
+
+        cam = mainframe.getCamera();
+
+        double right = width;
+        double bottom = height;
+        for(Map.Entry<ArrayList<Window<?>>, Constraint.Property.Type> e : getDock().docked.entrySet())
+        {
+            for(Window<?> key : e.getKey())
+            {
+                Constraint.Property.Type value = e.getValue();
+                switch(value)
+                {
+                    case RIGHT:
+                    {
+                        if(key.getLeft() < right)
+                        {
+                            right = key.getLeft();
+                        }
+                        break;
+                    }
+                    case BOTTOM:
+                    {
+                        if(key.getTop() < bottom)
+                        {
+                            bottom = key.getTop();
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        RenderSystem.translated(right - 20F, bottom - 20F, 3000F);
+        float scale = 15F;
+        RenderSystem.scalef(scale, scale, scale);
+        RenderSystem.scalef(-1.0F, 1.0F, 1.0F);
+        RenderSystem.rotatef(-15F + (cam.rendPitchPrev + (cam.rendPitch - cam.rendPitchPrev) * partialTick) + 180F, 1.0F, 0.0F, 0.0F);
+        RenderSystem.rotatef(-38F + (cam.rendYawPrev + (cam.rendYaw - cam.rendYawPrev) * partialTick), 0.0F, 1.0F, 0.0F);
+
+        IRenderTypeBuffer.Impl bufferSource = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+        RenderType type = ModelTabula.RENDER_MODEL_COMPASS_FLAT;
+
+        IVertexBuilder ivertexbuilder = bufferSource.getBuffer(type);
+
+        MatrixStack stack = new MatrixStack();
+        stack.scale(16F, 16F, 16F);
+
+        modelVoxel.render(stack, ivertexbuilder, 15728880, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+
+        bufferSource.finish();
+
+        RenderSystem.popMatrix();
+
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(3);
+        GL11.glReadPixels((int)minecraft.mouseHelper.getMouseX(), (int)(minecraft.getMainWindow().getHeight() - minecraft.mouseHelper.getMouseY()), 1, 1, GL11.GL_RGB, GL11.GL_FLOAT, buffer);
+
+        int red = (int)(buffer.get() * 255);
+        int green = (int)(buffer.get() * 255);
+        int blue = (int)(buffer.get() * 255);
+
+        if(blue > 0 && red == 255 && green == 255)
+        {
+            blue -= 250;
+            if(blue <= 1)
+            {
+                cam.yaw = 0F;
+            }
+            else
+            {
+                cam.pitch = 0F;
+            }
+            switch(blue)
+            {
+                case 0:
+                {
+                    cam.pitch = 90F;
+                    break;
+                }
+                case 1:
+                {
+                    cam.pitch = -90F;
+                    break;
+                }
+                case 2:
+                {
+                    cam.yaw = 90F;
+                    break;
+                }
+                case 3:
+                {
+                    cam.yaw = 270F;
+                    break;
+                }
+                case 4:
+                {
+                    cam.yaw = 180F;
+                    break;
+                }
+                case 5:
+                {
+                    cam.yaw = 0F;
+                    break;
+                }
+            }
+            cam.pitch += 15F;
+            cam.yaw += 38F;
+        }
     }
 
     @Override
@@ -605,6 +722,96 @@ public class WorkspaceTabula extends Workspace
             else if(keyCode == GLFW.GLFW_KEY_E)
             {
                 windowToolbar.getCurrentView().openExportProject();
+                return true;
+            }
+            else if(keyCode == GLFW.GLFW_KEY_Z)
+            {
+                if(Screen.hasShiftDown())
+                {
+                    windowToolbar.getCurrentView().redo();
+                    return true;
+                }
+                else
+                {
+                    windowToolbar.getCurrentView().undo();
+                    return true;
+                }
+            }
+            else if(keyCode == GLFW.GLFW_KEY_Y)
+            {
+                windowToolbar.getCurrentView().redo();
+                return true;
+            }
+            else if(keyCode == GLFW.GLFW_KEY_X)
+            {
+                windowToolbar.getCurrentView().cut();
+                return true;
+            }
+            else if(keyCode == GLFW.GLFW_KEY_C)
+            {
+                windowToolbar.getCurrentView().copy();
+                return true;
+            }
+            else if(keyCode == GLFW.GLFW_KEY_V)
+            {
+                if(Screen.hasShiftDown()) //in place
+                {
+                    windowToolbar.getCurrentView().paste(false, true);
+                    return true;
+                }
+                else
+                {
+                    windowToolbar.getCurrentView().paste(false, false);
+                    return true;
+                }
+            }
+            else if(keyCode == GLFW.GLFW_KEY_TAB)
+            {
+                if(Screen.hasShiftDown()) //in place
+                {
+                    mainframe.activeView--;
+                    if(mainframe.activeView < 0)
+                    {
+                        mainframe.activeView = mainframe.projects.size() - 1;
+                    }
+                    if(mainframe.activeView >= 0)
+                    {
+                        setCurrentProject(mainframe.projects.get(mainframe.activeView));
+                        projectChanged(IProjectInfo.ChangeType.PROJECT);
+                    }
+                    return true;
+                }
+                else
+                {
+                    mainframe.activeView++;
+                    if(mainframe.activeView >= mainframe.projects.size())
+                    {
+                        mainframe.activeView = 0;
+                    }
+                    if(mainframe.activeView < mainframe.projects.size())
+                    {
+                        setCurrentProject(mainframe.projects.get(mainframe.activeView));
+                        projectChanged(IProjectInfo.ChangeType.PROJECT);
+                    }
+                    return true;
+                }
+            }
+            else if(keyCode == GLFW.GLFW_KEY_W)
+            {
+                Mainframe.ProjectInfo info = mainframe.getActiveProject();
+                if(info != null)
+                {
+                    closeProject(info);
+                }
+                return true;
+            }
+        }
+        else if((keyCode == GLFW.GLFW_KEY_DELETE || keyCode == GLFW.GLFW_KEY_KP_DECIMAL) && !(getFocused() != null && getFocused().getClass().getName().contains("popup")))
+        {
+            Window<?> window = getWindowType(WindowModelTree.class);
+            if(window != null)
+            {
+                ((WindowModelTree.ViewModelTree)window.currentView).delete();
                 return true;
             }
         }

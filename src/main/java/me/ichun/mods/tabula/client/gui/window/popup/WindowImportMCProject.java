@@ -16,6 +16,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.HorseRenderer;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
@@ -182,34 +183,46 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                     catch(Throwable ignored){}
 
                     ResourceLocation texLoc = null;
-                    try
+                    if(entityRenderer instanceof HorseRenderer)
                     {
-                        texLoc = ObfHelper.getEntityTexture(entityRenderer, entityRenderer.getClass(), instance);
+                        texLoc = new ResourceLocation("textures/entity/horse/horse_gray.png");
                     }
-                    catch(Throwable ignored){}
-
-                    if(texLoc == null)
+                    else
                     {
                         try
                         {
-                            Class<?> clz = entityRenderer.getClass();
-                            while(clz != EntityRenderer.class && texLoc == null)
-                            {
-                                Field[] fields = clz.getDeclaredFields();
-                                for(Field f : fields)
-                                {
-                                    f.setAccessible(true);
-                                    if(ResourceLocation.class.isAssignableFrom(f.getType()))
-                                    {
-                                        texLoc = (ResourceLocation)f.get(entityRenderer);
-                                        break;
-                                    }
-                                }
+                            texLoc = ObfHelper.getEntityTexture(entityRenderer, entityRenderer.getClass(), instance);
+                        }
+                        catch(Throwable ignored)
+                        {
+                        }
 
-                                clz = clz.getSuperclass();
+
+                        if(texLoc == null)
+                        {
+                            try
+                            {
+                                Class<?> clz = entityRenderer.getClass();
+                                while(clz != EntityRenderer.class && texLoc == null)
+                                {
+                                    Field[] fields = clz.getDeclaredFields();
+                                    for(Field f : fields)
+                                    {
+                                        f.setAccessible(true);
+                                        if(ResourceLocation.class.isAssignableFrom(f.getType()))
+                                        {
+                                            texLoc = (ResourceLocation)f.get(entityRenderer);
+                                            break;
+                                        }
+                                    }
+
+                                    clz = clz.getSuperclass();
+                                }
+                            }
+                            catch(Throwable ignored)
+                            {
                             }
                         }
-                        catch(Throwable ignored){}
                     }
 
                     //we have the texture. let's get all the models now.
@@ -380,7 +393,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
         }
     }
 
-    public <T extends LivingEntity> WindowImportMCProject(WorkspaceTabula parent)
+    public WindowImportMCProject(WorkspaceTabula parent)
     {
         super(parent);
 

@@ -9,6 +9,7 @@ import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.client.gui.window.WindowModelTree;
 import me.ichun.mods.tabula.client.gui.window.WindowTexture;
+import me.ichun.mods.tabula.common.Tabula;
 
 import javax.annotation.Nonnull;
 import java.awt.image.BufferedImage;
@@ -72,9 +73,6 @@ public class Mainframe
     //INPUT FROM CLIENT
     public void openProject(Project project) //when opened using the UI
     {
-        //TODO what to do when you're not the master??
-        //TODO send project to listeners
-
         //add the project
         ProjectInfo info = new ProjectInfo(this, project);
         projects.add(info);
@@ -98,8 +96,12 @@ public class Mainframe
 
     public void editProject(Project project) //edited in the UI
     {
-        project.markDirty();
-        workspace.projectChanged(IProjectInfo.ChangeType.PROJECT);
+        ProjectInfo info = getProjectInfoForProject(project);
+        if(info != null)
+        {
+            info.markProjectDirty();
+            workspace.projectChanged(IProjectInfo.ChangeType.PROJECT);
+        }
     }
 
     public void importProject(@Nonnull Project project, boolean texture)
@@ -114,6 +116,7 @@ public class Mainframe
                 info.textureFileMd5 = null;
                 workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
             }
+            info.markProjectDirty();
             workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
         }
     }
@@ -153,20 +156,22 @@ public class Mainframe
         }
     }
 
-    public void addPart(ProjectInfo info, Identifiable<?> parent)
+    public void addPart(ProjectInfo info, Identifiable<?> parent, Project.Part part)
     {
         if(info != null)
         {
-            info.project.addPart(parent);
+            info.project.addPart(parent, part);
+            info.markProjectDirty();
             workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
         }
     }
 
-    public void addBox(ProjectInfo info, Identifiable<?> parent)
+    public void addBox(ProjectInfo info, Identifiable<?> parent, Project.Part.Box box)
     {
         if(info != null)
         {
-            info.project.addBox(parent);
+            info.project.addBox(parent, box);
+            info.markProjectDirty();
             workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
         }
     }
@@ -176,20 +181,29 @@ public class Mainframe
         if(info != null)
         {
             info.project.delete(child);
+            info.markProjectDirty();
             workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
         }
     }
 
     public void updatePart(Project.Part part)
     {
-        part.markDirty();
-        workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+        ProjectInfo info = getProjectInfoForProject(part.markDirty());
+        if(info != null)
+        {
+            info.markProjectDirty();
+            workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+        }
     }
 
     public void updateBox(Project.Part.Box box)
     {
-        box.markDirty();
-        workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+        ProjectInfo info = getProjectInfoForProject(box.markDirty());
+        if(info != null)
+        {
+            info.markProjectDirty();
+            workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+        }
     }
 
     public void setImage(ProjectInfo info, BufferedImage image)
@@ -197,6 +211,7 @@ public class Mainframe
         if(info != null)
         {
             info.project.setBufferedTexture(image);
+            info.markProjectDirty();
             workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
         }
     }
@@ -230,7 +245,7 @@ public class Mainframe
             Project project = draggedOnto.getProject();
             if(getActiveProject() != null && project == getActiveProject().project)
             {
-                project.markDirty();
+                getActiveProject().markProjectDirty();
                 workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
             }
         }
@@ -296,9 +311,28 @@ public class Mainframe
                 project.rearrange(lastItem, child);
             }
 
-            project.markDirty();
-            workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+            ProjectInfo info = getProjectInfoForProject(project);
+            if(info != null)
+            {
+                info.markProjectDirty();
+                workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+            }
         }
+    }
+
+    public void changeState(ProjectInfo info, boolean redo)
+    {
+        if(redo)
+        {
+            info.redo();
+        }
+        else
+        {
+            info.undo();
+        }
+        workspace.projectChanged(IProjectInfo.ChangeType.PROJECT);
+        workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+        workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
     }
 
 
@@ -333,12 +367,24 @@ public class Mainframe
         return null;
     }
 
+    public ProjectInfo getProjectInfoForProject(Project project)
+    {
+        for(ProjectInfo info : projects)
+        {
+            if(info.project == project)
+            {
+                return info;
+            }
+        }
+        return null;
+    }
+
     public static class ProjectInfo
     {
         @Nonnull
         private final Mainframe mainframe;
         @Nonnull
-        public final Project project;
+        public Project project;
         @Nonnull
         public final Camera camera;
 
@@ -352,6 +398,10 @@ public class Mainframe
         public Project ghostProject;
         public float ghostOpacity;
 
+        public int stateCooldown;
+        public ArrayList<State> states = new ArrayList<>();
+        public int stateIndex = -1;
+
         public ProjectInfo(@Nonnull Mainframe mainframe, Project project)
         {
             this.mainframe = mainframe;
@@ -359,19 +409,101 @@ public class Mainframe
             this.camera = new Camera();
         }
 
-        public void tick()  //TODO autosaves?
+        public void tick()
         {
             camera.tick();
+            if(stateCooldown > 0)
+            {
+                stateCooldown--;
+                if(stateCooldown == 0)
+                {
+                    if(states.size() > stateIndex + 1)
+                    {
+                        states.subList(stateIndex + 1, states.size()).clear();
+                    }
+
+                    states.add(new State(Project.SIMPLE_GSON.toJson(project), project.getBufferedTexture()));
+                    while(states.size() > Tabula.configClient.maximumUndoStates)
+                    {
+                        states.remove(0);
+                    }
+                    stateIndex = states.size() - 1; //put state at max
+                }
+            }
         }
 
-        public void addPart(Identifiable<?> parent)
+        public void markProjectDirty()
         {
-            mainframe.addPart(this, parent);
+            project.markDirty();
+            //SAVE STATE
+            if(stateCooldown <= 0)
+            {
+                stateCooldown = 40; //2 seconds?
+
+                if(states.size() > stateIndex + 1)
+                {
+                    states.subList(stateIndex + 1, states.size()).clear();
+                }
+            }
         }
 
-        public void addBox(Identifiable<?> parent)
+        public void createState()
         {
-            mainframe.addBox(this, parent);
+            State state = new State(Project.SIMPLE_GSON.toJson(project), project.getBufferedTexture());
+            if(states.isEmpty() || !states.get(states.size() - 1).equals(state))
+            {
+                states.add(state);
+                while(states.size() > Tabula.configClient.maximumUndoStates)
+                {
+                    states.remove(0);
+                }
+                stateIndex = states.size() - 1; //put state at max
+            }
+        }
+
+        public void undo()
+        {
+            if(stateIndex > 0)
+            {
+                stateIndex--;
+                setProjectToState(stateIndex);
+            }
+        }
+
+        public void redo()
+        {
+            if(stateIndex < states.size() - 1)
+            {
+                stateIndex++;
+                setProjectToState(stateIndex);
+            }
+        }
+
+        private void setProjectToState(int index)
+        {
+            State state = states.get(index);
+            Project project = Project.SIMPLE_GSON.fromJson(state.project, Project.class);
+            if(project != null)
+            {
+                this.project.transferTransients(project);
+                project.setBufferedTexture(state.image);
+
+                //DO NOT CALL DESTROY.
+                this.project = project;
+                this.project.adoptChildren();
+
+                selectPart(null); // this selects a null box for us anyway
+            }
+        }
+
+        public void addPart(Identifiable<?> parent, Project.Part part)
+        {
+            mainframe.addPart(this, parent, part);
+        }
+
+        public void addBox(Identifiable<?> parent, Project.Part.Box box)
+        {
+            mainframe.addBox(this, parent, box);
         }
 
         public void delete(Identifiable<?> child)
@@ -416,6 +548,25 @@ public class Mainframe
             }
             this.ghostProject = project;
             this.ghostOpacity = ghostOpacity;
+        }
+
+        public static class State
+        {
+            public final String project;
+            public final BufferedImage image;
+            public boolean autosaved;
+
+            public State(String project, BufferedImage image)
+            {
+                this.project = project;
+                this.image = image;
+            }
+
+            @Override
+            public boolean equals(Object obj)
+            {
+                return obj instanceof State && ((State)obj).project.equals(project) && ((State)obj).image == image;
+            }
         }
     }
 

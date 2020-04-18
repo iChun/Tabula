@@ -81,38 +81,20 @@ public class WindowModelTree extends Window<WorkspaceTabula>
             ElementButtonTextured<?> button;
 
             button = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/newgroup.png"), elementClickable -> {
-                if(currentInfo != null) currentInfo.addPart(getSelectedElement());
+                if(currentInfo != null) currentInfo.addPart(getSelectedElement(), new Project.Part(getSelectedElement(), ++currentInfo.project.partCountProjectLife));
             });
             button.setSize(20, 20).setTooltip(I18n.format("window.modelTree.newGroup"));
             button.setConstraint(new Constraint(button).left(this, Constraint.Property.Type.LEFT, 2).bottom(this, Constraint.Property.Type.BOTTOM, spaceBottom));
             elements.add(last = button);
 
             button = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/newcube.png"), elementClickable -> {
-                if(currentInfo != null) currentInfo.addBox(getSelectedElement());
+                if(currentInfo != null) currentInfo.addBox(getSelectedElement(), new Project.Part.Box(getSelectedElement()));
             });
             button.setSize(20, 20).setTooltip(I18n.format("window.modelTree.newCube"));
             button.setConstraint(new Constraint(button).left(last, Constraint.Property.Type.RIGHT, 0).bottom(this, Constraint.Property.Type.BOTTOM, spaceBottom));
             elements.add(last = button);
 
-            button = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/delete.png"), elementClickable -> {
-                if(currentInfo != null)
-                {
-                    Identifiable<?> selected = getSelectedElement();
-                    if(selected != null)
-                    {
-                        if(selected instanceof Project.Part)
-                        {
-                            Project.Part part = (Project.Part)selected;
-                            if(part.boxes.size() == 1 && Screen.hasShiftDown()) //if shift is held, delete just the box.
-                            {
-                                currentInfo.delete(part.boxes.get(0));
-                                return;
-                            }
-                        }
-                        currentInfo.delete(selected);
-                    }
-                }
-            });
+            button = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/delete.png"), elementClickable -> delete());
             button.setSize(20, 20).setTooltip(I18n.format("window.modelTree.delete"));
             button.setConstraint(new Constraint(button).left(last, Constraint.Property.Type.RIGHT, 0).bottom(this, Constraint.Property.Type.BOTTOM, spaceBottom));
             elements.add(last = button);
@@ -308,6 +290,27 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                 }
             }
             return null;
+        }
+
+        public void delete()
+        {
+            if(currentInfo != null)
+            {
+                Identifiable<?> selected = getSelectedElement();
+                if(selected != null)
+                {
+                    if(selected instanceof Project.Part)
+                    {
+                        Project.Part part = (Project.Part)selected;
+                        if(part.boxes.size() == 1 && Screen.hasShiftDown()) //if shift is held, delete just the box.
+                        {
+                            currentInfo.delete(part.boxes.get(0));
+                            return;
+                        }
+                    }
+                    currentInfo.delete(selected);
+                }
+            }
         }
     }
 }
