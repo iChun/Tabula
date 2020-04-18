@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WindowToolbar extends Window<WorkspaceTabula>
-    implements IProjectInfo
+        implements IProjectInfo
 {
     @Nullable
     public Mainframe.ProjectInfo currentInfo = null;
@@ -53,6 +53,11 @@ public class WindowToolbar extends Window<WorkspaceTabula>
         children().stream().filter(child -> child instanceof IProjectInfo).forEach(child -> ((IProjectInfo)child).setCurrentProject(info));
     }
 
+    public ViewToolbar getCurrentView()
+    {
+        return (ViewToolbar)currentView;
+    }
+
     public static class ViewToolbar extends View<WindowToolbar>
             implements IProjectInfo
     {
@@ -76,19 +81,13 @@ public class WindowToolbar extends Window<WorkspaceTabula>
             ElementButtonTextured<?> last;
             ElementButtonTextured<?> btn;
             //new project
-            btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/new.png"), button -> {
-                getWorkspace().openWindowInCenter(new WindowNewProject(getWorkspace()), 0.6D, 0.6D);
-            });
+            btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/new.png"), button -> openNewProject());
             btn.setSize(20,20).setTooltip(I18n.format("topdock.new"));
             btn.setConstraint(new Constraint(btn).left(this, Constraint.Property.Type.LEFT, 0));
             elements.add(last = btn);
 
             //open project
-            btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/open.png"), button -> {
-                Window<?> window = new WindowOpenProject(getWorkspace());
-                getWorkspace().openWindowInCenter(window, 0.4D, 0.6D);
-                window.init();
-            });
+            btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/open.png"), button -> openOpenProject());
             btn.setSize(20,20).setTooltip(I18n.format("topdock.open"));
             btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
             elements.add(last = btn);
@@ -108,88 +107,37 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                 elements.add(last = btn);
 
                 //save project
-                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/save.png"), button -> {
-                    Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
-                    if(info1 != null)
-                    {
-                        if(info1.project.saveFile == null) //we've not saved before. no savefile
-                        {
-                            openSaveAsWindow(info1);
-                        }
-                        else if(!info1.project.save(info1.project.saveFile))
-                        {
-                            WindowPopup.popup(parentFragment.parent, 0.4D, 0.3D, null, I18n.format("window.saveAs.failed"));
-                        }
-                    }
-                });
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/save.png"), button -> saveProject());
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.save"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //saveAs project
-                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/saveas.png"), button -> {
-                    Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
-                    if(info1 != null)
-                    {
-                        openSaveAsWindow(info1);
-                    }
-                });
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/saveas.png"), button -> saveAsProject());
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.saveAs"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //import to project
-                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/import.png"), button -> {
-                    Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
-                    if(info1 != null)
-                    {
-                        Window<?> window = new WindowImportProject(getWorkspace());
-                        getWorkspace().openWindowInCenter(window, 0.4D, 0.6D);
-                        window.init();
-                    }
-                });
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/import.png"), button -> openImportProject());
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.import"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //importMC to project
-                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/importmc.png"), button -> {
-                    Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
-                    if(info1 != null)
-                    {
-                        Window<?> window = new WindowImportMCProject(getWorkspace());
-                        getWorkspace().openWindowInCenter(window, 0.4D, 0.6D);
-                        window.init();
-                    }
-                });
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/importmc.png"), button -> openImportMCProject());
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.importMC"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //export project
-                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/export.png"), button -> {
-                    Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
-                    if(info1 != null)
-                    {
-                        WindowExport window = new WindowExport(getWorkspace(), info1);
-                        getWorkspace().openWindowInCenter(window, 0.6D, 0.6D);
-                        window.init();
-                    }
-                });
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/export.png"), button -> openExportProject());
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.export"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 
                 //ghostModel
-                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/ghostmodel.png"), button -> {
-                    Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
-                    if(info1 != null)
-                    {
-                        Window<?> window = new WindowGhostProject(getWorkspace());
-                        getWorkspace().openWindowInCenter(window, 0.4D, 0.6D);
-                        window.init();
-                    }
-                });
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/ghostmodel.png"), button -> openGhostModel());
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.ghostModel"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
@@ -331,6 +279,87 @@ public class WindowToolbar extends Window<WorkspaceTabula>
         public void openSaveAsWindow(Mainframe.ProjectInfo info)
         {
             getWorkspace().openWindowInCenter(new WindowSaveAs(parentFragment.parent, info.project), 0.4D, 0.4D);
+        }
+
+        public void openNewProject()
+        {
+            getWorkspace().openWindowInCenter(new WindowNewProject(getWorkspace()), 0.6D, 0.6D);
+        }
+
+        public void openOpenProject()
+        {
+            Window<?> window = new WindowOpenProject(getWorkspace());
+            getWorkspace().openWindowInCenter(window, 0.4D, 0.6D);
+            window.init();
+        }
+
+        public void saveProject()
+        {
+            Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
+            if(info1 != null)
+            {
+                if(info1.project.saveFile == null) //we've not saved before. no savefile
+                {
+                    openSaveAsWindow(info1);
+                }
+                else if(!info1.project.save(info1.project.saveFile))
+                {
+                    WindowPopup.popup(parentFragment.parent, 0.4D, 0.3D, null, I18n.format("window.saveAs.failed"));
+                }
+            }
+        }
+
+        public void saveAsProject()
+        {
+            Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
+            if(info1 != null)
+            {
+                openSaveAsWindow(info1);
+            }
+        }
+
+        public void openImportProject()
+        {
+            Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
+            if(info1 != null)
+            {
+                Window<?> window = new WindowImportProject(getWorkspace());
+                getWorkspace().openWindowInCenter(window, 0.4D, 0.6D);
+                window.init();
+            }
+        }
+
+        public void openImportMCProject()
+        {
+            Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
+            if(info1 != null)
+            {
+                Window<?> window = new WindowImportMCProject(getWorkspace());
+                getWorkspace().openWindowInCenter(window, 0.4D, 0.6D);
+                window.init();
+            }
+        }
+
+        public void openExportProject()
+        {
+            Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
+            if(info1 != null)
+            {
+                WindowExport window = new WindowExport(getWorkspace(), info1);
+                getWorkspace().openWindowInCenter(window, 0.6D, 0.6D);
+                window.init();
+            }
+        }
+
+        public void openGhostModel()
+        {
+            Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
+            if(info1 != null)
+            {
+                Window<?> window = new WindowGhostProject(getWorkspace());
+                getWorkspace().openWindowInCenter(window, 0.4D, 0.6D);
+                window.init();
+            }
         }
     }
 

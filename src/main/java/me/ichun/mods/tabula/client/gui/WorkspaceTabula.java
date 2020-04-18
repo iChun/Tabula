@@ -30,6 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
@@ -556,6 +557,61 @@ public class WorkspaceTabula extends Workspace
     }
 
     @Override
+    public boolean keyPressed(int keyCode, int p_keyPressed_2_, int p_keyPressed_3_)
+    {
+        if(Screen.hasControlDown())
+        {
+            if(keyCode == GLFW.GLFW_KEY_N)
+            {
+                windowToolbar.getCurrentView().openNewProject();
+                return true;
+            }
+            else if(keyCode == GLFW.GLFW_KEY_O)
+            {
+                windowToolbar.getCurrentView().openOpenProject();
+                return true;
+            }
+            else if(keyCode == GLFW.GLFW_KEY_S)
+            {
+                if(Screen.hasShiftDown())
+                {
+                    windowToolbar.getCurrentView().saveAsProject();
+                    return true;
+                }
+                else
+                {
+                    windowToolbar.getCurrentView().saveProject();
+                    return true;
+                }
+            }
+            else if(keyCode == GLFW.GLFW_KEY_G)
+            {
+                windowToolbar.getCurrentView().openGhostModel();
+                return true;
+            }
+            else if(keyCode == GLFW.GLFW_KEY_I)
+            {
+                if(Screen.hasShiftDown())
+                {
+                    windowToolbar.getCurrentView().openImportProject();
+                    return true;
+                }
+                else
+                {
+                    windowToolbar.getCurrentView().openImportMCProject();
+                    return true;
+                }
+            }
+            else if(keyCode == GLFW.GLFW_KEY_E)
+            {
+                windowToolbar.getCurrentView().openExportProject();
+                return true;
+            }
+        }
+        return super.keyPressed(keyCode, p_keyPressed_2_, p_keyPressed_3_);
+    }
+
+    @Override
     public void addToDock(Window<?> window, Constraint.Property.Type type)
     {
         Fragment<?> nav = getById("windowNav");
@@ -573,6 +629,18 @@ public class WorkspaceTabula extends Workspace
     @Override
     public void onClose()
     {
+        if(!windows.isEmpty())
+        {
+            for(Window<?> window : windows)
+            {
+                if(window.getClass().getName().contains("popup")) //I'm lazy ok
+                {
+                    removeWindow(window);
+                    return;
+                }
+            }
+        }
+
         closing = true;
         if(canClose())
         {
