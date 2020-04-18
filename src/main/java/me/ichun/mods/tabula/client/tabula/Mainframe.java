@@ -5,6 +5,7 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementList;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
+import me.ichun.mods.ichunutil.common.util.IOUtil;
 import me.ichun.mods.tabula.client.core.ResourceHelper;
 import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
@@ -14,8 +15,10 @@ import me.ichun.mods.tabula.common.Tabula;
 import net.minecraft.util.Util;
 
 import javax.annotation.Nonnull;
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -411,6 +414,34 @@ public class Mainframe
             this.mainframe = mainframe;
             this.project = project;
             this.camera = new Camera();
+
+            if(project.textureFile != null && project.textureFileMd5 != null)
+            {
+                File file = new File(ResourceHelper.getTexturesDir().toFile(), project.textureFile);
+                if(file.exists())
+                {
+                    String md5 = IOUtil.getMD5Checksum(file);
+                    if(md5 != null && md5.equals(project.textureFileMd5)) //oh hey we found our save file.
+                    {
+                        textureFile = file;
+                        textureFileMd5 = md5;
+
+                        BufferedImage image = null;
+                        try
+                        {
+                            image = ImageIO.read(textureFile);
+                        }
+                        catch(IOException ignored){}
+
+                        if(image != null)
+                        {
+                            //don't call setImage from the mainframe. We don't want to mark dirty.
+                            project.setBufferedTexture(image);
+                            mainframe.workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
+                        }
+                    }
+                }
+            }
         }
 
         public void tick()

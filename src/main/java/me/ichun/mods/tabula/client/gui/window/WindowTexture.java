@@ -52,6 +52,8 @@ public class WindowTexture extends Window<WorkspaceTabula>
                 {
                     currentInfo.textureFile = null;
                     currentInfo.textureFileMd5 = null;
+                    currentInfo.project.textureFile = null;
+                    currentInfo.project.textureFileMd5 = null;
                     parentFragment.parent.mainframe.setImage(currentInfo, null);
                 }
             });
@@ -233,6 +235,7 @@ public class WindowTexture extends Window<WorkspaceTabula>
                             if(md5 != null && !md5.equals(currentInfo.textureFileMd5)) // file changed!
                             {
                                 currentInfo.textureFileMd5 = md5;
+                                currentInfo.project.textureFileMd5 = md5;
 
                                 BufferedImage image = null;
                                 try

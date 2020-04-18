@@ -5,6 +5,7 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.*;
+import me.ichun.mods.ichunutil.common.util.IOUtil;
 import me.ichun.mods.tabula.client.core.ResourceHelper;
 import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
@@ -119,6 +120,8 @@ public class WindowNewTexture extends Window<WorkspaceTabula>
             if(info != null)
             {
                 parentFragment.projectInfo.textureFile = file;
+                parentFragment.projectInfo.project.textureFile = file.getName();
+                parentFragment.projectInfo.project.textureFileMd5 = IOUtil.getMD5Checksum(file);
 
                 BufferedImage image = null;
                 try
