@@ -74,7 +74,11 @@ public class EventHandler
     @SubscribeEvent
     public void onRegisterBlock(RegistryEvent.Register<Block> event)
     {
-        Tabula.blockTabulaRasa = (new BlockTabulaRasa(Material.CIRCUITS)).setHardness(0.0F).setCreativeTab(CreativeTabs.DECORATIONS).setRegistryName(new ResourceLocation("tabula", "tabularasa")).setTranslationKey("tabula.block.tabularasa");
+        Tabula.blockTabulaRasa = (new BlockTabulaRasa(Material.CIRCUITS)).setHardness(0.0F)
+                .setCreativeTab(CreativeTabs.DECORATIONS)
+                .setRegistryName(new ResourceLocation("tabula", "tabularasa"))
+                .setTranslationKey("tabula.block.tabularasa");
+
         event.getRegistry().register(Tabula.blockTabulaRasa);
 
         GameRegistry.registerTileEntity(TileEntityTabulaRasa.class, new ResourceLocation("tabula", "tabula_rasa"));

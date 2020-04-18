@@ -9,8 +9,7 @@
       "item": "minecraft:ghast_tear"
     },
     "S": {
-      "item": "minecraft:wooden_pressure_plate",
-      "data": 32767
+      "item": "minecraft:oak_pressure_plate"
     }
   },
   "result": {

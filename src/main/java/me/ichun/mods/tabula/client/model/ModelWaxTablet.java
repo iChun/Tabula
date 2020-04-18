@@ -1,15 +1,22 @@
-package me.ichun.mods.tabula.old.client.model;
+package me.ichun.mods.tabula.client.model;
 
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.GlStateManager;
+import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.model.Model;
+import net.minecraft.client.renderer.model.ModelRenderer;
+
+import java.util.List;
 
 /**
  * Wax Tablet - iChun
  * Created using Tabula 4.1.0
+ * Updated whilst writing Tabula 8.0.0 :)
  */
-public class ModelWaxTablet extends ModelBase {
-    public double[] modelScale = new double[] { 2.0D, 2.0D, 2.0D };
+public class ModelWaxTablet extends Model
+{
+    public float[] modelScale = new float[] { 2.0F, 2.0F, 2.0F };
     public ModelRenderer bBindTop;
     public ModelRenderer bBindLeft;
     public ModelRenderer bBindRight;
@@ -28,8 +35,10 @@ public class ModelWaxTablet extends ModelBase {
     public ModelRenderer rBorderFront;
     public ModelRenderer rBorderBack;
     public ModelRenderer rPage;
+    public List<ModelRenderer> modelRenderers;
 
     public ModelWaxTablet() {
+        super(RenderType::getEntityCutoutNoCull);
         this.textureWidth = 64;
         this.textureHeight = 32;
         this.bBindBottom = new ModelRenderer(this, 0, 0);
@@ -86,38 +95,34 @@ public class ModelWaxTablet extends ModelBase {
         this.rBorderL = new ModelRenderer(this, 2, 2);
         this.rBorderL.setRotationPoint(0.5F, 0.0F, -9.0F);
         this.rBorderL.addBox(0.0F, 0.0F, 0.0F, 2, 2, 18, 0.0F);
+
+        modelRenderers = ImmutableList.of(
+                this.bBindBottom,
+                this.lBorderBack,
+                this.bBindRight,
+                this.fBindLeft,
+                this.fBindTop,
+                this.lBorderFront,
+                this.rBorderR,
+                this.bBindLeft,
+                this.lBorderL,
+                this.rPage,
+                this.rBorderBack,
+                this.fBindBottom,
+                this.bBindTop,
+                this.fBindRight,
+                this.lPage,
+                this.rBorderFront,
+                this.lBorderR,
+                this.rBorderL);
     }
 
-    public void render(float f5) {
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(1D / modelScale[0], 1D / modelScale[1], 1D / modelScale[2]);
-        this.bBindBottom.render(f5);
-        this.lBorderBack.render(f5);
-        this.bBindRight.render(f5);
-        this.fBindLeft.render(f5);
-        this.fBindTop.render(f5);
-        this.lBorderFront.render(f5);
-        this.rBorderR.render(f5);
-        this.bBindLeft.render(f5);
-        this.lBorderL.render(f5);
-        this.rPage.render(f5);
-        this.rBorderBack.render(f5);
-        this.fBindBottom.render(f5);
-        this.bBindTop.render(f5);
-        this.fBindRight.render(f5);
-        this.lPage.render(f5);
-        this.rBorderFront.render(f5);
-        this.lBorderR.render(f5);
-        this.rBorderL.render(f5);
-        GlStateManager.popMatrix();
-    }
-
-    /**
-     * This is a helper function from Tabula to set the rotation of model parts
-     */
-    public void setRotateAngle(ModelRenderer modelRenderer, float x, float y, float z) {
-        modelRenderer.rotateAngleX = x;
-        modelRenderer.rotateAngleY = y;
-        modelRenderer.rotateAngleZ = z;
+    @Override
+    public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+    {
+        matrixStackIn.scale(1F / modelScale[0], 1F / modelScale[1], 1F / modelScale[2]);
+        modelRenderers.forEach(modelRenderer -> {
+            modelRenderer.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        });
     }
 }

@@ -1,5 +1,5 @@
 {
     "variants": {
-        "normal": { "model": "tabula:tabularasa" }
+        "": { "model": "tabula:block/tabularasa" }
     }
 }

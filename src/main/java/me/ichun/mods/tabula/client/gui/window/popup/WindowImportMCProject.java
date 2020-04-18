@@ -21,14 +21,15 @@ import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.entity.model.PlayerModel;
+import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.Model;
+import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.crafting.RecipeManager;
@@ -67,11 +68,11 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
         @Nullable
         public final ResourceLocation texture;
         @Nonnull
-        public final Model model;
+        public final Object model; //doesn't extend Model because some TileEntityRenderers may be the models.
         @Nullable
         public final Object source;
 
-        public ModelInfo(@Nullable ResourceLocation texture, @Nonnull Model model, @Nullable Object source)
+        public ModelInfo(@Nullable ResourceLocation texture, @Nonnull Object model, @Nullable Object source)
         {
             this.texture = texture;
             this.model = model;
@@ -107,7 +108,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
     }
 
     private static boolean hasInit;
-    public static <T extends LivingEntity> void initModels()
+    public static void initModels()
     {
         if(!hasInit)
         {
@@ -345,14 +346,25 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                                     texLoc = (ResourceLocation)f.get(tileEntityRenderer);
                                     break;
                                 }
+                                else if(Material.class.isAssignableFrom(f.getType()))
+                                {
+                                    ResourceLocation loc = ((Material)f.get(tileEntityRenderer)).getTextureLocation();
+                                    texLoc = new ResourceLocation(loc.getNamespace(), "textures/" + loc.getPath() + ".png");
+                                    break;
+                                }
                             }
 
                             clz = clz.getSuperclass();
                         }
                     }
-                    catch(Throwable ignored){}
+                    catch(Throwable ignored)
+                    {
+                        ignored.printStackTrace();
+                    }
+
 
                     //we have the texture. let's get all the models now.
+                    boolean rendererIsModel = false;
                     try
                     {
                         Class<?> clz = tileEntityRenderer.getClass();
@@ -369,12 +381,21 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
 
                                     MODELS.add(new ModelInfo(texLoc, model, tileEntityRenderer));
                                 }
+                                else if(ModelRenderer.class.isAssignableFrom(f.getType()))
+                                {
+                                    rendererIsModel = true;
+                                }
                             }
 
                             clz = clz.getSuperclass();
                         }
                     }
                     catch(Throwable ignored){}
+
+                    if(rendererIsModel)
+                    {
+                        MODELS.add(new ModelInfo(texLoc, tileEntityRenderer, tileEntityRenderer));
+                    }
                 }
                 catch(Throwable ignored){}
             });
