@@ -61,9 +61,6 @@ public class WindowTopDock extends WindowTopDockBase
                 elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_REMOVE_EDITOR, true, 0, 0, "topdock.removeEditor", new ResourceLocation("tabula", "textures/icon/removeeditor.png")));
             }
         }
-        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_THEMES, true, 0, 0, "topdock.themes", new ResourceLocation("tabula", "textures/icon/themes.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_SETTINGS, true, 0, 0, "topdock.settings", new ResourceLocation("tabula", "textures/icon/settings.png")));
-        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CREDITS, true, 0, 0, "topdock.info", new ResourceLocation("tabula", "textures/icon/info.png")));
         //elements.add(new ElementButtonTextured(this, width - 20, 0, ID_EXIT_TABULA, true, 1, 0, "topdock.exitTabula", new ResourceLocation("tabula", "textures/icon/exittabula.png")));
     }
 

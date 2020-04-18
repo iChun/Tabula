@@ -1,5 +1,6 @@
 package me.ichun.mods.tabula.client.gui.window;
 
+import me.ichun.mods.ichunutil.client.core.EventHandlerClient;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
 import me.ichun.mods.ichunutil.client.gui.bns.window.WindowPopup;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
@@ -10,11 +11,14 @@ import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.client.gui.window.popup.*;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
+import me.ichun.mods.tabula.common.Tabula;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WindowToolbar extends Window<WorkspaceTabula>
     implements IProjectInfo
@@ -247,6 +251,60 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                 elements.add(last = btn);
             }
 
+            //settings
+            btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/settings.png"), button -> {
+                for(Mainframe.ProjectInfo project : parentFragment.mainframe.projects)
+                {
+                    if(project.project.isDirty)
+                    {
+                        WindowPopup.popup(parentFragment.parent, 0.4D, 0.4D, w->{}, I18n.format("tabula.warning.unsavedProjects"));
+                        return;
+                    }
+                }
+
+                parentFragment.parent.getMinecraft().displayGuiScreen(EventHandlerClient.getConfigGui(parentFragment.parent.getMinecraft(), parentFragment.parent));
+            });
+            btn.setSize(20,20).setTooltip(I18n.format("topdock.settings"));
+            btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
+            elements.add(last = btn);
+
+            //info
+            btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/info.png"), button -> {
+                String[] creds = new String[]{
+                        Tabula.VERSION, "iChun", "mr_hazard", "heldplayer, Vswe, bombmask, FraserKillip", "Kihira, Dizkonnekted, Dunkleosteus, Zorn_Taov, OndraSter, K-4U, Horfius, GlitchPulse"
+                };
+                List<String> lines = new ArrayList<>();
+
+                lines.add(I18n.format("window.about.powered"));
+                for(int i = 0; i <= 6; i++)
+                {
+                    String text = I18n.format("window.about.line" + i);
+                    if(i < creds.length)
+                    {
+                        if(text.endsWith(" "))
+                        {
+                            text = text + creds[i];
+                        }
+                        else
+                        {
+                            text = text + " " + creds[i];
+                        }
+                    }
+                    lines.add(text);
+                }
+                lines.add("");
+                lines.add(I18n.format("window.about.os1"));
+                lines.add(I18n.format("window.about.os2"));
+                lines.add("https://github.com/iChun/Tabula");
+
+                WindowPopup.popup(parentFragment.parent, 0.6D, 0.6D, "window.about.title", workspace -> {}, lines.toArray(new String[lines.size()]));
+
+            });
+            btn.setSize(20,20).setTooltip(I18n.format("topdock.info"));
+            btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
+            elements.add(last = btn);
+
+
             //Add exit button. last button
             btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/exittabula.png"), button -> {
                 getWorkspace().onClose();
@@ -255,13 +313,13 @@ public class WindowToolbar extends Window<WorkspaceTabula>
             btn.setConstraint(new Constraint(btn).right(this, Constraint.Property.Type.RIGHT, 0));
             elements.add(btn);
 
-            ElementToggle<?> toggle = new ElementToggle<>(this, "B", elementClickable -> {}).setToggled(true);
+            ElementToggle<?> toggle = new ElementToggle<>(this, "B", elementClickable -> {}).setToggled(Tabula.configClient.renderWorkspaceBlock);
             toggle.setSize(20,20).setTooltip(I18n.format("topdock.woodFull"));
             toggle.setId("buttonBlockToggle");
             toggle.setConstraint(new Constraint(toggle).right(btn, Constraint.Property.Type.LEFT, 0));
             elements.add(toggle);
 
-            ElementToggle<?> toggle1 = new ElementToggle<>(this, "G", elementClickable -> {}).setToggled(true);
+            ElementToggle<?> toggle1 = new ElementToggle<>(this, "G", elementClickable -> {}).setToggled(Tabula.configClient.renderWorkspaceGrid);
             toggle1.setSize(20,20).setTooltip(I18n.format("tabula.config.prop.renderGrid.name"));
             toggle1.setId("buttonGridToggle");
             toggle1.setConstraint(new Constraint(toggle1).right(toggle, Constraint.Property.Type.LEFT, 0));

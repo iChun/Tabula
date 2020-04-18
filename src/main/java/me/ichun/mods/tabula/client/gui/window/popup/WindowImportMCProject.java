@@ -10,6 +10,7 @@ import me.ichun.mods.ichunutil.client.model.ModelHelper;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.ichunutil.common.util.ObfHelper;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
+import me.ichun.mods.tabula.common.Tabula;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -226,7 +227,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                                     //we found a model.
                                     Model model = (Model)f.get(entityRenderer);
 
-                                    if(model instanceof EntityModel)
+                                    if(model instanceof EntityModel && Tabula.configClient.animateImports)
                                     {
                                         EntityModel entityModel = (EntityModel)model;
                                         try

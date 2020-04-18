@@ -6,6 +6,8 @@ import me.ichun.mods.ichunutil.common.config.annotations.Prop;
 import me.ichun.mods.tabula.common.Tabula;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConfigClient extends ConfigBase
 {
@@ -20,6 +22,26 @@ public class ConfigClient extends ConfigBase
 
     @Prop(min = 0, max = 10)
     public int guiMaxDecimals = 2;
+
+    @Prop
+    public boolean renderWorkspaceBlock = true;
+
+    @Prop
+    public boolean renderWorkspaceGrid = true;
+
+    @Prop
+    public boolean ignoreOldTabulaWarning = false;
+
+    @CategoryDivider(name = "multiplayer")
+    @Prop
+    public boolean chatSound = true;
+
+    @Prop
+    public boolean allowEveryoneToEdit = true;
+
+    @Prop
+    public List<String> editors = new ArrayList<>();
+
 
     @Nonnull
     @Override

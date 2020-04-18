@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 public class WindowProjectNavigator extends Window<WorkspaceTabula>
         implements IProjectInfo
 {
-    public WindowProjectNavigator(WorkspaceTabula parent) //TODO save popup if closing project with unsaved changes
+    public WindowProjectNavigator(WorkspaceTabula parent)
     {
         super(parent);
         borderSize = () -> 0;

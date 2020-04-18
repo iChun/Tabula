@@ -13,6 +13,7 @@ import me.ichun.mods.ichunutil.common.module.tabula.formats.ImportList;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.core.ResourceHelper;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
+import me.ichun.mods.tabula.common.Tabula;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
@@ -115,6 +116,11 @@ public class WindowOpenProject extends Window<WorkspaceTabula>
             }
             else
             {
+                if(project.isOldTabula && !Tabula.configClient.ignoreOldTabulaWarning)
+                {
+                    WindowPopup.popup(parentFragment.parent, 0.5D, 0.5D, null, I18n.format("window.open.oldTabula1"), I18n.format("window.open.oldTabula2"), I18n.format("window.open.oldTabula3"), I18n.format("window.open.oldTabula4"));
+                }
+
                 parentFragment.parent.mainframe.openProject(project);
             }
         }

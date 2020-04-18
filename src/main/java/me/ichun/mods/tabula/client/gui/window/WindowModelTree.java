@@ -61,7 +61,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
             sh.setConstraint(new Constraint(sh).left(this, Constraint.Property.Type.LEFT, spaceBottom)
                     .bottom(this, Constraint.Property.Type.BOTTOM, bottomSpace)
                     .right(sv, Constraint.Property.Type.LEFT, 0)
-            ); //TODO test the horizontal scroll bar.
+            );
             elements.add(sh);
 
             list = new ElementList<>(this).setScrollHorizontal(sh).setScrollVertical(sv)

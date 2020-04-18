@@ -67,7 +67,7 @@ public class ElementProjectButton<T extends ElementProjectButton> extends Elemen
     {
         boolean flag = super.mouseReleased(mouseX, mouseY, button); // unsets dragging;
         parentFragment.setFocused(null); //we're a one time click, stop focusing on us
-        if(isMouseOver(mouseX, mouseY)) //lmb //TODO close project
+        if(isMouseOver(mouseX, mouseY)) //lmb
         {
             trigger(); //Switch to this project anyway
 

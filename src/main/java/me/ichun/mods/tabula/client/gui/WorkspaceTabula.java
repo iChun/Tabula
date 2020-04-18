@@ -355,11 +355,8 @@ public class WorkspaceTabula extends Workspace
         Fragment<?> fragment = getById("buttonBlockToggle");
         if(fragment instanceof ElementToggle && ((ElementToggle<?>)fragment).toggleState) //render the block
         {
-            //TODO fix themes
-            //TODO change how this is done
-            //TODO set the block from theme
             Block block = getTheme().block;
-            if(block == null)
+            if(block == null || block.getDefaultState().isAir())
             {
                 block = Blocks.SPRUCE_PLANKS;
             }
@@ -446,7 +443,7 @@ public class WorkspaceTabula extends Workspace
                 info.project.getModel().render(stack, info.getSelectedPart(), info.getSelectedBox(), info.hideTexture, 1F);
 
                 stack.pop();
-                
+
                 if(info.ghostProject != null)
                 {
                     info.ghostProject.getModel().render(stack, null, null, false, info.ghostOpacity);

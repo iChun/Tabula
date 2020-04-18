@@ -5,6 +5,7 @@
   "tabula.project.height": "Height",
 
   "tabula.warning.resources": "Something went wrong when initialising. Expect crashes/problems.",
+  "tabula.warning.unsavedProjects": "You have unsaved projects.",
 
   "window.controls.title": "Controls",
   "window.controls.cubeName": "Selected Cube Name",
@@ -73,8 +74,13 @@
   "window.open.title": "Open Project",
   "window.open.opening": "Opening...",
   "window.open.failed": "Failed to open file.",
+  "window.open.oldTabula1": "Warning! You are opening an old Tabula file.",
+  "window.open.oldTabula2": "A lot of things are no longer supported",
+  "window.open.oldTabula3": "EG: Animations, Cube Groups, Cube Scale, Opacity",
+  "window.open.oldTabula4": "I've done my best to try and import everything else.",
 
   "window.about.title": "About",
+  "window.about.powered": "GUI powered by Boxes & Stuff",
   "window.about.line0": "Mod Version: ",
   "window.about.line1": "Developer: ",
   "window.about.line2": "Textures: ",
