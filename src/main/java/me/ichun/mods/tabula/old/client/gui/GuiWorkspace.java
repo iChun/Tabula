@@ -248,51 +248,6 @@ public class GuiWorkspace extends IWorkspace
     @Override
     public void updateScreen()
     {
-        for(ProjectInfo proj : projectManager.projects)
-        {
-            if(liveTime - proj.lastAutosave > 20 * 60 * 5 && !proj.autosaved)
-            {
-                File file = new File(ResourceHelper.getAutosaveDir(), proj.modelName + "-TabulaAutosave-" + Minecraft.getSystemTime() + ".tbl");
-                if(ProjectInfo.saveProject(proj, file))
-                {
-                    //get the last few files in this name, delete them off.
-                    long timestamp = 0;
-                    File oldestAutosave = null;
-                    int count = 0;
-                    File[] files = ResourceHelper.getAutosaveDir().listFiles();
-                    for(File save : files)
-                    {
-                        if(!save.isDirectory() && save.getName().endsWith(".tbl") && save.getName().startsWith(proj.modelName + "-TabulaAutosave-"))
-                        {
-                            count++;
-                            String stamp = save.getName().substring((proj.modelName + "-TabulaAutosave-").length(), save.getName().length() - 4);//remove the ".tbl"
-                            try
-                            {
-                                long time = Long.parseLong(stamp);
-                                if(time < timestamp || timestamp == 0)
-                                {
-                                    timestamp = time;
-                                    oldestAutosave = save;
-                                }
-                            }
-                            catch(NumberFormatException e)
-                            {
-                            }
-                        }
-                    }
-                    if(oldestAutosave != null && count > 5)
-                    {
-                        oldestAutosave.delete();
-                    }
-                }
-                proj.lastAutosave = liveTime;
-                proj.autosaved = true;
-            }
-            for(Animation anim : proj.anims)
-            {
-                anim.update();
-            }
-        }
         if(wantToExit)
         {
             if(!remoteSession)

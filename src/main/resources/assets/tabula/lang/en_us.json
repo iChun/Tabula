@@ -78,6 +78,7 @@
   "window.open.oldTabula2": "A lot of things are no longer supported",
   "window.open.oldTabula3": "EG: Animations, Cube Groups, Cube Scale, Opacity",
   "window.open.oldTabula4": "I've done my best to try and import everything else.",
+  "window.open.tampered": "The model file appears to have been tampered. Just FYI.",
 
   "window.about.title": "About",
   "window.about.powered": "GUI powered by Boxes & Stuff",

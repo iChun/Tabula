@@ -116,6 +116,11 @@ public class WindowOpenProject extends Window<WorkspaceTabula>
             }
             else
             {
+                if(project.tampered)
+                {
+                    WindowPopup.popup(parentFragment.parent, 0.5D, 0.5D, null, I18n.format("window.open.tampered"));
+                }
+
                 if(project.isOldTabula && !Tabula.configClient.ignoreOldTabulaWarning)
                 {
                     WindowPopup.popup(parentFragment.parent, 0.5D, 0.5D, null, I18n.format("window.open.oldTabula1"), I18n.format("window.open.oldTabula2"), I18n.format("window.open.oldTabula3"), I18n.format("window.open.oldTabula4"));

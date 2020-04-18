@@ -193,7 +193,7 @@ public class WorkspaceTabula extends Workspace
     {
         super.init();
 
-        SpiderModel model = new SpiderModel();
+        SpiderModel model = new SpiderModel(); //TODO remove this
         model.isChild = false;
         model.setRotationAngles(null, 0F, 0F ,0F, 0F, 0F);
         Project project = ModelHelper.convertModelToProject(model);
