@@ -181,7 +181,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             ElementScrollBar<?> scrollBar = new ElementScrollBar<>(this, ElementScrollBar.Orientation.HORIZONTAL, 0.05F);
             scrollBar.setScrollProg(0.5F);
             scrollBar.setCallback(scroll -> {
-                ((ElementNumberInput)getById("rotX")).setText(String.format(Locale.ENGLISH, "%.2f", (scroll.scrollProg * 360F) - 180F));
+                ((ElementNumberInput)getById("rotX")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", (scroll.scrollProg * 360F) - 180F));
             }).setId("scrollX");
             scrollBar.setConstraint(new Constraint(scrollBar).left(num, Constraint.Property.Type.LEFT, 0).right(num2, Constraint.Property.Type.RIGHT, 0).top(num, Constraint.Property.Type.BOTTOM, spacing * 2).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(scrollBar);
@@ -189,7 +189,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             ElementScrollBar<?> scrollBar1 = new ElementScrollBar<>(this, ElementScrollBar.Orientation.HORIZONTAL, 0.05F);
             scrollBar1.setScrollProg(0.5F);
             scrollBar1.setCallback(scroll -> {
-                ((ElementNumberInput)getById("rotY")).setText(String.format(Locale.ENGLISH, "%.2f", (scroll.scrollProg * 360F) - 180F));
+                ((ElementNumberInput)getById("rotY")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", (scroll.scrollProg * 360F) - 180F));
             }).setId("scrollY");
             scrollBar1.setConstraint(new Constraint(scrollBar1).left(num, Constraint.Property.Type.LEFT, 0).right(num2, Constraint.Property.Type.RIGHT, 0).top(scrollBar, Constraint.Property.Type.BOTTOM, spacing).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(scrollBar1);
@@ -197,7 +197,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             ElementScrollBar<?> scrollBar2 = new ElementScrollBar<>(this, ElementScrollBar.Orientation.HORIZONTAL, 0.05F);
             scrollBar2.setScrollProg(0.5F);
             scrollBar2.setCallback(scroll -> {
-                ((ElementNumberInput)getById("rotZ")).setText(String.format(Locale.ENGLISH, "%.2f", (scroll.scrollProg * 360F) - 180F));
+                ((ElementNumberInput)getById("rotZ")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", (scroll.scrollProg * 360F) - 180F));
             }).setId("scrollZ");
             scrollBar2.setConstraint(new Constraint(scrollBar2).left(num, Constraint.Property.Type.LEFT, 0).right(num2, Constraint.Property.Type.RIGHT, 0).top(scrollBar1, Constraint.Property.Type.BOTTOM, spacing).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(scrollBar2);
@@ -293,13 +293,13 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
                 ((ElementNumberInput)getById("txOffY")).setText(Integer.toString(part.texOffY));
                 ((ElementToggle<?>)getById("txMirror")).setToggled(part.mirror);
 
-                ((ElementNumberInput)getById("posX")).setText(String.format(Locale.ENGLISH, "%.2f", part.rotPX));
-                ((ElementNumberInput)getById("posY")).setText(String.format(Locale.ENGLISH, "%.2f", part.rotPY));
-                ((ElementNumberInput)getById("posZ")).setText(String.format(Locale.ENGLISH, "%.2f", part.rotPZ));
+                ((ElementNumberInput)getById("posX")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", part.rotPX));
+                ((ElementNumberInput)getById("posY")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", part.rotPY));
+                ((ElementNumberInput)getById("posZ")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", part.rotPZ));
 
-                ((ElementNumberInput)getById("rotX")).setText(String.format(Locale.ENGLISH, "%.2f", part.rotAX));
-                ((ElementNumberInput)getById("rotY")).setText(String.format(Locale.ENGLISH, "%.2f", part.rotAY));
-                ((ElementNumberInput)getById("rotZ")).setText(String.format(Locale.ENGLISH, "%.2f", part.rotAZ));
+                ((ElementNumberInput)getById("rotX")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", part.rotAX));
+                ((ElementNumberInput)getById("rotY")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", part.rotAY));
+                ((ElementNumberInput)getById("rotZ")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", part.rotAZ));
 
                 ((ElementScrollBar<?>)getById("scrollX")).setScrollProg((part.rotAX + 180F) / 360F);
                 ((ElementScrollBar<?>)getById("scrollY")).setScrollProg((part.rotAY + 180F) / 360F);

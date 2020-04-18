@@ -111,7 +111,7 @@ public class WindowOpenProject extends Window<WorkspaceTabula>
             Project project = ImportList.createProjectFromFile(file);
             if(project == null)
             {
-                WindowPopup.popup(parentFragment.parent, 0.4D, 0.3D, I18n.format("window.open.failed"), null);
+                WindowPopup.popup(parentFragment.parent, 0.4D, 0.3D, null, I18n.format("window.open.failed"));
             }
             else
             {

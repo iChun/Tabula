@@ -7,11 +7,12 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.*;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
-import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
+import me.ichun.mods.tabula.common.Tabula;
 import net.minecraft.client.resources.I18n;
 
 import javax.annotation.Nonnull;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 public class WindowEditProject extends Window<WorkspaceTabula>
@@ -64,18 +65,44 @@ public class WindowEditProject extends Window<WorkspaceTabula>
             elements.add(textField);
 
             text = new ElementTextWrapper(this);
-            text.setNoWrap().setText(I18n.format("window.newProject.txDimensions"));
+            text.setNoWrap().setText(I18n.format("window.controls.scale"));
             text.setConstraint(new Constraint(text).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20).top(textField, Constraint.Property.Type.BOTTOM, 20));
             elements.add(text);
 
-            ElementNumberInput numberInput = new ElementNumberInput(this, false);
+            ElementNumberInput numberInput = new ElementNumberInput(this, true);
+            numberInput.setId("scaleX");
+            numberInput.setMin(0).setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", project.scaleX));
+            numberInput.setWidth(80);
+            numberInput.setConstraint(new Constraint(numberInput).left(this, Constraint.Property.Type.LEFT, 20).top(text, Constraint.Property.Type.BOTTOM, 3));
+            elements.add(numberInput);
+
+            ElementNumberInput numberInput1 = new ElementNumberInput(this, true);
+            numberInput1.setId("scaleY");
+            numberInput1.setMin(0).setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", project.scaleY));
+            numberInput1.setWidth(80);
+            numberInput1.setConstraint(new Constraint(numberInput1).left(numberInput, Constraint.Property.Type.RIGHT, 3));
+            elements.add(numberInput1);
+
+            ElementNumberInput numberInput2 = new ElementNumberInput(this, true);
+            numberInput2.setId("scaleZ");
+            numberInput2.setMin(0).setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", project.scaleZ));
+            numberInput2.setWidth(80);
+            numberInput2.setConstraint(new Constraint(numberInput2).left(numberInput1, Constraint.Property.Type.RIGHT, 3));
+            elements.add(numberInput2);
+
+            text = new ElementTextWrapper(this);
+            text.setNoWrap().setText(I18n.format("window.newProject.txDimensions"));
+            text.setConstraint(new Constraint(text).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20).top(numberInput, Constraint.Property.Type.BOTTOM, 20));
+            elements.add(text);
+
+            numberInput = new ElementNumberInput(this, false);
             numberInput.setTooltip(I18n.format("tabula.project.width")).setId("texWidth");
             numberInput.setMin(1).setDefaultText(Integer.toString(project.texWidth)).setHeight(14);
             numberInput.setWidth(80);
             numberInput.setConstraint(new Constraint(numberInput).left(this, Constraint.Property.Type.LEFT, 20).top(text, Constraint.Property.Type.BOTTOM, 3));
             elements.add(numberInput);
 
-            ElementNumberInput numberInput1 = new ElementNumberInput(this, false);
+            numberInput1 = new ElementNumberInput(this, false);
             numberInput1.setTooltip(I18n.format("tabula.project.height")).setId("texHeight");
             numberInput1.setMin(1).setDefaultText(Integer.toString(project.texHeight)).setHeight(14);
             numberInput1.setWidth(80);
@@ -128,6 +155,9 @@ public class WindowEditProject extends Window<WorkspaceTabula>
         {
             project.name = ((ElementTextField)getById("modelName")).getText();
             project.author = ((ElementTextField)getById("author")).getText();
+            project.scaleX = (float)((ElementNumberInput)getById("scaleX")).getDouble();
+            project.scaleY = (float)((ElementNumberInput)getById("scaleY")).getDouble();
+            project.scaleZ = (float)((ElementNumberInput)getById("scaleZ")).getDouble();
             project.texWidth = ((ElementNumberInput)getById("texWidth")).getInt();
             project.texHeight = ((ElementNumberInput)getById("texHeight")).getInt();
             parentFragment.parent.mainframe.editProject(project);

@@ -114,7 +114,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                         }
                         else if(!info1.project.save(info1.project.saveFile))
                         {
-                            WindowPopup.popup(parentFragment.parent, 0.4D, 0.3D, I18n.format("window.saveAs.failed"), null);
+                            WindowPopup.popup(parentFragment.parent, 0.4D, 0.3D, null, I18n.format("window.saveAs.failed"));
                         }
                     }
                 });
@@ -164,7 +164,13 @@ public class WindowToolbar extends Window<WorkspaceTabula>
 
                 //export project
                 btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/export.png"), button -> {
-                    //TODO this
+                    Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
+                    if(info1 != null)
+                    {
+                        WindowExport window = new WindowExport(getWorkspace(), info1);
+                        getWorkspace().openWindowInCenter(window, 0.6D, 0.6D);
+                        window.init();
+                    }
                 });
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.export"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));

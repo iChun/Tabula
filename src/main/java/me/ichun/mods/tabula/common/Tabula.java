@@ -18,6 +18,7 @@ public class Tabula
 {
     public static final String MOD_ID = "tabula";
     public static final String MOD_NAME = "Tabula";
+    public static final String VERSION = "8.0.0";
 
     public static final Logger LOGGER = LogManager.getLogger();
 

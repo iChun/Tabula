@@ -237,17 +237,17 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
             {
                 ((ElementTextField)getById("boxName")).setText(box.name);
 
-                ((ElementNumberInput)getById("dimX")).setText(String.format(Locale.ENGLISH, "%.2f", box.dimX));
-                ((ElementNumberInput)getById("dimY")).setText(String.format(Locale.ENGLISH, "%.2f", box.dimY));
-                ((ElementNumberInput)getById("dimZ")).setText(String.format(Locale.ENGLISH, "%.2f", box.dimZ));
+                ((ElementNumberInput)getById("dimX")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", box.dimX));
+                ((ElementNumberInput)getById("dimY")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", box.dimY));
+                ((ElementNumberInput)getById("dimZ")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", box.dimZ));
 
-                ((ElementNumberInput)getById("offX")).setText(String.format(Locale.ENGLISH, "%.2f", box.posX));
-                ((ElementNumberInput)getById("offY")).setText(String.format(Locale.ENGLISH, "%.2f", box.posY));
-                ((ElementNumberInput)getById("offZ")).setText(String.format(Locale.ENGLISH, "%.2f", box.posZ));
+                ((ElementNumberInput)getById("offX")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", box.posX));
+                ((ElementNumberInput)getById("offY")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", box.posY));
+                ((ElementNumberInput)getById("offZ")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", box.posZ));
 
-                ((ElementNumberInput)getById("expX")).setText(String.format(Locale.ENGLISH, "%.2f", box.expandX));
-                ((ElementNumberInput)getById("expY")).setText(String.format(Locale.ENGLISH, "%.2f", box.expandY));
-                ((ElementNumberInput)getById("expZ")).setText(String.format(Locale.ENGLISH, "%.2f", box.expandZ));
+                ((ElementNumberInput)getById("expX")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", box.expandX));
+                ((ElementNumberInput)getById("expY")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", box.expandY));
+                ((ElementNumberInput)getById("expZ")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", box.expandZ));
 
                 ((ElementNumberInput)getById("texX")).setText(Integer.toString(box.texOffX));
                 ((ElementNumberInput)getById("texY")).setText(Integer.toString(box.texOffY));

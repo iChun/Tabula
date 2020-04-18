@@ -1,13 +1,11 @@
 package me.ichun.mods.tabula.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.ichun.mods.ichunutil.client.gui.bns.Workspace;
 import me.ichun.mods.ichunutil.client.gui.bns.window.*;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
-import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggleTextured;
 import me.ichun.mods.ichunutil.client.model.ModelHelper;
 import me.ichun.mods.ichunutil.client.model.ModelTabula;
 import me.ichun.mods.ichunutil.client.render.RenderHelper;
@@ -100,7 +98,7 @@ public class WorkspaceTabula extends Workspace
                     }
                     else
                     {
-                        WindowPopup.popup(this, 0.4D, 0.3D, I18n.format("window.saveAs.failed"), null);
+                        WindowPopup.popup(this, 0.4D, 0.3D, null, I18n.format("window.saveAs.failed"));
                         closing = false; //disable closing (if we are)
                     }
                 }
@@ -387,7 +385,7 @@ public class WorkspaceTabula extends Workspace
             int light2 = 15728880 & 65535;
 
             RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            RenderSystem.defaultBlendFunc();
 
             double dist = 0.125D;
             double pX = -3.495D - dist;
@@ -421,12 +419,19 @@ public class WorkspaceTabula extends Workspace
             RenderSystem.enableAlphaTest();
             RenderSystem.defaultAlphaFunc();
             RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            RenderSystem.defaultBlendFunc();
 
             MatrixStack stack = new MatrixStack();
 
             stack.translate(0F, 2.0005F, 0F);
             stack.scale(-1F, -1F, 1F);
+
+            if(info.project.scaleX != 1.0F || info.project.scaleY != 1.0F || info.project.scaleZ != 1.0F)
+            {
+                stack.translate(0F, 1.5F, 0F);
+                stack.scale(info.project.scaleX, info.project.scaleY, info.project.scaleZ);
+                stack.translate(0F, -1.5F, 0F);
+            }
 
             if(selection)
             {
@@ -512,7 +517,7 @@ public class WorkspaceTabula extends Workspace
         RenderSystem.popMatrix();
 
         RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.defaultBlendFunc();
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();

@@ -88,7 +88,7 @@ public class WindowSaveAs extends Window<WorkspaceTabula>
 
                     if(!project.save(file))
                     {
-                        WindowPopup.popup(parentFragment.parent, 0.4D, 0.3D, I18n.format("window.saveAs.failed"), null);
+                        WindowPopup.popup(parentFragment.parent, 0.4D, 0.3D, null, I18n.format("window.saveAs.failed"));
                     }
                 }
             }
