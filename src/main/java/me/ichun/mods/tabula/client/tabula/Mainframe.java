@@ -349,6 +349,9 @@ public class Mainframe
         public String textureFileMd5;
         public boolean hideTexture;
 
+        public Project ghostProject;
+        public float ghostOpacity;
+
         public ProjectInfo(@Nonnull Mainframe mainframe, Project project)
         {
             this.mainframe = mainframe;
@@ -403,6 +406,16 @@ public class Mainframe
             selectedBox = box;
 
             mainframe.workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+        }
+
+        public void setGhostProject(Project project, float ghostOpacity)
+        {
+            if(ghostProject != null && ghostProject != project)
+            {
+                ghostProject.destroy();
+            }
+            this.ghostProject = project;
+            this.ghostOpacity = ghostOpacity;
         }
     }
 

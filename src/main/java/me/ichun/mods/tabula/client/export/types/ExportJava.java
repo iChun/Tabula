@@ -113,7 +113,12 @@ public class ExportJava extends Exporter
             sb.append("        this." + field + ".setRotationPoint(" + cube.rotPX + "F, " + cube.rotPY + "F, " + cube.rotPZ + "F);\n");
             for(Project.Part.Box box : cube.boxes)
             {
-                sb.append("        this." + field + ".addBox(" + box.posX + "F, " + box.posY + "F, " + box.posZ + "F, " + box.dimX + "F, " + box.dimY + "F, " + box.dimZ + "F, " + box.expandX + "F, " + box.expandY + "F, "  + box.expandZ + "F);\n");
+                sb.append("        this." + field);
+                if(!(box.texOffX == 0 && box.texOffY == 0))
+                {
+                    sb.append(".setTextureOffset(" + box.texOffX + ", " + box.texOffY + ")");
+                }
+                sb.append(".addBox(" + box.posX + "F, " + box.posY + "F, " + box.posZ + "F, " + box.dimX + "F, " + box.dimY + "F, " + box.dimZ + "F, " + box.expandX + "F, " + box.expandY + "F, "  + box.expandZ + "F);\n");
             }
             if(!(cube.rotAX == 0.0D && cube.rotAY == 0.0D && cube.rotAZ == 0.0D))
             {

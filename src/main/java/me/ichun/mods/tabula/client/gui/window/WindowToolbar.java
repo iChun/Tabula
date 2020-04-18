@@ -178,7 +178,13 @@ public class WindowToolbar extends Window<WorkspaceTabula>
 
                 //ghostModel
                 btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/ghostmodel.png"), button -> {
-                    //TODO this
+                    Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
+                    if(info1 != null)
+                    {
+                        Window<?> window = new WindowGhostProject(getWorkspace());
+                        getWorkspace().openWindowInCenter(window, 0.4D, 0.6D);
+                        window.init();
+                    }
                 });
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.ghostModel"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
@@ -221,14 +227,6 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                     //TODO this
                 });
                 btn.setSize(20,20).setTooltip(I18n.format("topdock.pasteWithoutChildren"));
-                btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
-                elements.add(last = btn);
-
-                //autolayout
-                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/autolayout.png"), button -> {
-                    //TODO this
-                });
-                btn.setSize(20,20).setTooltip(I18n.format("topdock.autoLayout"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
 

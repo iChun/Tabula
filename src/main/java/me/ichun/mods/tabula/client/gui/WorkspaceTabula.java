@@ -426,6 +426,8 @@ public class WorkspaceTabula extends Workspace
             stack.translate(0F, 2.0005F, 0F);
             stack.scale(-1F, -1F, 1F);
 
+            stack.push();
+
             if(info.project.scaleX != 1.0F || info.project.scaleY != 1.0F || info.project.scaleZ != 1.0F)
             {
                 stack.translate(0F, 1.5F, 0F);
@@ -436,10 +438,19 @@ public class WorkspaceTabula extends Workspace
             if(selection)
             {
                 info.project.getModel().renderForSelection(stack);
+
+                stack.pop();
             }
             else
             {
-                info.project.getModel().render(stack, info.getSelectedPart(), info.getSelectedBox(), info.hideTexture);
+                info.project.getModel().render(stack, info.getSelectedPart(), info.getSelectedBox(), info.hideTexture, 1F);
+
+                stack.pop();
+                
+                if(info.ghostProject != null)
+                {
+                    info.ghostProject.getModel().render(stack, null, null, false, info.ghostOpacity);
+                }
             }
 
             net.minecraft.client.renderer.RenderHelper.setupGui3DDiffuseLighting();

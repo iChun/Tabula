@@ -52,23 +52,6 @@ public class WindowTopDock extends WindowTopDockBase
         elements.add(new ElementButton(this, width - 144 - 20, 4, 140, 12, ID_OPEN_WORKING_DIR, true, 1, 0, "topdock.openWorkingDir"));
 
         int button = 0;
-        //elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_NEW, true, 0, 0, "topdock.new", new ResourceLocation("tabula", "textures/icon/new.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_EDIT, true, 0, 0, "topdock.edit", new ResourceLocation("tabula", "textures/icon/edit.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_OPEN, true, 0, 0, "topdock.open", new ResourceLocation("tabula", "textures/icon/open.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_SAVE, true, 0, 0, "topdock.save", new ResourceLocation("tabula", "textures/icon/save.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_SAVE_AS, true, 0, 0, "topdock.saveAs", new ResourceLocation("tabula", "textures/icon/saveas.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_IMPORT, true, 0, 0, "topdock.import", new ResourceLocation("tabula", "textures/icon/import.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_IMPORT_MC, true, 0, 0, "topdock.importMC", new ResourceLocation("tabula", "textures/icon/importmc.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_EXPORT, true, 0, 0, "topdock.export", new ResourceLocation("tabula", "textures/icon/export.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_GHOST_MODEL, true, 0, 0, "topdock.ghostModel", new ResourceLocation("tabula", "textures/icon/ghostmodel.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CUT, true, 0, 0, "topdock.cut", new ResourceLocation("tabula", "textures/icon/cut.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_COPY, true, 0, 0, "topdock.copy", new ResourceLocation("tabula", "textures/icon/copy.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE, true, 0, 0, "topdock.paste", new ResourceLocation("tabula", "textures/icon/paste.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE_IN_PLACE, true, 0, 0, "topdock.pasteInPlace", new ResourceLocation("tabula", "textures/icon/pasteinplace.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_PASTE_WITHOUT_CHILDREN, true, 0, 0, "topdock.pasteWithoutChildren", new ResourceLocation("tabula", "textures/icon/pastewithoutchildren.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_AUTO_LAYOUT, true, 0, 0, "topdock.autoLayout", new ResourceLocation("tabula", "textures/icon/autolayout.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_UNDO, true, 0, 0, "topdock.undo", new ResourceLocation("tabula", "textures/icon/undo.png")));
-//        elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_REDO, true, 0, 0, "topdock.redo", new ResourceLocation("tabula", "textures/icon/redo.png")));
         if(((GuiWorkspace)workspace).host != null)
         {
             elements.add(new ElementButtonTextured(this, 20 * button++, 0, ID_CHAT, true, 0, 0, "topdock.chat", new ResourceLocation("tabula", "textures/icon/chat.png")));
@@ -87,57 +70,6 @@ public class WindowTopDock extends WindowTopDockBase
     @Override
     public void elementTriggered(Element element)
     {
-        if(element.id == ID_NEW)
-        {
-            workspace.addWindowOnTop(new WindowNewProject(workspace, workspace.width / 2 - 100, workspace.height / 2 - 100, 200, 200, 200, 160).putInMiddleOfScreen());
-        }
-        else if(element.id == ID_EDIT)
-        {
-            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
-            {
-                workspace.addWindowOnTop(new WindowEditProject(workspace, workspace.width / 2 - 100, workspace.height / 2 - 100, 200, 240, 200, 160).putInMiddleOfScreen());
-            }
-        }
-        else if(element.id == ID_OPEN)
-        {
-            workspace.addWindowOnTop(new WindowOpenProject(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 260, 320, 240, 160).putInMiddleOfScreen());
-        }
-        else if(element.id == ID_SAVE)
-        {
-            ((GuiWorkspace)workspace).save(false);
-        }
-        else if(element.id == ID_SAVE_AS)
-        {
-            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
-            {
-                workspace.addWindowOnTop(new WindowSaveAs(workspace, workspace.width / 2 - 100, workspace.height / 2 - 80, 200, 100, 200, 100, false).putInMiddleOfScreen());
-            }
-        }
-        else if(element.id == ID_IMPORT)
-        {
-            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
-            {
-                workspace.addWindowOnTop(new WindowImportProject(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 260, 320, 240, 160).putInMiddleOfScreen());
-            }
-        }
-        else if(element.id == ID_IMPORT_MC)
-        {
-            workspace.addWindowOnTop(new WindowImport(workspace, workspace.width / 2 - 150, workspace.height / 2 - 200, 300, workspace.height < 400 ? workspace.height - 30 < 160 ? 160 : workspace.height - 30 : 400, 280, 160).putInMiddleOfScreen());
-        }
-        else if(element.id == ID_EXPORT)
-        {
-            if(!((GuiWorkspace)workspace).projectManager.projects.isEmpty())
-            {
-                workspace.addWindowOnTop(new WindowExport(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 260, 160, 240, 160).putInMiddleOfScreen());
-            }
-        }
-        else if(element.id == ID_GHOST_MODEL)
-        {
-            if(((GuiWorkspace)workspace).hasOpenProject())
-            {
-                workspace.addWindowOnTop(new WindowSetGhostModel(workspace, workspace.width / 2 - 130, workspace.height / 2 - 160, 260, 320, 240, 160).putInMiddleOfScreen());
-            }
-        }
         else if(element.id == ID_CUT)
         {
             ((GuiWorkspace)workspace).cut();
@@ -193,10 +125,6 @@ public class WindowTopDock extends WindowTopDockBase
         else if(element.id == ID_EXIT_TABULA)
         {
             ((GuiWorkspace)workspace).wantToExit = true;
-        }
-        else if(element.id == ID_AUTO_LAYOUT)
-        {
-            ((GuiWorkspace)workspace).layoutTextures();
         }
         else if(element.id == ID_WOOD)
         {

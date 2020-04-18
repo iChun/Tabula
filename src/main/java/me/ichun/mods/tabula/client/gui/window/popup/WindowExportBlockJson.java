@@ -24,11 +24,11 @@ public class WindowExportBlockJson extends Window<WorkspaceTabula>
     {
         super(parent);
 
-        setView(new ViewNewProject(this, project));
+        setView(new ViewExportBlockJson(this, project));
         disableDockingEntirely();
     }
 
-    public static class ViewNewProject extends View<WindowExportBlockJson>
+    public static class ViewExportBlockJson extends View<WindowExportBlockJson>
     {
         /**
          * Toggles cornerAtZero
@@ -54,7 +54,7 @@ public class WindowExportBlockJson extends Window<WorkspaceTabula>
         private boolean relativeToBlock;
 
 
-        public ViewNewProject(@Nonnull WindowExportBlockJson parent, Project project)
+        public ViewExportBlockJson(@Nonnull WindowExportBlockJson parent, Project project)
         {
             super(parent, "export.blockjson.title");
 

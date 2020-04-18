@@ -2,6 +2,7 @@ package me.ichun.mods.tabula.client.gui.window;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
+import me.ichun.mods.ichunutil.client.gui.bns.window.WindowPopup;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.*;
@@ -58,8 +59,6 @@ public class WindowTexture extends Window<WorkspaceTabula>
             btn.setConstraint(new Constraint(btn).bottom(this, Constraint.Property.Type.BOTTOM, 2).right(this, Constraint.Property.Type.RIGHT, 2));
             elements.add(btn);
 
-            //TODO button to hide/disable texture temporarily.
-
             ElementButtonTextured<?> btn1 = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/newtexture.png"), button -> {
                 if(currentInfo != null)
                 {
@@ -80,11 +79,124 @@ public class WindowTexture extends Window<WorkspaceTabula>
             btn2.setConstraint(new Constraint(btn2).bottom(this, Constraint.Property.Type.BOTTOM, 2).right(btn1, Constraint.Property.Type.LEFT, 0));
             elements.add(btn2);
 
+            ElementButtonTextured<?> btn3 = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/autolayout.png"), button -> {
+                if(currentInfo != null)
+                {
+                    boolean[][] positions = new boolean[currentInfo.project.texWidth][currentInfo.project.texHeight];
+
+                    ArrayList<Project.Part.Box> cubes = currentInfo.project.getAllBoxes();
+
+                    for(Project.Part.Box cube : cubes) {
+                        boolean collide = true;
+                        int breakout = 0;
+                        cube.texOffX = 0;
+                        cube.texOffY = 0;
+
+                        while (collide && cube.texOffX + (int)Math.ceil(cube.dimZ) * 2 + (int)Math.ceil(cube.dimX) * 2 < currentInfo.project.texWidth && cube.texOffY + (int)Math.ceil(cube.dimY) + (int)Math.ceil(cube.dimZ) < currentInfo.project.texHeight && breakout++ < 150000) {
+                            collide = false;
+                            for (int i = 0; i < (int)Math.ceil(cube.dimX); i++) {
+                                for (int j = 0; j < (int)Math.ceil(cube.dimY); j++) {
+                                    for (int k = 0; k < (int)Math.ceil(cube.dimZ); k++) {
+                                        if (withinBounds(currentInfo.project.texWidth, currentInfo.project.texHeight, cube.texOffX + k, cube.texOffY + (int)Math.ceil(cube.dimZ) + j) && positions[cube.texOffX + k][cube.texOffY + (int)Math.ceil(cube.dimZ) + j]) {
+                                            collide = true;
+                                        }
+                                        if (withinBounds(currentInfo.project.texWidth, currentInfo.project.texHeight, cube.texOffX + (int)Math.ceil(cube.dimZ) + i, cube.texOffY + (int)Math.ceil(cube.dimZ) + j) && positions[cube.texOffX + (int)Math.ceil(cube.dimZ) + i][cube.texOffY + (int)Math.ceil(cube.dimZ) + j]) {
+                                            collide = true;
+                                        }
+                                        if (withinBounds(currentInfo.project.texWidth, currentInfo.project.texHeight, cube.texOffX + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + k, cube.texOffY + (int)Math.ceil(cube.dimZ) + j) && positions[cube.texOffX + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + k][cube.texOffY + (int)Math.ceil(cube.dimZ) + j]) {
+                                            collide = true;
+                                        }
+                                        if (withinBounds(currentInfo.project.texWidth, currentInfo.project.texHeight, cube.texOffX + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + (int)Math.ceil(cube.dimZ) + i, cube.texOffY + (int)Math.ceil(cube.dimZ) + j) && positions[cube.texOffX + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + (int)Math.ceil(cube.dimZ) + i][cube.texOffY + (int)Math.ceil(cube.dimZ) + j]) {
+                                            collide = true;
+                                        }
+                                        if (withinBounds(currentInfo.project.texWidth, currentInfo.project.texHeight, cube.texOffX + (int)Math.ceil(cube.dimZ) + i, cube.texOffY + k) && positions[cube.texOffX + (int)Math.ceil(cube.dimZ) + i][cube.texOffY + k]) {
+                                            collide = true;
+                                        }
+                                        if (withinBounds(currentInfo.project.texWidth, currentInfo.project.texHeight, cube.texOffX + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + i, cube.texOffY + k) && positions[cube.texOffX + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + i][cube.texOffY + k]) {
+                                            collide = true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (!collide) {
+                                for (int i = 0; i < (int)Math.ceil(cube.dimX); i++) {
+                                    for (int j = 0; j < (int)Math.ceil(cube.dimY); j++) {
+                                        for (int k = 0; k < (int)Math.ceil(cube.dimZ); k++) {
+                                            if (withinBounds(currentInfo.project.texWidth, currentInfo.project.texHeight, cube.texOffX + k, cube.texOffY + (int)Math.ceil(cube.dimZ) + j)) {
+                                                positions[cube.texOffX + k][cube.texOffY + (int)Math.ceil(cube.dimZ) + j] = true;
+                                            }
+                                            if (withinBounds(currentInfo.project.texWidth, currentInfo.project.texHeight, cube.texOffX + (int)Math.ceil(cube.dimZ) + i, cube.texOffY + (int)Math.ceil(cube.dimZ) + j)) {
+                                                positions[cube.texOffX + (int)Math.ceil(cube.dimZ) + i][cube.texOffY + (int)Math.ceil(cube.dimZ) + j] = true;
+                                            }
+                                            if (withinBounds(currentInfo.project.texWidth, currentInfo.project.texHeight, cube.texOffX + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + k, cube.texOffY + (int)Math.ceil(cube.dimZ) + j)) {
+                                                positions[cube.texOffX + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + k][cube.texOffY + (int)Math.ceil(cube.dimZ) + j] = true;
+                                            }
+                                            if (withinBounds(currentInfo.project.texWidth, currentInfo.project.texHeight, cube.texOffX + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + (int)Math.ceil(cube.dimZ) + i, cube.texOffY + (int)Math.ceil(cube.dimZ) + j)) {
+                                                positions[cube.texOffX + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + (int)Math.ceil(cube.dimZ) + i][cube.texOffY + (int)Math.ceil(cube.dimZ) + j] = true;
+                                            }
+                                            if (withinBounds(currentInfo.project.texWidth, currentInfo.project.texHeight, cube.texOffX + (int)Math.ceil(cube.dimZ) + i, cube.texOffY + k)) {
+                                                positions[cube.texOffX + (int)Math.ceil(cube.dimZ) + i][cube.texOffY + k] = true;
+                                            }
+                                            if (withinBounds(currentInfo.project.texWidth, currentInfo.project.texHeight, cube.texOffX + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + i, cube.texOffY + k)) {
+                                                positions[cube.texOffX + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + i][cube.texOffY + k] = true;
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+                            if(collide) {
+                                cube.texOffX++;
+                                if(cube.texOffX + (int)Math.ceil(cube.dimZ) * 2 + (int)Math.ceil(cube.dimX) * 2 >= currentInfo.project.texWidth) {
+                                    cube.texOffX = 0;
+                                    cube.texOffY++;
+                                }
+                            }
+                        }
+
+                        if(breakout >= 150000 || collide) {
+                            WindowPopup.popup(parent.parent, 0.4D, 0.4D, w->{}, I18n.format("window.autoLayout.failed"));
+                        }
+                    }
+
+                    ArrayList<Project.Part> parts = currentInfo.project.getAllParts();
+                    for(Project.Part part : parts)
+                    {
+                        int lowTexX = part.texWidth;
+                        int lowTexY = part.texHeight;
+
+                        for(Project.Part.Box box : part.boxes)
+                        {
+                            if(box.texOffX < lowTexX)
+                            {
+                                lowTexX = box.texOffX;
+                            }
+                            if(box.texOffY < lowTexY)
+                            {
+                                lowTexY = box.texOffY;
+                            }
+                        }
+
+                        part.texOffX = lowTexX;
+                        part.texOffY = lowTexY;
+                        for(Project.Part.Box box : part.boxes)
+                        {
+                            box.texOffX -= lowTexX;
+                            box.texOffY -= lowTexY;
+                        }
+                    }
+                }
+            });
+            btn3.setSize(20, 20).setTooltip(I18n.format("topdock.autoLayout"));
+            btn3.setConstraint(new Constraint(btn3).bottom(this, Constraint.Property.Type.BOTTOM, 2).right(btn2, Constraint.Property.Type.LEFT, 0));
+            elements.add(btn3);
+
             ElementToggle<?> toggle = new ElementToggle<>(this, "window.texture.listenTexture", elementClickable -> {
                 listenTime = 0;
             });
             toggle.setToggled(true).setSize(60, 20).setTooltip(I18n.format("window.texture.listenTextureFull")).setId("elementListenTex");
-            toggle.setConstraint(new Constraint(toggle).bottom(this, Constraint.Property.Type.BOTTOM, 2).right(btn2, Constraint.Property.Type.LEFT, 0).left(this, Constraint.Property.Type.LEFT, 2));
+            toggle.setConstraint(new Constraint(toggle).bottom(this, Constraint.Property.Type.BOTTOM, 2).right(btn3, Constraint.Property.Type.LEFT, 0).left(this, Constraint.Property.Type.LEFT, 2));
             elements.add(toggle);
 
             ElementTextWrapper text = new ElementTextWrapper(this);
@@ -94,6 +206,11 @@ public class WindowTexture extends Window<WorkspaceTabula>
             ElementProjectTexture texture = new ElementProjectTexture(this);
             texture.setConstraint(new Constraint(texture).bottom(text, Constraint.Property.Type.TOP, 1).left(this, Constraint.Property.Type.LEFT, 2).right(this, Constraint.Property.Type.RIGHT, 2).top(this, Constraint.Property.Type.TOP, 2));
             elements.add(texture);
+        }
+
+        public boolean withinBounds(int textureWidth, int textureHeight, int x, int y)
+        {
+            return x >= 0 && x < textureWidth && y >= 0 && y < textureHeight;
         }
 
         @Override
