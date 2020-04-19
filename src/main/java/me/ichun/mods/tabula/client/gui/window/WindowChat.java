@@ -15,6 +15,7 @@ import java.util.Collections;
 public class WindowChat extends Window<WorkspaceTabula>
 {
     public final Mainframe mainframe;
+    public boolean firstUpdate = true;
 
     public WindowChat(WorkspaceTabula parent)
     {
@@ -30,13 +31,37 @@ public class WindowChat extends Window<WorkspaceTabula>
 
     public void updateChat()
     {
-        ((ViewChat)currentView).chatMessages.setText(parent.mainframe.chatMessages);
-        ((ViewChat)currentView).chatMessages.init();
+        if(firstUpdate)
+        {
+            firstUpdate = false;
+
+            if(!parent.isDocked(this) && getRight() < 0) //we're not docked, we're off screen
+            {
+                parent.addToDock(this, Constraint.Property.Type.BOTTOM);
+            }
+        }
+
+        ViewChat chat = (ViewChat)currentView;
+
+        float oldSize = chat.scroll.getScrollbarSize();
+
+        boolean maintainScroll = chat.scroll.scrollProg == 1.0F;
+
+        chat.chatMessages.setText(parent.mainframe.chatMessages);
+        chat.chatMessages.init();
+
+        if(maintainScroll || oldSize == 1.01F && chat.scroll.getScrollbarSize() < oldSize)
+        {
+            chat.scroll.setScrollProg(1F);
+
+            chat.chatMessages.init();
+        }
     }
 
     public static class ViewChat extends View<WindowChat>
     {
         public ElementTextWrapper chatMessages;
+        public ElementScrollBar<?> scroll;
 
         public ViewChat(@Nonnull WindowChat parent)
         {
@@ -45,25 +70,25 @@ public class WindowChat extends Window<WorkspaceTabula>
             int spaceBottom = 4;
 
             ElementButton<?> button = new ElementButton<>(this, "window.chat.tabula", btn -> {
-               if(I18n.format("window.chat.tabula").equals(btn.text))
-               {
-                   btn.text = I18n.format("window.chat.global");
-               }
-               else
-               {
-                   btn.text = I18n.format("window.chat.tabula");
-               }
+                if(I18n.format("window.chat.tabula").equals(btn.text))
+                {
+                    btn.text = I18n.format("window.chat.global");
+                }
+                else
+                {
+                    btn.text = I18n.format("window.chat.tabula");
+                }
             });
             button.setWidth(60);
             button.setConstraint(new Constraint(button).left(this, Constraint.Property.Type.LEFT, spaceBottom).bottom(this, Constraint.Property.Type.BOTTOM, spaceBottom));
             elements.add(button);
 
-            ElementScrollBar<?> sv = new ElementScrollBar<>(this, ElementScrollBar.Orientation.VERTICAL, 0.6F);
-            sv.setConstraint(new Constraint(sv).top(this, Constraint.Property.Type.TOP, spaceBottom)
+            scroll = new ElementScrollBar<>(this, ElementScrollBar.Orientation.VERTICAL, 0.6F);
+            scroll.setConstraint(new Constraint(scroll).top(this, Constraint.Property.Type.TOP, spaceBottom)
                     .bottom(button, Constraint.Property.Type.TOP, spaceBottom)
                     .right(this, Constraint.Property.Type.RIGHT, spaceBottom)
             );
-            elements.add(sv);
+            elements.add(scroll);
 
             ElementButton<?> users = null;
             if(parentFragment.parent.mainframe.getIsMaster())
@@ -106,8 +131,8 @@ public class WindowChat extends Window<WorkspaceTabula>
                         userList.init();
                         userList.init();
 
-                        sv.constraint.right(userList, Constraint.Property.Type.LEFT, spaceBottom);
-                        sv.constraint.apply();
+                        scroll.constraint.right(userList, Constraint.Property.Type.LEFT, spaceBottom);
+                        scroll.constraint.apply();
                         this.resize(Minecraft.getInstance(), this.getParentWidth(), this.getParentHeight());
 
                         userList.init();
@@ -119,8 +144,8 @@ public class WindowChat extends Window<WorkspaceTabula>
                         //destroy list
                         elements.remove(getById("userList"));
 
-                        sv.constraint.right(this, Constraint.Property.Type.RIGHT, spaceBottom);
-                        sv.constraint.apply();
+                        scroll.constraint.right(this, Constraint.Property.Type.RIGHT, spaceBottom);
+                        scroll.constraint.apply();
                         this.resize(Minecraft.getInstance(), this.getParentWidth(), this.getParentHeight());
 
                         btn.text = "<";
@@ -159,8 +184,8 @@ public class WindowChat extends Window<WorkspaceTabula>
             textField.setConstraint(new Constraint(textField).left(button, Constraint.Property.Type.RIGHT, spaceBottom).bottom(this, Constraint.Property.Type.BOTTOM, spaceBottom).right(users != null ? users : this, users != null ? Constraint.Property.Type.LEFT : Constraint.Property.Type.RIGHT, spaceBottom));
             elements.add(textField);
 
-            ElementScrollView list = new ElementScrollView(this).setScrollVertical(sv);
-            list.setConstraint(new Constraint(list).bottom(textField, Constraint.Property.Type.TOP, spaceBottom).left(this, Constraint.Property.Type.LEFT, spaceBottom).right(sv, Constraint.Property.Type.LEFT, 0).top(this, Constraint.Property.Type.TOP, spaceBottom));
+            ElementScrollView list = new ElementScrollView(this).setScrollVertical(scroll);
+            list.setConstraint(new Constraint(list).bottom(textField, Constraint.Property.Type.TOP, spaceBottom).left(this, Constraint.Property.Type.LEFT, spaceBottom).right(scroll, Constraint.Property.Type.LEFT, 0).top(this, Constraint.Property.Type.TOP, spaceBottom));
             elements.add(list);
 
             chatMessages = new ElementTextWrapper(list);

@@ -56,7 +56,7 @@ public class WindowExportJava extends Window<WorkspaceTabula>
 
             textField = new ElementTextField(this);
             textField.setId("className");
-            textField.setDefaultText(project.name).setEnterResponder(enterResponder);
+            textField.setDefaultText(project.name).setValidator(ElementTextField.FILE_SAFE.and(s-> !s.contains(" "))).setEnterResponder(enterResponder);
             textField.setConstraint(new Constraint(textField).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20).top(text, Constraint.Property.Type.BOTTOM, 3));
             elements.add(textField);
 

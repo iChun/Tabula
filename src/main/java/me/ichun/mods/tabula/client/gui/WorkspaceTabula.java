@@ -140,8 +140,25 @@ public class WorkspaceTabula extends Workspace
                 if(window == null)
                 {
                     window = new WindowPartInfo(this);
+                    WindowChat chat = getByWindowType(WindowChat.class);
+                    boolean chatDocked = false;
+                    if(chat != null & isDocked(chat))
+                    {
+                        //remove the chat first
+                        chatDocked = true;
+                        removeFromDock(chat);
+                    }
                     addToDock(window, Constraint.Property.Type.LEFT);
                     window.init();
+
+                    if(chatDocked)
+                    {
+                        addToDock(chat, Constraint.Property.Type.BOTTOM);
+                        chat.setHeight(95);
+                        chat.constraint.apply();
+                        chat.resize(Minecraft.getInstance(), chat.getParentWidth(), chat.getParentHeight());
+                        chat.init();
+                    }
                 }
             }
 
@@ -223,8 +240,9 @@ public class WorkspaceTabula extends Workspace
             if(chat == null)
             {
                 chat = new WindowChat(this);
-                putInCenter(chat);
                 addWindow(chat);
+
+                putInCenter(chat); //TODO we ain't putting in the center.
                 chat.init();
             }
         }
@@ -829,7 +847,7 @@ public class WorkspaceTabula extends Workspace
                 return true;
             }
         }
-        else if((keyCode == GLFW.GLFW_KEY_DELETE || keyCode == GLFW.GLFW_KEY_KP_DECIMAL) && !(getFocused() != null && getFocused().getClass().getName().contains("popup")))
+        else if((keyCode == GLFW.GLFW_KEY_DELETE || keyCode == GLFW.GLFW_KEY_KP_DECIMAL) && (getFocused() instanceof WindowInputReceiver || getFocused() instanceof WindowModelTree))
         {
             Window<?> window = getByWindowType(WindowModelTree.class);
             if(window != null)

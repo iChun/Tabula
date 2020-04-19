@@ -122,7 +122,7 @@ public class Mainframe
         }
         defaultCam.tick();
 
-        if(!sessionEnded && !Minecraft.getInstance().isGamePaused())
+        if(origin != null && !sessionEnded && !Minecraft.getInstance().isGamePaused() && !master.equals(Minecraft.getInstance().getSession().getUsername()))
         {
             lastPing++;
             if(lastPing > 600)
@@ -427,6 +427,8 @@ public class Mainframe
             {
                 Tabula.channel.sendToServer(new PacketEditorStatus(listener, true));
             }
+
+            //TODO send what we have open etc to the listener
         }
         else
         {
@@ -765,6 +767,14 @@ public class Mainframe
         public void delete(Identifiable<?> child)
         {
             mainframe.delete(this, child);
+            if(child instanceof Project.Part)
+            {
+                selectPart(null);
+            }
+            else if(child instanceof Project.Part.Box)
+            {
+                selectBox(null);
+            }
         }
 
         public Project.Part getSelectedPart()

@@ -14,6 +14,7 @@ import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.client.gui.window.popup.*;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
 import me.ichun.mods.tabula.common.Tabula;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
@@ -191,7 +192,27 @@ public class WindowToolbar extends Window<WorkspaceTabula>
             {
                 //chat
                 btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/chat.png"), button -> {
+                    WindowChat chat = parentFragment.parent.getByWindowType(WindowChat.class);
+                    if(chat != null)
+                    {
+                        if(!chat.parent.isDocked(chat) && chat.getRight() < 0) //we're not docked, we're off screen
+                        {
+                            chat.parent.addToDock(chat, Constraint.Property.Type.BOTTOM);
+                            chat.setHeight(95);
+                            chat.constraint.apply();
+                            chat.resize(Minecraft.getInstance(), chat.getParentWidth(), chat.getParentHeight());
+                            chat.updateChat();
+                        }
+                        else //hide chat?
+                        {
+                            if(chat.parent.isDocked(chat))
+                            {
+                                chat.parent.removeFromDock(chat);
+                            }
 
+                            chat.setPosX(-10000);
+                        }
+                    }
                 });
                 btn.setSize(20, 20).setTooltip(I18n.format("topdock.chat"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));

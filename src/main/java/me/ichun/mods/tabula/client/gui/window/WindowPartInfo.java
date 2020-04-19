@@ -29,7 +29,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
 
         setView(viewPartInfo = new ViewPartInfo(this));
         setId("windowPartInfo");
-        size(180 + borderSize.get(), 225);
+        size(180 + borderSize.get(), 230);
     }
 
     public static class ViewPartInfo extends View<WindowPartInfo>
@@ -54,6 +54,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
                     updatePart();
                 }
             };
+            Consumer<String> enterResponder = s -> updatePart(); //bypass the empty check
 
             ElementTextWrapper text1 = new ElementTextWrapper(this);
             text1.setNoWrap().setText(I18n.format("window.partInfo.partName"));
@@ -61,8 +62,8 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             elements.add(text1);
 
             ElementTextField input = new ElementTextField(this);
-            input.setDefaultText("").setSize(numberInputWidth * 3, 14).setId("partName");
-            input.setResponder(responder);
+            input.setDefaultText("").setMaxStringLength(256).setSize(numberInputWidth * 3, 14).setId("partName");
+            input.setResponder(responder).setEnterResponder(enterResponder);
             input.setConstraint(new Constraint(input).left(text1, Constraint.Property.Type.LEFT, 2).top(text1, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(input);
 
@@ -75,19 +76,19 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             space.setSize(14, 14).setConstraint(new Constraint(space).left(this, Constraint.Property.Type.LEFT, 4).top(text, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(space);
 
-            ElementNumberInput num = new ElementNumberInput(this, false);
+            ElementNumberInput num = new ElementNumberInput(space, false);
             num.setMin(0).setSize(numberInputWidth, 14).setId("txWidth");
-            num.setResponder(responder);
+            num.setResponder(responder).setEnterResponder(enterResponder);
             num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num);
 
-            ElementNumberInput num1 = new ElementNumberInput(this, false);
+            ElementNumberInput num1 = new ElementNumberInput(space, false);
             num1.setMin(0).setSize(numberInputWidth, 14).setId("txHeight");
-            num1.setResponder(responder);
+            num1.setResponder(responder).setEnterResponder(enterResponder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num1);
 
-            ElementToggle<?> btn = new ElementToggle<>(this, "window.partInfo.matchProject", elementClickable -> {
+            ElementToggle<?> btn = new ElementToggle<>(space, "window.partInfo.matchProject", elementClickable -> {
                 updatePart();
             });
             btn.setSize(numberInputWidth - 2, 14).setTooltip(I18n.format("window.partInfo.matchProjectFull"));
@@ -104,19 +105,19 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             space.setSize(14, 14).setConstraint(new Constraint(space).left(this, Constraint.Property.Type.LEFT, 4).top(text, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(space);
 
-            num = new ElementNumberInput(this, false);
+            num = new ElementNumberInput(space, false);
             num.setSize(numberInputWidth, 14).setId("txOffX");
-            num.setResponder(responder);
+            num.setResponder(responder).setEnterResponder(enterResponder);
             num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num);
 
-            num1 = new ElementNumberInput(this, false);
+            num1 = new ElementNumberInput(space, false);
             num1.setSize(numberInputWidth, 14).setId("txOffY");
-            num1.setResponder(responder);
+            num1.setResponder(responder).setEnterResponder(enterResponder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num1);
 
-            btn = new ElementToggle<>(this, "window.controls.txMirror", elementClickable -> {
+            btn = new ElementToggle<>(space, "window.controls.txMirror", elementClickable -> {
                 updatePart();
             });
             btn.setSize(numberInputWidth - 2, 14).setTooltip(I18n.format("window.controls.txMirrorFull"));
@@ -133,21 +134,21 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             space.setSize(14, 14).setConstraint(new Constraint(space).left(this, Constraint.Property.Type.LEFT, 4).top(text, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(space);
 
-            num = new ElementNumberInput(this, true);
+            num = new ElementNumberInput(space, true);
             num.setMaxDec(Tabula.configClient.guiMaxDecimals).setSize(numberInputWidth, 14).setId("posX");
-            num.setResponder(responder);
+            num.setResponder(responder).setEnterResponder(enterResponder);
             num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num);
 
-            num1 = new ElementNumberInput(this, true);
+            num1 = new ElementNumberInput(space, true);
             num1.setMaxDec(Tabula.configClient.guiMaxDecimals).setSize(numberInputWidth, 14).setId("posY");
-            num1.setResponder(responder);
+            num1.setResponder(responder).setEnterResponder(enterResponder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num1);
 
-            ElementNumberInput num2 = new ElementNumberInput(this, true);
+            ElementNumberInput num2 = new ElementNumberInput(space, true);
             num2.setMaxDec(Tabula.configClient.guiMaxDecimals).setSize(numberInputWidth, 14).setId("posZ");
-            num2.setResponder(responder);
+            num2.setResponder(responder).setEnterResponder(enterResponder);
             num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
             space.addElement(num2);
 
@@ -160,21 +161,21 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             space.setSize(14, 14).setConstraint(new Constraint(space).left(this, Constraint.Property.Type.LEFT, 4).top(text, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(space);
 
-            num = new ElementNumberInput(this, true);
+            num = new ElementNumberInput(space, true);
             num.setMaxDec(Tabula.configClient.guiMaxDecimals).setMin(-180).setMax(180).setSize(numberInputWidth, 14).setId("rotX");
-            num.setResponder(responder);
+            num.setResponder(responder).setEnterResponder(enterResponder);
             num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num);
 
-            num1 = new ElementNumberInput(this, true);
+            num1 = new ElementNumberInput(space, true);
             num1.setMaxDec(Tabula.configClient.guiMaxDecimals).setMin(-180).setMax(180).setSize(numberInputWidth, 14).setId("rotY");
-            num1.setResponder(responder);
+            num1.setResponder(responder).setEnterResponder(enterResponder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num1);
 
-            num2 = new ElementNumberInput(this, true);
+            num2 = new ElementNumberInput(space, true);
             num2.setMaxDec(Tabula.configClient.guiMaxDecimals).setMin(-180).setMax(180).setSize(numberInputWidth, 14).setId("rotZ");
-            num2.setResponder(responder);
+            num2.setResponder(responder).setEnterResponder(enterResponder);
             num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
             space.addElement(num2);
 

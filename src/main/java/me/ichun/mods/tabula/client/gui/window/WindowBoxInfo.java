@@ -29,7 +29,7 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
 
         setView(viewBoxInfo = new ViewBoxInfo(this));
         setId("windowBoxInfo");
-        size(180 + borderSize.get(), 170);
+        size(180 + borderSize.get(), 180);
     }
 
     public static class ViewBoxInfo extends View<WindowBoxInfo>
@@ -61,7 +61,7 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
             elements.add(text1);
 
             ElementTextField input = new ElementTextField(this);
-            input.setDefaultText("").setSize(numberInputWidth * 3, 14).setId("boxName");
+            input.setDefaultText("").setMaxStringLength(256).setSize(numberInputWidth * 3, 14).setId("boxName");
             input.setResponder(responder);
             input.setConstraint(new Constraint(input).left(text1, Constraint.Property.Type.LEFT, 2).top(text1, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(input);
@@ -75,19 +75,19 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
             space.setSize(14, 14).setConstraint(new Constraint(space).left(this, Constraint.Property.Type.LEFT, 4).top(text, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(space);
 
-            ElementNumberInput num = new ElementNumberInput(this, true);
+            ElementNumberInput num = new ElementNumberInput(space, true);
             num.setMaxDec(Tabula.configClient.guiMaxDecimals).setMin(0).setSize(numberInputWidth, 14).setId("dimX");
             num.setResponder(responder);
             num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num);
 
-            ElementNumberInput num1 = new ElementNumberInput(this, true);
+            ElementNumberInput num1 = new ElementNumberInput(space, true);
             num1.setMaxDec(Tabula.configClient.guiMaxDecimals).setMin(0).setSize(numberInputWidth, 14).setId("dimY");
             num1.setResponder(responder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num1);
 
-            ElementNumberInput num2 = new ElementNumberInput(this, true);
+            ElementNumberInput num2 = new ElementNumberInput(space, true);
             num2.setMaxDec(Tabula.configClient.guiMaxDecimals).setMin(0).setSize(numberInputWidth, 14).setId("dimZ");
             num2.setResponder(responder);
             num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
@@ -102,19 +102,19 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
             space.setSize(14, 14).setConstraint(new Constraint(space).left(this, Constraint.Property.Type.LEFT, 4).top(text, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(space);
 
-            num = new ElementNumberInput(this, true);
+            num = new ElementNumberInput(space, true);
             num.setMaxDec(Tabula.configClient.guiMaxDecimals).setSize(numberInputWidth, 14).setId("offX");
             num.setResponder(responder);
             num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num);
 
-            num1 = new ElementNumberInput(this, true);
+            num1 = new ElementNumberInput(space, true);
             num1.setMaxDec(Tabula.configClient.guiMaxDecimals).setSize(numberInputWidth, 14).setId("offY");
             num1.setResponder(responder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num1);
 
-            num2 = new ElementNumberInput(this, true);
+            num2 = new ElementNumberInput(space, true);
             num2.setMaxDec(Tabula.configClient.guiMaxDecimals).setSize(numberInputWidth, 14).setId("offZ");
             num2.setResponder(responder);
             num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
@@ -129,19 +129,19 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
             space.setSize(14, 14).setConstraint(new Constraint(space).left(this, Constraint.Property.Type.LEFT, 4).top(text, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(space);
 
-            num = new ElementNumberInput(this, true);
+            num = new ElementNumberInput(space, true);
             num.setMaxDec(Tabula.configClient.guiMaxDecimals).setSize(numberInputWidth, 14).setId("expX");
             num.setResponder(responder);
             num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num);
 
-            num1 = new ElementNumberInput(this, true);
+            num1 = new ElementNumberInput(space, true);
             num1.setMaxDec(Tabula.configClient.guiMaxDecimals).setSize(numberInputWidth, 14).setId("expY");
             num1.setResponder(responder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num1);
 
-            num2 = new ElementNumberInput(this, true);
+            num2 = new ElementNumberInput(space, true);
             num2.setMaxDec(Tabula.configClient.guiMaxDecimals).setSize(numberInputWidth, 14).setId("expZ");
             num2.setResponder(responder);
             num2.setConstraint(new Constraint(num2).left(num1, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0).right(space, Constraint.Property.Type.RIGHT, 0));
@@ -156,13 +156,13 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
             space.setSize(14, 14).setConstraint(new Constraint(space).left(this, Constraint.Property.Type.LEFT, 4).top(text, Constraint.Property.Type.BOTTOM, padding).right(this, Constraint.Property.Type.RIGHT, 4));
             elements.add(space);
 
-            num = new ElementNumberInput(this, false);
+            num = new ElementNumberInput(space, false);
             num.setSize(numberInputWidth, 14).setId("texX");
             num.setResponder(responder);
             num.setConstraint(new Constraint(num).left(space, Constraint.Property.Type.LEFT, 0).top(space, Constraint.Property.Type.TOP, 0));
             space.addElement(num);
 
-            num1 = new ElementNumberInput(this, false);
+            num1 = new ElementNumberInput(space, false);
             num1.setSize(numberInputWidth, 14).setId("texY");
             num1.setResponder(responder);
             num1.setConstraint(new Constraint(num1).left(num, Constraint.Property.Type.RIGHT, 0).top(space, Constraint.Property.Type.TOP, 0));
