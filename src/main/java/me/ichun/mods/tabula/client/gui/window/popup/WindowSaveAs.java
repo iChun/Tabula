@@ -99,7 +99,7 @@ public class WindowSaveAs extends Window<WorkspaceTabula>
     public void onClose()
     {
         super.onClose();
-        WindowSaveOverwrite window = parent.getWindowType(WindowSaveOverwrite.class);
+        WindowSaveOverwrite window = parent.getByWindowType(WindowSaveOverwrite.class);
         if(window != null)
         {
             getWorkspace().removeWindow(window);

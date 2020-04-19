@@ -75,7 +75,7 @@ public class WorkspaceTabula extends Workspace
     {
         if(info != null)
         {
-            Window<?> window = getWindowType(WindowProjectNavigator.class);
+            Window<?> window = getByWindowType(WindowProjectNavigator.class);
             if(window == null)
             {
                 window = new WindowProjectNavigator(this);
@@ -136,7 +136,7 @@ public class WorkspaceTabula extends Workspace
             if(part != null)
             {
                 //check to see if WindowPartInfo exists, if not, add it.
-                Window<?> window = getWindowType(WindowPartInfo.class);
+                Window<?> window = getByWindowType(WindowPartInfo.class);
                 if(window == null)
                 {
                     window = new WindowPartInfo(this);
@@ -162,10 +162,10 @@ public class WorkspaceTabula extends Workspace
 
                 //we've selected the parent
                 //check to see if WindowBoxInfo exists, if not, add it.
-                Window<?> window = getWindowType(WindowBoxInfo.class);
+                Window<?> window = getByWindowType(WindowBoxInfo.class);
                 if(window == null)
                 {
-                    Window<?> partInfo = getWindowType(WindowPartInfo.class); //shouldn't be null, we just checked for it!
+                    Window<?> partInfo = getByWindowType(WindowPartInfo.class); //shouldn't be null, we just checked for it!
                     window = new WindowBoxInfo(this);
                     if(isDocked(partInfo))
                     {
@@ -188,6 +188,15 @@ public class WorkspaceTabula extends Workspace
         }
     }
 
+    public void updateChat()
+    {
+        Window<?> chat = getByWindowType(WindowChat.class);
+        if(chat != null)
+        {
+            ((WindowChat)chat).updateChat();
+        }
+    }
+
 
     @Override
     protected void init()
@@ -207,6 +216,18 @@ public class WorkspaceTabula extends Workspace
         this.mainframe.openProject(project);
 
         //        this.mainframe.getActiveProject().addPart(null);
+
+        if(mainframe.origin != null) //multiplayer
+        {
+            Window<?> chat = getByWindowType(WindowChat.class);
+            if(chat == null)
+            {
+                chat = new WindowChat(this);
+                putInCenter(chat);
+                addWindow(chat);
+                chat.init();
+            }
+        }
     }
 
     @Override
@@ -217,7 +238,7 @@ public class WorkspaceTabula extends Workspace
 
         if(closing)
         {
-            if(!(getById("windowClosingPrompt") != null || getWindowType(WindowSaveAs.class) != null || getWindowType(WindowSaveOverwrite.class) != null) && !mainframe.projects.isEmpty())
+            if(!(getById("windowClosingPrompt") != null || getByWindowType(WindowSaveAs.class) != null || getByWindowType(WindowSaveOverwrite.class) != null) && !mainframe.projects.isEmpty())
             {
                 closeProject(mainframe.getActiveProject());
             }
@@ -810,7 +831,7 @@ public class WorkspaceTabula extends Workspace
         }
         else if((keyCode == GLFW.GLFW_KEY_DELETE || keyCode == GLFW.GLFW_KEY_KP_DECIMAL) && !(getFocused() != null && getFocused().getClass().getName().contains("popup")))
         {
-            Window<?> window = getWindowType(WindowModelTree.class);
+            Window<?> window = getByWindowType(WindowModelTree.class);
             if(window != null)
             {
                 ((WindowModelTree.ViewModelTree)window.currentView).delete();

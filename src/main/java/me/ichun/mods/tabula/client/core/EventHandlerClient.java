@@ -3,8 +3,11 @@ package me.ichun.mods.tabula.client.core;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.MainMenuScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.text.ChatType;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -64,6 +67,20 @@ public class EventHandlerClient
                 WorkspaceTabula screen = WorkspaceTabula.create(Minecraft.getInstance().getSession().getUsername());
                 Minecraft.getInstance().displayGuiScreen(screen);
             }));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public void onClientChatReceived(ClientChatReceivedEvent event)
+    {
+        if(event.getType().equals(ChatType.CHAT))
+        {
+            Screen screen = Minecraft.getInstance().currentScreen;
+            if(screen instanceof WorkspaceTabula)
+            {
+                WorkspaceTabula workspace = (WorkspaceTabula)screen;
+                workspace.mainframe.receiveChat(event.getMessage().getFormattedText(), false);
+            }
         }
     }
 }

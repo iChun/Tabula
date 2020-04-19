@@ -32,14 +32,14 @@ public class PacketListenerChange extends AbstractPacket
     @Override
     public void readFrom(PacketBuffer buf)
     {
-        listener = buf.readString();
+        listener = buf.readString(32767);
         add = buf.readBoolean();
     }
 
     @Override
     public void process(NetworkEvent.Context context)
     {
-        handleClient();
+        context.enqueueWork(this::handleClient);
     }
 
     @OnlyIn(Dist.CLIENT)

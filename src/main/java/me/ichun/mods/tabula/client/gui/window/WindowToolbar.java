@@ -196,25 +196,6 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                 btn.setSize(20, 20).setTooltip(I18n.format("topdock.chat"));
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
-
-                if(parentFragment.parent.mainframe.getIsMaster())
-                {
-                    //Add editor
-                    btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/addeditor.png"), button -> {
-
-                    });
-                    btn.setSize(20, 20).setTooltip(I18n.format("topdock.addEditor"));
-                    btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
-                    elements.add(last = btn);
-
-                    //Remove editor
-                    btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/removeeditor.png"), button -> {
-
-                    });
-                    btn.setSize(20, 20).setTooltip(I18n.format("topdock.removeEditor"));
-                    btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
-                    elements.add(last = btn);
-                }
             }
 
 

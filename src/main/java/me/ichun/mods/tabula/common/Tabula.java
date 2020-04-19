@@ -6,10 +6,7 @@ import me.ichun.mods.tabula.client.core.EventHandlerClient;
 import me.ichun.mods.tabula.client.core.ResourceHelper;
 import me.ichun.mods.tabula.client.render.TileRendererTabulaRasa;
 import me.ichun.mods.tabula.common.block.BlockTabulaRasa;
-import me.ichun.mods.tabula.common.packet.PacketKillSession;
-import me.ichun.mods.tabula.common.packet.PacketListenerChange;
-import me.ichun.mods.tabula.common.packet.PacketPing;
-import me.ichun.mods.tabula.common.packet.PacketRequestSession;
+import me.ichun.mods.tabula.common.packet.*;
 import me.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.AtlasTexture;
@@ -69,7 +66,7 @@ public class Tabula
         bus.addListener(this::onClientSetup);
 
         channel = new PacketChannel(new ResourceLocation(MOD_ID, "channel"), PROTOCOL,
-                PacketRequestSession.class, PacketPing.class, PacketKillSession.class, PacketListenerChange.class
+                PacketRequestSession.class, PacketPing.class, PacketKillSession.class, PacketListenerChange.class, PacketChat.class, PacketEditorStatus.class
         );
     }
 

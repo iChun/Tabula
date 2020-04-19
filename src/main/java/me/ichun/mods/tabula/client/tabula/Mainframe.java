@@ -3,6 +3,7 @@ package me.ichun.mods.tabula.client.tabula;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementList;
+import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementTextWrapper;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.ichunutil.common.util.IOUtil;
@@ -12,9 +13,20 @@ import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.client.gui.window.WindowModelTree;
 import me.ichun.mods.tabula.client.gui.window.WindowTexture;
 import me.ichun.mods.tabula.common.Tabula;
+import me.ichun.mods.tabula.common.packet.PacketChat;
+import me.ichun.mods.tabula.common.packet.PacketEditorStatus;
 import me.ichun.mods.tabula.common.packet.PacketKillSession;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SimpleSound;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
@@ -39,6 +51,7 @@ public class Mainframe
     public boolean sessionEnded;
     public BlockPos origin; //only set if it's multiplayer
     public int lastPing;
+    public ArrayList<String> chatMessages = new ArrayList<>();
 
     public Camera defaultCam = new Camera();
     public int activeView = -1;
@@ -50,17 +63,27 @@ public class Mainframe
         this.isMaster = false;
         this.canEdit = false;
         this.master = master;
+        String s;
+        if(master.equalsIgnoreCase(Minecraft.getInstance().getSession().getUsername()))
+        {
+            s = I18n.format("system.hosting");
+            listeners.add(master);
+            editors.add(master);
+            editors.addAll(Tabula.configClient.editors);
+        }
+        else
+        {
+            s = I18n.format("system.hostingOther", master);
+        }
+        String name = "System";
+        StringTextComponent text = new StringTextComponent(name);
+        text.setStyle(new Style().setColor(ElementTextWrapper.getRandomTextFormattingColorForName(name))).appendSibling(new StringTextComponent(" : " + s).setStyle(new Style().setColor(TextFormatting.WHITE)));
+        chatMessages.add(text.getFormattedText());
     }
 
     public Mainframe setMaster()
     {
         isMaster = true;
-        canEdit = true;
-        return this;
-    }
-
-    public Mainframe setCanEdit()
-    {
         canEdit = true;
         return this;
     }
@@ -74,6 +97,11 @@ public class Mainframe
     public boolean getIsMaster()
     {
         return isMaster;
+    }
+
+    public void setCanEdit(boolean flag)
+    {
+        canEdit = flag;
     }
 
     public boolean getCanEdit()
@@ -94,14 +122,22 @@ public class Mainframe
         }
         defaultCam.tick();
 
-        lastPing++;
-        //TODO if lastPing > 600 (30 secs)
+        if(!sessionEnded && !Minecraft.getInstance().isGamePaused())
+        {
+            lastPing++;
+            if(lastPing > 600)
+            {
+                sessionEnded = true;
+                addSystemMessage(I18n.format("system.cannotReachHost", master), false);
+            }
+        }
     }
 
     public void shutdown()
     {
         if(origin != null && !sessionEnded) //if we're on MP
         {
+            sendSystemMessage(I18n.format("system.sessionEnded", master));
             Tabula.channel.sendToServer(new PacketKillSession(origin));
         }
     }
@@ -117,7 +153,7 @@ public class Mainframe
         activeView = projects.size() - 1;
 
         //this is the first project you've opened.
-        if(projects.size() == 1 && workspace.getWindowType(WindowTexture.class) == null) // first project
+        if(projects.size() == 1 && workspace.getByWindowType(WindowTexture.class) == null) // first project
         {
             Window<?> window = new WindowTexture(workspace);
             workspace.addToDock(window, Constraint.Property.Type.RIGHT);
@@ -376,20 +412,94 @@ public class Mainframe
     //HOST STUFF
     public void listenerChange(String listener, boolean add)
     {
-        //TODO post to chat
         if(add)
         {
             listeners.add(listener);
+            if(Tabula.configClient.allowEveryoneToEdit)
+            {
+                editors.add(listener);
+            }
+
+            sendSystemMessage(I18n.format("system.joinedSession", listener));
+            addSystemMessage(I18n.format(editors.contains(listener) ? "system.isEditor" : "system.notEditor", listener), true);
+
+            if(editors.contains(listener))
+            {
+                Tabula.channel.sendToServer(new PacketEditorStatus(listener, true));
+            }
         }
         else
         {
             listeners.remove(listener);
+            sendSystemMessage(I18n.format("system.leftSession", listener));
         }
     }
 
-    public void sendChat(String s)
+    public void editorChange(String editor, boolean add) //TODO test this
     {
-        //TODO this;
+        if(add)
+        {
+            editors.add(editor);
+            sendSystemMessage(I18n.format("system.addEditor", master, editor));
+            Tabula.channel.sendToServer(new PacketEditorStatus(editor, true));
+        }
+        else
+        {
+            editors.remove(editor);
+            sendSystemMessage(I18n.format("system.removeEditor", master, editor));
+            Tabula.channel.sendToServer(new PacketEditorStatus(editor, false));
+        }
+    }
+
+    public void receiveChat(String s, boolean silent)
+    {
+        if(!silent && Tabula.configClient.chatSound && !s.startsWith(Minecraft.getInstance().getSession().getUsername()))
+        {
+            SoundEvent sound = ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("entity.experience_orb.pickup"));
+            if(sound != null)
+            {
+                Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(sound, 1F));
+            }
+        }
+        chatMessages.add(s);
+        workspace.updateChat();
+    }
+
+    public void addSystemMessage(String s, boolean silent)
+    {
+        String name = "System";
+        StringTextComponent text = new StringTextComponent(name);
+        text.setStyle(new Style().setColor(ElementTextWrapper.getRandomTextFormattingColorForName(name))).appendSibling(new StringTextComponent(" : " + s).setStyle(new Style().setColor(TextFormatting.WHITE)));
+        receiveChat(text.getFormattedText(), silent);
+    }
+
+    public void sendSystemMessage(String s)
+    {
+        if(origin != null && !sessionEnded)
+        {
+            String name = "System";
+            StringTextComponent text = new StringTextComponent(name);
+            text.setStyle(new Style().setColor(ElementTextWrapper.getRandomTextFormattingColorForName(name))).appendSibling(new StringTextComponent(" : " + s).setStyle(new Style().setColor(TextFormatting.WHITE)));
+            Tabula.channel.sendToServer(new PacketChat(origin, text.getFormattedText()));
+        }
+    }
+
+    public void sendChat(String s, boolean global)
+    {
+        if(origin != null && !sessionEnded)
+        {
+            if(global)
+            {
+                Minecraft.getInstance().player.sendChatMessage(s);
+            }
+            else
+            {
+                String name = Minecraft.getInstance().player.getName().getUnformattedComponentText();
+                StringTextComponent text = new StringTextComponent(name);
+                text.setStyle(new Style().setColor(ElementTextWrapper.getRandomTextFormattingColorForName(name))).appendSibling(new StringTextComponent(" : " + s).setStyle(new Style().setColor(TextFormatting.WHITE)));
+                Tabula.channel.sendToServer(new PacketChat(origin, text.getFormattedText()));
+            }
+        }
     }
 
     //END CONNECTION STUFF

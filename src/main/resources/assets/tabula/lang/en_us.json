@@ -66,6 +66,8 @@
 
   "window.chat.title": "Chat",
   "window.chat.textbox": "Hit ENTER to send",
+  "window.chat.global": "Global",
+  "window.chat.tabula": "Tabula",
 
   "window.notSaved.title": "Project not saved!",
   "window.notSaved.unsaved": "Project is not saved!",

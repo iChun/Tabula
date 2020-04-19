@@ -52,7 +52,7 @@ public class WindowSaveOverwrite extends Window<WorkspaceTabula>
             {
                 parent.parent.removeWindow(parent);
 
-                WindowSaveAs window = parent.parent.getWindowType(WindowSaveAs.class);
+                WindowSaveAs window = parent.parent.getByWindowType(WindowSaveAs.class);
                 if(window != null)
                 {
                     getWorkspace().removeWindow(window);
