@@ -187,6 +187,14 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
             }
+            else
+            {
+                //importMC to project
+                btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/importmc.png"), button -> openImportMCProject());
+                btn.setSize(20,20).setTooltip(I18n.format("topdock.importMC"));
+                btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
+                elements.add(last = btn);
+            }
 
             if(parentFragment.parent.mainframe.origin != null) // it's on a server
             {
@@ -230,7 +238,6 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                 btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
                 elements.add(last = btn);
             }
-
 
             //settings
             btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/settings.png"), button -> {
@@ -362,13 +369,9 @@ public class WindowToolbar extends Window<WorkspaceTabula>
 
         public void openImportMCProject()
         {
-            Mainframe.ProjectInfo info1 = parentFragment.parent.mainframe.getActiveProject();
-            if(info1 != null)
-            {
-                Window<?> window = new WindowImportMCProject(getWorkspace());
-                getWorkspace().openWindowInCenter(window, 0.4D, 0.8D);
-                window.init();
-            }
+            Window<?> window = new WindowImportMCProject(getWorkspace());
+            getWorkspace().openWindowInCenter(window, 0.4D, 0.8D);
+            window.init();
         }
 
         public void openExportProject()
@@ -447,7 +450,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
         public void paste(boolean sterile, boolean inPlace)
         {
             Mainframe.ProjectInfo info = parentFragment.parent.mainframe.getActiveProject();
-            if(info != null)
+            if(info != null && parentFragment.parent.clipboard != null)
             {
                 Identifiable<?> clone = (Identifiable<?>)parentFragment.parent.clipboard.clone();
                 clone.witnessProtectionProgramme();

@@ -1,6 +1,7 @@
 package me.ichun.mods.tabula.client.tabula;
 
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
+import me.ichun.mods.ichunutil.client.gui.bns.window.WindowPopup;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementList;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementTextWrapper;
@@ -16,6 +17,7 @@ import me.ichun.mods.tabula.common.Tabula;
 import me.ichun.mods.tabula.common.packet.PacketChat;
 import me.ichun.mods.tabula.common.packet.PacketEditorStatus;
 import me.ichun.mods.tabula.common.packet.PacketKillSession;
+import me.ichun.mods.tabula.common.packet.PacketProjectFragment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.resources.I18n;
@@ -27,10 +29,12 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -137,20 +141,37 @@ public class Mainframe
     {
         if(origin != null && !sessionEnded) //if we're on MP
         {
-            sendSystemMessage(I18n.format("system.sessionEnded", master));
+            if(getIsMaster())
+            {
+                sendSystemMessage(I18n.format("system.sessionEnded", master));
+            }
             Tabula.channel.sendToServer(new PacketKillSession(origin));
         }
     }
 
     //INPUT FROM CLIENT
-    public void openProject(Project project) //when opened using the UI
+    public void openProject(Project project, boolean isUserInput) //when opened using the UI
     {
+        if(isUserInput && !getCanEdit())
+        {
+            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            return;
+        }
+        if(getProjectInfoForProject(project) != null)
+        {
+            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.projectAlreadyOpen"));
+            return;
+        }
+
         //add the project
         ProjectInfo info = new ProjectInfo(this, project);
         projects.add(info);
 
-        //switch to view the active project
-        activeView = projects.size() - 1;
+        if(isUserInput || projects.size() == 1)
+        {
+            //switch to view the active project
+            activeView = projects.size() - 1;
+        }
 
         //this is the first project you've opened.
         if(projects.size() == 1 && workspace.getByWindowType(WindowTexture.class) == null) // first project
@@ -161,23 +182,50 @@ public class Mainframe
         }
 
         //Notify!
-        workspace.setCurrentProject(info);
+        workspace.setCurrentProject(getActiveProject());
         workspace.projectChanged(IProjectInfo.ChangeType.PROJECTS);
         workspace.projectChanged(IProjectInfo.ChangeType.PROJECT);
+
+        if(isUserInput && origin != null && !sessionEnded)
+        {
+            sendContent("", info.project.identifier, "", info.project, (byte)1);
+
+            if(info.project.getBufferedTexture() != null)
+            {
+                sendContent("", info.project.identifier, "", info.project.getBufferedTexture(), (byte)0);
+            }
+        }
     }
 
     public void editProject(Project project) //edited in the UI
     {
+        if(!getCanEdit())
+        {
+            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            return;
+        }
+
         ProjectInfo info = getProjectInfoForProject(project);
         if(info != null)
         {
             info.markProjectDirty();
             workspace.projectChanged(IProjectInfo.ChangeType.PROJECT);
+
+            if(origin != null && !sessionEnded)
+            {
+                sendContent("", info.project.identifier, "", info.project, (byte)2);
+            }
         }
     }
 
-    public void importProject(@Nonnull Project project, boolean texture)
+    public void importProject(@Nonnull Project project, boolean texture, boolean isUserInput)
     {
+        if(isUserInput && !getCanEdit())
+        {
+            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            return;
+        }
+
         ProjectInfo info = getActiveProject();
         if(info != null)
         {
@@ -187,14 +235,30 @@ public class Mainframe
                 info.textureFile = null;
                 info.textureFileMd5 = null;
                 workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
+
+                if(isUserInput && origin != null && !sessionEnded && info.project.getBufferedTexture() != null)
+                {
+                    sendContent("", info.project.identifier, "", info.project.getBufferedTexture(), (byte)0);
+                }
             }
             info.markProjectDirty();
             workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+
+            if(isUserInput && origin != null && !sessionEnded)
+            {
+                sendContent("", info.project.identifier, "", info.project, (byte)3);
+            }
         }
     }
 
-    public void closeProject(ProjectInfo info)
+    public void closeProject(ProjectInfo info, boolean isUserInput)
     {
+        if(isUserInput && !getCanEdit())
+        {
+            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            return;
+        }
+
         boolean currentProject = info == getActiveProject();
         if(currentProject)
         {
@@ -205,6 +269,11 @@ public class Mainframe
             }
             info.project.destroy();
             projects.remove(info);
+
+            if(isUserInput && origin != null && !sessionEnded)
+            {
+                sendContent("", info.project.identifier, "", "null", (byte)4);
+            }
         }
         workspace.setCurrentProject(getActiveProject());
         workspace.projectChanged(IProjectInfo.ChangeType.PROJECTS);
@@ -228,68 +297,150 @@ public class Mainframe
         }
     }
 
-    public void addPart(ProjectInfo info, Identifiable<?> parent, Project.Part part)
+    public void addPart(ProjectInfo info, Identifiable<?> parent, Project.Part part, boolean isUserInput)
     {
+        if(isUserInput && !getCanEdit())
+        {
+            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            return;
+        }
+
         if(info != null)
         {
             info.project.addPart(parent, part);
             info.markProjectDirty();
             workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+
+            if(isUserInput && origin != null && !sessionEnded)
+            {
+                sendContent("", info.project.identifier, parent.identifier, part, (byte)5);
+            }
         }
     }
 
-    public void addBox(ProjectInfo info, Identifiable<?> parent, Project.Part.Box box)
+    public void addBox(ProjectInfo info, Identifiable<?> parent, Project.Part.Box box, boolean isUserInput)
     {
+        if(isUserInput && !getCanEdit())
+        {
+            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            return;
+        }
+
         if(info != null)
         {
             info.project.addBox(parent, box);
             info.markProjectDirty();
             workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+
+            if(isUserInput && origin != null && !sessionEnded)
+            {
+                sendContent("", info.project.identifier, parent.identifier, box, (byte)6);
+            }
         }
     }
 
-    public void delete(ProjectInfo info, Identifiable<?> child) //parent should not be null
+    public void delete(ProjectInfo info, Identifiable<?> child, boolean isUserInput) //parent should not be null
     {
+        if(isUserInput && !getCanEdit())
+        {
+            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            return;
+        }
+
         if(info != null)
         {
             info.project.delete(child);
             info.markProjectDirty();
+
+            if(child instanceof Project.Part)
+            {
+                info.selectPart(null);
+            }
+            else if(child instanceof Project.Part.Box)
+            {
+                info.selectBox(null);
+            }
+
             workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+
+            if(isUserInput && origin != null && !sessionEnded)
+            {
+                sendContent("", info.project.identifier, child.identifier, "null", (byte)7);
+            }
         }
     }
 
-    public void updatePart(Project.Part part)
+    public void updatePart(Project.Part part, boolean isUserInput)
     {
+        if(isUserInput && !getCanEdit())
+        {
+            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            return;
+        }
+
         ProjectInfo info = getProjectInfoForProject(part.markDirty());
         if(info != null)
         {
             info.markProjectDirty();
             workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+
+            if(isUserInput && origin != null && !sessionEnded)
+            {
+                sendContent("", info.project.identifier, part.parent.identifier, part, (byte)8);
+            }
         }
     }
 
-    public void updateBox(Project.Part.Box box)
+    public void updateBox(Project.Part.Box box, boolean isUserInput)
     {
+        if(isUserInput && !getCanEdit())
+        {
+            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            return;
+        }
+
         ProjectInfo info = getProjectInfoForProject(box.markDirty());
         if(info != null)
         {
             info.markProjectDirty();
             workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
+
+            if(isUserInput && origin != null && !sessionEnded)
+            {
+                sendContent("", info.project.identifier, box.parent.identifier, box, (byte)9);
+            }
         }
     }
 
-    public void setImage(ProjectInfo info, BufferedImage image)
+    public void setImage(ProjectInfo info, BufferedImage image, boolean isUserInput)
     {
+        if(isUserInput && !getCanEdit())
+        {
+            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            return;
+        }
+
         if(info != null)
         {
             info.project.setBufferedTexture(image);
             info.markProjectDirty();
             workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
+
+            if(isUserInput && origin != null && !sessionEnded)
+            {
+                sendContent("", info.project.identifier, "", info.project.getBufferedTexture(), (byte)0);
+            }
         }
     }
 
     public void handleDragged(Identifiable<?> object, Identifiable<?> object1)
     {
+        if(!getCanEdit()) //this function is only called by user input
+        {
+            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            return;
+        }
+
         Project.Part draggedOnto = null;
         if(object1 instanceof Project.Part) // the item we dragged onto
         {
@@ -315,16 +466,28 @@ public class Mainframe
                 draggedOnto.adopt(box);
             }
             Project project = draggedOnto.getProject();
-            if(getActiveProject() != null && project == getActiveProject().project)
+            ProjectInfo info = getActiveProject();
+            if(info != null && project == info.project)
             {
-                getActiveProject().markProjectDirty();
+                info.markProjectDirty();
+
+                if(origin != null && !sessionEnded)
+                {
+                    sendContent("", info.project.identifier, "", info.project, (byte)2);
+                }
                 workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
             }
         }
     }
 
-    public void handleRearrange(List<ElementList.Item<?>> items, Identifiable<?> child, int oldIndex)
+    public void handleRearrange(List<ElementList.Item<?>> items, Identifiable<?> child)
     {
+        if(!getCanEdit()) //this function is only called by user input
+        {
+            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            return;
+        }
+
         Project project = child.getProject();
         if(getActiveProject() != null && project == getActiveProject().project)
         {
@@ -387,6 +550,10 @@ public class Mainframe
             if(info != null)
             {
                 info.markProjectDirty();
+                if(origin != null && !sessionEnded)
+                {
+                    sendContent("", info.project.identifier, "", info.project, (byte)2);
+                }
                 workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
             }
         }
@@ -394,6 +561,12 @@ public class Mainframe
 
     public void changeState(ProjectInfo info, boolean redo)
     {
+        if(!getCanEdit()) //this function is only called by user input
+        {
+            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            return;
+        }
+
         if(redo)
         {
             info.redo();
@@ -402,6 +575,10 @@ public class Mainframe
         {
             info.undo();
         }
+        if(origin != null && !sessionEnded)
+        {
+            sendContent("", info.project.identifier, "", info.project, (byte)2);
+        }
         workspace.projectChanged(IProjectInfo.ChangeType.PROJECT);
         workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
         workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
@@ -409,6 +586,82 @@ public class Mainframe
     //END INPUT STUFF
 
     //CONNECTION STUFF
+    //UPDATE STUFF
+    public void sendContent(String directed, String projIdent, String secondaryIdent, Object o, byte func) //empty string for directed to send to all
+    {
+        byte type;
+        byte[] data;
+        if(func == 0) //sending out an image
+        {
+            try
+            {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write((BufferedImage)o, "png", baos);
+                data = baos.toByteArray();
+            }
+            catch(IOException e){return;}
+            type = 0;
+        }
+        else //it's an identifiable
+        {
+            String obj = Project.SIMPLE_GSON.toJson(o);
+            try
+            {
+                data = IOUtil.compress(obj);
+            }
+            catch(IOException e){return;}
+            if(o instanceof Project)
+            {
+                type = 1;
+            }
+            else if(o instanceof Project.Part)
+            {
+                type = 2;
+            }
+            else if(o instanceof Project.Part.Box)
+            {
+                type = 3;
+            }
+            else if(o instanceof String)
+            {
+                type = 4;
+            }
+            else
+            {
+                return;
+            }
+        }
+        //1 = open project
+
+        final int maxFile = 31000; //smaller packet cause I'm worried about too much info carried over from the bloat vs hat info.
+
+        String fileName = RandomStringUtils.randomAscii(Project.IDENTIFIER_LENGTH);
+        int fileSize = data.length;
+
+        int packetsToSend = (int)Math.ceil((float)fileSize / (float)maxFile);
+
+        int packetCount = 0;
+        int offset = 0;
+        while(fileSize > 0)
+        {
+            byte[] fileBytes = new byte[Math.min(fileSize, maxFile)];
+            int index = 0;
+            while(index < fileBytes.length) //from index 0 to 31999
+            {
+                fileBytes[index] = data[index + offset];
+                index++;
+            }
+
+            Tabula.channel.sendToServer(new PacketProjectFragment(fileName, packetsToSend, packetCount, fileBytes, origin, directed, projIdent, secondaryIdent, type, func));
+
+            packetCount++;
+            fileSize -= 32000;
+            offset += index;
+        }
+
+    }
+
+
     //HOST STUFF
     public void listenerChange(String listener, boolean add)
     {
@@ -428,7 +681,13 @@ public class Mainframe
                 Tabula.channel.sendToServer(new PacketEditorStatus(listener, true));
             }
 
-            //TODO send what we have open etc to the listener
+            projects.forEach(info -> {
+                sendContent(listener, info.project.identifier, "", info.project, (byte)1);
+                if(info.project.getBufferedTexture() != null)
+                {
+                    sendContent(listener, info.project.identifier, "", info.project.getBufferedTexture(), (byte)0);
+                }
+            });
         }
         else
         {
@@ -523,7 +782,9 @@ public class Mainframe
         return null;
     }
 
-    public ProjectInfo getProjectWithIdentifier(String ident)
+
+    //GETTERS
+    public ProjectInfo getObjectWithIdentifier(String ident)
     {
         for(ProjectInfo info : projects)
         {
@@ -536,16 +797,23 @@ public class Mainframe
         return null;
     }
 
-    public ProjectInfo getProjectInfoForProject(Project project)
+    public ProjectInfo getProjectInfoByProjectIdentifier(String identifier)
     {
-        for(ProjectInfo info : projects)
+        for(int i = projects.size() - 1; i >= 0; i--)
         {
-            if(info.project == project)
+            ProjectInfo info = projects.get(i);
+            if(info.project.identifier.equals(identifier))
             {
                 return info;
             }
         }
         return null;
+    }
+
+
+    public ProjectInfo getProjectInfoForProject(Project project)
+    {
+        return getProjectInfoByProjectIdentifier(project.identifier);
     }
 
     public static class ProjectInfo
@@ -744,11 +1012,15 @@ public class Mainframe
                 state.autosaved = false;
 
                 this.project.transferTransients(project);
-                project.setBufferedTexture(state.image);
 
                 //DO NOT CALL DESTROY.
                 this.project = project;
                 this.project.adoptChildren();
+
+                if(this.project.getBufferedTexture() != state.image)
+                {
+                    mainframe.setImage(this, state.image, false);
+                }
 
                 selectPart(null); // this selects a null box for us anyway
             }
@@ -756,25 +1028,17 @@ public class Mainframe
 
         public void addPart(Identifiable<?> parent, Project.Part part)
         {
-            mainframe.addPart(this, parent, part);
+            mainframe.addPart(this, parent, part, true);
         }
 
         public void addBox(Identifiable<?> parent, Project.Part.Box box)
         {
-            mainframe.addBox(this, parent, box);
+            mainframe.addBox(this, parent, box, true);
         }
 
         public void delete(Identifiable<?> child)
         {
-            mainframe.delete(this, child);
-            if(child instanceof Project.Part)
-            {
-                selectPart(null);
-            }
-            else if(child instanceof Project.Part.Box)
-            {
-                selectBox(null);
-            }
+            mainframe.delete(this, child, true);
         }
 
         public Project.Part getSelectedPart()

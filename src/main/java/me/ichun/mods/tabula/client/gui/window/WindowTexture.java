@@ -54,7 +54,7 @@ public class WindowTexture extends Window<WorkspaceTabula>
                     currentInfo.textureFileMd5 = null;
                     currentInfo.project.textureFile = null;
                     currentInfo.project.textureFileMd5 = null;
-                    parentFragment.parent.mainframe.setImage(currentInfo, null);
+                    parentFragment.parent.mainframe.setImage(currentInfo, null, true);
                 }
             });
             btn.setSize(20, 20).setTooltip(I18n.format("window.texture.clearTexture"));
@@ -188,6 +188,8 @@ public class WindowTexture extends Window<WorkspaceTabula>
                             box.texOffY -= lowTexY;
                         }
                     }
+
+                    //TODO send the project out for updates.
                 }
             });
             btn3.setSize(20, 20).setTooltip(I18n.format("topdock.autoLayout"));
@@ -244,7 +246,7 @@ public class WindowTexture extends Window<WorkspaceTabula>
                                 }
                                 catch(IOException ignored){}
 
-                                parentFragment.parent.mainframe.setImage(currentInfo, image);
+                                parentFragment.parent.mainframe.setImage(currentInfo, image, true);
                             }
                         }
                     }

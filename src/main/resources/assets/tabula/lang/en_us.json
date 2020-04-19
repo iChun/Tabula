@@ -200,6 +200,7 @@
   "system.hostingOther": "%s is hosting this Tabula session.",
   "system.cannotReachHost": "%s (host) is unavailable. They might have crashed or disconnected. Consider saving the models for them before exiting.",
   "system.sessionEnded": "%s (host) has ended session.",
+  "system.projectAlreadyOpen": "That project appears to already be open.",
 
   "tabula.config.cat.multiplayer.name": "Multiplayer",
   "tabula.config.cat.others.name": "Others",

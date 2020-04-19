@@ -541,13 +541,13 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                 catch(IOException ignored){}
             }
 
-            if(((ElementToggle)getById("buttonProject")).toggleState)
+            if(((ElementToggle)getById("buttonProject")).toggleState || parentFragment.parent.mainframe.getActiveProject() == null)
             {
-                parentFragment.parent.mainframe.openProject(project);
+                parentFragment.parent.mainframe.openProject(project, true);
             }
             else
             {
-                parentFragment.parent.mainframe.importProject(project, texture);
+                parentFragment.parent.mainframe.importProject(project, texture, true);
             }
         }
     }

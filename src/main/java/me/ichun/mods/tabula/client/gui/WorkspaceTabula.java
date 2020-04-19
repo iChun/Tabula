@@ -7,7 +7,6 @@ import me.ichun.mods.ichunutil.client.gui.bns.Workspace;
 import me.ichun.mods.ichunutil.client.gui.bns.window.*;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
-import me.ichun.mods.ichunutil.client.model.ModelHelper;
 import me.ichun.mods.ichunutil.client.model.ModelTabula;
 import me.ichun.mods.ichunutil.client.render.RenderHelper;
 import me.ichun.mods.ichunutil.common.iChunUtil;
@@ -24,7 +23,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.entity.model.SpiderModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
@@ -90,6 +88,12 @@ public class WorkspaceTabula extends Workspace
 
     public void closeProject(Mainframe.ProjectInfo projectInfo)
     {
+        if(closing && !mainframe.getIsMaster())
+        {
+            mainframe.closeProject(projectInfo, false);
+            return;
+        }
+
         if(projectInfo.project.isDirty) //interrupt with prompts
         {
             WindowYesNoCancel window = new WindowYesNoCancel(this, "window.notSaved.title", I18n.format("window.notSaved.save"), workspace -> {
@@ -113,7 +117,7 @@ public class WorkspaceTabula extends Workspace
             }, workspace ->
             {
                 projectInfo.project.isDirty = false;
-                mainframe.closeProject(projectInfo);
+                mainframe.closeProject(projectInfo, true);
             }, //do nothing. we're not saving.
                     workspace -> {
                         closing = false; //disable closing (if we are)
@@ -123,7 +127,7 @@ public class WorkspaceTabula extends Workspace
         }
         else
         {
-            mainframe.closeProject(projectInfo);
+            mainframe.closeProject(projectInfo, true);
         }
     }
 
@@ -220,20 +224,7 @@ public class WorkspaceTabula extends Workspace
     {
         super.init();
 
-        SpiderModel model = new SpiderModel(); //TODO remove this
-        model.isChild = false;
-        model.setRotationAngles(null, 0F, 0F ,0F, 0F, 0F);
-        Project project = ModelHelper.convertModelToProject(model);
-
-        //        Project project = new Project();
-        //        project.name = "MyFirstModel";
-        //        project.author = "sugar tits";
-        //        project.texWidth = 64;
-        //        project.texHeight = 32;
-        this.mainframe.openProject(project);
-
-        //        this.mainframe.getActiveProject().addPart(null);
-
+        windowToolbar.setCurrentProject(null);
         if(mainframe.origin != null) //multiplayer
         {
             Window<?> chat = getByWindowType(WindowChat.class);
@@ -241,8 +232,7 @@ public class WorkspaceTabula extends Workspace
             {
                 chat = new WindowChat(this);
                 addWindow(chat);
-
-                putInCenter(chat); //TODO we ain't putting in the center.
+                chat.setPosX(-10000);
                 chat.init();
             }
         }

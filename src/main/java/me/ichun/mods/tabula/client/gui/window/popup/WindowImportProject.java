@@ -117,7 +117,7 @@ public class WindowImportProject extends Window<WorkspaceTabula>
             }
             else
             {
-                parentFragment.parent.mainframe.importProject(project, ((ElementToggle)getById("buttonTexture")).toggleState);
+                parentFragment.parent.mainframe.importProject(project, ((ElementToggle)getById("buttonTexture")).toggleState, true);
             }
         }
     }

@@ -137,7 +137,7 @@ public class WindowNewTexture extends Window<WorkspaceTabula>
                     parentFragment.parent.projectChanged(IProjectInfo.ChangeType.PROJECT);
                 }
 
-                parentFragment.parent.mainframe.setImage(info, image);
+                parentFragment.parent.mainframe.setImage(info, image, true);
             }
         }
     }

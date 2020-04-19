@@ -73,7 +73,7 @@ public class EventHandlerClient
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onClientChatReceived(ClientChatReceivedEvent event)
     {
-        if(event.getType().equals(ChatType.CHAT))
+        if(event.getType().equals(ChatType.CHAT) || event.getType().equals(ChatType.SYSTEM))
         {
             Screen screen = Minecraft.getInstance().currentScreen;
             if(screen instanceof WorkspaceTabula)

@@ -140,7 +140,7 @@ public class WindowNewProject extends Window<WorkspaceTabula>
             project.texWidth = ((ElementNumberInput)getById("texWidth")).getInt();
             project.texHeight = ((ElementNumberInput)getById("texHeight")).getInt();
             project.markDirty();
-            parentFragment.parent.mainframe.openProject(project);
+            parentFragment.parent.mainframe.openProject(project, true);
             getWorkspace().removeWindow(parentFragment);
         }
     }

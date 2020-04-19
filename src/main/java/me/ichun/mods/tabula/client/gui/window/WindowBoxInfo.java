@@ -220,7 +220,7 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
                 String postUpdate = currentBox.getJsonWithoutChildren();
                 if(!postUpdate.equals(preUpdate))
                 {
-                    parentFragment.mainframe.updateBox(currentBox);
+                    parentFragment.mainframe.updateBox(currentBox, true);
                 }
             }
         }

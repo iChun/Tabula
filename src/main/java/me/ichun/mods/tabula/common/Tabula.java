@@ -66,14 +66,13 @@ public class Tabula
         bus.addListener(this::onClientSetup);
 
         channel = new PacketChannel(new ResourceLocation(MOD_ID, "channel"), PROTOCOL,
-                PacketRequestSession.class, PacketPing.class, PacketKillSession.class, PacketListenerChange.class, PacketChat.class, PacketEditorStatus.class
+                PacketRequestSession.class, PacketPing.class, PacketKillSession.class, PacketListenerChange.class, PacketChat.class, PacketEditorStatus.class, PacketProjectFragment.class
         );
     }
 
     private void onClientSetup(FMLClientSetupEvent event)
     {
         ClientRegistry.bindTileEntityRenderer(TileEntityTypes.TABULA_RASA.get(), TileRendererTabulaRasa::new);
-//        TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(new ResourceLocation("tabula", "textures/model/tabularasa.png"));
     }
 
     private void onTextureStitchEvent(TextureStitchEvent.Pre event)

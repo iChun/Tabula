@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
+import java.util.ArrayList;
 
 public class WindowChat extends Window<WorkspaceTabula>
 {
@@ -26,7 +26,9 @@ public class WindowChat extends Window<WorkspaceTabula>
         setId("windowChat");
         size(300, 200);
 
-        updateChat();
+        ViewChat chat = (ViewChat)currentView;
+        chat.chatMessages.setText(parent.mainframe.chatMessages);
+        chat.chatMessages.init();
     }
 
     public void updateChat()
@@ -110,10 +112,14 @@ public class WindowChat extends Window<WorkspaceTabula>
                             ElementList.Item item = userList.addItem(name);
                             if(!isHost)
                             {
-                                ElementContextMenu menu = new ElementContextMenu(item, Collections.singletonList(isEditor ? I18n.format("topdock.removeEditor") : I18n.format("topdock.addEditor")), ((iContextMenu, item1) -> {
+                                ArrayList<String> objects = new ArrayList<>();
+                                objects.add(isEditor ? I18n.format("topdock.removeEditor") : I18n.format("topdock.addEditor"));
+                                ElementContextMenu menu = new ElementContextMenu(item, objects, ((iContextMenu, item1) -> {
                                     if(item1.selected)
                                     {
-                                        parentFragment.parent.mainframe.editorChange(name, !isEditor);
+                                        parentFragment.parent.mainframe.editorChange(name, !parentFragment.parent.mainframe.editors.contains(name));
+                                        objects.clear();
+                                        objects.add(parentFragment.parent.mainframe.editors.contains(name) ? I18n.format("topdock.removeEditor") : I18n.format("topdock.addEditor"));
                                     }
                                 }));
                                 item.addElement(menu);

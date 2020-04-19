@@ -275,7 +275,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
                 String postUpdate = currentPart.getJsonWithoutChildren();
                 if(!postUpdate.equals(preUpdate))
                 {
-                    parentFragment.mainframe.updatePart(currentPart);
+                    parentFragment.mainframe.updatePart(currentPart, true);
                 }
             }
         }

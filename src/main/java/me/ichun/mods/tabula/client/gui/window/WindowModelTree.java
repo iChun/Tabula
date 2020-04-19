@@ -71,7 +71,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
             })
             .setRearrangeHandler((item, integer) -> 
             {
-                parent.mainframe.handleRearrange(list.items, ((Identifiable<?>)item.getObject()), integer);
+                parent.mainframe.handleRearrange(list.items, ((Identifiable<?>)item.getObject()));
             })
             ;
             list.setConstraint(new Constraint(list).bottom(sh, Constraint.Property.Type.TOP, 0).left(this, Constraint.Property.Type.LEFT, spaceBottom).right(sv, Constraint.Property.Type.LEFT, 0).top(this, Constraint.Property.Type.TOP, spaceBottom));
@@ -112,7 +112,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                                 currentInfo.getSelectedPart().notes.add(oriText.getText());
                             }
                         }
-                        parentFragment.mainframe.updatePart(currentInfo.getSelectedPart());
+                        parentFragment.mainframe.updatePart(currentInfo.getSelectedPart(), true);
                     });
                     window.setId("windowEditPartMeta");
                     getWorkspace().openWindowInCenter(window, 0.6D, 0.8D);
@@ -224,7 +224,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                     });
                     item.setRightClickConsumer((mouseX, mouseY, itemObj) -> {
                         itemObj.getObject().showModel = !itemObj.getObject().showModel;
-                        parentFragment.mainframe.updatePart(itemObj.getObject());
+                        parentFragment.mainframe.updatePart(itemObj.getObject(), true);
                     });
 
                     int newIndent = indent + 10;
