@@ -35,6 +35,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -853,6 +854,7 @@ public class WorkspaceTabula extends Workspace
         if(canClose())
         {
             Minecraft mc = Minecraft.getInstance();
+            mainframe.shutdown();
             super.onClose();
             if(oriScale != mc.gameSettings.guiScale)
             {
@@ -867,14 +869,18 @@ public class WorkspaceTabula extends Workspace
         return mainframe.projects.isEmpty();
     }
 
-    public static WorkspaceTabula create(Screen lastScreen)
+    public static WorkspaceTabula create(@Nonnull String master)
     {
         Minecraft mc = Minecraft.getInstance();
-        WorkspaceTabula workspace = new WorkspaceTabula(lastScreen, new Mainframe(mc.getSession().getUsername()), mc.gameSettings.guiScale);
+        WorkspaceTabula workspace = new WorkspaceTabula(Minecraft.getInstance().currentScreen, new Mainframe(!master.isEmpty() ? master : mc.getSession().getUsername()), mc.gameSettings.guiScale);
         if(Tabula.configClient.forceGuiScale >= 0)
         {
             mc.gameSettings.guiScale = Tabula.configClient.forceGuiScale;
             mc.updateWindowSize();
+        }
+        if(master.equals(mc.getSession().getUsername()))
+        {
+            workspace.mainframe.setMaster();
         }
 
         return workspace;

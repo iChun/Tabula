@@ -1,5 +1,7 @@
 package me.ichun.mods.tabula.common.block;
 
+import me.ichun.mods.tabula.common.Tabula;
+import me.ichun.mods.tabula.common.packet.PacketRequestSession;
 import me.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
@@ -74,11 +76,11 @@ public class BlockTabulaRasa extends Block
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit)
     {
-//        if(world.isRemote)
-//        {
-//            Tabula.channel.sendToServer(new PacketRequestSession(pos.getX(), pos.getY(), pos.getZ()));
-//        }
-        return ActionResultType.PASS;
+        if(world.isRemote)
+        {
+            Tabula.channel.sendToServer(new PacketRequestSession(pos, ""));
+        }
+        return ActionResultType.SUCCESS;
     }
 
     @Override
@@ -124,7 +126,6 @@ public class BlockTabulaRasa extends Block
             {
                 world.removeBlock(pos, false);
                 spawnDrops(state, world, pos);
-//                spawnAsEntity(world, pos, new ItemStack(Tabula.blockTabulaRasa, 1));
             }
         }
     }

@@ -61,8 +61,7 @@ public class EventHandlerClient
             }
 
             event.addWidget(new Button(btnX, btnY, 20, 20, "T", button -> {
-                WorkspaceTabula screen = WorkspaceTabula.create(Minecraft.getInstance().currentScreen);
-                screen.mainframe.setMaster();
+                WorkspaceTabula screen = WorkspaceTabula.create(Minecraft.getInstance().getSession().getUsername());
                 Minecraft.getInstance().displayGuiScreen(screen);
             }));
         }

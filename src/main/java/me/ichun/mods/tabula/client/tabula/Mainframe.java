@@ -12,7 +12,9 @@ import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.client.gui.window.WindowModelTree;
 import me.ichun.mods.tabula.client.gui.window.WindowTexture;
 import me.ichun.mods.tabula.common.Tabula;
+import me.ichun.mods.tabula.common.packet.PacketKillSession;
 import net.minecraft.util.Util;
+import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
@@ -20,6 +22,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Mainframe
@@ -27,13 +30,15 @@ public class Mainframe
     public ArrayList<ProjectInfo> projects = new ArrayList<>();
 
     //only on the master.
-    public ArrayList<String> listeners = new ArrayList<>();
-    public ArrayList<String> editors = new ArrayList<>();
+    public HashSet<String> listeners = new HashSet<>();
+    public HashSet<String> editors = new HashSet<>();
 
-    public boolean isMaster;
-    public boolean canEdit;
+    private boolean isMaster;
+    private boolean canEdit;
     public String master; //who is the master
     public boolean sessionEnded;
+    public BlockPos origin; //only set if it's multiplayer
+    public int lastPing;
 
     public Camera defaultCam = new Camera();
     public int activeView = -1;
@@ -60,6 +65,22 @@ public class Mainframe
         return this;
     }
 
+    public Mainframe setOrigin(BlockPos pos)
+    {
+        this.origin = pos;
+        return this;
+    }
+
+    public boolean getIsMaster()
+    {
+        return isMaster;
+    }
+
+    public boolean getCanEdit()
+    {
+        return canEdit;
+    }
+
     public void setWorkspace(WorkspaceTabula workspace)
     {
         this.workspace = workspace;
@@ -72,9 +93,19 @@ public class Mainframe
             project.tick();
         }
         defaultCam.tick();
+
+        lastPing++;
+        //TODO if lastPing > 600 (30 secs)
     }
 
-    //CONNECTION STUFF
+    public void shutdown()
+    {
+        if(origin != null && !sessionEnded) //if we're on MP
+        {
+            Tabula.channel.sendToServer(new PacketKillSession(origin));
+        }
+    }
+
     //INPUT FROM CLIENT
     public void openProject(Project project) //when opened using the UI
     {
@@ -339,9 +370,30 @@ public class Mainframe
         workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
         workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
     }
+    //END INPUT STUFF
 
+    //CONNECTION STUFF
+    //HOST STUFF
+    public void listenerChange(String listener, boolean add)
+    {
+        //TODO post to chat
+        if(add)
+        {
+            listeners.add(listener);
+        }
+        else
+        {
+            listeners.remove(listener);
+        }
+    }
 
-    //WHEN SHOULD WE SEND OUT SERVER STUFF?
+    public void sendChat(String s)
+    {
+        //TODO this;
+    }
+
+    //END CONNECTION STUFF
+
 
     //LOCAL
     public Camera getCamera()

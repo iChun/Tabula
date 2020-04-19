@@ -231,5 +231,5 @@
   "tabula.config.prop.chatWindow.comment": "Don't touch this. Seriously.",
   "tabula.config.prop.tooltipTime.comment": "Time (in ticks) for tooltip to appear.",
 
-  "block.tabula.block.tabularasa": "Wax Tablet"
+  "block.tabula.tabularasa": "Wax Tablet"
 }

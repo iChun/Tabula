@@ -6,6 +6,10 @@ import me.ichun.mods.tabula.client.core.EventHandlerClient;
 import me.ichun.mods.tabula.client.core.ResourceHelper;
 import me.ichun.mods.tabula.client.render.TileRendererTabulaRasa;
 import me.ichun.mods.tabula.common.block.BlockTabulaRasa;
+import me.ichun.mods.tabula.common.packet.PacketKillSession;
+import me.ichun.mods.tabula.common.packet.PacketListenerChange;
+import me.ichun.mods.tabula.common.packet.PacketPing;
+import me.ichun.mods.tabula.common.packet.PacketRequestSession;
 import me.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.AtlasTexture;
@@ -37,6 +41,7 @@ public class Tabula
     public static final String MOD_ID = "tabula";
     public static final String MOD_NAME = "Tabula";
     public static final String VERSION = "8.0.0";
+    public static final String PROTOCOL = "1";
 
     public static final Logger LOGGER = LogManager.getLogger();
 
@@ -63,6 +68,9 @@ public class Tabula
         TileEntityTypes.REGISTRY.register(bus);
         bus.addListener(this::onClientSetup);
 
+        channel = new PacketChannel(new ResourceLocation(MOD_ID, "channel"), PROTOCOL,
+                PacketRequestSession.class, PacketPing.class, PacketKillSession.class, PacketListenerChange.class
+        );
     }
 
     private void onClientSetup(FMLClientSetupEvent event)

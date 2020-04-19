@@ -29,7 +29,7 @@ public class WindowBoxInfo extends Window<WorkspaceTabula>
 
         setView(viewBoxInfo = new ViewBoxInfo(this));
         setId("windowBoxInfo");
-        size(180 + borderSize.get(), 150);
+        size(180 + borderSize.get(), 170);
     }
 
     public static class ViewBoxInfo extends View<WindowBoxInfo>
