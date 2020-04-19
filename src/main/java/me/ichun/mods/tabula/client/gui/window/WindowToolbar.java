@@ -202,6 +202,11 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                             chat.constraint.apply();
                             chat.resize(Minecraft.getInstance(), chat.getParentWidth(), chat.getParentHeight());
                             chat.updateChat();
+
+                            WindowChat.ViewChat chatView = (WindowChat.ViewChat)chat.currentView;
+                            chatView.scroll.setScrollProg(1F);
+
+                            chatView.chatMessages.init();
                         }
                         else //hide chat?
                         {
@@ -211,6 +216,13 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                             }
 
                             chat.setPosX(-10000);
+
+                            chat.updateChat();
+
+                            WindowChat.ViewChat chatView = (WindowChat.ViewChat)chat.currentView;
+                            chatView.scroll.setScrollProg(1F);
+
+                            chatView.chatMessages.init();
                         }
                     }
                 });
