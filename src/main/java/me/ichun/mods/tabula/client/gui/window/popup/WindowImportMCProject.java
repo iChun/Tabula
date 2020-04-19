@@ -403,6 +403,17 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
             MODELS.add(new ModelInfo(new ResourceLocation("textures/entity/steve.png"), new PlayerModel<>(0F, false), Minecraft.getInstance().getRenderManager().skinMap.get("default")));
             MODELS.add(new ModelInfo(new ResourceLocation("textures/entity/alex.png"), new PlayerModel<>(0F, true), Minecraft.getInstance().getRenderManager().skinMap.get("slim")));
 
+            MODELS.removeIf(info -> {
+                for(Class<? extends Model> aClass : Tabula.modelBlacklist)
+                {
+                    if(aClass.isAssignableFrom(info.model.getClass()))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            });
+
             Collections.sort(MODELS);
 
             Workspace.registerObjectInterpreter(ModelInfo.class, o -> {

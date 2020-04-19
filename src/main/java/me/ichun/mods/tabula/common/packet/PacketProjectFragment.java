@@ -92,6 +92,35 @@ public class PacketProjectFragment extends PacketDataFragment
                                 .forEach(player1 -> Tabula.channel.sendTo(new PacketProjectFragment(this.fileName, this.packetTotal, this.packetNumber, this.data, this.pos, this.directed, this.projIdent, this.secondaryIdent, this.type, this.func), (ServerPlayerEntity)player1));
                     }
                 }
+                else if(directed.equals("Server"))
+                {
+                    World world = player.world;
+                    TileEntity tileEntity = world.getTileEntity(pos);
+                    if(tileEntity instanceof TileEntityTabulaRasa)
+                    {
+                        TileEntityTabulaRasa tabulaRasa = (TileEntityTabulaRasa)tileEntity;
+                        if(tabulaRasa.host.equals(player.getName().getUnformattedComponentText()))
+                        {
+                            byte[] data = process(LogicalSide.SERVER);
+                            if(data != null)
+                            {
+                                try
+                                {
+                                    if(projIdent.equals("project"))
+                                    {
+                                        tabulaRasa.projectString = IOUtil.decompress(data);
+                                    }
+                                    else
+                                    {
+                                        InputStream is = new ByteArrayInputStream(data);
+                                        tabulaRasa.projectImage = ImageIO.read(is);
+                                    }
+                                }
+                                catch(IOException ignored){}
+                            }
+                        }
+                    }
+                }
                 else
                 {
                     for(PlayerEntity worldPlayer : player.world.getPlayers())
@@ -242,7 +271,35 @@ public class PacketProjectFragment extends PacketDataFragment
                             catch(IOException ignored){}
                         }
                     }
-
+                    else if(func == -1) //project data
+                    {
+                        TileEntity te = Minecraft.getInstance().world.getTileEntity(pos);
+                        if(te instanceof TileEntityTabulaRasa)
+                        {
+                            TileEntityTabulaRasa tabulaRasa = (TileEntityTabulaRasa)te;
+                            try
+                            {
+                                if(projIdent.equals("project"))
+                                {
+                                    String s = IOUtil.decompress(data);
+                                    Project project = Project.SIMPLE_GSON.fromJson(s, Project.class);
+                                    if(tabulaRasa.project != null)
+                                    {
+                                        tabulaRasa.project.transferTransients(project);
+                                    }
+                                    tabulaRasa.project = project;
+                                    tabulaRasa.project.adoptChildren();
+                                }
+                                else if(tabulaRasa.project != null)
+                                {
+                                    InputStream is = new ByteArrayInputStream(data);
+                                    BufferedImage image = ImageIO.read(is);
+                                    tabulaRasa.project.setBufferedTexture(image);
+                                }
+                            }
+                            catch(IOException ignored){}
+                        }
+                    }
                 }
             }
         });

@@ -4,6 +4,7 @@ import me.ichun.mods.ichunutil.common.network.AbstractPacket;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.common.Tabula;
 import me.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -57,6 +58,11 @@ public class PacketRequestSession extends AbstractPacket
                     if(tabulaRasa.host.isEmpty())
                     {
                         tabulaRasa.host = player.getName().getUnformattedComponentText(); //you are now the host!
+                        tabulaRasa.projectString = null;
+                        tabulaRasa.projectImage = null;
+
+                        BlockState state = world.getBlockState(pos);
+                        world.notifyBlockUpdate(pos, state, state, 3);
                     }
                     else
                     {

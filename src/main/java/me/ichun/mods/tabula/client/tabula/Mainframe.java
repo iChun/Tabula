@@ -54,6 +54,9 @@ public class Mainframe
     public String master; //who is the master
     public boolean sessionEnded;
     public BlockPos origin; //only set if it's multiplayer
+    public int mpAge;
+    public String mpString;
+    public BufferedImage mpImage;
     public int lastPing;
     public ArrayList<String> chatMessages = new ArrayList<>();
 
@@ -126,13 +129,40 @@ public class Mainframe
         }
         defaultCam.tick();
 
-        if(origin != null && !sessionEnded && !Minecraft.getInstance().isGamePaused() && !master.equals(Minecraft.getInstance().getSession().getUsername()))
+        if(origin != null && !sessionEnded && !Minecraft.getInstance().isGamePaused())
         {
-            lastPing++;
-            if(lastPing > 600)
+            if(master.equals(Minecraft.getInstance().getSession().getUsername()))
             {
-                sessionEnded = true;
-                addSystemMessage(I18n.format("system.cannotReachHost", master), false);
+                mpAge++;
+                if(mpAge % 100 == 0)
+                {
+                    ProjectInfo info = getActiveProject();
+                    if(info != null)
+                    {
+                        String projString = Project.SIMPLE_GSON.toJson(info.project);
+                        BufferedImage image = info.project.getBufferedTexture();
+
+                        if(!projString.equals(mpString))
+                        {
+                            mpString = projString;
+                            sendContent("Server", "project", "", info.project, (byte)-1);
+                        }
+                        if(!image.equals(mpImage))
+                        {
+                            mpImage = image;
+                            sendContent("Server", "image", "", mpImage, (byte)-1);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                lastPing++;
+                if(lastPing > 600)
+                {
+                    sessionEnded = true;
+                    addSystemMessage(I18n.format("system.cannotReachHost", master), false);
+                }
             }
         }
     }
@@ -591,7 +621,7 @@ public class Mainframe
     {
         byte type;
         byte[] data;
-        if(func == 0) //sending out an image
+        if(func == 0 || func == -1 && projIdent.equals("image")) //sending out an image
         {
             try
             {

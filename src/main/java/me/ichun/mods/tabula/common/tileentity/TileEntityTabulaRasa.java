@@ -1,8 +1,10 @@
 package me.ichun.mods.tabula.common.tileentity;
 
+import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.common.Tabula;
 import me.ichun.mods.tabula.common.packet.PacketKillSession;
 import me.ichun.mods.tabula.common.packet.PacketPing;
+import me.ichun.mods.tabula.common.packet.PacketRequestProject;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -11,7 +13,10 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.awt.image.BufferedImage;
 import java.util.HashSet;
 
 public class TileEntityTabulaRasa extends TileEntity
@@ -23,6 +28,13 @@ public class TileEntityTabulaRasa extends TileEntity
     public HashSet<String> listeners = new HashSet<>();
 
     public int lastPing;
+
+    public String projectString;
+    public BufferedImage projectImage;
+
+    @OnlyIn(Dist.CLIENT)
+    public Project project;
+    public int projectReq;
 
     public TileEntityTabulaRasa()
     {
@@ -49,6 +61,27 @@ public class TileEntityTabulaRasa extends TileEntity
                 }
             }
         }
+        else
+        {
+            if(host != null && !host.isEmpty())
+            {
+                projectReq--;
+            }
+            else
+            {
+                if(project != null)
+                {
+                    project.destroy();
+                }
+                project = null;
+                projectReq = 0;
+            }
+        }
+    }
+
+    public void requestProject()
+    {
+        Tabula.channel.sendToServer(new PacketRequestProject(pos));
     }
 
     public void killSession()
@@ -58,6 +91,11 @@ public class TileEntityTabulaRasa extends TileEntity
         host = "";
         listeners.clear();
         lastPing = 0;
+        projectString = null;
+        projectImage = null;
+
+        BlockState state = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, state, state, 3);
     }
 
     public ServerPlayerEntity getHost()

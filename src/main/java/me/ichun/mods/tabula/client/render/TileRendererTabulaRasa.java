@@ -1,8 +1,10 @@
 package me.ichun.mods.tabula.client.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import me.ichun.mods.tabula.client.model.ModelWaxTablet;
 import me.ichun.mods.tabula.common.tileentity.TileEntityTabulaRasa;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Vector3f;
@@ -34,6 +36,34 @@ public class TileRendererTabulaRasa extends TileEntityRenderer<TileEntityTabulaR
         matrixStackIn.rotate(Vector3f.YP.rotationDegrees((tr.facing.getHorizontalIndex() * 90F)));
 
         model.render(matrixStackIn, MATERIAL_MODEL.getBuffer(bufferIn, RenderType::getEntityCutoutNoCull), combinedLightIn, combinedOverlayIn, 1F, 1F, 1F, 1F);
+
+        if(!tr.host.isEmpty())
+        {
+            if(tr.projectReq <= 0)
+            {
+                tr.projectReq = 100;
+                tr.requestProject();
+            }
+
+            if(tr.project != null)
+            {
+                RenderSystem.enableBlend();
+                RenderSystem.defaultBlendFunc();
+
+                matrixStackIn.push();
+
+                matrixStackIn.scale(0.2F, 0.2F, 0.2F);
+                matrixStackIn.translate(0F, -2.6005F, 0F);
+
+                float ticks = Minecraft.getInstance().player.ticksExisted + partialTicks;
+                matrixStackIn.translate(0F, 0.5F * Math.sin(Math.toRadians(ticks * 2)), 0F);
+                matrixStackIn.rotate(Vector3f.YP.rotationDegrees(1F * ticks));
+
+                tr.project.getModel().render(matrixStackIn, null, null, false, 1F);
+
+                matrixStackIn.pop();
+            }
+        }
 
         matrixStackIn.pop();
 
