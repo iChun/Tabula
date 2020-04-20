@@ -882,14 +882,18 @@ public class WorkspaceTabula extends Workspace
         closing = true;
         if(canClose())
         {
-            Minecraft mc = Minecraft.getInstance();
-            mainframe.shutdown();
             super.onClose();
-            if(oriScale != mc.gameSettings.guiScale)
-            {
-                mc.gameSettings.guiScale = oriScale;
-                mc.updateWindowSize();
-            }
+        }
+    }
+
+    @Override
+    public void removed()
+    {
+        mainframe.shutdown();
+        if(oriScale != minecraft.gameSettings.guiScale)
+        {
+            minecraft.gameSettings.guiScale = oriScale;
+            minecraft.updateWindowSize();
         }
     }
 
