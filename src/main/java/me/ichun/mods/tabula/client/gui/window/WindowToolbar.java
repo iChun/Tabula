@@ -37,9 +37,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
         mainframe = parent.mainframe;
 
         borderSize = () -> 0;
-        disableDocking();
-        disableDockStacking();
-        disableUndocking();
+        disableDockingEntirely();
         disableBringToFront();
         disableDrag();
         disableDragResize();

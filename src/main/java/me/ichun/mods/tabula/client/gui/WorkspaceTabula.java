@@ -871,7 +871,7 @@ public class WorkspaceTabula extends Workspace
         {
             for(Window<?> window : windows)
             {
-                if(window.getClass().getName().contains("popup")) //I'm lazy ok
+                if(window.getClass().getName().contains("popup") || window instanceof WindowEditList) //I'm lazy ok
                 {
                     removeWindow(window);
                     return;
