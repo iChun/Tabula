@@ -247,8 +247,6 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                         return;
                     }
                 }
-
-                parentFragment.parent.removed();
                 parentFragment.parent.getMinecraft().displayGuiScreen(EventHandlerClient.getConfigGui(parentFragment.parent.getMinecraft(), parentFragment.parent));
             });
             btn.setSize(20,20).setTooltip(I18n.format("topdock.settings"));
