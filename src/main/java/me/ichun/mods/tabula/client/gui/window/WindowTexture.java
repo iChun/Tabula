@@ -158,7 +158,7 @@ public class WindowTexture extends Window<WorkspaceTabula>
                         }
 
                         if(breakout >= 150000 || collide) {
-                            WindowPopup.popup(parent.parent, 0.4D, 0.4D, w->{}, I18n.format("window.autoLayout.failed"));
+                            WindowPopup.popup(parent.parent, 0.4D, 140, w->{}, I18n.format("window.autoLayout.failed"));
                         }
                     }
 

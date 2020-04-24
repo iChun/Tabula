@@ -112,18 +112,18 @@ public class WindowOpenProject extends Window<WorkspaceTabula>
             Project project = ImportList.createProjectFromFile(file);
             if(project == null)
             {
-                WindowPopup.popup(parentFragment.parent, 0.4D, 0.3D, null, I18n.format("window.open.failed"));
+                WindowPopup.popup(parentFragment.parent, 0.4D, 140, null, I18n.format("window.open.failed"));
             }
             else
             {
                 if(project.tampered)
                 {
-                    WindowPopup.popup(parentFragment.parent, 0.5D, 0.5D, null, I18n.format("window.open.tampered"));
+                    WindowPopup.popup(parentFragment.parent, 0.5D, 160, null, I18n.format("window.open.tampered"));
                 }
 
                 if(project.isOldTabula && !Tabula.configClient.ignoreOldTabulaWarning)
                 {
-                    WindowPopup.popup(parentFragment.parent, 0.5D, 0.5D, null, I18n.format("window.open.oldTabula1"), I18n.format("window.open.oldTabula2"), I18n.format("window.open.oldTabula3"), I18n.format("window.open.oldTabula4"));
+                    WindowPopup.popup(parentFragment.parent, 0.5D, 300, null, I18n.format("window.open.oldTabula1"), I18n.format("window.open.oldTabula2"), I18n.format("window.open.oldTabula3"), I18n.format("window.open.oldTabula4"));
                 }
 
                 parentFragment.parent.mainframe.openProject(project, true);

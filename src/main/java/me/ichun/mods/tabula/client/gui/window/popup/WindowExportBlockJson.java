@@ -176,7 +176,7 @@ public class WindowExportBlockJson extends Window<WorkspaceTabula>
             {
                 StringBuilder blockJson = ((ExportBlockJson)ExportList.EXPORTERS.get("blockJson")).errors;
                 List<String> strings = Splitter.on("\n").splitToList(blockJson.toString());
-                WindowPopup.popup(parentFragment.parent, 0.4D, 0.3D, I18n.format("export.failed"), null, strings.toArray(new String[strings.size()]));
+                WindowPopup.popup(parentFragment.parent, 0.4D, 0.6D, I18n.format("export.failed"), null, strings.toArray(new String[strings.size()]));
             }
         }
     }

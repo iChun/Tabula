@@ -243,7 +243,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                 {
                     if(project.project.isDirty)
                     {
-                        WindowPopup.popup(parentFragment.parent, 0.4D, 0.4D, w->{}, I18n.format("tabula.warning.unsavedProjects"));
+                        WindowPopup.popup(parentFragment.parent, 0.4D, 140, w->{}, I18n.format("tabula.warning.unsavedProjects"));
                         return;
                     }
                 }
@@ -339,7 +339,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
                 }
                 else if(!info1.project.save(info1.project.saveFile))
                 {
-                    WindowPopup.popup(parentFragment.parent, 0.4D, 0.3D, null, I18n.format("window.saveAs.failed"));
+                    WindowPopup.popup(parentFragment.parent, 0.4D, 140, null, I18n.format("window.saveAs.failed"));
                 }
             }
         }

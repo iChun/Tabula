@@ -110,7 +110,7 @@ public class WorkspaceTabula extends Workspace
                     }
                     else
                     {
-                        WindowPopup.popup(this, 0.4D, 0.3D, null, I18n.format("window.saveAs.failed"));
+                        WindowPopup.popup(this, 0.4D, 140, null, I18n.format("window.saveAs.failed"));
                         closing = false; //disable closing (if we are)
                     }
                 }

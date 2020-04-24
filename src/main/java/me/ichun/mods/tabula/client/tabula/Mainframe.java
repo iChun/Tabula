@@ -184,12 +184,12 @@ public class Mainframe
     {
         if(isUserInput && !getCanEdit())
         {
-            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
             return;
         }
         if(getProjectInfoForProject(project) != null)
         {
-            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.projectAlreadyOpen"));
+            WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.projectAlreadyOpen"));
             return;
         }
 
@@ -231,7 +231,7 @@ public class Mainframe
     {
         if(!getCanEdit())
         {
-            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
             return;
         }
 
@@ -252,7 +252,7 @@ public class Mainframe
     {
         if(isUserInput && !getCanEdit())
         {
-            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
             return;
         }
 
@@ -285,7 +285,7 @@ public class Mainframe
     {
         if(isUserInput && !getCanEdit())
         {
-            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
             return;
         }
 
@@ -331,7 +331,7 @@ public class Mainframe
     {
         if(isUserInput && !getCanEdit())
         {
-            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
             return;
         }
 
@@ -352,7 +352,7 @@ public class Mainframe
     {
         if(isUserInput && !getCanEdit())
         {
-            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
             return;
         }
 
@@ -373,7 +373,7 @@ public class Mainframe
     {
         if(isUserInput && !getCanEdit())
         {
-            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
             return;
         }
 
@@ -404,7 +404,7 @@ public class Mainframe
     {
         if(isUserInput && !getCanEdit())
         {
-            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
             return;
         }
 
@@ -425,7 +425,7 @@ public class Mainframe
     {
         if(isUserInput && !getCanEdit())
         {
-            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
             return;
         }
 
@@ -446,7 +446,7 @@ public class Mainframe
     {
         if(isUserInput && !getCanEdit())
         {
-            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
             return;
         }
 
@@ -467,7 +467,7 @@ public class Mainframe
     {
         if(!getCanEdit()) //this function is only called by user input
         {
-            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
             return;
         }
 
@@ -514,7 +514,7 @@ public class Mainframe
     {
         if(!getCanEdit()) //this function is only called by user input
         {
-            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
             return;
         }
 
@@ -593,7 +593,7 @@ public class Mainframe
     {
         if(!getCanEdit()) //this function is only called by user input
         {
-            WindowPopup.popup(workspace, 0.4D, 0.4D, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
+            WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
             return;
         }
 

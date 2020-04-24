@@ -94,7 +94,7 @@ public class WindowExport extends Window<WorkspaceTabula>
 
             if(info != null && !exporter.override(parentFragment.parent, info.project) && !exporter.export(info.project))
             {
-                WindowPopup.popup(parentFragment.parent, 0.4D, 0.4D, w -> {}, I18n.format("export.failed"));
+                WindowPopup.popup(parentFragment.parent, 0.4D, 140, w -> {}, I18n.format("export.failed"));
             }
         }
     }

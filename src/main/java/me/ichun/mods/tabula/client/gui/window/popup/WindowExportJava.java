@@ -93,7 +93,7 @@ public class WindowExportJava extends Window<WorkspaceTabula>
 
             if(!ExportList.EXPORTERS.get("javaClass").export(project, packageName, className))
             {
-                WindowPopup.popup(parentFragment.parent, 0.4D, 0.3D, null, I18n.format("export.failed"));
+                WindowPopup.popup(parentFragment.parent, 0.4D, 140, null, I18n.format("export.failed"));
             }
         }
     }
