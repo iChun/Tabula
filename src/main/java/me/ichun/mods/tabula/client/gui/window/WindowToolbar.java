@@ -256,7 +256,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
             //info
             btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/info.png"), button -> {
                 String[] creds = new String[]{
-                        Tabula.VERSION, "iChun", "mr_hazard", "heldplayer, Vswe, bombmask, FraserKillip", "Kihira, Dizkonnekted, Dunkleosteus, Zorn_Taov, OndraSter, K-4U, Horfius, GlitchPulse"
+                        Tabula.VERSION, "iChun", "MCVinnyq, mr_hazard", "heldplayer, Vswe, bombmask, FraserKillip", "Kihira, Dizkonnekted, Dunkleosteus, Zorn_Taov, OndraSter, K-4U, Horfius, GlitchPulse"
                 };
                 List<String> lines = new ArrayList<>();
 

@@ -1,6 +1,7 @@
 package me.ichun.mods.tabula.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import me.ichun.mods.ichunutil.client.gui.bns.Workspace;
@@ -275,7 +276,7 @@ public class WorkspaceTabula extends Workspace
             selecting = false;
         }
 
-//        RenderSystem.pushMatrix();
+        //        RenderSystem.pushMatrix();
 
         renderBackground();
 
@@ -755,47 +756,6 @@ public class WorkspaceTabula extends Workspace
                 windowToolbar.getCurrentView().openExportProject();
                 return true;
             }
-            else if(keyCode == GLFW.GLFW_KEY_Z)
-            {
-                if(Screen.hasShiftDown())
-                {
-                    windowToolbar.getCurrentView().redo();
-                    return true;
-                }
-                else
-                {
-                    windowToolbar.getCurrentView().undo();
-                    return true;
-                }
-            }
-            else if(keyCode == GLFW.GLFW_KEY_Y)
-            {
-                windowToolbar.getCurrentView().redo();
-                return true;
-            }
-            else if(keyCode == GLFW.GLFW_KEY_X)
-            {
-                windowToolbar.getCurrentView().cut();
-                return true;
-            }
-            else if(keyCode == GLFW.GLFW_KEY_C)
-            {
-                windowToolbar.getCurrentView().copy();
-                return true;
-            }
-            else if(keyCode == GLFW.GLFW_KEY_V)
-            {
-                if(Screen.hasShiftDown()) //in place
-                {
-                    windowToolbar.getCurrentView().paste(false, true);
-                    return true;
-                }
-                else
-                {
-                    windowToolbar.getCurrentView().paste(false, false);
-                    return true;
-                }
-            }
             else if(keyCode == GLFW.GLFW_KEY_TAB)
             {
                 if(Screen.hasShiftDown()) //in place
@@ -835,6 +795,50 @@ public class WorkspaceTabula extends Workspace
                     closeProject(info);
                 }
                 return true;
+            }
+            else if(getFocused() instanceof WindowInputReceiver)
+            {
+                if(keyCode == GLFW.GLFW_KEY_Z)
+                {
+                    if(Screen.hasShiftDown())
+                    {
+                        windowToolbar.getCurrentView().redo();
+                        return true;
+                    }
+                    else
+                    {
+                        windowToolbar.getCurrentView().undo();
+                        return true;
+                    }
+                }
+                else if(keyCode == GLFW.GLFW_KEY_Y)
+                {
+                    windowToolbar.getCurrentView().redo();
+                    return true;
+                }
+                else if(keyCode == GLFW.GLFW_KEY_X)
+                {
+                    windowToolbar.getCurrentView().cut();
+                    return true;
+                }
+                else if(keyCode == GLFW.GLFW_KEY_C)
+                {
+                    windowToolbar.getCurrentView().copy();
+                    return true;
+                }
+                else if(keyCode == GLFW.GLFW_KEY_V)
+                {
+                    if(Screen.hasShiftDown()) //in place
+                    {
+                        windowToolbar.getCurrentView().paste(false, true);
+                        return true;
+                    }
+                    else
+                    {
+                        windowToolbar.getCurrentView().paste(false, false);
+                        return true;
+                    }
+                }
             }
         }
         else if((keyCode == GLFW.GLFW_KEY_DELETE || keyCode == GLFW.GLFW_KEY_KP_DECIMAL) && (getFocused() instanceof WindowInputReceiver || getFocused() instanceof WindowModelTree))

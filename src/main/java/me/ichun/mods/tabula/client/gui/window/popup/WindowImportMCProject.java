@@ -105,6 +105,12 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
         {
             return getSourceTypeName().equals(o.getSourceTypeName()) ? model.getClass().getSimpleName().compareTo(o.model.getClass().getSimpleName()) : getSourceTypeName().compareTo(o.getSourceTypeName());
         }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            return obj instanceof ModelInfo && (texture == null && ((ModelInfo)obj).texture == null || texture != null && texture.equals(((ModelInfo)obj).texture)) && model.equals(((ModelInfo)obj).model) && (source == null && ((ModelInfo)obj).source == null || source != null && source.equals(((ModelInfo)obj).source));
+        }
     }
 
     private static boolean hasInit;
@@ -241,27 +247,40 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                                     //we found a model.
                                     Model model = (Model)f.get(entityRenderer);
 
-                                    if(model instanceof EntityModel && Tabula.configClient.animateImports)
+                                    if(model != null)
                                     {
-                                        EntityModel entityModel = (EntityModel)model;
-                                        try
+                                        if(model instanceof EntityModel && Tabula.configClient.animateImports)
                                         {
-                                            entityModel.setLivingAnimations(instance, 0F, 0F, 0F);
+                                            EntityModel entityModel = (EntityModel)model;
+                                            try
+                                            {
+                                                entityModel.setLivingAnimations(instance, 0F, 0F, 0F);
+                                            }
+                                            catch(Throwable ignored)
+                                            {
+                                            }
+                                            try
+                                            {
+                                                entityModel.setRotationAngles(instance, 0F, 0F, 0F, 0F, 0F);
+                                            }
+                                            catch(Throwable ignored)
+                                            {
+                                            }
+                                            try
+                                            {
+                                                entityModel.render(new MatrixStack(), Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer(RenderType.getCutout()), 15728880, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 0F);
+                                            }
+                                            catch(Throwable ignored)
+                                            {
+                                            }
                                         }
-                                        catch(Throwable ignored){}
-                                        try
-                                        {
-                                            entityModel.setRotationAngles(instance, 0F, 0F, 0F, 0F, 0F);
-                                        }
-                                        catch(Throwable ignored){}
-                                        try
-                                        {
-                                            entityModel.render(new MatrixStack(), Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer(RenderType.getCutout()), 15728880, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 0F);
-                                        }
-                                        catch(Throwable ignored){}
-                                    }
 
-                                    MODELS.add(new ModelInfo(texLoc, model, entityRenderer));
+                                        ModelInfo info = new ModelInfo(texLoc, model, entityRenderer);
+                                        if(!MODELS.contains(info))
+                                        {
+                                            MODELS.add(info);
+                                        }
+                                    }
                                 }
                             }
 
@@ -313,7 +332,14 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                                             //we found a model.
                                             Model model = (Model)f.get(layer);
 
-                                            MODELS.add(new ModelInfo(texLoc, model, layer));
+                                            if(model != null)
+                                            {
+                                                ModelInfo info = new ModelInfo(texLoc, model, layer);
+                                                if(!MODELS.contains(info))
+                                                {
+                                                    MODELS.add(info);
+                                                }
+                                            }
                                         }
                                     }
 
@@ -379,7 +405,14 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                                     //we found a model.
                                     Model model = (Model)f.get(tileEntityRenderer);
 
-                                    MODELS.add(new ModelInfo(texLoc, model, tileEntityRenderer));
+                                    if(model != null)
+                                    {
+                                        ModelInfo info = new ModelInfo(texLoc, model, tileEntityRenderer);
+                                        if(!MODELS.contains(info))
+                                        {
+                                            MODELS.add(info);
+                                        }
+                                    }
                                 }
                                 else if(ModelRenderer.class.isAssignableFrom(f.getType()))
                                 {
@@ -394,7 +427,11 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
 
                     if(rendererIsModel)
                     {
-                        MODELS.add(new ModelInfo(texLoc, tileEntityRenderer, tileEntityRenderer));
+                        ModelInfo info = new ModelInfo(texLoc, tileEntityRenderer, tileEntityRenderer);
+                        if(!MODELS.contains(info))
+                        {
+                            MODELS.add(info);
+                        }
                     }
                 }
                 catch(Throwable ignored){}
