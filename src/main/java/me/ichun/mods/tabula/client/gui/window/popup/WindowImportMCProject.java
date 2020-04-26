@@ -334,7 +334,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
 
                                             if(model != null)
                                             {
-                                                ModelInfo info = new ModelInfo(texLoc, model, layer);
+                                                ModelInfo info = new ModelInfo(texLoc1, model, layer);
                                                 if(!MODELS.contains(info))
                                                 {
                                                     MODELS.add(info);
