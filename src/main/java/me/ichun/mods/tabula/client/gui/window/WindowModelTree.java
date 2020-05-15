@@ -100,7 +100,7 @@ public class WindowModelTree extends Window<WorkspaceTabula>
             elements.add(last = button);
 
             button = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/editmeta.png"), elementClickable -> {
-                if(currentInfo != null)
+                if(currentInfo != null && currentInfo.getSelectedPart() != null)
                 {
                     WindowEditList<?> window = new WindowEditList<>(getWorkspace(), "window.modelTree.editMeta", currentInfo.getSelectedPart().notes, s -> true, list1 -> {
                         currentInfo.getSelectedPart().notes.clear();

@@ -225,7 +225,16 @@ public class WorkspaceTabula extends Workspace
     {
         super.init();
 
-        windowToolbar.setCurrentProject(null);
+        if(!closing && Tabula.configClient.forceGuiScale >= 0 && minecraft.gameSettings.guiScale != Tabula.configClient.forceGuiScale)
+        {
+            minecraft.gameSettings.guiScale = Tabula.configClient.forceGuiScale;
+            minecraft.updateWindowSize();
+        }
+
+        if(mainframe.projects.isEmpty())
+        {
+            windowToolbar.setCurrentProject(null);
+        }
         if(mainframe.origin != null) //multiplayer
         {
             Window<?> chat = getByWindowType(WindowChat.class);
@@ -364,9 +373,9 @@ public class WorkspaceTabula extends Workspace
 
         double right = width;
         double bottom = height;
-        for(Map.Entry<ArrayList<Window<?>>, Constraint.Property.Type> e : getDock().docked.entrySet())
+        for(Map.Entry<WindowDock.ArrayListHolder, Constraint.Property.Type> e : getDock().docked.entrySet())
         {
-            for(Window<?> key : e.getKey())
+            for(Window<?> key : e.getKey().windows)
             {
                 Constraint.Property.Type value = e.getValue();
                 switch(value)
@@ -633,9 +642,9 @@ public class WorkspaceTabula extends Workspace
 
         double right = width;
         double bottom = height;
-        for(Map.Entry<ArrayList<Window<?>>, Constraint.Property.Type> e : getDock().docked.entrySet())
+        for(Map.Entry<WindowDock.ArrayListHolder, Constraint.Property.Type> e : getDock().docked.entrySet())
         {
-            for(Window<?> key : e.getKey())
+            for(Window<?> key : e.getKey().windows)
             {
                 Constraint.Property.Type value = e.getValue();
                 switch(value)
@@ -893,6 +902,8 @@ public class WorkspaceTabula extends Workspace
     @Override
     public void removed()
     {
+        super.removed();
+
         mainframe.shutdown();
         if(oriScale != minecraft.gameSettings.guiScale)
         {
@@ -910,11 +921,6 @@ public class WorkspaceTabula extends Workspace
     {
         Minecraft mc = Minecraft.getInstance();
         WorkspaceTabula workspace = new WorkspaceTabula(Minecraft.getInstance().currentScreen, new Mainframe(!master.isEmpty() ? master : mc.getSession().getUsername()), mc.gameSettings.guiScale);
-        if(Tabula.configClient.forceGuiScale >= 0)
-        {
-            mc.gameSettings.guiScale = Tabula.configClient.forceGuiScale;
-            mc.updateWindowSize();
-        }
         if(master.equals(mc.getSession().getUsername()))
         {
             workspace.mainframe.setMaster();
