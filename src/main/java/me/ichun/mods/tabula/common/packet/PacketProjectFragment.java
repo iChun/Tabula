@@ -64,9 +64,9 @@ public class PacketProjectFragment extends PacketDataFragment
     public void readFrom(PacketBuffer buf)
     {
         pos = buf.readBlockPos();
-        directed = buf.readString(32767);
-        projIdent = buf.readString(32767);
-        secondaryIdent = buf.readString(32767);
+        directed = readString(buf);
+        projIdent = readString(buf);
+        secondaryIdent = readString(buf);
         type = buf.readByte();
         func = buf.readByte();
         super.readFrom(buf);
@@ -78,7 +78,7 @@ public class PacketProjectFragment extends PacketDataFragment
         context.enqueueWork(() -> {
             if(context.getDirection().getReceptionSide().isServer())
             {
-                //Send it off you lil bitch, servers are just proxies for these.
+                //Send it off, servers are just proxies for these.
                 ServerPlayerEntity player = context.getSender();
                 if(directed.isEmpty())
                 {

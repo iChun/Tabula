@@ -39,7 +39,7 @@ public class PacketChat extends AbstractPacket
     public void readFrom(PacketBuffer buf)
     {
         pos = buf.readBlockPos();
-        chat = buf.readString(32767);
+        chat = readString(buf);
     }
 
     @Override

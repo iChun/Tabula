@@ -32,7 +32,7 @@ public class PacketListenerChange extends AbstractPacket
     @Override
     public void readFrom(PacketBuffer buf)
     {
-        listener = buf.readString(32767);
+        listener = readString(buf);
         add = buf.readBoolean();
     }
 

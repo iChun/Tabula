@@ -38,7 +38,7 @@ public class PacketEditorStatus extends AbstractPacket
     @Override
     public void readFrom(PacketBuffer buf)
     {
-        editor = buf.readString(32767);
+        editor = readString(buf);
         status = buf.readBoolean();
     }
 

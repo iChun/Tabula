@@ -39,7 +39,7 @@ public class PacketRequestSession extends AbstractPacket
     public void readFrom(PacketBuffer buf)
     {
         pos = buf.readBlockPos();
-        host = buf.readString(32767);
+        host = readString(buf);
     }
 
     @Override
