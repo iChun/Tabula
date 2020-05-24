@@ -2,7 +2,7 @@ package me.ichun.mods.tabula.client.model;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import me.ichun.mods.ichunutil.client.model.ModelTabula;
+import me.ichun.mods.ichunutil.client.model.tabula.ModelTabula;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
 

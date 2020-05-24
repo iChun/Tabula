@@ -6,7 +6,7 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.*;
-import me.ichun.mods.ichunutil.client.model.ModelHelper;
+import me.ichun.mods.ichunutil.client.model.util.ModelHelper;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.ichunutil.common.util.ObfHelper;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
@@ -268,7 +268,9 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                                             }
                                             try
                                             {
-                                                entityModel.render(new MatrixStack(), Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer(RenderType.getCutout()), 15728880, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 0F);
+                                                MatrixStack stack = new MatrixStack();
+                                                stack.translate(0D, -500D, 0D);
+                                                entityModel.render(stack, Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer(RenderType.getCutout()), 15728880, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 0F);
                                             }
                                             catch(Throwable ignored)
                                             {
