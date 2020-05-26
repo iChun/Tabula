@@ -7,8 +7,8 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.*;
 import me.ichun.mods.ichunutil.client.model.util.ModelHelper;
+import me.ichun.mods.ichunutil.client.render.RenderHelper;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
-import me.ichun.mods.ichunutil.common.util.ObfHelper;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.common.Tabula;
 import net.minecraft.block.Block;
@@ -198,7 +198,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                     {
                         try
                         {
-                            texLoc = ObfHelper.getEntityTexture(entityRenderer, entityRenderer.getClass(), instance);
+                            texLoc = RenderHelper.getEntityTexture(entityRenderer, instance);
                         }
                         catch(Throwable ignored)
                         {
