@@ -21,7 +21,6 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -144,13 +143,7 @@ public class PacketProjectFragment extends PacketDataFragment
 
                         if(type == 0)
                         {
-                            try
-                            {
-                                InputStream is = new ByteArrayInputStream(data);
-                                BufferedImage img = ImageIO.read(is);
-                                workspace.mainframe.setImage(workspace.mainframe.getProjectInfoByProjectIdentifier(projIdent), img, false);
-                            }
-                            catch(IOException ignored){}
+                            workspace.mainframe.setImage(workspace.mainframe.getProjectInfoByProjectIdentifier(projIdent), data, false);
                         }
                         else
                         {
@@ -292,9 +285,7 @@ public class PacketProjectFragment extends PacketDataFragment
                                 }
                                 else if(tabulaRasa.project != null)
                                 {
-                                    InputStream is = new ByteArrayInputStream(data);
-                                    BufferedImage image = ImageIO.read(is);
-                                    tabulaRasa.project.setBufferedTexture(image);
+                                    tabulaRasa.project.setImageBytes(data);
                                 }
                             }
                             catch(IOException ignored){}

@@ -10,14 +10,14 @@ import me.ichun.mods.tabula.client.core.ResourceHelper;
 import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 
 import javax.annotation.Nonnull;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.TreeSet;
 
@@ -123,19 +123,19 @@ public class WindowNewTexture extends Window<WorkspaceTabula>
                 parentFragment.projectInfo.project.textureFile = file.getName();
                 parentFragment.projectInfo.project.textureFileMd5 = IOUtil.getMD5Checksum(file);
 
-                BufferedImage image = null;
-                try
+                byte[] image = null;
+                try (NativeImage img = NativeImage.read(new FileInputStream(file)))
                 {
-                    image = ImageIO.read(file);
+                    image = img.getBytes();
+
+                    if(!(parentFragment.projectInfo.project.texWidth == img.getWidth() && parentFragment.projectInfo.project.texHeight == img.getHeight()) && ((ElementToggle)getById("buttonTexture")).toggleState)
+                    {
+                        parentFragment.projectInfo.project.texWidth = img.getWidth();
+                        parentFragment.projectInfo.project.texHeight = img.getHeight();
+                        parentFragment.parent.projectChanged(IProjectInfo.ChangeType.PROJECT);
+                    }
                 }
                 catch(IOException ignored){}
-
-                if(image != null && !(parentFragment.projectInfo.project.texWidth == image.getWidth() && parentFragment.projectInfo.project.texHeight == image.getHeight()) && ((ElementToggle)getById("buttonTexture")).toggleState)
-                {
-                    parentFragment.projectInfo.project.texWidth = image.getWidth();
-                    parentFragment.projectInfo.project.texHeight = image.getHeight();
-                    parentFragment.parent.projectChanged(IProjectInfo.ChangeType.PROJECT);
-                }
 
                 parentFragment.parent.mainframe.setImage(info, image, true);
             }

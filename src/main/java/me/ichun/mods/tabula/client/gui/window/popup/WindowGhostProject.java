@@ -136,9 +136,9 @@ public class WindowGhostProject extends Window<WorkspaceTabula>
                 Mainframe.ProjectInfo info = parentFragment.parent.mainframe.getActiveProject();
                 if(info != null)
                 {
-                    if(!((ElementToggle)getById("buttonTexture")).toggleState && project.getBufferedTexture() != null)
+                    if(!((ElementToggle)getById("buttonTexture")).toggleState && project.getTextureBytes() != null)
                     {
-                        project.setBufferedTexture(null);
+                        project.setImageBytes(null);
                     }
                     info.setGhostProject(project, ((ElementNumberInput)getById("inputOpacity")).getInt() / 100F);
                 }

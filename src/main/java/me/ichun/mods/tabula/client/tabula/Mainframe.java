@@ -20,6 +20,7 @@ import me.ichun.mods.tabula.common.packet.PacketKillSession;
 import me.ichun.mods.tabula.common.packet.PacketProjectFragment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -36,8 +37,10 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -56,7 +59,7 @@ public class Mainframe
     public BlockPos origin; //only set if it's multiplayer
     public int mpAge;
     public String mpString;
-    public BufferedImage mpImage;
+    public byte[] mpImage;
     public int lastPing;
     public ArrayList<String> chatMessages = new ArrayList<>();
 
@@ -140,14 +143,14 @@ public class Mainframe
                     if(info != null)
                     {
                         String projString = Project.SIMPLE_GSON.toJson(info.project);
-                        BufferedImage image = info.project.getBufferedTexture();
+                        byte[] image = info.project.getTextureBytes();
 
                         if(!projString.equals(mpString))
                         {
                             mpString = projString;
                             sendContent("Server", "project", "", info.project, (byte)-1);
                         }
-                        if(!image.equals(mpImage))
+                        if(!Arrays.equals(image, mpImage))
                         {
                             mpImage = image;
                             sendContent("Server", "image", "", mpImage, (byte)-1);
@@ -220,9 +223,9 @@ public class Mainframe
         {
             sendContent("", info.project.identifier, "", info.project, (byte)1);
 
-            if(info.project.getBufferedTexture() != null)
+            if(info.project.getTextureBytes() != null)
             {
-                sendContent("", info.project.identifier, "", info.project.getBufferedTexture(), (byte)0);
+                sendContent("", info.project.identifier, "", info.project.getTextureBytes(), (byte)0);
             }
         }
     }
@@ -266,9 +269,9 @@ public class Mainframe
                 info.textureFileMd5 = null;
                 workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
 
-                if(isUserInput && origin != null && !sessionEnded && info.project.getBufferedTexture() != null)
+                if(isUserInput && origin != null && !sessionEnded && info.project.getTextureBytes() != null)
                 {
-                    sendContent("", info.project.identifier, "", info.project.getBufferedTexture(), (byte)0);
+                    sendContent("", info.project.identifier, "", info.project.getTextureBytes(), (byte)0);
                 }
             }
             info.markProjectDirty();
@@ -442,7 +445,7 @@ public class Mainframe
         }
     }
 
-    public void setImage(ProjectInfo info, BufferedImage image, boolean isUserInput)
+    public void setImage(ProjectInfo info, byte[] imageBytes, boolean isUserInput)
     {
         if(isUserInput && !getCanEdit())
         {
@@ -452,13 +455,13 @@ public class Mainframe
 
         if(info != null)
         {
-            info.project.setBufferedTexture(image);
+            info.project.setImageBytes(imageBytes);
             info.markProjectDirty();
             workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
 
             if(isUserInput && origin != null && !sessionEnded)
             {
-                sendContent("", info.project.identifier, "", info.project.getBufferedTexture(), (byte)0);
+                sendContent("", info.project.identifier, "", info.project.getTextureBytes(), (byte)0);
             }
         }
     }
@@ -713,9 +716,9 @@ public class Mainframe
 
             projects.forEach(info -> {
                 sendContent(listener, info.project.identifier, "", info.project, (byte)1);
-                if(info.project.getBufferedTexture() != null)
+                if(info.project.getTextureBytes() != null)
                 {
-                    sendContent(listener, info.project.identifier, "", info.project.getBufferedTexture(), (byte)0);
+                    sendContent(listener, info.project.identifier, "", info.project.getTextureBytes(), (byte)0);
                 }
             });
         }
@@ -888,17 +891,17 @@ public class Mainframe
                         textureFile = file;
                         textureFileMd5 = md5;
 
-                        BufferedImage image = null;
-                        try
+                        byte[] image = null;
+                        try (NativeImage img = NativeImage.read(new FileInputStream(textureFile)))
                         {
-                            image = ImageIO.read(textureFile);
+                            image = img.getBytes();
                         }
                         catch(IOException ignored){}
 
                         if(image != null)
                         {
                             //don't call setImage from the mainframe. We don't want to mark dirty.
-                            project.setBufferedTexture(image);
+                            project.setImageBytes(image);
                             mainframe.workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
                         }
                     }
@@ -919,7 +922,7 @@ public class Mainframe
                         states.subList(stateIndex + 1, states.size()).clear();
                     }
 
-                    states.add(new State(Project.SIMPLE_GSON.toJson(project), project.getBufferedTexture()));
+                    states.add(new State(Project.SIMPLE_GSON.toJson(project), project.getTextureBytes()));
                     while(states.size() > Tabula.configClient.maximumUndoStates)
                     {
                         states.remove(0);
@@ -1003,7 +1006,7 @@ public class Mainframe
 
         public void createState()
         {
-            State state = new State(Project.SIMPLE_GSON.toJson(project), project.getBufferedTexture());
+            State state = new State(Project.SIMPLE_GSON.toJson(project), project.getTextureBytes());
             if(states.isEmpty() || !states.get(states.size() - 1).equals(state))
             {
                 states.add(state);
@@ -1047,7 +1050,7 @@ public class Mainframe
                 this.project = project;
                 this.project.adoptChildren();
 
-                if(this.project.getBufferedTexture() != state.image)
+                if(this.project.getTextureBytes() != state.image)
                 {
                     mainframe.setImage(this, state.image, false);
                 }
@@ -1113,10 +1116,10 @@ public class Mainframe
         public static class State
         {
             public final String project;
-            public final BufferedImage image;
+            public final byte[] image;
             public boolean autosaved;
 
-            public State(String project, BufferedImage image)
+            public State(String project, byte[] image)
             {
                 this.project = project;
                 this.image = image;

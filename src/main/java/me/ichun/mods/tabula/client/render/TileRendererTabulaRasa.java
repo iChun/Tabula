@@ -25,7 +25,6 @@ public class TileRendererTabulaRasa extends TileEntityRenderer<TileEntityTabulaR
         model = new ModelWaxTablet();
     }
 
-
     @Override
     public void render(TileEntityTabulaRasa tr, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn)
     {

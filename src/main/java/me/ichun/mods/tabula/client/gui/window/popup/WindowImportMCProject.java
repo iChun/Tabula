@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -50,8 +51,6 @@ import net.minecraft.world.storage.WorldInfo;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -580,13 +579,11 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                 try
                 {
                     IResource iresource = Minecraft.getInstance().getResourceManager().getResource(model.texture);
-                    BufferedImage image = ImageIO.read(iresource.getInputStream());
-                    if(image != null)
-                    {
-                        project.setBufferedTexture(image);
-                        project.texWidth = image.getWidth();
-                        project.texHeight = image.getHeight();
-                    }
+                    NativeImage img = NativeImage.read(iresource.getInputStream());
+                    project.setImageBytes(img.getBytes());
+                    project.texWidth = img.getWidth();
+                    project.texHeight = img.getHeight();
+                    img.close();
                 }
                 catch(IOException ignored){}
             }

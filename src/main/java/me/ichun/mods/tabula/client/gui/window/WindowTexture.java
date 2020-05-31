@@ -13,13 +13,13 @@ import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.client.gui.window.popup.WindowNewTexture;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -239,10 +239,10 @@ public class WindowTexture extends Window<WorkspaceTabula>
                                 currentInfo.textureFileMd5 = md5;
                                 currentInfo.project.textureFileMd5 = md5;
 
-                                BufferedImage image = null;
-                                try
+                                byte[] image = null;
+                                try (NativeImage img = NativeImage.read(new FileInputStream(currentInfo.textureFile)))
                                 {
-                                    image = ImageIO.read(currentInfo.textureFile);
+                                    image = img.getBytes();
                                 }
                                 catch(IOException ignored){}
 
@@ -276,7 +276,7 @@ public class WindowTexture extends Window<WorkspaceTabula>
                     }
                     else
                     {
-                        ((ElementTextWrapper)getById("elementTextWrapper")).setText(I18n.format(currentInfo.project.getBufferedTexture() != null ? "window.texture.remoteTexture" : "window.texture.noTexture"));
+                        ((ElementTextWrapper)getById("elementTextWrapper")).setText(I18n.format(currentInfo.project.getTextureBytes() != null ? "window.texture.remoteTexture" : "window.texture.noTexture"));
                     }
                     ((ElementToggleTextured)getById("buttonHideTexture")).setToggled(currentInfo.hideTexture);
                 }
@@ -314,10 +314,10 @@ public class WindowTexture extends Window<WorkspaceTabula>
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
 
-                if(project.bufferedImageTexture != null)
+                if(project.nativeImageTexture != null)
                 {
                     RenderSystem.enableAlphaTest();
-                    RenderHelper.drawTexture(project.bufferedImageTexture.getResourceLocation(), offX, offY, w1, h1, 0D);
+                    RenderHelper.drawTexture(project.nativeImageTexture.getResourceLocation(), offX, offY, w1, h1, 0D);
                 }
 
                 ArrayList<Project.Part.Box> boxes = project.getAllBoxes();
