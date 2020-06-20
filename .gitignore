@@ -17,6 +17,7 @@ out
 build
 .gradle
 libs
+src/api
 
 # other
 eclipse
