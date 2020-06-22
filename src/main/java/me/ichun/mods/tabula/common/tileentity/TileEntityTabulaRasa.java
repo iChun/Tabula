@@ -6,6 +6,7 @@ import me.ichun.mods.tabula.common.packet.PacketKillSession;
 import me.ichun.mods.tabula.common.packet.PacketPing;
 import me.ichun.mods.tabula.common.packet.PacketRequestProject;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
@@ -16,7 +17,6 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.awt.image.BufferedImage;
 import java.util.HashSet;
 
 public class TileEntityTabulaRasa extends TileEntity
@@ -30,7 +30,7 @@ public class TileEntityTabulaRasa extends TileEntity
     public int lastPing;
 
     public String projectString;
-    public BufferedImage projectImage;
+    public byte[] projectImage;
 
     @OnlyIn(Dist.CLIENT)
     public Project project;

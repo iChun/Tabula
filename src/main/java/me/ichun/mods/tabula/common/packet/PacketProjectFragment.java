@@ -111,8 +111,7 @@ public class PacketProjectFragment extends PacketDataFragment
                                     }
                                     else
                                     {
-                                        InputStream is = new ByteArrayInputStream(data);
-                                        tabulaRasa.projectImage = ImageIO.read(is);
+                                        tabulaRasa.projectImage = data;
                                     }
                                 }
                                 catch(IOException ignored){}

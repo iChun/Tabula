@@ -33,9 +33,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import javax.annotation.Nonnull;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -626,13 +623,7 @@ public class Mainframe
         byte[] data;
         if(func == 0 || func == -1 && projIdent.equals("image")) //sending out an image
         {
-            try
-            {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write((BufferedImage)o, "png", baos);
-                data = baos.toByteArray();
-            }
-            catch(IOException e){return;}
+            data = (byte[])o;
             type = 0;
         }
         else //it's an identifiable

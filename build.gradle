@@ -13,7 +13,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '8.0.0'
+version = '8.0.1'
 group = 'tabula'
 archivesBaseName = 'Tabula-1.15.2'
 

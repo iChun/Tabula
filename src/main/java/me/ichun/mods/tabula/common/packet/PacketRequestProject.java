@@ -13,9 +13,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.apache.commons.lang3.RandomStringUtils;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class PacketRequestProject extends AbstractPacket
@@ -68,13 +65,7 @@ public class PacketRequestProject extends AbstractPacket
         byte[] data;
         if(projIdent.equals("image")) //sending out an image
         {
-            try
-            {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write((BufferedImage)o, "png", baos);
-                data = baos.toByteArray();
-            }
-            catch(IOException e){return;}
+            data = (byte[])o;
         }
         else
         {

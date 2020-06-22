@@ -3,10 +3,9 @@ package me.ichun.mods.tabula.client.export.types;
 import me.ichun.mods.ichunutil.common.module.tabula.formats.types.Exporter;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.core.ResourceHelper;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.resources.I18n;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ public class ExportTextureMap extends Exporter
     {
         File file = new File(ResourceHelper.getExportsDir().toFile(), project.name + "-texturemap.png");
 
-        BufferedImage tmp = new BufferedImage(project.texWidth, project.texHeight, BufferedImage.TYPE_INT_ARGB);
+        NativeImage tmp = new NativeImage(project.texWidth, project.texHeight, true);
 
         ArrayList<Project.Part.Box> cubes = project.getAllBoxes();
 
@@ -43,27 +42,27 @@ public class ExportTextureMap extends Exporter
                     {
                         if(withinBounds(tmp, (cube.texOffX + ((Project.Part)cube.parent).texOffX) + k, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + (int)Math.ceil(cube.dimZ) + j) && (int)Math.ceil(cube.dimZ) > 0 && (int)Math.ceil(cube.dimY) > 0)
                         {
-                            tmp.setRGB((cube.texOffX + ((Project.Part)cube.parent).texOffX) + k, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + (int)Math.ceil(cube.dimZ) + j, 0xffff0000); //red
+                            tmp.setPixelRGBA((cube.texOffX + ((Project.Part)cube.parent).texOffX) + k, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + (int)Math.ceil(cube.dimZ) + j, 0xffff0000); //red
                         }
                         if(withinBounds(tmp, (cube.texOffX + ((Project.Part)cube.parent).texOffX) + (int)Math.ceil(cube.dimZ) + i, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + (int)Math.ceil(cube.dimZ) + j) && (int)Math.ceil(cube.dimX) > 0 && (int)Math.ceil(cube.dimY) > 0)
                         {
-                            tmp.setRGB((cube.texOffX + ((Project.Part)cube.parent).texOffX) + (int)Math.ceil(cube.dimZ) + i, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + (int)Math.ceil(cube.dimZ) + j, 0xff0000ff); //blue
+                            tmp.setPixelRGBA((cube.texOffX + ((Project.Part)cube.parent).texOffX) + (int)Math.ceil(cube.dimZ) + i, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + (int)Math.ceil(cube.dimZ) + j, 0xff0000ff); //blue
                         }
                         if(withinBounds(tmp, (cube.texOffX + ((Project.Part)cube.parent).texOffX) + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + k, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + (int)Math.ceil(cube.dimZ) + j) && (int)Math.ceil(cube.dimZ) > 0 && (int)Math.ceil(cube.dimY) > 0)
                         {
-                            tmp.setRGB((cube.texOffX + ((Project.Part)cube.parent).texOffX) + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + k, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + (int)Math.ceil(cube.dimZ) + j, 0xffaa0000); //dark red
+                            tmp.setPixelRGBA((cube.texOffX + ((Project.Part)cube.parent).texOffX) + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + k, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + (int)Math.ceil(cube.dimZ) + j, 0xffaa0000); //dark red
                         }
                         if(withinBounds(tmp, (cube.texOffX + ((Project.Part)cube.parent).texOffX) + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + (int)Math.ceil(cube.dimZ) + i, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + (int)Math.ceil(cube.dimZ) + j) && (int)Math.ceil(cube.dimX) > 0 && (int)Math.ceil(cube.dimY) > 0)
                         {
-                            tmp.setRGB((cube.texOffX + ((Project.Part)cube.parent).texOffX) + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + (int)Math.ceil(cube.dimZ) + i, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + (int)Math.ceil(cube.dimZ) + j, 0xff0000aa); //dark blue
+                            tmp.setPixelRGBA((cube.texOffX + ((Project.Part)cube.parent).texOffX) + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + (int)Math.ceil(cube.dimZ) + i, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + (int)Math.ceil(cube.dimZ) + j, 0xff0000aa); //dark blue
                         }
                         if(withinBounds(tmp, (cube.texOffX + ((Project.Part)cube.parent).texOffX) + (int)Math.ceil(cube.dimZ) + i, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + k) && (int)Math.ceil(cube.dimX) > 0 && (int)Math.ceil(cube.dimZ) > 0)
                         {
-                            tmp.setRGB((cube.texOffX + ((Project.Part)cube.parent).texOffX) + (int)Math.ceil(cube.dimZ) + i, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + k, 0xff00ff00); //green
+                            tmp.setPixelRGBA((cube.texOffX + ((Project.Part)cube.parent).texOffX) + (int)Math.ceil(cube.dimZ) + i, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + k, 0xff00ff00); //green
                         }
                         if(withinBounds(tmp, (cube.texOffX + ((Project.Part)cube.parent).texOffX) + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + i, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + k) && (int)Math.ceil(cube.dimX) > 0 && (int)Math.ceil(cube.dimZ) > 0)
                         {
-                            tmp.setRGB((cube.texOffX + ((Project.Part)cube.parent).texOffX) + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + i, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + k, 0xff00aa00); //dark green
+                            tmp.setPixelRGBA((cube.texOffX + ((Project.Part)cube.parent).texOffX) + (int)Math.ceil(cube.dimZ) + (int)Math.ceil(cube.dimX) + i, (cube.texOffY + ((Project.Part)cube.parent).texOffY) + k, 0xff00aa00); //dark green
                         }
                     }
                 }
@@ -72,7 +71,7 @@ public class ExportTextureMap extends Exporter
 
         try
         {
-            ImageIO.write(tmp, "png", file);
+            tmp.write(file);
             return true;
         }
         catch (IOException ioexception)
@@ -80,9 +79,13 @@ public class ExportTextureMap extends Exporter
             ioexception.printStackTrace();
             return false;
         }
+        finally
+        {
+            tmp.close();
+        }
     }
 
-    public boolean withinBounds(BufferedImage img, int x, int y)
+    public boolean withinBounds(NativeImage img, int x, int y)
     {
         return x >= 0 && x < img.getWidth() && y >= 0 && y < img.getHeight();
     }
