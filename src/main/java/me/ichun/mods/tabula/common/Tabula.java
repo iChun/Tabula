@@ -127,21 +127,21 @@ public class Tabula
 
     public static class Blocks
     {
-        private static final DeferredRegister<Block> REGISTRY = new DeferredRegister<>(ForgeRegistries.BLOCKS, MOD_ID);
+        private static final DeferredRegister<Block> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCKS, MOD_ID);
 
         public static final RegistryObject<BlockTabulaRasa> TABULA_RASA = REGISTRY.register("tabularasa", BlockTabulaRasa::new);
     }
 
     public static class Items
     {
-        private static final DeferredRegister<Item> REGISTRY = new DeferredRegister<>(ForgeRegistries.ITEMS, MOD_ID);
+        private static final DeferredRegister<Item> REGISTRY = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
 
         public static final RegistryObject<BlockItem> TABULA_RASA = REGISTRY.register("tabularasa", () -> new BlockItem(Blocks.TABULA_RASA.get(), (new Item.Properties()).group(ItemGroup.DECORATIONS)));
     }
 
     public static class TileEntityTypes
     {
-        private static final DeferredRegister<TileEntityType<?>> REGISTRY = new DeferredRegister<>(ForgeRegistries.TILE_ENTITIES, MOD_ID);
+        private static final DeferredRegister<TileEntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, MOD_ID);
 
         public static final RegistryObject<TileEntityType<TileEntityTabulaRasa>> TABULA_RASA = REGISTRY.register("tabularasa", () -> TileEntityType.Builder.create(TileEntityTabulaRasa::new, Blocks.TABULA_RASA.get()).build(null));
     }
