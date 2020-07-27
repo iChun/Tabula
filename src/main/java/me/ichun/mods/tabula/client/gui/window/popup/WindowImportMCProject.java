@@ -21,9 +21,9 @@ import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.entity.model.PlayerModel;
-import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
@@ -34,10 +34,12 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.crafting.RecipeManager;
+import net.minecraft.profiler.EmptyProfiler;
 import net.minecraft.resources.IResource;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.tags.NetworkTagManager;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -45,9 +47,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.chunk.AbstractChunkProvider;
+import net.minecraft.world.storage.ISpawnWorldInfo;
 import net.minecraft.world.storage.MapData;
-import net.minecraft.world.storage.WorldInfo;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -119,7 +121,104 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
         {
             hasInit = true;
             //Hackery
-            World worldInstance = new World(new WorldInfo(new WorldSettings(0L, GameType.CREATIVE, false, false, WorldType.CUSTOMIZED), "Tabula"), DimensionType.OVERWORLD, ((world, dimension) -> null), null, false) {
+            World worldInstance = new World(new ISpawnWorldInfo()
+            {
+                @Override
+                public int getSpawnX()
+                {
+                    return 0;
+                }
+
+                @Override
+                public int getSpawnY()
+                {
+                    return 0;
+                }
+
+                @Override
+                public int getSpawnZ()
+                {
+                    return 0;
+                }
+
+                @Override
+                public long getGameTime()
+                {
+                    return 0;
+                }
+
+                @Override
+                public long getDayTime()
+                {
+                    return 0;
+                }
+
+                @Override
+                public boolean isThundering()
+                {
+                    return false;
+                }
+
+                @Override
+                public boolean isRaining()
+                {
+                    return false;
+                }
+
+                @Override
+                public void setRaining(boolean isRaining)
+                {
+
+                }
+
+                @Override
+                public boolean isHardcore()
+                {
+                    return false;
+                }
+
+                @Override
+                public GameRules getGameRulesInstance()
+                {
+                    return new GameRules();
+                }
+
+                @Override
+                public Difficulty getDifficulty()
+                {
+                    return Difficulty.HARD;
+                }
+
+                @Override
+                public boolean isDifficultyLocked()
+                {
+                    return true;
+                }
+
+                @Override
+                public void setSpawnX(int x)
+                {
+
+                }
+
+                @Override
+                public void setSpawnY(int y)
+                {
+
+                }
+
+                @Override
+                public void setSpawnZ(int z)
+                {
+
+                }
+            }, World.field_234918_g_, DimensionType.OVERWORLD, DimensionType.func_236019_a_(), () -> EmptyProfiler.INSTANCE, false, false, 0L) {
+                @Override
+                public float func_230487_a_(Direction p_230487_1_, boolean p_230487_2_)
+                {
+                    return 0;
+                }
+
                 @Override
                 public void notifyBlockUpdate(BlockPos pos, BlockState oldState, BlockState newState, int flags){}
 
@@ -162,6 +261,9 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                 public ITickList<Fluid> getPendingFluidTicks() { return EmptyTickList.get();}
 
                 @Override
+                public AbstractChunkProvider getChunkProvider() { return null;} //this might crash things?
+
+                @Override
                 public void playEvent(@Nullable PlayerEntity player, int type, BlockPos pos, int data){}
 
                 @Override
@@ -195,12 +297,15 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                     }
                     else
                     {
-                        try
+                        if(instance != null)
                         {
-                            texLoc = RenderHelper.getEntityTexture(entityRenderer, instance);
-                        }
-                        catch(Throwable ignored)
-                        {
+                            try
+                            {
+                                texLoc = RenderHelper.getEntityTexture(entityRenderer, instance);
+                            }
+                            catch(Throwable ignored)
+                            {
+                            }
                         }
 
 
@@ -373,9 +478,9 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                                     texLoc = (ResourceLocation)f.get(tileEntityRenderer);
                                     break;
                                 }
-                                else if(Material.class.isAssignableFrom(f.getType()))
+                                else if(RenderMaterial.class.isAssignableFrom(f.getType()))
                                 {
-                                    ResourceLocation loc = ((Material)f.get(tileEntityRenderer)).getTextureLocation();
+                                    ResourceLocation loc = ((RenderMaterial)f.get(tileEntityRenderer)).getTextureLocation();
                                     texLoc = new ResourceLocation(loc.getNamespace(), "textures/" + loc.getPath() + ".png");
                                     break;
                                 }
@@ -527,15 +632,24 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
             button1.setConstraint(new Constraint(button1).right(button, Constraint.Property.Type.LEFT, 10));
             elements.add(button1);
 
+            ElementTextField textField = new ElementTextField(this);
+            textField.setId("search");
+            textField.setResponder(s -> {
+                this.list.items.clear();
+                this.populatedList = false;
+            }).setHeight(14);
+            textField.setConstraint(new Constraint(textField).left(toggle1, Constraint.Property.Type.RIGHT, 10).right(button1, Constraint.Property.Type.LEFT, 10).bottom(button1, Constraint.Property.Type.BOTTOM, 3));
+            elements.add(textField);
+
             ElementTextWrapper text = new ElementTextWrapper(this);
             text.setText("Populating list...").setConstraint(new Constraint(text).left(this, Constraint.Property.Type.LEFT, 2).right(this, Constraint.Property.Type.RIGHT, 2)).setId("textPopulating");
             elements.add(text);
         }
 
         @Override
-        public void render(int mouseX, int mouseY, float partialTick)
+        public void render(MatrixStack stack, int mouseX, int mouseY, float partialTick)
         {
-            super.render(mouseX, mouseY, partialTick);
+            super.render(stack, mouseX, mouseY, partialTick);
 
             if(!hasInit)
             {
@@ -552,18 +666,24 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                 populatedList = true;
 
                 MODELS.forEach(modelInfo -> {
-                    list.addItem(modelInfo).setDefaultAppearance().setDoubleClickHandler(item -> {
-                        if(item.selected)
-                        {
-                            loadModel(item.getObject());
-                        }
-                    });
+                    String search = ((ElementTextField)getWorkspace().getById("search")).getText();
+                    String modelName = modelInfo.model.getClass().getSimpleName() + " - " + modelInfo.source.getClass().getSimpleName();
+                    if(search.isEmpty() || modelName.toLowerCase().contains(search.toLowerCase()))
+                    {
+                        list.addItem(modelInfo).setDefaultAppearance().setDoubleClickHandler(item -> {
+                            if(item.selected)
+                            {
+                                loadModel(item.getObject());
+                            }
+                        });
+                    }
                 });
 
                 ((ElementTextWrapper)getById("textPopulating")).setText("");
+                getById("textPopulating").init();
 
-                init();
-                init();
+                list.init();
+                list.init();
             }
         }
 

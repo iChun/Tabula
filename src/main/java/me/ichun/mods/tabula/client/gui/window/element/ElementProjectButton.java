@@ -1,5 +1,6 @@
 package me.ichun.mods.tabula.client.gui.window.element;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import me.ichun.mods.ichunutil.client.gui.bns.Theme;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Fragment;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementClickable;
@@ -23,18 +24,18 @@ public class ElementProjectButton<T extends ElementProjectButton> extends Elemen
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTick)
+    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTick)
     {
-        hover = isMouseOver(mouseX, mouseY) || parentFragment.getFocused() == this;
+        hover = isMouseOver(mouseX, mouseY) || parentFragment.getListener() == this;
 
         if(renderMinecraftStyle())
         {
-            renderMinecraftStyleButton(getLeft(), getTop(), width, height, parentFragment.isDragging() && parentFragment.getFocused() == this ? ButtonState.CLICK : hover ? ButtonState.HOVER : ButtonState.IDLE);
+            renderMinecraftStyleButton(stack, getLeft(), getTop(), width, height, parentFragment.isDragging() && parentFragment.getListener() == this ? ButtonState.CLICK : hover ? ButtonState.HOVER : ButtonState.IDLE);
         }
         else
         {
-            int[] colour = parentFragment.isDragging() && parentFragment.getFocused() == this ? getTheme().elementButtonClick : hover ? getTheme().elementProjectTabHover : getTheme().elementTreeItemBg;
-            fill(colour, 0);
+            int[] colour = parentFragment.isDragging() && parentFragment.getListener() == this ? getTheme().elementButtonClick : hover ? getTheme().elementProjectTabHover : getTheme().elementTreeItemBg;
+            fill(stack, colour, 0);
         }
         int[] fontClr = getTheme().fontDim;
         Mainframe.ProjectInfo info = ((WorkspaceTabula)getWorkspace()).mainframe.getActiveProject();
@@ -57,16 +58,16 @@ public class ElementProjectButton<T extends ElementProjectButton> extends Elemen
                 s = s + "*";
             }
 
-            drawString(s, getLeft() + 2, getTop() + (height - getFontRenderer().FONT_HEIGHT) / 2F + 1, Theme.getAsHex(fontClr));
+            drawString(stack, s, getLeft() + 2, getTop() + (height - getFontRenderer().FONT_HEIGHT) / 2F + 1, Theme.getAsHex(fontClr));
         }
-        drawString("X", getRight() - 7, getTop() + (height - getFontRenderer().FONT_HEIGHT) / 2F + 1, Theme.getAsHex(isOverX(mouseX, mouseY) ? getTheme().font : getTheme().fontDim));
+        drawString(stack, "X", getRight() - 7, getTop() + (height - getFontRenderer().FONT_HEIGHT) / 2F + 1, Theme.getAsHex(isOverX(mouseX, mouseY) ? getTheme().font : getTheme().fontDim));
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button)
     {
         boolean flag = super.mouseReleased(mouseX, mouseY, button); // unsets dragging;
-        parentFragment.setFocused(null); //we're a one time click, stop focusing on us
+        parentFragment.setListener(null); //we're a one time click, stop focusing on us
         if(isMouseOver(mouseX, mouseY)) //lmb
         {
             trigger(); //Switch to this project anyway

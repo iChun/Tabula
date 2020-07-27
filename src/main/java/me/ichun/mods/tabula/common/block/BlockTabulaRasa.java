@@ -32,7 +32,7 @@ public class BlockTabulaRasa extends Block
     public BlockTabulaRasa()
     {
         super(Block.Properties.create(Material.MISCELLANEOUS)
-//                .doesNotBlockMovement()
+                //                .doesNotBlockMovement()
                 .hardnessAndResistance(0.0F)
                 .sound(SoundType.WOOD)
         );
@@ -84,7 +84,7 @@ public class BlockTabulaRasa extends Block
     }
 
     @Override
-    public float getBlockHardness(BlockState blockState, IBlockReader world, BlockPos pos)
+    public float getPlayerRelativeBlockHardness(BlockState state, PlayerEntity player, IBlockReader world, BlockPos pos)
     {
         TileEntity te = world.getTileEntity(pos);
         if(te instanceof TileEntityTabulaRasa)
@@ -92,10 +92,10 @@ public class BlockTabulaRasa extends Block
             TileEntityTabulaRasa tr = (TileEntityTabulaRasa)te;
             if(!tr.host.isEmpty())
             {
-                return -1.0F;
+                return 0.0F; //super returns 0 if hardness is -1
             }
         }
-        return this.blockHardness;
+        return super.getPlayerRelativeBlockHardness(state, player, world, pos);
     }
 
     @Override

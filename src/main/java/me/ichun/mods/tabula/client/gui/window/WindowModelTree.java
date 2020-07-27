@@ -142,12 +142,12 @@ public class WindowModelTree extends Window<WorkspaceTabula>
 
         public void updateList()
         {
-            if(list.getFocused() instanceof ElementList.Item)
+            if(list.getListener() instanceof ElementList.Item)
             {
-                ElementList.Item<?> focused = (ElementList.Item<?>)list.getFocused();
+                ElementList.Item<?> focused = (ElementList.Item<?>)list.getListener();
                 focused.selected = false;
             }
-            list.setFocused(null);
+            list.setListener(null);
             list.items.clear();
 
             Window<?> window = parentFragment.parent.getById("windowEditPartMeta");
@@ -177,15 +177,15 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                     item.constraint = Constraint.sizeOnly(item);
                     if(info.getSelectedPart() != null && info.getSelectedPart().identifier.equals(part.identifier)) //this is the selected part
                     {
-                        if(list.getFocused() instanceof ElementList.Item)
+                        if(list.getListener() instanceof ElementList.Item)
                         {
-                            ElementList.Item<?> focused = (ElementList.Item<?>)list.getFocused();
+                            ElementList.Item<?> focused = (ElementList.Item<?>)list.getListener();
                             focused.selected = false;
                         }
-                        list.setFocused(null);
+                        list.setListener(null);
 
                         item.selected = true;
-                        list.setFocused(item);
+                        list.setListener(item);
                     }
 
                     ElementTexture texture = new ElementTexture(item, part.boxes.size() == 1 ? TEX_BOX : TEX_PART);
@@ -246,15 +246,15 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                     item.constraint = Constraint.sizeOnly(item);
                     if(info.getSelectedBox() != null && info.getSelectedBox().identifier.equals(box.identifier)) //this is the selected part
                     {
-                        if(list.getFocused() instanceof ElementList.Item)
+                        if(list.getListener() instanceof ElementList.Item)
                         {
-                            ElementList.Item<?> focused = (ElementList.Item<?>)list.getFocused();
+                            ElementList.Item<?> focused = (ElementList.Item<?>)list.getListener();
                             focused.selected = false;
                         }
-                        list.setFocused(null);
+                        list.setListener(null);
 
                         item.selected = true;
-                        list.setFocused(item);
+                        list.setListener(item);
                     }
 
                     ElementTexture texture = new ElementTexture(item, TEX_BOX);

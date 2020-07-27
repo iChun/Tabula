@@ -1,5 +1,6 @@
 package me.ichun.mods.tabula.client.gui.window;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.IConstrainable;
@@ -93,22 +94,22 @@ public class WindowProjectNavigator extends Window<WorkspaceTabula>
         }
 
         @Override
-        public void render(int mouseX, int mouseY, float partialTick)
+        public void render(MatrixStack stack, int mouseX, int mouseY, float partialTick)
         {
             setScissor();
             //render our background
             if(!renderMinecraftStyle())
             {
-                fill(getTheme().windowBackground, 0);
+                fill(stack, getTheme().windowBackground, 0);
 
                 int[] clr = getTheme().elementTreeBorder;
-                RenderHelper.drawColour(clr[0], clr[1], clr[2], 255, getLeft(), getTop(), getWidth(), 1, 0);
+                RenderHelper.drawColour(stack, clr[0], clr[1], clr[2], 255, getLeft(), getTop(), getWidth(), 1, 0);
             }
 
             //render attached elements
             for(Element<?> element : elements)
             {
-                element.render(mouseX, mouseY, partialTick);
+                element.render(stack, mouseX, mouseY, partialTick);
             }
 
             resetScissorToParent();

@@ -198,11 +198,5 @@ public class WindowChat extends Window<WorkspaceTabula>
             chatMessages.setConstraint(Constraint.sizeOnly(chatMessages));
             list.addElement(chatMessages);
         }
-
-        @Override
-        public boolean keyPressed(int keyCode, int p_keyPressed_2_, int p_keyPressed_3_)
-        {
-            return super.keyPressed(keyCode, p_keyPressed_2_, p_keyPressed_3_);
-        }
     }
 }

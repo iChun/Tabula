@@ -110,9 +110,10 @@ public class TileEntityTabulaRasa extends TileEntity
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt)
     {
-        read(pkt.getNbtCompound());
-
         BlockState state = world.getBlockState(getPos());
+
+        read(state, pkt.getNbtCompound());
+
         world.notifyBlockUpdate(getPos(), state, state, 3);
     }
 
@@ -138,9 +139,9 @@ public class TileEntityTabulaRasa extends TileEntity
     }
 
     @Override
-    public void read(CompoundNBT tag)
+    public void read(BlockState state, CompoundNBT tag)
     {
-        super.read(tag);
+        super.read(state, tag);
         facing = Direction.byHorizontalIndex(tag.getByte("facing"));
         host = tag.getString("host");
     }

@@ -22,12 +22,16 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
@@ -81,7 +85,7 @@ public class WorkspaceTabula extends Workspace
             }
         }
 
-        List<Window<?>> children = children();
+        List<Window<?>> children = getEventListeners();
         children.stream().filter(child -> child instanceof IProjectInfo).forEach(child -> ((IProjectInfo)child).setCurrentProject(info));
     }
 
@@ -258,18 +262,18 @@ public class WorkspaceTabula extends Workspace
             {
                 closeProject(mainframe.getActiveProject());
             }
-            onClose();
+            closeScreen();
         }
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double distX, double distY)
     {
-        return (this.getFocused() != null && this.isDragging()) && this.getFocused().mouseDragged(mouseX, mouseY, button, distX, distY);
+        return (this.getListener() != null && this.isDragging()) && this.getListener().mouseDragged(mouseX, mouseY, button, distX, distY);
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTick)
+    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTick)
     {
         RenderSystem.enableAlphaTest();
         RenderSystem.enableCull();
@@ -285,7 +289,7 @@ public class WorkspaceTabula extends Workspace
 
         //        RenderSystem.pushMatrix();
 
-        renderBackground();
+        renderBackground(stack);
 
         //Set up projection for workspace
         Mainframe.Camera cam = mainframe.getCamera();
@@ -297,7 +301,7 @@ public class WorkspaceTabula extends Workspace
 
         RenderSystem.pushMatrix();
 
-        renderWorkspace(mouseX, mouseY, partialTick);
+        renderWorkspace(stack, mouseX, mouseY, partialTick);
 
         //Reset our perspective, and set up for drawing windows.
         RenderSystem.popMatrix();
@@ -308,11 +312,11 @@ public class WorkspaceTabula extends Workspace
         RenderSystem.matrixMode(GL11.GL_MODELVIEW);
         RenderSystem.loadIdentity();
 
-        renderCompass(partialTick);
+        renderCompass(stack, partialTick);
 
-        renderWindows(mouseX, mouseY, partialTick);
+        renderWindows(stack, mouseX, mouseY, partialTick);
 
-        renderTooltip(mouseX, mouseY, partialTick);
+        renderTooltip(stack, mouseX, mouseY, partialTick);
 
         resetBackground();
 
@@ -476,7 +480,7 @@ public class WorkspaceTabula extends Workspace
     }
 
     @Override
-    public void renderBackground()
+    public void renderBackground(MatrixStack stack)
     {
         RenderSystem.clearColor((float)getTheme().workspaceBackground[0] / 255F, (float)getTheme().workspaceBackground[1] / 255F, (float)getTheme().workspaceBackground[2] / 255F, 255F);
         RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
@@ -503,9 +507,11 @@ public class WorkspaceTabula extends Workspace
         return (WindowDock<? extends Workspace>)windows.get(windows.size() - 2);
     }
 
-    public void renderWorkspace(int mouseX, int mouseY, float partialTick)
+    public void renderWorkspace(MatrixStack stack, int mouseX, int mouseY, float partialTick)
     {
         setupCamera(partialTick);
+
+        RenderSystem.enableRescaleNormal();
 
         //RENDER BLOCK
         Fragment<?> fragment = getById("buttonBlockToggle");
@@ -525,7 +531,13 @@ public class WorkspaceTabula extends Workspace
         }
         //END RENDER BLOCK
 
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthFunc(GL11.GL_LEQUAL);
+        RenderSystem.depthMask(true);
+
         renderModel(false);
+
+        RenderSystem.disableRescaleNormal();
 
         fragment = getById("buttonGridToggle");
         if(fragment instanceof ElementToggle && ((ElementToggle<?>)fragment).toggleState) //render the block
@@ -547,15 +559,16 @@ public class WorkspaceTabula extends Workspace
             double pZ = -(dist / 2) - 0.005D;
             double w = dist;
             double l = dist;
+            Matrix4f matrix = stack.getLast().getMatrix();
             bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR_TEX_LIGHTMAP);
-            bufferbuilder.pos(pX, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex((-halfDist + 0.5F), (halfDist + 0.5F)).lightmap(light1, light2).endVertex();
-            bufferbuilder.pos(pX + w, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex((halfDist + 0.5F), (halfDist + 0.5F)).lightmap(light1, light2).endVertex();
-            bufferbuilder.pos(pX + w, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex((halfDist + 0.5F), (-halfDist + 0.5F)).lightmap(light1, light2).endVertex();
-            bufferbuilder.pos(pX, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex((-halfDist + 0.5F), (-halfDist + 0.5F)).lightmap(light1, light2).endVertex();
-            bufferbuilder.pos(pX + w, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex((halfDist + 0.5F), (halfDist + 0.5F)).lightmap(light1, light2).endVertex();
-            bufferbuilder.pos(pX, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex((-halfDist + 0.5F), (halfDist + 0.5F)).lightmap(light1, light2).endVertex();
-            bufferbuilder.pos(pX, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex((-halfDist + 0.5F), (-halfDist + 0.5F)).lightmap(light1, light2).endVertex();
-            bufferbuilder.pos(pX + w, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex((halfDist + 0.5F), (-halfDist + 0.5F)).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(matrix, (float)pX, (float)pY, (float)(pZ + l)).color(1.0F, 1.0F, 1.0F, 0.5F).tex((-halfDist + 0.5F), (halfDist + 0.5F)).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(matrix, (float)(pX + w), (float)pY, (float)(pZ + l)).color(1.0F, 1.0F, 1.0F, 0.5F).tex((halfDist + 0.5F), (halfDist + 0.5F)).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(matrix, (float)(pX + w), (float)pY, (float)pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex((halfDist + 0.5F), (-halfDist + 0.5F)).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(matrix, (float)pX, (float)pY, (float)pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex((-halfDist + 0.5F), (-halfDist + 0.5F)).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(matrix, (float)(pX + w), (float)pY, (float)(pZ + l)).color(1.0F, 1.0F, 1.0F, 0.5F).tex((halfDist + 0.5F), (halfDist + 0.5F)).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(matrix, (float)pX, (float)pY, (float)(pZ + l)).color(1.0F, 1.0F, 1.0F, 0.5F).tex((-halfDist + 0.5F), (halfDist + 0.5F)).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(matrix, (float)pX, (float)pY, (float)pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex((-halfDist + 0.5F), (-halfDist + 0.5F)).lightmap(light1, light2).endVertex();
+            bufferbuilder.pos(matrix, (float)(pX + w), (float)pY, (float)pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex((halfDist + 0.5F), (-halfDist + 0.5F)).lightmap(light1, light2).endVertex();
             tessellator.draw();
 
             RenderSystem.disableBlend();
@@ -575,7 +588,7 @@ public class WorkspaceTabula extends Workspace
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
 
-            MatrixStack stack = new MatrixStack();
+            MatrixStack stack = new MatrixStack(); //TODO do I have to use the one passed in render?
 
             stack.translate(0F, 2.0005F, 0F);
             stack.scale(-1F, -1F, 1F);
@@ -632,7 +645,7 @@ public class WorkspaceTabula extends Workspace
         RenderSystem.rotatef(-38F + (cam.rendYawPrev + (cam.rendYaw - cam.rendYawPrev) * partialTick), 0.0F, 1.0F, 0.0F);
     }
 
-    public void renderCompass(float partialTick)
+    public void renderCompass(MatrixStack stack, float partialTick)
     {
         RenderSystem.pushMatrix();
 
@@ -674,12 +687,20 @@ public class WorkspaceTabula extends Workspace
         RenderSystem.rotatef(-15F + (cam.rendPitchPrev + (cam.rendPitch - cam.rendPitchPrev) * partialTick) + 180F, 1.0F, 0.0F, 0.0F);
         RenderSystem.rotatef(-38F + (cam.rendYawPrev + (cam.rendYaw - cam.rendYawPrev) * partialTick), 0.0F, 1.0F, 0.0F);
 
+        RenderSystem.enableRescaleNormal();
+
         RenderSystem.pushMatrix();
         Block block = Blocks.FURNACE;
         net.minecraft.client.renderer.RenderHelper.setupGuiFlatDiffuseLighting();
         RenderHelper.renderBakedModel(Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModel(block.getDefaultState()), new ItemStack(block));
         net.minecraft.client.renderer.RenderHelper.setupGui3DDiffuseLighting();
         RenderSystem.popMatrix();
+
+        RenderSystem.disableRescaleNormal();
+
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthFunc(GL11.GL_LEQUAL);
+        RenderSystem.depthMask(true);
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
@@ -696,15 +717,16 @@ public class WorkspaceTabula extends Workspace
         double pZ = -1D - dist;
         double w = 2 + (dist * 2);
         double l = 2 + (dist * 2);
+        Matrix4f matrix = stack.getLast().getMatrix();
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR_TEX_LIGHTMAP);
-        bufferbuilder.pos(pX, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex(0.0F, 1.0F).lightmap(light1, light2).endVertex();
-        bufferbuilder.pos(pX + w, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex(1.0F, 1.0F).lightmap(light1, light2).endVertex();
-        bufferbuilder.pos(pX + w, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(1.0F, 0.0F).lightmap(light1, light2).endVertex();
-        bufferbuilder.pos(pX	  , pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(0.0F, 0.0F).lightmap(light1, light2).endVertex();
-        bufferbuilder.pos(pX + w, pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex(1.0F, 1.0F).lightmap(light1, light2).endVertex();
-        bufferbuilder.pos(pX	  , pY, pZ + l).color(1.0F, 1.0F, 1.0F, 0.5F).tex(0.0F, 1.0F).lightmap(light1, light2).endVertex();
-        bufferbuilder.pos(pX	  , pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(0.0F, 0.0F).lightmap(light1, light2).endVertex();
-        bufferbuilder.pos(pX + w, pY, pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(1.0F, 0.0F).lightmap(light1, light2).endVertex();
+        bufferbuilder.pos(matrix, (float)pX, (float)pY, (float)(pZ + l)).color(1.0F, 1.0F, 1.0F, 0.5F).tex(0.0F, 1.0F).lightmap(light1, light2).endVertex();
+        bufferbuilder.pos(matrix, (float)(pX + w), (float)pY, (float)(pZ + l)).color(1.0F, 1.0F, 1.0F, 0.5F).tex(1.0F, 1.0F).lightmap(light1, light2).endVertex();
+        bufferbuilder.pos(matrix, (float)(pX + w), (float)pY, (float)pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(1.0F, 0.0F).lightmap(light1, light2).endVertex();
+        bufferbuilder.pos(matrix, (float)pX	  , (float)pY, (float)pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(0.0F, 0.0F).lightmap(light1, light2).endVertex();
+        bufferbuilder.pos(matrix, (float)(pX + w), (float)pY, (float)(pZ + l)).color(1.0F, 1.0F, 1.0F, 0.5F).tex(1.0F, 1.0F).lightmap(light1, light2).endVertex();
+        bufferbuilder.pos(matrix, (float)pX	  , (float)pY, (float)(pZ + l)).color(1.0F, 1.0F, 1.0F, 0.5F).tex(0.0F, 1.0F).lightmap(light1, light2).endVertex();
+        bufferbuilder.pos(matrix, (float)pX	  , (float)pY, (float)pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(0.0F, 0.0F).lightmap(light1, light2).endVertex();
+        bufferbuilder.pos(matrix, (float)(pX + w), (float)pY, (float)pZ).color(1.0F, 1.0F, 1.0F, 0.5F).tex(1.0F, 0.0F).lightmap(light1, light2).endVertex();
         tessellator.draw();
 
         RenderSystem.disableBlend();
@@ -803,7 +825,7 @@ public class WorkspaceTabula extends Workspace
                 }
                 return true;
             }
-            else if(getFocused() instanceof WindowInputReceiver)
+            else if(getListener() instanceof WindowInputReceiver)
             {
                 if(keyCode == GLFW.GLFW_KEY_Z)
                 {
@@ -848,7 +870,7 @@ public class WorkspaceTabula extends Workspace
                 }
             }
         }
-        else if((keyCode == GLFW.GLFW_KEY_DELETE || keyCode == GLFW.GLFW_KEY_KP_DECIMAL) && (getFocused() instanceof WindowInputReceiver || getFocused() instanceof WindowModelTree))
+        else if((keyCode == GLFW.GLFW_KEY_DELETE || keyCode == GLFW.GLFW_KEY_KP_DECIMAL) && (getListener() instanceof WindowInputReceiver || getListener() instanceof WindowModelTree))
         {
             Window<?> window = getByWindowType(WindowModelTree.class);
             if(window != null)
@@ -876,7 +898,7 @@ public class WorkspaceTabula extends Workspace
     }
 
     @Override
-    public void onClose()
+    public void closeScreen()
     {
         if(!windows.isEmpty())
         {
@@ -893,14 +915,14 @@ public class WorkspaceTabula extends Workspace
         closing = true;
         if(canClose())
         {
-            super.onClose();
+            super.closeScreen();
         }
     }
 
     @Override
-    public void removed()
+    public void onClose()
     {
-        super.removed();
+        super.onClose();
 
         mainframe.shutdown();
         if(oriScale != minecraft.gameSettings.guiScale)

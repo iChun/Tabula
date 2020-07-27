@@ -51,7 +51,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
     public void setCurrentProject(Mainframe.ProjectInfo info)
     {
         currentInfo = info;
-        children().stream().filter(child -> child instanceof IProjectInfo).forEach(child -> ((IProjectInfo)child).setCurrentProject(info));
+        getEventListeners().stream().filter(child -> child instanceof IProjectInfo).forEach(child -> ((IProjectInfo)child).setCurrentProject(info));
     }
 
     public ViewToolbar getCurrentView()
@@ -291,7 +291,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
 
 
             //Add exit button. last button
-            btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/exittabula.png"), button -> getWorkspace().onClose());
+            btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/exittabula.png"), button -> getWorkspace().closeScreen());
             btn.setSize(20,20).setTooltip(I18n.format("topdock.exitTabula"));
             btn.setConstraint(new Constraint(btn).right(this, Constraint.Property.Type.RIGHT, 0));
             elements.add(btn);
@@ -303,7 +303,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
             elements.add(toggle);
 
             ElementToggle<?> toggle1 = new ElementToggle<>(this, "G", elementClickable -> {}).setToggled(Tabula.configClient.renderWorkspaceGrid);
-            toggle1.setSize(20,20).setTooltip(I18n.format("tabula.config.prop.renderGrid.name"));
+            toggle1.setSize(20,20).setTooltip(I18n.format("config.tabula.prop.renderGrid.name"));
             toggle1.setId("buttonGridToggle");
             toggle1.setConstraint(new Constraint(toggle1).right(toggle, Constraint.Property.Type.LEFT, 0));
             elements.add(toggle1);

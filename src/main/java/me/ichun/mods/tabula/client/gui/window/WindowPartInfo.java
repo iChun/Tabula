@@ -182,7 +182,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             ElementScrollBar<?> scrollBar = new ElementScrollBar<>(this, ElementScrollBar.Orientation.HORIZONTAL, 0.05F);
             scrollBar.setScrollProg(0.5F);
             scrollBar.setCallback(scroll -> {
-                if(scroll.parentFragment.getFocused() == scroll)
+                if(scroll.parentFragment.getListener() == scroll)
                 {
                     ((ElementNumberInput)getById("rotX")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", (scroll.scrollProg * 360F) - 180F));
                 }
@@ -193,7 +193,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             ElementScrollBar<?> scrollBar1 = new ElementScrollBar<>(this, ElementScrollBar.Orientation.HORIZONTAL, 0.05F);
             scrollBar1.setScrollProg(0.5F);
             scrollBar1.setCallback(scroll -> {
-                if(scroll.parentFragment.getFocused() == scroll)
+                if(scroll.parentFragment.getListener() == scroll)
                 {
                     ((ElementNumberInput)getById("rotY")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", (scroll.scrollProg * 360F) - 180F));
                 }
@@ -204,7 +204,7 @@ public class WindowPartInfo extends Window<WorkspaceTabula>
             ElementScrollBar<?> scrollBar2 = new ElementScrollBar<>(this, ElementScrollBar.Orientation.HORIZONTAL, 0.05F);
             scrollBar2.setScrollProg(0.5F);
             scrollBar2.setCallback(scroll -> {
-                if(scroll.parentFragment.getFocused() == scroll)
+                if(scroll.parentFragment.getListener() == scroll)
                 {
                     ((ElementNumberInput)getById("rotZ")).setText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", (scroll.scrollProg * 360F) - 180F));
                 }

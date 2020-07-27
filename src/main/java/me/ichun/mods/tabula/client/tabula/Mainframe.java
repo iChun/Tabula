@@ -82,10 +82,7 @@ public class Mainframe
         {
             s = I18n.format("system.hostingOther", master);
         }
-        String name = "System";
-        StringTextComponent text = new StringTextComponent(name);
-        text.setStyle(new Style().setColor(ElementTextWrapper.getRandomTextFormattingColorForName(name))).appendSibling(new StringTextComponent(" : " + s).setStyle(new Style().setColor(TextFormatting.WHITE)));
-        chatMessages.add(text.getFormattedText());
+        chatMessages.add(getChatStyleMessage("System", s).getString());
     }
 
     public Mainframe setMaster()
@@ -720,7 +717,7 @@ public class Mainframe
         }
     }
 
-    public void editorChange(String editor, boolean add) //TODO test this
+    public void editorChange(String editor, boolean add)
     {
         if(add)
         {
@@ -752,20 +749,14 @@ public class Mainframe
 
     public void addSystemMessage(String s, boolean silent)
     {
-        String name = "System";
-        StringTextComponent text = new StringTextComponent(name);
-        text.setStyle(new Style().setColor(ElementTextWrapper.getRandomTextFormattingColorForName(name))).appendSibling(new StringTextComponent(" : " + s).setStyle(new Style().setColor(TextFormatting.WHITE)));
-        receiveChat(text.getFormattedText(), silent);
+        receiveChat(getChatStyleMessage("System", s).getString(), silent);
     }
 
     public void sendSystemMessage(String s)
     {
         if(origin != null && !sessionEnded)
         {
-            String name = "System";
-            StringTextComponent text = new StringTextComponent(name);
-            text.setStyle(new Style().setColor(ElementTextWrapper.getRandomTextFormattingColorForName(name))).appendSibling(new StringTextComponent(" : " + s).setStyle(new Style().setColor(TextFormatting.WHITE)));
-            Tabula.channel.sendToServer(new PacketChat(origin, text.getFormattedText()));
+            Tabula.channel.sendToServer(new PacketChat(origin, getChatStyleMessage("System", s).getString()));
         }
     }
 
@@ -779,10 +770,7 @@ public class Mainframe
             }
             else
             {
-                String name = Minecraft.getInstance().player.getName().getUnformattedComponentText();
-                StringTextComponent text = new StringTextComponent(name);
-                text.setStyle(new Style().setColor(ElementTextWrapper.getRandomTextFormattingColorForName(name))).appendSibling(new StringTextComponent(" : " + s).setStyle(new Style().setColor(TextFormatting.WHITE)));
-                Tabula.channel.sendToServer(new PacketChat(origin, text.getFormattedText()));
+                Tabula.channel.sendToServer(new PacketChat(origin, getChatStyleMessage(Minecraft.getInstance().player.getName().getUnformattedComponentText(), s).getString()));
             }
         }
     }
@@ -838,6 +826,13 @@ public class Mainframe
     public ProjectInfo getProjectInfoForProject(Project project)
     {
         return getProjectInfoByProjectIdentifier(project.identifier);
+    }
+
+    public static StringTextComponent getChatStyleMessage(String name, String s)
+    {
+        StringTextComponent text = new StringTextComponent(ElementTextWrapper.getRandomTextFormattingColorForName(name) + name);
+        text.append(new StringTextComponent(TextFormatting.WHITE + " : " + s));
+        return text;
     }
 
     public static class ProjectInfo

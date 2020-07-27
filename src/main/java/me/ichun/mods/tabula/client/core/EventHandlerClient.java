@@ -7,6 +7,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ChatType;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -25,6 +27,15 @@ public class EventHandlerClient
             int offsetY = 0; //24?
             int btnX = event.getGui().width / 2 - 124 + offsetX;
             int btnY = event.getGui().height / 4 + 48 + 24 * 2 + offsetY;
+            for(int i = 0; i < event.getWidgetList().size(); i++)
+            {
+                Widget button = event.getWidgetList().get(i);
+                if(button instanceof Button && button.getMessage() instanceof TranslationTextComponent && ((TranslationTextComponent)button.getMessage()).getKey().equals("fml.menu.mods"))
+                {
+                    btnY = button.y;
+                    break;
+                }
+            }
             while(true)
             {
                 if(btnX < 0)
@@ -63,7 +74,7 @@ public class EventHandlerClient
                 btnX -= 24; // move to the left to try and find a free space.
             }
 
-            event.addWidget(new Button(btnX, btnY, 20, 20, "T", button -> {
+            event.addWidget(new Button(btnX, btnY, 20, 20, new StringTextComponent("T"), button -> {
                 WorkspaceTabula screen = WorkspaceTabula.create(Minecraft.getInstance().getSession().getUsername());
                 Minecraft.getInstance().displayGuiScreen(screen);
             }));
@@ -79,7 +90,7 @@ public class EventHandlerClient
             if(screen instanceof WorkspaceTabula)
             {
                 WorkspaceTabula workspace = (WorkspaceTabula)screen;
-                workspace.mainframe.receiveChat(event.getMessage().getFormattedText(), false);
+                workspace.mainframe.receiveChat(event.getMessage().getString(), false);
             }
         }
     }

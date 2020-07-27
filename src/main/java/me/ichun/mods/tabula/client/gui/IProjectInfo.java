@@ -9,7 +9,7 @@ import java.util.List;
 public interface IProjectInfo
 {
     //because I'm lazy
-    List<? extends IGuiEventListener> children();
+    List<? extends IGuiEventListener> getEventListeners();
 
     /**
      * Called before projectChanged(PROJECT) (ideally)
@@ -17,12 +17,12 @@ public interface IProjectInfo
      */
     default void setCurrentProject(@Nullable Mainframe.ProjectInfo info)
     {
-        children().stream().filter(child -> child instanceof IProjectInfo).forEach(child -> ((IProjectInfo)child).setCurrentProject(info));
+        getEventListeners().stream().filter(child -> child instanceof IProjectInfo).forEach(child -> ((IProjectInfo)child).setCurrentProject(info));
     }
 
     default void projectChanged(ChangeType type)
     {
-        children().stream().filter(child -> child instanceof IProjectInfo).forEach(child -> ((IProjectInfo)child).projectChanged(type));
+        getEventListeners().stream().filter(child -> child instanceof IProjectInfo).forEach(child -> ((IProjectInfo)child).projectChanged(type));
     }
 
     public enum ChangeType
