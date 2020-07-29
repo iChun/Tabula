@@ -2,15 +2,13 @@ package me.ichun.mods.tabula.client.gui;
 
 import me.ichun.mods.tabula.client.tabula.Mainframe;
 import net.minecraft.client.gui.IGuiEventListener;
+import net.minecraft.client.gui.INestedGuiEventHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public interface IProjectInfo
+public interface IProjectInfo extends INestedGuiEventHandler
 {
-    //because I'm lazy
-    List<? extends IGuiEventListener> getEventListeners();
-
     /**
      * Called before projectChanged(PROJECT) (ideally)
      * @param info

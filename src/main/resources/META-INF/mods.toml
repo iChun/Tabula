@@ -1,5 +1,6 @@
 modLoader="javafml"
 loaderVersion="[32,)" #forge version dep
+license="GNU Lesser General Public License v3.0"
 issueTrackerURL="https://github.com/iChun/Tabula/issues"
 
 [[mods]]
