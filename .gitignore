@@ -18,6 +18,7 @@ build
 .gradle
 libs
 src/api
+logs
 
 # other
 eclipse
@@ -27,6 +28,3 @@ run
 *.class
 *.war
 *.ear
-
-# Temp
-src/main/java/me/ichun/mods/ichunutil/old

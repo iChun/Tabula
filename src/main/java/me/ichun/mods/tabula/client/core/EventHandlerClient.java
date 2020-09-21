@@ -62,7 +62,7 @@ public class EventHandlerClient
                     Widget button = event.getWidgetList().get(i);
                     if(!intersects)
                     {
-                        intersects = btn.intersects(new Rectangle(button.x, button.y, button.getWidth(), button.getHeight()));
+                        intersects = btn.intersects(new Rectangle(button.x, button.y, button.getWidth(), button.getHeightRealms()));
                     }
                 }
 

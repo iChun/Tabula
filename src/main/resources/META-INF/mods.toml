@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[32,)" #forge version dep
+loaderVersion="[34,)" #forge version dep
 license="GNU Lesser General Public License v3.0"
 issueTrackerURL="https://github.com/iChun/Tabula/issues"
 
@@ -16,6 +16,6 @@ issueTrackerURL="https://github.com/iChun/Tabula/issues"
 [[dependencies.tabula]]
     modId="ichunutil"
     mandatory=true
-    versionRange="[9.0.0,10)"
+    versionRange="[10.0.0,11)"
     ordering="NONE"
     side="BOTH"

@@ -37,6 +37,7 @@ import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.profiler.EmptyProfiler;
 import net.minecraft.resources.IResource;
 import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.tags.NetworkTagManager;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -44,6 +45,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.DynamicRegistries;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
@@ -142,6 +145,12 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                 }
 
                 @Override
+                public float getSpawnAngle()
+                {
+                    return 0;
+                }
+
+                @Override
                 public long getGameTime()
                 {
                     return 0;
@@ -212,7 +221,19 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                 {
 
                 }
-            }, World.field_234918_g_, DimensionType.OVERWORLD, DimensionType.func_236019_a_(), () -> EmptyProfiler.INSTANCE, false, false, 0L) {
+
+                @Override
+                public void setSpawnAngle(float angle)
+                {
+
+                }
+            }, World.OVERWORLD, DimensionType.OVERWORLD_TYPE, () -> EmptyProfiler.INSTANCE, false, false, 0L) {
+                @Override
+                public DynamicRegistries func_241828_r()
+                {
+                    return DynamicRegistries.func_239770_b_();
+                }
+
                 @Override
                 public float func_230487_a_(Direction p_230487_1_, boolean p_230487_2_)
                 {
@@ -252,7 +273,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                 public RecipeManager getRecipeManager() { return new RecipeManager();}
 
                 @Override
-                public NetworkTagManager getTags() { return new NetworkTagManager();}
+                public ITagCollectionSupplier getTags() { return ITagCollectionSupplier.TAG_COLLECTION_SUPPLIER;}
 
                 @Override
                 public ITickList<Block> getPendingBlockTicks() { return EmptyTickList.get();}
@@ -275,7 +296,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                 @Override
                 public Biome getNoiseBiomeRaw(int x, int y, int z)
                 {
-                    return Biomes.OCEAN;
+                    return this.func_241828_r().getRegistry(Registry.BIOME_KEY).getOrThrow(Biomes.PLAINS);
                 }
             };
 
