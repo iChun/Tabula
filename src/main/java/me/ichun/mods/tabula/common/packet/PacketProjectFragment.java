@@ -142,7 +142,7 @@ public class PacketProjectFragment extends PacketDataFragment
 
                         if(type == 0)
                         {
-                            workspace.mainframe.setImage(workspace.mainframe.getProjectInfoByProjectIdentifier(projIdent), data, false);
+                            workspace.mainframe.setImage(workspace.mainframe.getProjectInfoByProjectIdentifier(projIdent), data.length == 0 ? null : data, false);
                         }
                         else
                         {

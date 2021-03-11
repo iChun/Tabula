@@ -1,5 +1,6 @@
 package me.ichun.mods.tabula.common;
 
+import me.ichun.mods.ichunutil.common.module.tabula.TabulaPlugin;
 import me.ichun.mods.ichunutil.common.network.PacketChannel;
 import me.ichun.mods.tabula.client.core.ConfigClient;
 import me.ichun.mods.tabula.client.core.EventHandlerClient;
@@ -17,18 +18,17 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ExtensionPoint;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
@@ -107,7 +107,7 @@ public class Tabula
                 try
                 {
                     Class clz = Class.forName(o.toString());
-                    if(Model.class.isAssignableFrom(clz) && o.getClass() != clz) //is an instance
+                    if(Model.class.isAssignableFrom(clz)) //is an instance
                     {
                         modelClz = (Class<? extends Model>)o;
                     }
@@ -121,8 +121,68 @@ public class Tabula
                 LOGGER.info("Blacklisting {} as requested by {}", modelClz.getName(), msg.getSenderModId());
             }
         });
-        event.getIMCStream(m -> m.equalsIgnoreCase("orientation")).forEach(msg -> {
+        event.getIMCStream(m -> m.equalsIgnoreCase("plugin")).forEach(msg -> {
+            if(FMLEnvironment.dist.isClient())
+            {
+                handleClientIMC(msg);
+            }
+            else
+            {
+                LOGGER.warn("Received plugin IMC when we're not on a client: {}", msg.getSenderModId());
+            }
         });
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private void handleClientIMC(InterModComms.IMCMessage msg)
+    {
+        Object o = msg.getMessageSupplier().get();
+        if(o instanceof TabulaPlugin)
+        {
+            eventHandlerClient.loadPlugin(msg.getSenderModId(), (TabulaPlugin)o);
+        }
+        else if(o instanceof Class<?>)
+        {
+            if(TabulaPlugin.class.isAssignableFrom((Class<?>)o))
+            {
+                try
+                {
+                    eventHandlerClient.loadPlugin(msg.getSenderModId(), ((Class<?extends TabulaPlugin>)o).newInstance());
+                }
+                catch(InstantiationException | IllegalAccessException e)
+                {
+                    Tabula.LOGGER.error("Error creating instance for {} from {}", ((Class<?extends TabulaPlugin>)o).getName(), msg.getSenderModId());
+                    e.printStackTrace();
+                }
+            }
+            else
+            {
+                LOGGER.error("Found invalid plugin class from {}: {}", msg.getSenderModId(), ((Class<?>)o).getName());
+            }
+        }
+        else if(o instanceof String)
+        {
+            try
+            {
+                Class clz = Class.forName(o.toString());
+                if(TabulaPlugin.class.isAssignableFrom((Class<?>)o))
+                {
+                    try
+                    {
+                        eventHandlerClient.loadPlugin(msg.getSenderModId(), ((Class<?extends TabulaPlugin>)clz).newInstance());
+                    }
+                    catch(InstantiationException | IllegalAccessException e)
+                    {
+                        Tabula.LOGGER.error("Error creating instance for {} from {}", ((Class<?extends TabulaPlugin>)clz).getName(), msg.getSenderModId());
+                        e.printStackTrace();
+                    }
+                }
+            }
+            catch(ClassNotFoundException ignored)
+            {
+                LOGGER.error("Found invalid plugin class from {}: {}", msg.getSenderModId(), o.toString());
+            }
+        }
     }
 
     public static class Blocks

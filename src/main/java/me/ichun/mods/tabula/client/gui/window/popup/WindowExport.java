@@ -64,7 +64,7 @@ public class WindowExport extends Window<WorkspaceTabula>
             openDir.setConstraint(new Constraint(openDir).bottom(this, Constraint.Property.Type.BOTTOM, 10).left(this, Constraint.Property.Type.LEFT, 10));
             elements.add(openDir);
 
-            ElementButton<?> button = new ElementButton<>(this, I18n.format("gui.cancel"), btn ->
+            ElementButton<?> button = new ElementButton<>(this, "gui.cancel", btn ->
             {
                 getWorkspace().removeWindow(parent);
             });
@@ -72,7 +72,7 @@ public class WindowExport extends Window<WorkspaceTabula>
             button.setConstraint(new Constraint(button).bottom(this, Constraint.Property.Type.BOTTOM, 10).right(this, Constraint.Property.Type.RIGHT, 10));
             elements.add(button);
 
-            ElementButton<?> button1 = new ElementButton<>(this, I18n.format("gui.ok"), btn ->
+            ElementButton<?> button1 = new ElementButton<>(this, "gui.ok", btn ->
             {
                 for(ElementList.Item<?> item : list.items)
                 {

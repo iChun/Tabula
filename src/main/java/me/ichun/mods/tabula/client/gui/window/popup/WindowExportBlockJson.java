@@ -145,7 +145,7 @@ public class WindowExportBlockJson extends Window<WorkspaceTabula>
             elements.add(toggleCornerAtZeroButton);
 
 
-            ElementButton<?> button = new ElementButton<>(this, I18n.format("gui.cancel"), elementClickable ->
+            ElementButton<?> button = new ElementButton<>(this, "gui.cancel", elementClickable ->
             {
                 getWorkspace().removeWindow(parent);
             });
@@ -153,7 +153,7 @@ public class WindowExportBlockJson extends Window<WorkspaceTabula>
             button.setConstraint(new Constraint(button).bottom(this, Constraint.Property.Type.BOTTOM, 10).right(this, Constraint.Property.Type.RIGHT, 10));
             elements.add(button);
 
-            ElementButton<?> button1 = new ElementButton<>(this, I18n.format("gui.ok"), elementClickable -> submit(project));
+            ElementButton<?> button1 = new ElementButton<>(this, "gui.ok", elementClickable -> submit(project));
             button1.setSize(60, 20);
             button1.setConstraint(new Constraint(button1).right(button, Constraint.Property.Type.LEFT, 10));
             elements.add(button1);

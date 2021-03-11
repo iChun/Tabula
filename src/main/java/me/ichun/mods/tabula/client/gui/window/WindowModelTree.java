@@ -226,6 +226,26 @@ public class WindowModelTree extends Window<WorkspaceTabula>
                         itemObj.getObject().showModel = !itemObj.getObject().showModel;
                         parentFragment.mainframe.updatePart(itemObj.getObject(), true);
                     });
+                    item.setDoubleClickHandler(itemPart -> {
+                        if(currentInfo != null && currentInfo.getSelectedPart() == itemPart.getObject())
+                        {
+                            WindowEditList<?> window = new WindowEditList<>(getWorkspace(), "window.modelTree.editMeta", currentInfo.getSelectedPart().notes, s -> true, list1 -> {
+                                currentInfo.getSelectedPart().notes.clear();
+                                for(ElementList.Item<?> item1 : list1.items)
+                                {
+                                    ElementTextField oriText = (ElementTextField)item1.elements.get(0);
+                                    if(!oriText.getText().isEmpty())
+                                    {
+                                        currentInfo.getSelectedPart().notes.add(oriText.getText());
+                                    }
+                                }
+                                parentFragment.mainframe.updatePart(currentInfo.getSelectedPart(), true);
+                            });
+                            window.setId("windowEditPartMeta");
+                            getWorkspace().openWindowInCenter(window, 0.6D, 0.8D);
+                            window.init();
+                        }
+                    });
 
                     int newIndent = indent + 10;
                     if(part.boxes.size() > 1)

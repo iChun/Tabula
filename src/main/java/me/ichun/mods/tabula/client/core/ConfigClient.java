@@ -4,6 +4,7 @@ import me.ichun.mods.ichunutil.common.config.ConfigBase;
 import me.ichun.mods.ichunutil.common.config.annotations.CategoryDivider;
 import me.ichun.mods.ichunutil.common.config.annotations.Prop;
 import me.ichun.mods.tabula.common.Tabula;
+import net.minecraftforge.fml.config.ModConfig;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -15,38 +16,29 @@ public class ConfigClient extends ConfigBase
     @Prop(min = -1, max = 8)
     public int forceGuiScale = 2;
 
-    @Prop
     public boolean animateImports = true;
 
     @Prop(min = 0, max = 10)
     public int guiMaxDecimals = 2;
 
-    @Prop
     public boolean renderWorkspaceBlock = true;
 
-    @Prop
     public boolean renderWorkspaceGrid = true;
 
-    @Prop
     public double workspaceGridSize = 7.25D;
 
-    @Prop
     public boolean ignoreOldTabulaWarning = false;
 
-    @Prop
-    public boolean disableAutosaves = true;
+    public boolean disableAutosaves = false;
 
     @Prop(min = 0, max = 200)
     public int maximumUndoStates = 40;
 
     @CategoryDivider(name = "multiplayer")
-    @Prop
     public boolean chatSound = true;
 
-    @Prop
     public boolean allowEveryoneToEdit = true;
 
-    @Prop
     public List<String> editors = new ArrayList<>();
 
 
@@ -62,5 +54,12 @@ public class ConfigClient extends ConfigBase
     public String getConfigName()
     {
         return Tabula.MOD_NAME;
+    }
+
+    @Nonnull
+    @Override
+    public ModConfig.Type getConfigType()
+    {
+        return ModConfig.Type.CLIENT;
     }
 }

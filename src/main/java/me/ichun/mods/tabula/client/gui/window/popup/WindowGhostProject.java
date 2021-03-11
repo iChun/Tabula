@@ -88,7 +88,7 @@ public class WindowGhostProject extends Window<WorkspaceTabula>
             input.setConstraint(new Constraint(input).bottom(this, Constraint.Property.Type.BOTTOM, 10).left(toggle, Constraint.Property.Type.RIGHT, 10));
             elements.add(input);
 
-            ElementButton<?> button = new ElementButton<>(this, I18n.format("element.button.clear"), btn ->
+            ElementButton<?> button = new ElementButton<>(this, "element.button.clear", btn ->
             {
                 Mainframe.ProjectInfo info = parent.parent.mainframe.getActiveProject();
                 if(info != null)
@@ -100,7 +100,7 @@ public class WindowGhostProject extends Window<WorkspaceTabula>
             button.setConstraint(new Constraint(button).bottom(this, Constraint.Property.Type.BOTTOM, 10).right(this, Constraint.Property.Type.RIGHT, 10));
             elements.add(button);
 
-            ElementButton<?> button1 = new ElementButton<>(this, I18n.format("gui.ok"), btn ->
+            ElementButton<?> button1 = new ElementButton<>(this, "gui.ok", btn ->
             {
                 getWorkspace().removeWindow(parent);
 

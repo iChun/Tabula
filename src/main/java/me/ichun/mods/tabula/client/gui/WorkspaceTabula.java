@@ -10,6 +10,7 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
 import me.ichun.mods.ichunutil.client.model.tabula.ModelTabula;
 import me.ichun.mods.ichunutil.client.render.RenderHelper;
 import me.ichun.mods.ichunutil.common.iChunUtil;
+import me.ichun.mods.ichunutil.common.module.tabula.TabulaPlugin;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.gui.window.*;
@@ -38,12 +39,14 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.FloatBuffer;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 public class WorkspaceTabula extends Workspace
-        implements IProjectInfo
+        implements IProjectInfo, TabulaPlugin.TabulaWorkspace
 {
     public static final ResourceLocation TEX_GRID_16 = new ResourceLocation("tabula", "textures/workspace/grid16.png");
     public static final ResourceLocation TEX_COMPASS_BASE = new ResourceLocation("tabula", "textures/workspace/orientationbase.png");
@@ -51,6 +54,8 @@ public class WorkspaceTabula extends Workspace
     public final Mainframe mainframe;
     public final int oriScale;
     public final WindowToolbar windowToolbar;
+
+    public final HashSet<TabulaPlugin> plugins;
 
     public final ModelVoxel modelVoxel = new ModelVoxel();
 
@@ -65,6 +70,7 @@ public class WorkspaceTabula extends Workspace
         this.mainframe = mainframe;
         this.mainframe.setWorkspace(this);
         this.oriScale = oriScale;
+        this.plugins = Tabula.eventHandlerClient.plugins;
         windows.add(new WindowInputReceiver(this));
 
         addToDock(windowToolbar = new WindowToolbar(this), Constraint.Property.Type.TOP);
@@ -225,6 +231,8 @@ public class WorkspaceTabula extends Workspace
     @Override
     protected void init()
     {
+        plugins.forEach(plugin -> plugin.onInit(this));
+
         super.init();
 
         if(!closing && Tabula.configClient.forceGuiScale >= 0 && minecraft.gameSettings.guiScale != Tabula.configClient.forceGuiScale)
@@ -275,6 +283,8 @@ public class WorkspaceTabula extends Workspace
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTick)
     {
+        cursorState = CURSOR_ARROW;
+
         RenderSystem.enableAlphaTest();
         RenderSystem.enableCull();
         RenderSystem.enableDepthTest();
@@ -323,6 +333,8 @@ public class WorkspaceTabula extends Workspace
         RenderSystem.enableAlphaTest();
         RenderSystem.depthMask(false);
         RenderSystem.disableDepthTest();
+
+        GLFW.glfwSetCursor(this.minecraft.getMainWindow().getHandle(), cursorState);
     }
 
     public void findSelection(int mouseX, int mouseY, float partialTick)
@@ -825,7 +837,7 @@ public class WorkspaceTabula extends Workspace
                 }
                 return true;
             }
-            else if(getListener() instanceof WindowInputReceiver)
+            else if(getListener() instanceof WindowInputReceiver || getListener() instanceof WindowModelTree)
             {
                 if(keyCode == GLFW.GLFW_KEY_Z)
                 {
@@ -922,6 +934,8 @@ public class WorkspaceTabula extends Workspace
     @Override
     public void onClose()
     {
+        plugins.forEach(plugin -> plugin.onClose(this));
+
         super.onClose();
 
         mainframe.shutdown();
@@ -947,5 +961,22 @@ public class WorkspaceTabula extends Workspace
         }
 
         return workspace;
+    }
+
+    @Override
+    public void openProject(@Nonnull Project project, @Nullable Project ghostProject, float ghostOpacity)
+    {
+        mainframe.openProject(project, true);
+        if(ghostProject != null)
+        {
+            for(int i = mainframe.projects.size() - 1; i >= 0; i--)
+            {
+                Mainframe.ProjectInfo projectInfo = mainframe.projects.get(i);
+                if(projectInfo.project == project)
+                {
+                    projectInfo.setGhostProject(ghostProject, ghostOpacity);
+                }
+            }
+        }
     }
 }

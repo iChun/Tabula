@@ -1,6 +1,8 @@
 package me.ichun.mods.tabula.client.core;
 
+import me.ichun.mods.ichunutil.common.module.tabula.TabulaPlugin;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
+import me.ichun.mods.tabula.common.Tabula;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -15,6 +17,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.awt.*;
+import java.util.HashSet;
 
 public class EventHandlerClient
 {
@@ -93,5 +96,13 @@ public class EventHandlerClient
                 workspace.mainframe.receiveChat(event.getMessage().getString(), false);
             }
         }
+    }
+
+    public HashSet<TabulaPlugin> plugins = new HashSet<>();
+
+    public void loadPlugin(String senderModId, TabulaPlugin o)
+    {
+        plugins.add(o);
+        Tabula.LOGGER.info("Added plugin {} from {}", o.getClass().getName(), senderModId);
     }
 }

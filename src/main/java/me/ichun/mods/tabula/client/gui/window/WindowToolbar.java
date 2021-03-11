@@ -7,6 +7,7 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementButtonTextured;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
+import me.ichun.mods.ichunutil.common.module.tabula.TabulaPlugin;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.gui.IProjectInfo;
@@ -54,6 +55,7 @@ public class WindowToolbar extends Window<WorkspaceTabula>
         getEventListeners().stream().filter(child -> child instanceof IProjectInfo).forEach(child -> ((IProjectInfo)child).setCurrentProject(info));
     }
 
+    @Override
     public ViewToolbar getCurrentView()
     {
         return (ViewToolbar)currentView;
@@ -289,6 +291,10 @@ public class WindowToolbar extends Window<WorkspaceTabula>
             btn.setConstraint(new Constraint(btn).left(last, Constraint.Property.Type.RIGHT, 0));
             elements.add(last = btn);
 
+            for(TabulaPlugin plugin : parentFragment.parent.plugins)
+            {
+                last = plugin.onPopulateToolbar(parentFragment.parent, this, last, info != null ? info.project : null);
+            }
 
             //Add exit button. last button
             btn = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/exittabula.png"), button -> getWorkspace().closeScreen());

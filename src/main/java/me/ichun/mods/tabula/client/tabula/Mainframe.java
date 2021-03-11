@@ -340,7 +340,7 @@ public class Mainframe
 
             if(isUserInput && origin != null && !sessionEnded)
             {
-                sendContent("", info.project.identifier, parent.identifier, part, (byte)5);
+                sendContent("", info.project.identifier, parent == null ? "" : parent.identifier, part, (byte)5);
             }
         }
     }
@@ -355,13 +355,21 @@ public class Mainframe
 
         if(info != null)
         {
-            info.project.addBox(parent, box);
+            Project.Part part = info.project.addBox(parent, box);
             info.markProjectDirty();
             workspace.projectChanged(IProjectInfo.ChangeType.PARTS);
 
             if(isUserInput && origin != null && !sessionEnded)
             {
-                sendContent("", info.project.identifier, parent.identifier, box, (byte)6);
+                if(part != null)
+                {
+                    sendContent("", info.project.identifier, "", part, (byte)5);
+                    sendContent("", info.project.identifier, part.identifier, box, (byte)6);
+                }
+                else
+                {
+                    sendContent("", info.project.identifier, parent.identifier, box, (byte)6);
+                }
             }
         }
     }
@@ -657,6 +665,11 @@ public class Mainframe
         final int maxFile = 31000; //smaller packet cause I'm worried about too much info carried over from the bloat vs hat info.
 
         String fileName = RandomStringUtils.randomAscii(Project.IDENTIFIER_LENGTH);
+        if(data == null) //only when cancelling an image
+        {
+            Tabula.channel.sendToServer(new PacketProjectFragment(fileName, 1, 0, new byte[0], origin, directed, projIdent, secondaryIdent, type, func));
+            return;
+        }
         int fileSize = data.length;
 
         int packetsToSend = (int)Math.ceil((float)fileSize / (float)maxFile);
