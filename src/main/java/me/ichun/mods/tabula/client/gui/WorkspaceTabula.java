@@ -600,7 +600,7 @@ public class WorkspaceTabula extends Workspace
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
 
-            MatrixStack stack = new MatrixStack(); //TODO do I have to use the one passed in render?
+            MatrixStack stack = new MatrixStack();
 
             stack.translate(0F, 2.0005F, 0F);
             stack.scale(-1F, -1F, 1F);

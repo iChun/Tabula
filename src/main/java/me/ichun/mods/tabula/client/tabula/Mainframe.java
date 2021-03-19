@@ -844,7 +844,7 @@ public class Mainframe
     public static StringTextComponent getChatStyleMessage(String name, String s)
     {
         StringTextComponent text = new StringTextComponent(ElementTextWrapper.getRandomTextFormattingColorForName(name) + name);
-        text.append(new StringTextComponent(TextFormatting.WHITE + " : " + s));
+        text.appendSibling(new StringTextComponent(TextFormatting.WHITE + " : " + s));
         return text;
     }
 

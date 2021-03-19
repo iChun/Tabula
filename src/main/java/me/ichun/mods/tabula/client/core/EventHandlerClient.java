@@ -65,7 +65,7 @@ public class EventHandlerClient
                     Widget button = event.getWidgetList().get(i);
                     if(!intersects)
                     {
-                        intersects = btn.intersects(new Rectangle(button.x, button.y, button.getWidth(), button.getHeightRealms()));
+                        intersects = btn.intersects(new Rectangle(button.x, button.y, button.getWidth(), button.getHeight()));
                     }
                 }
 
@@ -103,6 +103,6 @@ public class EventHandlerClient
     public void loadPlugin(String senderModId, TabulaPlugin o)
     {
         plugins.add(o);
-        Tabula.LOGGER.info("Added plugin {} from {}", o.getClass().getName(), senderModId);
+        Tabula.LOGGER.info("Added plugin {} from {}", o.getClass().getSimpleName(), senderModId);
     }
 }
