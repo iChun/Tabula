@@ -98,7 +98,7 @@ public class WindowProjectNavigator extends Window<WorkspaceTabula>
         {
             setScissor();
             //render our background
-            if(!renderMinecraftStyle())
+            if(renderMinecraftStyle() == 0)
             {
                 fill(stack, getTheme().windowBackground, 0);
 

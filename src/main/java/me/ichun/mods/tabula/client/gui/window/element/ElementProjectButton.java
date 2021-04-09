@@ -28,9 +28,9 @@ public class ElementProjectButton<T extends ElementProjectButton> extends Elemen
     {
         hover = isMouseOver(mouseX, mouseY) || parentFragment.getListener() == this;
 
-        if(renderMinecraftStyle())
+        if(renderMinecraftStyle() > 0)
         {
-            renderMinecraftStyleButton(stack, getLeft(), getTop(), width, height, parentFragment.isDragging() && parentFragment.getListener() == this ? ButtonState.CLICK : hover ? ButtonState.HOVER : ButtonState.IDLE);
+            renderMinecraftStyleButton(stack, getLeft(), getTop(), width, height, parentFragment.isDragging() && parentFragment.getListener() == this ? ButtonState.CLICK : hover ? ButtonState.HOVER : ButtonState.IDLE, renderMinecraftStyle());
         }
         else
         {

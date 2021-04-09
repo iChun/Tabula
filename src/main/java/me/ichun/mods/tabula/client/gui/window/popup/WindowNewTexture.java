@@ -75,6 +75,7 @@ public class WindowNewTexture extends Window<WorkspaceTabula>
                     }
                 });
             }
+            list.init();
 
             ElementButtonTextured<?> openDir = new ElementButtonTextured<>(this, new ResourceLocation("tabula", "textures/icon/info.png"), btn -> {
                 Util.getOSType().openFile(ResourceHelper.getTexturesDir().toFile());

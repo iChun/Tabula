@@ -680,7 +680,7 @@ public class Mainframe
         {
             byte[] fileBytes = new byte[Math.min(fileSize, maxFile)];
             int index = 0;
-            while(index < fileBytes.length) //from index 0 to 31999
+            while(index < fileBytes.length) //from index 0 to 30999
             {
                 fileBytes[index] = data[index + offset];
                 index++;
@@ -689,7 +689,7 @@ public class Mainframe
             Tabula.channel.sendToServer(new PacketProjectFragment(fileName, packetsToSend, packetCount, fileBytes, origin, directed, projIdent, secondaryIdent, type, func));
 
             packetCount++;
-            fileSize -= 32000;
+            fileSize -= fileBytes.length;
             offset += index;
         }
 

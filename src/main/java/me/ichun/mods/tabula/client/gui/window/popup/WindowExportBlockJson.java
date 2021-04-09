@@ -141,6 +141,7 @@ public class WindowExportBlockJson extends Window<WorkspaceTabula>
                     this.toggleCornerAtZeroButton.text = this.cornerAtZero ? I18n.format("export.blockjson.corner") : I18n.format("export.blockjson.centre");
                 }
             });
+            toggleCornerAtZeroButton.posY = -1000;
             toggleCornerAtZeroButton.setConstraint(new Constraint(toggleCornerAtZeroButton).top(toggleRelativeToBlockButton, Constraint.Property.Type.BOTTOM, 20).left(this, Constraint.Property.Type.LEFT, 20).right(this, Constraint.Property.Type.RIGHT, 20));
             elements.add(toggleCornerAtZeroButton);
 

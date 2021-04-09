@@ -76,6 +76,9 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
         @Nullable
         public final Object source;
 
+        @Nullable
+        public Class<? extends Entity> originEntity;
+
         public ModelInfo(@Nullable ResourceLocation texture, @Nonnull Object model, @Nullable Object source)
         {
             this.texture = texture;
@@ -114,6 +117,11 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
         public boolean equals(Object obj)
         {
             return obj instanceof ModelInfo && (texture == null && ((ModelInfo)obj).texture == null || texture != null && texture.equals(((ModelInfo)obj).texture)) && model.equals(((ModelInfo)obj).model) && (source == null && ((ModelInfo)obj).source == null || source != null && source.equals(((ModelInfo)obj).source));
+        }
+
+        public void originEntity(Class<? extends Entity> aClass)
+        {
+            this.originEntity = aClass;
         }
     }
 
@@ -403,6 +411,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                                         }
 
                                         ModelInfo info = new ModelInfo(texLoc, model, entityRenderer);
+                                        info.originEntity(instance.getClass());
                                         if(!MODELS.contains(info))
                                         {
                                             MODELS.add(info);
@@ -715,6 +724,10 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
             boolean texture = ((ElementToggle)getById("buttonTexture")).toggleState;
 
             Project project = ModelHelper.convertModelToProject(model.model);
+            if(model.originEntity != null)
+            {
+                project.notes.add("suspected-origin-entity:" + model.originEntity.getName());
+            }
             if(texture && model.texture != null)
             {
                 try

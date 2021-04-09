@@ -9,10 +9,12 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
 import me.ichun.mods.ichunutil.client.model.tabula.ModelTabula;
 import me.ichun.mods.ichunutil.client.render.RenderHelper;
+import me.ichun.mods.ichunutil.common.head.HeadInfo;
 import me.ichun.mods.ichunutil.common.iChunUtil;
 import me.ichun.mods.ichunutil.common.module.tabula.TabulaPlugin;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
+import me.ichun.mods.tabula.client.export.types.headInfo.PreviewRenderHandler;
 import me.ichun.mods.tabula.client.gui.window.*;
 import me.ichun.mods.tabula.client.gui.window.popup.WindowSaveAs;
 import me.ichun.mods.tabula.client.gui.window.popup.WindowSaveOverwrite;
@@ -64,9 +66,11 @@ public class WorkspaceTabula extends Workspace
 
     public Identifiable<?> clipboard = null;
 
+    public HeadInfo headInfoRender = null;
+
     private WorkspaceTabula(Screen lastScreen, Mainframe mainframe, int oriScale)
     {
-        super(lastScreen, new TranslationTextComponent("tabula.name"), iChunUtil.configClient.guiStyleMinecraft);
+        super(lastScreen, new TranslationTextComponent("tabula.name"), iChunUtil.configClient.guiMinecraftStyle);
         this.mainframe = mainframe;
         this.mainframe.setWorkspace(this);
         this.oriScale = oriScale;
@@ -623,6 +627,11 @@ public class WorkspaceTabula extends Workspace
             else
             {
                 info.project.getModel().render(stack, info.getSelectedPart(), info.getSelectedBox(), info.hideTexture, 1F);
+
+                if(headInfoRender != null && info.getSelectedPart() != null)
+                {
+                    PreviewRenderHandler.renderHeadInfoPreview(stack, headInfoRender, info.project.getModel(), info.getSelectedPart());
+                }
 
                 stack.pop();
 
