@@ -66,7 +66,7 @@ public class WorkspaceTabula extends Workspace
 
     public Identifiable<?> clipboard = null;
 
-    public HeadInfo headInfoRender = null;
+    public HeadInfo<?> headInfoRender = null;
 
     private WorkspaceTabula(Screen lastScreen, Mainframe mainframe, int oriScale)
     {
@@ -925,7 +925,7 @@ public class WorkspaceTabula extends Workspace
         {
             for(Window<?> window : windows)
             {
-                if(window.getClass().getName().contains("popup") || window instanceof WindowEditList) //I'm lazy ok
+                if(window.getClass().getName().contains("popup") && !(window instanceof WindowSaveAs) || window instanceof WindowEditList) //I'm lazy ok
                 {
                     removeWindow(window);
                     return;

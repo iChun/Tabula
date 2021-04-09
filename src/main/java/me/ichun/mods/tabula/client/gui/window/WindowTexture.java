@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class WindowTexture extends Window<WorkspaceTabula>
         implements IProjectInfo
@@ -247,7 +248,13 @@ public class WindowTexture extends Window<WorkspaceTabula>
                                 }
                                 catch(IOException ignored){}
 
-                                parentFragment.parent.mainframe.setImage(currentInfo, image, true);
+                                if(!Arrays.equals(currentInfo.project.getTextureBytes(), image))
+                                {
+                                    parentFragment.parent.mainframe.setImage(currentInfo, image, true);
+                                }
+
+                                currentInfo.textureFileMd5 = md5;
+                                currentInfo.project.textureFileMd5 = md5;
                             }
                         }
                     }

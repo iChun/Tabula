@@ -68,7 +68,7 @@ public class WindowProjectNavigator extends Window<WorkspaceTabula>
         @Override
         public void projectChanged(ChangeType type)
         {
-            if(type == ChangeType.PROJECTS)
+            if(type == ChangeType.PROJECTS || type == ChangeType.PROJECT)
             {
                 populate();
             }

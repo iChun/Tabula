@@ -903,6 +903,9 @@ public class Mainframe
                             project.setImageBytes(image);
                             mainframe.workspace.projectChanged(IProjectInfo.ChangeType.TEXTURE);
                         }
+
+                        textureFile = file;
+                        textureFileMd5 = md5;
                     }
                 }
             }
