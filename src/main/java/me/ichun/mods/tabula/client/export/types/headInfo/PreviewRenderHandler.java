@@ -48,6 +48,8 @@ public class PreviewRenderHandler
             return;
         }
 
+        stack.push();
+
         LivingEntity living = null;
         float partialTicks = 1F;
         int packedLightIn = 0xf000f0;
@@ -163,5 +165,7 @@ public class PreviewRenderHandler
                 stack.pop();
             }
         }
+
+        stack.pop();
     }
 }

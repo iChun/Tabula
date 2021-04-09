@@ -626,12 +626,12 @@ public class WorkspaceTabula extends Workspace
             }
             else
             {
-                info.project.getModel().render(stack, info.getSelectedPart(), info.getSelectedBox(), info.hideTexture, 1F);
-
                 if(headInfoRender != null && info.getSelectedPart() != null)
                 {
                     PreviewRenderHandler.renderHeadInfoPreview(stack, headInfoRender, info.project.getModel(), info.getSelectedPart());
                 }
+
+                info.project.getModel().render(stack, info.getSelectedPart(), info.getSelectedBox(), info.hideTexture, 1F);
 
                 stack.pop();
 

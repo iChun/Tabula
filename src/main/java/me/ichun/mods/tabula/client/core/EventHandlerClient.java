@@ -35,6 +35,7 @@ public class EventHandlerClient
                 Widget button = event.getWidgetList().get(i);
                 if(button instanceof Button && button.getMessage() instanceof TranslationTextComponent && ((TranslationTextComponent)button.getMessage()).getKey().equals("fml.menu.mods"))
                 {
+                    btnX = button.x - 24;
                     btnY = button.y;
                     break;
                 }
