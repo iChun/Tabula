@@ -1,18 +1,15 @@
 package me.ichun.mods.tabula.client.export.types.headInfo;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import me.ichun.mods.ichunutil.api.common.head.HeadInfo;
 import me.ichun.mods.ichunutil.client.model.tabula.ModelTabula;
-import me.ichun.mods.ichunutil.client.render.RenderHelper;
-import me.ichun.mods.ichunutil.common.head.HeadInfo;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.LivingEntity;
@@ -21,6 +18,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class PreviewRenderHandler
 {
@@ -38,15 +38,45 @@ public class PreviewRenderHandler
             return;
         }
 
-        ModelRenderer renderer = model.partMap.get(selectedPart);
-        if(renderer != null)
+        List<String> names = HeadInfo.DOT_SPLITTER.splitToList(helper.modelFieldName);
+        ModelRenderer head = null;
+        ArrayList<ModelRenderer> childs = new ArrayList<>();
+
+        if(!names.isEmpty())
         {
-            helper.headModel = new ModelRenderer[] { renderer };
+            for(int i = 0; i < names.size(); i++)
+            {
+                String name = names.get(i);
+
+                for(Map.Entry<Project.Part, ModelTabula.ModelRendererTabula> entry : model.partMap.entrySet())
+                {
+                    if(entry.getKey().name.equals(name))
+                    {
+                        //we found it;
+                        if(i == 0)
+                        {
+                            head = entry.getValue();
+                        }
+                        else
+                        {
+                            childs.add(entry.getValue());
+                        }
+                    }
+                }
+            }
         }
         else
         {
             return;
         }
+
+        if(!(head != null && childs.size() + 1 == names.size())) //we didn't find it all.
+        {
+            return;
+        }
+
+        helper.headModel = new ModelRenderer[] { head };
+        helper.childTranslates = childs.toArray(new ModelRenderer[0]);
 
         stack.push();
 

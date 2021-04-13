@@ -9,7 +9,7 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.ElementToggle;
 import me.ichun.mods.ichunutil.client.model.tabula.ModelTabula;
 import me.ichun.mods.ichunutil.client.render.RenderHelper;
-import me.ichun.mods.ichunutil.common.head.HeadInfo;
+import me.ichun.mods.ichunutil.api.common.head.HeadInfo;
 import me.ichun.mods.ichunutil.common.iChunUtil;
 import me.ichun.mods.ichunutil.common.module.tabula.TabulaPlugin;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Identifiable;

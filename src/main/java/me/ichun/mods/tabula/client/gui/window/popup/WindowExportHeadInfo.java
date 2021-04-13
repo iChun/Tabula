@@ -6,7 +6,7 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.*;
 import me.ichun.mods.ichunutil.common.head.HeadHandler;
-import me.ichun.mods.ichunutil.common.head.HeadInfo;
+import me.ichun.mods.ichunutil.api.common.head.HeadInfo;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.export.ExportList;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
@@ -39,6 +39,8 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
     public static class ViewExportHeadInfo extends View<WindowExportHeadInfo>
     {
         public HeadInfo<?> infoInstance;
+
+        private Project.Part lastPart;
 
         public ViewExportHeadInfo(@Nonnull WindowExportHeadInfo parent, Project project)
         {
@@ -96,7 +98,8 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
                 Project.Part selectedPart = activeProject.getSelectedPart();
                 if(selectedPart != null)
                 {
-                    infoInstance.modelFieldName = selectedPart.name;
+                    infoInstance.modelFieldName = getFullNameFor(selectedPart);
+                    lastPart = selectedPart;
                 }
             }
 
@@ -469,6 +472,38 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
             elements.add(previewToggle);
 
             parent.parent.headInfoRender = infoInstance;
+        }
+
+        private String getFullNameFor(@Nonnull Project.Part selectedPart)
+        {
+            Project.Part part = selectedPart;
+            String name = selectedPart.name;
+            while(part.parent instanceof Project.Part)
+            {
+                name = part.parent.name + "." + name;
+                part = (Project.Part)part.parent;
+            }
+            return name;
+        }
+
+        @Override
+        public void tick()
+        {
+            super.tick();
+
+            Mainframe.ProjectInfo activeProject = parentFragment.parent.mainframe.getActiveProject();
+            if(activeProject != null)
+            {
+                Project.Part selectedPart = activeProject.getSelectedPart();
+                if(selectedPart != null && lastPart != selectedPart)
+                {
+                    lastPart = selectedPart;
+
+                    ((ElementTextField)getById("modelFieldName")).setText(getFullNameFor(lastPart));
+
+                    updateHeadInfo();
+                }
+            }
         }
 
         @Override

@@ -4,19 +4,18 @@ import com.google.common.base.Splitter;
 import me.ichun.mods.ichunutil.client.gui.bns.Workspace;
 import me.ichun.mods.ichunutil.client.gui.bns.window.WindowPopup;
 import me.ichun.mods.ichunutil.common.head.HeadHandler;
-import me.ichun.mods.ichunutil.common.head.HeadInfo;
+import me.ichun.mods.ichunutil.api.common.head.HeadInfo;
 import me.ichun.mods.ichunutil.common.module.tabula.formats.types.Exporter;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.core.ResourceHelper;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.client.gui.window.popup.WindowExportHeadInfo;
-import me.ichun.mods.tabula.client.gui.window.popup.WindowExportJava;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class ExportHeadInfo extends Exporter
@@ -66,6 +65,11 @@ public class ExportHeadInfo extends Exporter
     public boolean export(Project project, Object... params)
     {
         HeadInfo info = (HeadInfo)params[0];
+
+        if(!Minecraft.getInstance().getSession().getUsername().equals("Dev"))
+        {
+            info.author = Minecraft.getInstance().getSession().getUsername();
+        }
 
         List<String> strings = Splitter.on(".").trimResults().omitEmptyStrings().splitToList(info.forClass);
 

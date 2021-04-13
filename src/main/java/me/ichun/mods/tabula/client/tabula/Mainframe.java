@@ -184,10 +184,18 @@ public class Mainframe
             WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.notEditor", Minecraft.getInstance().getSession().getUsername()));
             return;
         }
-        if(getProjectInfoForProject(project) != null)
+        ProjectInfo otherProj = getProjectInfoForProject(project);
+        if(otherProj != null)
         {
-            WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.projectAlreadyOpen"));
-            return;
+            if(otherProj.project.saveFile != project.saveFile)
+            {
+                project.witnessProtectionProgramme();
+            }
+            else
+            {
+                WindowPopup.popup(workspace, 0.4D, 140, w -> {}, I18n.format("system.projectAlreadyOpen"));
+                return;
+            }
         }
 
         //add the project

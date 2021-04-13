@@ -78,6 +78,8 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
 
         @Nullable
         public Class<? extends Entity> originEntity;
+        @Nullable
+        public String origin = null;
 
         public ModelInfo(@Nullable ResourceLocation texture, @Nonnull Object model, @Nullable Object source)
         {
@@ -412,6 +414,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
 
                                         ModelInfo info = new ModelInfo(texLoc, model, entityRenderer);
                                         info.originEntity(instance.getClass());
+                                        info.origin = entityType.getRegistryName().getNamespace();
                                         if(!MODELS.contains(info))
                                         {
                                             MODELS.add(info);
@@ -471,6 +474,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                                             if(model != null)
                                             {
                                                 ModelInfo info = new ModelInfo(texLoc1, model, layer);
+                                                info.origin = texLoc1.getNamespace();
                                                 if(!MODELS.contains(info))
                                                 {
                                                     MODELS.add(info);
@@ -544,6 +548,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                                     if(model != null)
                                     {
                                         ModelInfo info = new ModelInfo(texLoc, model, tileEntityRenderer);
+                                        info.origin = texLoc.getNamespace();
                                         if(!MODELS.contains(info))
                                         {
                                             MODELS.add(info);
@@ -564,6 +569,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                     if(rendererIsModel)
                     {
                         ModelInfo info = new ModelInfo(texLoc, tileEntityRenderer, tileEntityRenderer);
+                        info.origin = texLoc.getNamespace();
                         if(!MODELS.contains(info))
                         {
                             MODELS.add(info);
@@ -573,8 +579,15 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                 catch(Throwable ignored){}
             });
 
-            MODELS.add(new ModelInfo(new ResourceLocation("textures/entity/steve.png"), new PlayerModel<>(0F, false), Minecraft.getInstance().getRenderManager().skinMap.get("default")));
-            MODELS.add(new ModelInfo(new ResourceLocation("textures/entity/alex.png"), new PlayerModel<>(0F, true), Minecraft.getInstance().getRenderManager().skinMap.get("slim")));
+            ModelInfo playerInfo = new ModelInfo(new ResourceLocation("textures/entity/steve.png"), new PlayerModel<>(0F, false), Minecraft.getInstance().getRenderManager().skinMap.get("default"));
+            playerInfo.originEntity = PlayerEntity.class;
+            playerInfo.origin = "minecraft";
+            MODELS.add(playerInfo);
+
+            playerInfo = new ModelInfo(new ResourceLocation("textures/entity/alex.png"), new PlayerModel<>(0F, true), Minecraft.getInstance().getRenderManager().skinMap.get("slim"));
+            playerInfo.originEntity = PlayerEntity.class;
+            playerInfo.origin = "minecraft";
+            MODELS.add(playerInfo);
 
             MODELS.removeIf(info -> {
                 for(Class<? extends Model> aClass : Tabula.modelBlacklist)
@@ -592,7 +605,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
             Workspace.registerObjectInterpreter(ModelInfo.class, o -> {
                 ModelInfo info = (ModelInfo)o;
                 ArrayList<String> strings = new ArrayList<>();
-                strings.add(info.model.getClass().getSimpleName() + " - " + info.source.getClass().getSimpleName());
+                strings.add(info.model.getClass().getSimpleName() + " - " + info.source.getClass().getSimpleName() + (info.origin != null ? " - " + info.origin : ""));
                 return strings;
             });
         }
