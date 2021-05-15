@@ -123,24 +123,24 @@ public class PreviewRenderHandler
                 int overlay = OverlayTexture.NO_OVERLAY;
 
                 float[] irisColours = helper.getIrisColours(living, stack, partialTicks, i);
-                MODEL_GOOGLY_EYE.renderIris(stack, buffer, packedLightIn, overlay, irisColours[0], irisColours[1], irisColours[2], 1F);
+                MODEL_GOOGLY_EYE.renderCornea(stack, buffer, packedLightIn, overlay, irisColours[0], irisColours[1], irisColours[2], 1F);
 
                 float[] pupilColours = helper.getPupilColours(living, stack, partialTicks, i);
 
                 float pupilScale = 1F;
                 stack.push();
                 stack.scale(pupilScale, pupilScale, 1F);
-                MODEL_GOOGLY_EYE.renderPupil(stack, buffer, packedLightIn, overlay, pupilColours[0], pupilColours[1], pupilColours[2], 1F);
+                MODEL_GOOGLY_EYE.renderIris(stack, buffer, packedLightIn, overlay, pupilColours[0], pupilColours[1], pupilColours[2], 1F);
                 stack.pop();
 
                 if(helper.doesEyeGlow(living, i))
                 {
                     buffer = bufferIn.getBuffer(RENDER_TYPE_EYES);
-                    MODEL_GOOGLY_EYE.renderIris(stack, buffer, packedLightIn, overlay, irisColours[0], irisColours[1], irisColours[2], 1F);
+                    MODEL_GOOGLY_EYE.renderCornea(stack, buffer, packedLightIn, overlay, irisColours[0], irisColours[1], irisColours[2], 1F);
 
                     stack.push();
                     stack.scale(pupilScale, pupilScale, 1F);
-                    MODEL_GOOGLY_EYE.renderPupil(stack, buffer, packedLightIn, overlay, pupilColours[0], pupilColours[1], pupilColours[2], 1F);
+                    MODEL_GOOGLY_EYE.renderIris(stack, buffer, packedLightIn, overlay, pupilColours[0], pupilColours[1], pupilColours[2], 1F);
                     stack.pop();
                 }
                 //end rendering the eyes
