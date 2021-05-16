@@ -75,7 +75,7 @@ public class PreviewRenderHandler
             return;
         }
 
-        helper.headModel = new ModelRenderer[] { head };
+        helper.headModel = head;
         helper.childTranslates = childs.toArray(new ModelRenderer[0]);
 
         stack.push();
@@ -100,7 +100,7 @@ public class PreviewRenderHandler
 
                 stack.push();
 
-                float[] joint = helper.getHeadJointOffset(living, stack, partialTicks, i, -1);
+                float[] joint = helper.getHeadJointOffset(living, stack, partialTicks, -1);
                 stack.translate(-joint[0], -joint[1], -joint[2]);
 
                 stack.rotate(Vector3f.ZP.rotationDegrees(helper.getHeadRoll(living, stack, partialTicks, i, -1)));
@@ -167,7 +167,7 @@ public class PreviewRenderHandler
 
                 stack.push();
 
-                float[] joint = helper.getHeadJointOffset(living, stack, partialTicks, -1, i);
+                float[] joint = helper.getHeadJointOffset(living, stack, partialTicks, i);
                 stack.translate(-joint[0], -joint[1], -joint[2]); //to fight Z-fighting
 
                 stack.rotate(Vector3f.ZP.rotationDegrees(helper.getHeadRoll(living, stack, partialTicks, -1, i)));

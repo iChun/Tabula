@@ -1,10 +1,10 @@
 package me.ichun.mods.tabula.client.export.types;
 
 import com.google.common.base.Splitter;
+import me.ichun.mods.ichunutil.api.common.head.HeadInfo;
 import me.ichun.mods.ichunutil.client.gui.bns.Workspace;
 import me.ichun.mods.ichunutil.client.gui.bns.window.WindowPopup;
 import me.ichun.mods.ichunutil.common.head.HeadHandler;
-import me.ichun.mods.ichunutil.api.common.head.HeadInfo;
 import me.ichun.mods.ichunutil.common.module.tabula.formats.types.Exporter;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.core.ResourceHelper;
@@ -45,12 +45,7 @@ public class ExportHeadInfo extends Exporter
                     HeadHandler.init();
                 }
 
-                WindowExportHeadInfo windowExportHeadInfo = new WindowExportHeadInfo((WorkspaceTabula)workspace, project);
-                windowExportHeadInfo.size(294, 400);
-                windowExportHeadInfo.pos(workspace.getWidth() / 2 + 60, 40);
-                workspace.addWindow(windowExportHeadInfo);
-                workspace.setListener(windowExportHeadInfo);
-                windowExportHeadInfo.init();
+                WindowExportHeadInfo.open((WorkspaceTabula)workspace, project, null, false);
             }
             else
             {

@@ -6,7 +6,6 @@ import me.ichun.mods.tabula.common.packet.PacketKillSession;
 import me.ichun.mods.tabula.common.packet.PacketPing;
 import me.ichun.mods.tabula.common.packet.PacketRequestProject;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;

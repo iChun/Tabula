@@ -38,7 +38,6 @@ import net.minecraft.profiler.EmptyProfiler;
 import net.minecraft.resources.IResource;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.tags.ITagCollectionSupplier;
-import net.minecraft.tags.NetworkTagManager;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;

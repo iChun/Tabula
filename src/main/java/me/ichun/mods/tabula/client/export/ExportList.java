@@ -4,7 +4,6 @@ import me.ichun.mods.ichunutil.common.module.tabula.formats.types.Exporter;
 import me.ichun.mods.tabula.client.export.types.*;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.TreeMap;
 
 public final class ExportList

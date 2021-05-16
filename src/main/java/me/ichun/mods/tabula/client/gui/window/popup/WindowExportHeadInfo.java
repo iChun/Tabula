@@ -1,12 +1,12 @@
 package me.ichun.mods.tabula.client.gui.window.popup;
 
+import me.ichun.mods.ichunutil.api.common.head.HeadInfo;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
 import me.ichun.mods.ichunutil.client.gui.bns.window.WindowPopup;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.*;
 import me.ichun.mods.ichunutil.common.head.HeadHandler;
-import me.ichun.mods.ichunutil.api.common.head.HeadInfo;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.export.ExportList;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
@@ -16,18 +16,30 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
-import java.util.Locale;
+import javax.annotation.Nullable;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class WindowExportHeadInfo extends Window<WorkspaceTabula>
 {
-    public WindowExportHeadInfo(WorkspaceTabula parent, Project project)
+    private WindowExportHeadInfo(WorkspaceTabula parent, Project project, @Nullable HeadInfo<?> headInstance, boolean instanceIsParent)
     {
         super(parent);
 
         disableDockingEntirely();
 
-        setView(new ViewExportHeadInfo(this, project));
+        setView(new ViewExportHeadInfo(this, project, headInstance, instanceIsParent));
+    }
+
+    public static WindowExportHeadInfo open(WorkspaceTabula parent, Project project, @Nullable HeadInfo<?> headInstance, boolean instanceIsParent)
+    {
+        WindowExportHeadInfo windowExportHeadInfo = new WindowExportHeadInfo(parent, project, headInstance, instanceIsParent);
+        windowExportHeadInfo.size(294, 400);
+        windowExportHeadInfo.pos(parent.getWidth() / 2 + 60, 40);
+        parent.addWindow(windowExportHeadInfo);
+        parent.setListener(windowExportHeadInfo);
+        windowExportHeadInfo.init();
+        return windowExportHeadInfo;
     }
 
     @Override
@@ -38,51 +50,68 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
 
     public static class ViewExportHeadInfo extends View<WindowExportHeadInfo>
     {
+        public HeadInfo<?> parentHeadInstance;
         public HeadInfo<?> infoInstance;
 
         private Project.Part lastPart;
 
-        public ViewExportHeadInfo(@Nonnull WindowExportHeadInfo parent, Project project)
+        public ViewExportHeadInfo(@Nonnull WindowExportHeadInfo parent, Project project, @Nullable HeadInfo<?> headInstance, boolean instanceIsParent)
         {
-            super(parent, "tabula.export.headInfo.name");
+            super(parent, headInstance != null && instanceIsParent ? "tabula.export.headInfo.additionalHead.name" : "tabula.export.headInfo.name");
 
             String forClass = null;
-            for(String note : project.notes)
+
+            boolean isChildHeadInfo = headInstance != null && instanceIsParent;
+            if(isChildHeadInfo)
             {
-                if(note.startsWith("suspected-origin-entity:"))
-                {
-                    forClass = note.substring("suspected-origin-entity:".length());
-                    break;
-                }
+                parentHeadInstance = headInstance;
             }
-
-            if(forClass != null)
+            else if(headInstance != null)
             {
-                try
-                {
-                    Class<?> clz = Class.forName(forClass);
-                    if(LivingEntity.class.isAssignableFrom(clz))
-                    {
-                        HeadInfo<?> info = HeadHandler.getHelper((Class<? extends LivingEntity>)clz);
-                        if(info != null)
-                        {
-                            HeadInfo<?> clone = HeadHandler.GSON.fromJson(HeadHandler.GSON.toJson(info), HeadInfo.class);
-                            if(clone.customClass != null)
-                            {
-                                clone.customClass = null;
-                                WindowPopup.popup(parent.parent, 0.6D, 0.6D, w ->{}, I18n.format("tabula.export.headInfo.customClassWarning"));
-                            }
-
-                            infoInstance = HeadHandler.GSON.fromJson(HeadHandler.GSON.toJson(clone), HeadInfo.class);
-                            infoInstance.forClass = forClass;
-                        }
-                    }
-                }
-                catch(ClassNotFoundException ignored){}
+                infoInstance = headInstance;
             }
             else
             {
-                forClass = "Entity Class Goes Here";
+                for(String note : project.notes)
+                {
+                    if(note.startsWith("suspected-origin-entity:"))
+                    {
+                        forClass = note.substring("suspected-origin-entity:".length());
+                        break;
+                    }
+                }
+
+                if(forClass != null)
+                {
+                    try
+                    {
+                        Class<?> clz = Class.forName(forClass);
+                        if(LivingEntity.class.isAssignableFrom(clz))
+                        {
+                            HeadInfo<?> info = HeadHandler.getHelper((Class<? extends LivingEntity>)clz);
+                            if(info != null)
+                            {
+                                HeadInfo<?> clone = HeadHandler.GSON.fromJson(HeadHandler.GSON.toJson(info), HeadInfo.class);
+                                if(clone.customClass != null)
+                                {
+                                    clone.customClass = null;
+                                    WindowPopup.popup(parent.parent, 0.6D, 0.6D, w -> {
+                                    }, I18n.format("tabula.export.headInfo.customClassWarning"));
+                                }
+
+                                infoInstance = HeadHandler.GSON.fromJson(HeadHandler.GSON.toJson(clone), HeadInfo.class);
+                                infoInstance.forClass = forClass;
+                            }
+                        }
+                    }
+                    catch(ClassNotFoundException ignored)
+                    {
+                    }
+                }
+                else
+                {
+                    forClass = "Entity Class Goes Here";
+                }
             }
 
             if(infoInstance == null)
@@ -111,17 +140,21 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
             };
 
             ElementTextWrapper text = new ElementTextWrapper(this);
-            text.setNoWrap().setText(I18n.format("tabula.export.headInfo.forClass"));
+            text.setNoWrap().setText(I18n.format(isChildHeadInfo ? "tabula.export.headInfo.additionalHead.desc" :"tabula.export.headInfo.forClass"));
             text.constraints().left(this, Constraint.Property.Type.LEFT, 10).top(this, Constraint.Property.Type.TOP, 10);
             elements.add(text);
             last = text;
 
-            ElementTextField textField = new ElementTextField(this);
-            textField.setTooltip(I18n.format("tabula.export.headInfo.forClass.tooltip")).setId("forClass");
-            textField.setDefaultText(infoInstance.forClass);
-            textField.setResponder(responder).setEnterResponder(responder);
-            textField.constraints().left(text, Constraint.Property.Type.RIGHT, 5).right(this, Constraint.Property.Type.RIGHT, 10).top(text, Constraint.Property.Type.TOP, 2);
-            elements.add(textField);
+            ElementTextField textField;
+            if(!isChildHeadInfo)
+            {
+                textField = new ElementTextField(this);
+                textField.setTooltip(I18n.format("tabula.export.headInfo.forClass.tooltip")).setId("forClass");
+                textField.setDefaultText(infoInstance.forClass);
+                textField.setResponder(responder).setEnterResponder(responder);
+                textField.constraints().left(text, Constraint.Property.Type.RIGHT, 5).right(this, Constraint.Property.Type.RIGHT, 10).top(text, Constraint.Property.Type.TOP, 2);
+                elements.add(textField);
+            }
 
             text = new ElementTextWrapper(this);
             text.setNoWrap().setText(I18n.format("tabula.export.headInfo.modelFieldName"));
@@ -136,18 +169,27 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
             textField.constraints().left(text, Constraint.Property.Type.RIGHT, 5).right(this, Constraint.Property.Type.RIGHT, 10).top(text, Constraint.Property.Type.TOP, 2);
             elements.add(textField);
 
-            ElementToggle<?> toggle = new ElementToggle<>(this, "tabula.export.headInfo.isBoss", btn -> { updateHeadInfo(); });
-            toggle.setSize(120, 14).setTooltip(I18n.format("tabula.export.headInfo.isBoss.tooltip")).setId("isBoss");
-            toggle.setToggled(infoInstance.isBoss);
-            toggle.constraints().left(last, Constraint.Property.Type.LEFT, 0).top(last, Constraint.Property.Type.BOTTOM, spacing);
-            elements.add(toggle);
+            ElementToggle<?> toggle;
+            ElementToggle<?> toggle1;
+            if(!isChildHeadInfo)
+            {
+                toggle = new ElementToggle<>(this, "tabula.export.headInfo.isBoss", btn -> {
+                    updateHeadInfo();
+                });
+                toggle.setSize(120, 14).setTooltip(I18n.format("tabula.export.headInfo.isBoss.tooltip")).setId("isBoss");
+                toggle.setToggled(infoInstance.isBoss);
+                toggle.constraints().left(last, Constraint.Property.Type.LEFT, 0).top(last, Constraint.Property.Type.BOTTOM, spacing);
+                elements.add(toggle);
 
-            ElementToggle<?> toggle1 = new ElementToggle<>(this, "tabula.export.headInfo.affectedByInvisibility", btn -> { updateHeadInfo(); });
-            toggle1.setSize(140, 14).setTooltip(I18n.format("tabula.export.headInfo.affectedByInvisibility.tooltip")).setId("affectedByInvisibility");
-            toggle1.setToggled(infoInstance.affectedByInvisibility);
-            toggle1.constraints().left(toggle, Constraint.Property.Type.RIGHT, 8).top(last, Constraint.Property.Type.BOTTOM, spacing);
-            elements.add(toggle1);
-            last = toggle;
+                toggle1 = new ElementToggle<>(this, "tabula.export.headInfo.affectedByInvisibility", btn -> {
+                    updateHeadInfo();
+                });
+                toggle1.setSize(140, 14).setTooltip(I18n.format("tabula.export.headInfo.affectedByInvisibility.tooltip")).setId("affectedByInvisibility");
+                toggle1.setToggled(infoInstance.affectedByInvisibility);
+                toggle1.constraints().left(toggle, Constraint.Property.Type.RIGHT, 8).top(last, Constraint.Property.Type.BOTTOM, spacing);
+                elements.add(toggle1);
+                last = toggle;
+            }
 
             toggle = new ElementToggle<>(this, "tabula.export.headInfo.noFaceInfo", btn -> { updateHeadInfo(); });
             toggle.setSize(120, 14).setTooltip(I18n.format("tabula.export.headInfo.noFaceInfo.tooltip")).setId("noFaceInfo");
@@ -358,19 +400,51 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
             elements.add(numberInput);
             last = text;
 
-            text = new ElementTextWrapper(this);
-            text.setNoWrap().setText(I18n.format("tabula.export.headInfo.headCount"));
-            text.constraints().left(last, Constraint.Property.Type.LEFT, 0).top(last, Constraint.Property.Type.BOTTOM, spacing);
-            elements.add(text);
+            if(!isChildHeadInfo)
+            {
+                text = new ElementTextWrapper(this);
+                text.setNoWrap().setText(I18n.format("tabula.export.headInfo.additionalHeads"));
+                text.setTooltip(I18n.format("tabula.export.headInfo.additionalHeads.tooltip"));
+                text.constraints().left(last, Constraint.Property.Type.LEFT, 0).top(last, Constraint.Property.Type.BOTTOM, spacing);
+                elements.add(text);
 
-            numberInput = new ElementNumberInput(this, false);
-            numberInput.setTooltip(I18n.format("tabula.export.headInfo.headCount.tooltip")).setId("headCount");
-            numberInput.setMin(0).setMaxDec(0).setDefaultText(Integer.toString(infoInstance.headCount));
-            numberInput.setResponder(responder).setEnterResponder(responder);
-            numberInput.setWidth(50);
-            numberInput.constraints().left(text, Constraint.Property.Type.RIGHT, 5).top(text, Constraint.Property.Type.TOP, 2);
-            elements.add(numberInput);
-            last = text;
+                Element<?> lastLeft = text;
+
+                ElementButton<?> headBtn;
+                if(infoInstance.additionalHeads != null)
+                {
+                    for(int i = 0; i < infoInstance.additionalHeads.length; i++)
+                    {
+                        int finalI = i;
+                        headBtn = new ElementButton<>(this, Integer.toString(i + 1), btn -> {
+                            List<HeadInfo> headInfos = Arrays.asList(infoInstance.additionalHeads);
+                            headInfos.remove(infoInstance.additionalHeads[finalI]);
+                            infoInstance.additionalHeads = headInfos.toArray(new HeadInfo[0]);
+
+                            getWorkspace().removeWindow(parent);
+
+                            WindowExportHeadInfo.open(getWorkspace(), project, infoInstance, false); //reopen itself
+                        });
+                        String btnTip = infoInstance.additionalHeads[i].modelFieldName + "\n\n" + I18n.format("tabula.export.headInfo.additionalHeads.btn.tooltip");
+                        headBtn.setSize(14, 14).setTooltip(btnTip);
+                        headBtn.constraints().left(lastLeft, Constraint.Property.Type.RIGHT, 5).top(text, Constraint.Property.Type.TOP, 1);
+                        elements.add(headBtn);
+
+                        lastLeft = headBtn;
+                    }
+                }
+
+                headBtn = new ElementButton<>(this, "+", btn -> {
+                    getWorkspace().removeWindow(parent);
+
+                    WindowExportHeadInfo.open(getWorkspace(), project, infoInstance, true);
+                });
+                headBtn.setSize(14, 14);
+                headBtn.constraints().left(lastLeft, Constraint.Property.Type.RIGHT, 5).top(text, Constraint.Property.Type.TOP, 1);
+                elements.add(headBtn);
+
+                last = text;
+            }
 
             text = new ElementTextWrapper(this);
             text.setNoWrap().setText(I18n.format("tabula.export.headInfo.hatTiltPitchYaw"));
@@ -394,54 +468,61 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
             elements.add(numberInput1);
             last = text;
 
-            text = new ElementTextWrapper(this);
-            text.setNoWrap().setText(I18n.format("tabula.export.headInfo.headArmorOffset"));
-            text.constraints().left(last, Constraint.Property.Type.LEFT, 0).top(last, Constraint.Property.Type.BOTTOM, spacing);
-            elements.add(text);
+            if(!isChildHeadInfo)
+            {
+                text = new ElementTextWrapper(this);
+                text.setNoWrap().setText(I18n.format("tabula.export.headInfo.headArmorOffset"));
+                text.constraints().left(last, Constraint.Property.Type.LEFT, 0).top(last, Constraint.Property.Type.BOTTOM, spacing);
+                elements.add(text);
 
-            numberInput = new ElementNumberInput(this, true);
-            numberInput.setTooltip(I18n.format("tabula.export.headInfo.headArmorOffset.tooltip")).setId("headArmorOffset0");
-            numberInput.setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", infoInstance.headArmorOffset[0] * 16F));
-            numberInput.setResponder(responder).setEnterResponder(responder);
-            numberInput.setWidth(50);
-            numberInput.constraints().left(text, Constraint.Property.Type.RIGHT, 5).top(text, Constraint.Property.Type.TOP, 2);
-            elements.add(numberInput);
+                numberInput = new ElementNumberInput(this, true);
+                numberInput.setTooltip(I18n.format("tabula.export.headInfo.headArmorOffset.tooltip")).setId("headArmorOffset0");
+                numberInput.setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", infoInstance.headArmorOffset[0] * 16F));
+                numberInput.setResponder(responder).setEnterResponder(responder);
+                numberInput.setWidth(50);
+                numberInput.constraints().left(text, Constraint.Property.Type.RIGHT, 5).top(text, Constraint.Property.Type.TOP, 2);
+                elements.add(numberInput);
 
-            numberInput1 = new ElementNumberInput(this, true);
-            numberInput1.setTooltip(I18n.format("tabula.export.headInfo.headArmorOffset.tooltip")).setId("headArmorOffset1");
-            numberInput1.setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", infoInstance.headArmorOffset[1] * 16F));
-            numberInput1.setResponder(responder).setEnterResponder(responder);
-            numberInput1.setWidth(50);
-            numberInput1.constraints().left(numberInput, Constraint.Property.Type.RIGHT, 5);
-            elements.add(numberInput1);
+                numberInput1 = new ElementNumberInput(this, true);
+                numberInput1.setTooltip(I18n.format("tabula.export.headInfo.headArmorOffset.tooltip")).setId("headArmorOffset1");
+                numberInput1.setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", infoInstance.headArmorOffset[1] * 16F));
+                numberInput1.setResponder(responder).setEnterResponder(responder);
+                numberInput1.setWidth(50);
+                numberInput1.constraints().left(numberInput, Constraint.Property.Type.RIGHT, 5);
+                elements.add(numberInput1);
 
-            numberInput2 = new ElementNumberInput(this, true);
-            numberInput2.setTooltip(I18n.format("tabula.export.headInfo.headArmorOffset.tooltip")).setId("headArmorOffset2");
-            numberInput2.setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", infoInstance.headArmorOffset[2] * 16F));
-            numberInput2.setResponder(responder).setEnterResponder(responder);
-            numberInput2.setWidth(50);
-            numberInput2.constraints().left(numberInput1, Constraint.Property.Type.RIGHT, 5);
-            elements.add(numberInput2);
-            last = text;
+                numberInput2 = new ElementNumberInput(this, true);
+                numberInput2.setTooltip(I18n.format("tabula.export.headInfo.headArmorOffset.tooltip")).setId("headArmorOffset2");
+                numberInput2.setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", infoInstance.headArmorOffset[2] * 16F));
+                numberInput2.setResponder(responder).setEnterResponder(responder);
+                numberInput2.setWidth(50);
+                numberInput2.constraints().left(numberInput1, Constraint.Property.Type.RIGHT, 5);
+                elements.add(numberInput2);
+                last = text;
 
-            text = new ElementTextWrapper(this);
-            text.setNoWrap().setText(I18n.format("tabula.export.headInfo.headArmorScale"));
-            text.constraints().left(last, Constraint.Property.Type.LEFT, 0).top(last, Constraint.Property.Type.BOTTOM, spacing);
-            elements.add(text);
+                text = new ElementTextWrapper(this);
+                text.setNoWrap().setText(I18n.format("tabula.export.headInfo.headArmorScale"));
+                text.constraints().left(last, Constraint.Property.Type.LEFT, 0).top(last, Constraint.Property.Type.BOTTOM, spacing);
+                elements.add(text);
 
-            numberInput = new ElementNumberInput(this, true);
-            numberInput.setTooltip(I18n.format("tabula.export.headInfo.headArmorScale.tooltip")).setId("headArmorScale");
-            numberInput.setMin(0).setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", infoInstance.headArmorScale));
-            numberInput.setResponder(responder).setEnterResponder(responder);
-            numberInput.setWidth(50);
-            numberInput.constraints().left(text, Constraint.Property.Type.RIGHT, 5).top(text, Constraint.Property.Type.TOP, 2);
-            elements.add(numberInput);
-            last = text;
-
+                numberInput = new ElementNumberInput(this, true);
+                numberInput.setTooltip(I18n.format("tabula.export.headInfo.headArmorScale.tooltip")).setId("headArmorScale");
+                numberInput.setMin(0).setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", infoInstance.headArmorScale));
+                numberInput.setResponder(responder).setEnterResponder(responder);
+                numberInput.setWidth(50);
+                numberInput.constraints().left(text, Constraint.Property.Type.RIGHT, 5).top(text, Constraint.Property.Type.TOP, 2);
+                elements.add(numberInput);
+                last = text;
+            }
 
             ElementButton<?> button = new ElementButton<>(this, "gui.cancel", elementClickable ->
             {
                 getWorkspace().removeWindow(parent);
+
+                if(parentHeadInstance != null)
+                {
+                    WindowExportHeadInfo.open(getWorkspace(), project, parentHeadInstance, false);
+                }
             });
             button.setSize(60, 20);
             button.setConstraint(new Constraint(button).bottom(this, Constraint.Property.Type.BOTTOM, 10).right(this, Constraint.Property.Type.RIGHT, 10));
@@ -450,7 +531,23 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
             ElementButton<?> button1 = new ElementButton<>(this, "gui.ok", btn -> {
                 getWorkspace().removeWindow(parent);
 
-                export(project);
+                if(parentHeadInstance != null)
+                {
+                    ArrayList<HeadInfo> additionalHeadList = new ArrayList<>();
+                    if(parentHeadInstance.additionalHeads != null)
+                    {
+                        Collections.addAll(additionalHeadList, parentHeadInstance.additionalHeads);
+                    }
+                    additionalHeadList.add(infoInstance);
+
+                    parentHeadInstance.additionalHeads = additionalHeadList.toArray(new HeadInfo[0]);
+
+                    WindowExportHeadInfo.open(getWorkspace(), project, parentHeadInstance, false);
+                }
+                else
+                {
+                    export(project);
+                }
             });
             button1.setSize(60, 20);
             button1.setConstraint(new Constraint(button1).right(button, Constraint.Property.Type.LEFT, 10));
@@ -516,10 +613,19 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
 
         public void updateHeadInfo()
         {
-            infoInstance.forClass = ((ElementTextField)getById("forClass")).getText();
+            if(parentHeadInstance == null)
+            {
+                infoInstance.forClass = ((ElementTextField)getById("forClass")).getText();
+                infoInstance.isBoss = ((ElementToggle)getById("isBoss")).toggleState;
+                infoInstance.affectedByInvisibility = ((ElementToggle)getById("affectedByInvisibility")).toggleState;
+
+                infoInstance.headArmorOffset[0] = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("headArmorOffset0")).getDouble() / 16D));
+                infoInstance.headArmorOffset[1] = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("headArmorOffset1")).getDouble() / 16D));
+                infoInstance.headArmorOffset[2] = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("headArmorOffset2")).getDouble() / 16D));
+                infoInstance.headArmorScale = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("headArmorScale")).getDouble()));
+            }
+
             infoInstance.modelFieldName = ((ElementTextField)getById("modelFieldName")).getText();
-            infoInstance.isBoss = ((ElementToggle)getById("isBoss")).toggleState;
-            infoInstance.affectedByInvisibility = ((ElementToggle)getById("affectedByInvisibility")).toggleState;
             infoInstance.noFaceInfo = ((ElementToggle)getById("noFaceInfo")).toggleState;
             infoInstance.eyeOffset[0] = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("eyeOffset0")).getDouble() / 16D));
             infoInstance.eyeOffset[1] = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("eyeOffset1")).getDouble() / 16D));
@@ -542,13 +648,8 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
             infoInstance.headTopCenter[1] = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("headTopCenter1")).getDouble() / 16D));
             infoInstance.headTopCenter[2] = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("headTopCenter2")).getDouble() / 16D));
             infoInstance.headScale = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("headScale")).getDouble()));
-            infoInstance.headCount = ((ElementNumberInput)getById("headCount")).getInt();
-            infoInstance.hatTiltPitch = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("hatTiltPitch")).getDouble() / 16D));
-            infoInstance.hatTiltYaw = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("hatTiltYaw")).getDouble() / 16D));
-            infoInstance.headArmorOffset[0] = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("headArmorOffset0")).getDouble() / 16D));
-            infoInstance.headArmorOffset[1] = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("headArmorOffset1")).getDouble() / 16D));
-            infoInstance.headArmorOffset[2] = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("headArmorOffset2")).getDouble() / 16D));
-            infoInstance.headArmorScale = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("headArmorScale")).getDouble()));
+            infoInstance.hatTiltPitch = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("hatTiltPitch")).getDouble()));
+            infoInstance.hatTiltYaw = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("hatTiltYaw")).getDouble()));
         }
 
         public void export(Project project)
