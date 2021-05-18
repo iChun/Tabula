@@ -205,6 +205,7 @@
 
   "tabula.export.headInfo.selectPart": "Select a part first!",
   "tabula.export.headInfo.customClassWarning": "The Head Info you just loaded has custom class Head Info defined.\n\nWe've taken what we can into a generic Head Info.\n\nIf you need the info the custom class provides, you may have to re-add by hand.",
+  "tabula.export.headInfo.delegateWarning": "The Head Info you just loaded uses a delegate system.\n\nThis will need to be edited by hand.",
   "tabula.export.headInfo.preview": "Preview",
   "tabula.export.headInfo.preview.tooltip": "Attempts to render a preview on the Head part that you have selected.\n\nTry rotating the model a little bit to ensure it's accurate.",
 

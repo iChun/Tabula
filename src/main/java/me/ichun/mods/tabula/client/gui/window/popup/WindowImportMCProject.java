@@ -709,7 +709,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
 
                 MODELS.forEach(modelInfo -> {
                     String search = ((ElementTextField)getWorkspace().getById("search")).getText();
-                    String modelName = modelInfo.model.getClass().getSimpleName() + " - " + modelInfo.source.getClass().getSimpleName();
+                    String modelName = modelInfo.model.getClass().getSimpleName() + " - " + modelInfo.source.getClass().getSimpleName() + (modelInfo.origin != null ? " - " + modelInfo.origin : "");
                     if(search.isEmpty() || modelName.toLowerCase().contains(search.toLowerCase()))
                     {
                         list.addItem(modelInfo).setDefaultAppearance().setDoubleClickHandler(item -> {

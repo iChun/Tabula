@@ -103,9 +103,9 @@ public class PreviewRenderHandler
                 float[] joint = helper.getHeadJointOffset(living, stack, partialTicks, -1);
                 stack.translate(-joint[0], -joint[1], -joint[2]);
 
-                stack.rotate(Vector3f.ZP.rotationDegrees(helper.getHeadRoll(living, stack, partialTicks, i, -1)));
-                stack.rotate(Vector3f.YP.rotationDegrees(helper.getHeadYaw(living, stack, partialTicks, i, -1)));
-                stack.rotate(Vector3f.XP.rotationDegrees(helper.getHeadPitch(living, stack, partialTicks, i, -1)));
+                stack.rotate(Vector3f.ZP.rotationDegrees(helper.getHeadRoll(living, stack, partialTicks, -1, i)));
+                stack.rotate(Vector3f.YP.rotationDegrees(helper.getHeadYaw(living, stack, partialTicks, -1, i)));
+                stack.rotate(Vector3f.XP.rotationDegrees(helper.getHeadPitch(living, stack, partialTicks, -1, i)));
 
                 helper.postHeadTranslation(living, stack, partialTicks);
 
@@ -122,10 +122,10 @@ public class PreviewRenderHandler
 
                 int overlay = OverlayTexture.NO_OVERLAY;
 
-                float[] irisColours = helper.getIrisColours(living, stack, partialTicks, i);
+                float[] irisColours = helper.getCorneaColours(living, stack, partialTicks, i);
                 MODEL_GOOGLY_EYE.renderCornea(stack, buffer, packedLightIn, overlay, irisColours[0], irisColours[1], irisColours[2], 1F);
 
-                float[] pupilColours = helper.getPupilColours(living, stack, partialTicks, i);
+                float[] pupilColours = helper.getIrisColours(living, stack, partialTicks, i);
 
                 float pupilScale = 1F;
                 stack.push();
@@ -170,9 +170,9 @@ public class PreviewRenderHandler
                 float[] joint = helper.getHeadJointOffset(living, stack, partialTicks, i);
                 stack.translate(-joint[0], -joint[1], -joint[2]); //to fight Z-fighting
 
-                stack.rotate(Vector3f.ZP.rotationDegrees(helper.getHeadRoll(living, stack, partialTicks, -1, i)));
-                stack.rotate(Vector3f.YP.rotationDegrees(helper.getHeadYaw(living, stack, partialTicks, -1, i)));
-                stack.rotate(Vector3f.XP.rotationDegrees(helper.getHeadPitch(living, stack, partialTicks, -1, i)));
+                stack.rotate(Vector3f.ZP.rotationDegrees(helper.getHeadRoll(living, stack, partialTicks, i, -1)));
+                stack.rotate(Vector3f.YP.rotationDegrees(helper.getHeadYaw(living, stack, partialTicks, i, -1)));
+                stack.rotate(Vector3f.XP.rotationDegrees(helper.getHeadPitch(living, stack, partialTicks, i, -1)));
 
                 helper.postHeadTranslation(living, stack, partialTicks);
 

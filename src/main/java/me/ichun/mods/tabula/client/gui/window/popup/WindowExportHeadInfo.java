@@ -1,6 +1,7 @@
 package me.ichun.mods.tabula.client.gui.window.popup;
 
 import me.ichun.mods.ichunutil.api.common.head.HeadInfo;
+import me.ichun.mods.ichunutil.api.common.head.HeadInfoDelegate;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
 import me.ichun.mods.ichunutil.client.gui.bns.window.WindowPopup;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
@@ -92,7 +93,12 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
                             if(info != null)
                             {
                                 HeadInfo<?> clone = HeadHandler.GSON.fromJson(HeadHandler.GSON.toJson(info), HeadInfo.class);
-                                if(clone.customClass != null)
+                                if(info instanceof HeadInfoDelegate)
+                                {
+                                    WindowPopup.popup(parent.parent, 0.6D, 0.6D, w -> {
+                                    }, I18n.format("tabula.export.headInfo.delegateWarning"));
+                                }
+                                else if(clone.customClass != null)
                                 {
                                     clone.customClass = null;
                                     WindowPopup.popup(parent.parent, 0.6D, 0.6D, w -> {
@@ -235,7 +241,7 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
 
             numberInput = new ElementNumberInput(this, false);
             numberInput.setTooltip(I18n.format("tabula.export.headInfo.irisColour.tooltip")).setId("irisColour0");
-            numberInput.setMin(0).setMax(255).setMaxDec(0).setDefaultText(Integer.toString((int)Math.floor(infoInstance.irisColour[0] * 255F)));
+            numberInput.setMin(0).setMax(255).setMaxDec(0).setDefaultText(Integer.toString((int)Math.floor(infoInstance.corneaColour[0] * 255F)));
             numberInput.setResponder(responder).setEnterResponder(responder);
             numberInput.setWidth(50);
             numberInput.constraints().left(text, Constraint.Property.Type.RIGHT, 5).top(text, Constraint.Property.Type.TOP, 2);
@@ -243,7 +249,7 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
 
             numberInput1 = new ElementNumberInput(this, false);
             numberInput1.setTooltip(I18n.format("tabula.export.headInfo.irisColour.tooltip")).setId("irisColour1");
-            numberInput1.setMin(0).setMax(255).setMaxDec(0).setDefaultText(Integer.toString((int)Math.floor(infoInstance.irisColour[1] * 255F)));
+            numberInput1.setMin(0).setMax(255).setMaxDec(0).setDefaultText(Integer.toString((int)Math.floor(infoInstance.corneaColour[1] * 255F)));
             numberInput1.setResponder(responder).setEnterResponder(responder);
             numberInput1.setWidth(50);
             numberInput1.constraints().left(numberInput, Constraint.Property.Type.RIGHT, 5);
@@ -251,7 +257,7 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
 
             numberInput2 = new ElementNumberInput(this, false);
             numberInput2.setTooltip(I18n.format("tabula.export.headInfo.irisColour.tooltip")).setId("irisColour2");
-            numberInput2.setMin(0).setMax(255).setMaxDec(0).setDefaultText(Integer.toString((int)Math.floor(infoInstance.irisColour[2] * 255F)));
+            numberInput2.setMin(0).setMax(255).setMaxDec(0).setDefaultText(Integer.toString((int)Math.floor(infoInstance.corneaColour[2] * 255F)));
             numberInput2.setResponder(responder).setEnterResponder(responder);
             numberInput2.setWidth(50);
             numberInput2.constraints().left(numberInput1, Constraint.Property.Type.RIGHT, 5);
@@ -265,7 +271,7 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
 
             numberInput = new ElementNumberInput(this, false);
             numberInput.setTooltip(I18n.format("tabula.export.headInfo.pupilColour.tooltip")).setId("pupilColour0");
-            numberInput.setMin(0).setMax(255).setMaxDec(0).setDefaultText(Integer.toString((int)Math.floor(infoInstance.pupilColour[0] * 255F)));
+            numberInput.setMin(0).setMax(255).setMaxDec(0).setDefaultText(Integer.toString((int)Math.floor(infoInstance.irisColour[0] * 255F)));
             numberInput.setResponder(responder).setEnterResponder(responder);
             numberInput.setWidth(50);
             numberInput.constraints().left(text, Constraint.Property.Type.RIGHT, 5).top(text, Constraint.Property.Type.TOP, 2);
@@ -273,7 +279,7 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
 
             numberInput1 = new ElementNumberInput(this, false);
             numberInput1.setTooltip(I18n.format("tabula.export.headInfo.pupilColour.tooltip")).setId("pupilColour1");
-            numberInput1.setMin(0).setMax(255).setMaxDec(0).setDefaultText(Integer.toString((int)Math.floor(infoInstance.pupilColour[1] * 255F)));
+            numberInput1.setMin(0).setMax(255).setMaxDec(0).setDefaultText(Integer.toString((int)Math.floor(infoInstance.irisColour[1] * 255F)));
             numberInput1.setResponder(responder).setEnterResponder(responder);
             numberInput1.setWidth(50);
             numberInput1.constraints().left(numberInput, Constraint.Property.Type.RIGHT, 5);
@@ -281,7 +287,7 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
 
             numberInput2 = new ElementNumberInput(this, false);
             numberInput2.setTooltip(I18n.format("tabula.export.headInfo.pupilColour.tooltip")).setId("pupilColour2");
-            numberInput2.setMin(0).setMax(255).setMaxDec(0).setDefaultText(Integer.toString((int)Math.floor(infoInstance.pupilColour[2] * 255F)));
+            numberInput2.setMin(0).setMax(255).setMaxDec(0).setDefaultText(Integer.toString((int)Math.floor(infoInstance.irisColour[2] * 255F)));
             numberInput2.setResponder(responder).setEnterResponder(responder);
             numberInput2.setWidth(50);
             numberInput2.constraints().left(numberInput1, Constraint.Property.Type.RIGHT, 5);
@@ -630,12 +636,12 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
             infoInstance.eyeOffset[0] = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("eyeOffset0")).getDouble() / 16D));
             infoInstance.eyeOffset[1] = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("eyeOffset1")).getDouble() / 16D));
             infoInstance.eyeOffset[2] = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("eyeOffset2")).getDouble() / 16D));
-            infoInstance.irisColour[0] = ((ElementNumberInput)getById("irisColour0")).getInt() / 255F;
-            infoInstance.irisColour[1] = ((ElementNumberInput)getById("irisColour1")).getInt() / 255F;
-            infoInstance.irisColour[2] = ((ElementNumberInput)getById("irisColour2")).getInt() / 255F;
-            infoInstance.pupilColour[0] = ((ElementNumberInput)getById("pupilColour0")).getInt() / 255F;
-            infoInstance.pupilColour[1] = ((ElementNumberInput)getById("pupilColour1")).getInt() / 255F;
-            infoInstance.pupilColour[2] = ((ElementNumberInput)getById("pupilColour2")).getInt() / 255F;
+            infoInstance.corneaColour[0] = ((ElementNumberInput)getById("irisColour0")).getInt() / 255F;
+            infoInstance.corneaColour[1] = ((ElementNumberInput)getById("irisColour1")).getInt() / 255F;
+            infoInstance.corneaColour[2] = ((ElementNumberInput)getById("irisColour2")).getInt() / 255F;
+            infoInstance.irisColour[0] = ((ElementNumberInput)getById("pupilColour0")).getInt() / 255F;
+            infoInstance.irisColour[1] = ((ElementNumberInput)getById("pupilColour1")).getInt() / 255F;
+            infoInstance.irisColour[2] = ((ElementNumberInput)getById("pupilColour2")).getInt() / 255F;
             infoInstance.halfInterpupillaryDistance = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("halfInterpupillaryDistance")).getDouble() / 16D));
             infoInstance.eyeScale = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("eyeScale")).getDouble()));
             infoInstance.sideEyed = ((ElementToggle)getById("sideEyed")).toggleState;
