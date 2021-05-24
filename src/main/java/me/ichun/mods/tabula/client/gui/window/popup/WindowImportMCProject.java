@@ -677,6 +677,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
             ElementTextField textField = new ElementTextField(this);
             textField.setId("search");
             textField.setResponder(s -> {
+                this.list.setListener(null);
                 this.list.items.clear();
                 this.populatedList = false;
             }).setHeight(14);
@@ -707,8 +708,9 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
             {
                 populatedList = true;
 
+                //List is cleared when populated list is set to false;
+                String search = ((ElementTextField)getWorkspace().getById("search")).getText();
                 MODELS.forEach(modelInfo -> {
-                    String search = ((ElementTextField)getWorkspace().getById("search")).getText();
                     String modelName = modelInfo.model.getClass().getSimpleName() + " - " + modelInfo.source.getClass().getSimpleName() + (modelInfo.origin != null ? " - " + modelInfo.origin : "");
                     if(search.isEmpty() || modelName.toLowerCase().contains(search.toLowerCase()))
                     {

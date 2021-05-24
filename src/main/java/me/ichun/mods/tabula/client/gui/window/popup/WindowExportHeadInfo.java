@@ -35,7 +35,7 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
     public static WindowExportHeadInfo open(WorkspaceTabula parent, Project project, @Nullable HeadInfo<?> headInstance, boolean instanceIsParent)
     {
         WindowExportHeadInfo windowExportHeadInfo = new WindowExportHeadInfo(parent, project, headInstance, instanceIsParent);
-        windowExportHeadInfo.size(294, 400);
+        windowExportHeadInfo.size(294, 417);
         windowExportHeadInfo.pos(parent.getWidth() / 2 + 60, 40);
         parent.addWindow(windowExportHeadInfo);
         parent.setListener(windowExportHeadInfo);
@@ -328,18 +328,45 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
             elements.add(toggle);
             last = text;
 
+            text = new ElementTextWrapper(this);
+            text.setNoWrap().setText(I18n.format("tabula.export.headInfo.eyeYRotation"));
+            text.constraints().left(last, Constraint.Property.Type.LEFT, 0).top(last, Constraint.Property.Type.BOTTOM, spacing);
+            elements.add(text);
+
+            numberInput = new ElementNumberInput(this, true);
+            numberInput.setTooltip(I18n.format("tabula.export.headInfo.eyeYRotation.tooltip")).setId("eyeYRotation");
+            numberInput.setMin(-180).setMax(180).setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", infoInstance.eyeYRotation));
+            numberInput.setResponder(responder).setEnterResponder(responder);
+            numberInput.setWidth(50);
+            numberInput.constraints().left(text, Constraint.Property.Type.RIGHT, 5).top(text, Constraint.Property.Type.TOP, 2);
+            elements.add(numberInput);
+
             toggle = new ElementToggle<>(this, "tabula.export.headInfo.sideEyed", btn -> { updateHeadInfo(); });
             toggle.setSize(80, 14).setTooltip(I18n.format("tabula.export.headInfo.sideEyed.tooltip")).setId("sideEyed");
             toggle.setToggled(infoInstance.sideEyed);
-            toggle.constraints().left(last, Constraint.Property.Type.LEFT, 0).top(last, Constraint.Property.Type.BOTTOM, spacing);
+            toggle.constraints().left(numberInput, Constraint.Property.Type.RIGHT, 5).top(last, Constraint.Property.Type.BOTTOM, spacing);
             elements.add(toggle);
+            last = text;
+
+            text = new ElementTextWrapper(this);
+            text.setNoWrap().setText(I18n.format("tabula.export.headInfo.eyeXRotation"));
+            text.constraints().left(last, Constraint.Property.Type.LEFT, 0).top(last, Constraint.Property.Type.BOTTOM, spacing);
+            elements.add(text);
+
+            numberInput = new ElementNumberInput(this, true);
+            numberInput.setTooltip(I18n.format("tabula.export.headInfo.eyeXRotation.tooltip")).setId("eyeXRotation");
+            numberInput.setMin(-180).setMax(180).setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", infoInstance.eyeXRotation));
+            numberInput.setResponder(responder).setEnterResponder(responder);
+            numberInput.setWidth(50);
+            numberInput.constraints().left(text, Constraint.Property.Type.RIGHT, 5).top(text, Constraint.Property.Type.TOP, 2);
+            elements.add(numberInput);
 
             toggle1 = new ElementToggle<>(this, "tabula.export.headInfo.topEyed", btn -> { updateHeadInfo(); });
             toggle1.setSize(80, 14).setTooltip(I18n.format("tabula.export.headInfo.topEyed.tooltip")).setId("topEyed");
             toggle1.setToggled(infoInstance.topEyed);
-            toggle1.constraints().left(toggle, Constraint.Property.Type.RIGHT, 8).top(last, Constraint.Property.Type.BOTTOM, spacing);
+            toggle1.constraints().left(numberInput, Constraint.Property.Type.RIGHT, 5).top(last, Constraint.Property.Type.BOTTOM, spacing);
             elements.add(toggle1);
-            last = toggle;
+            last = text;
 
             text = new ElementTextWrapper(this);
             text.setNoWrap().setText(I18n.format("tabula.export.headInfo.eyeCount"));
@@ -421,11 +448,21 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
                 {
                     for(int i = 0; i < infoInstance.additionalHeads.length; i++)
                     {
-                        int finalI = i;
+                        HeadInfo additionalHead = infoInstance.additionalHeads[i];
                         headBtn = new ElementButton<>(this, Integer.toString(i + 1), btn -> {
-                            List<HeadInfo> headInfos = Arrays.asList(infoInstance.additionalHeads);
-                            headInfos.remove(infoInstance.additionalHeads[finalI]);
-                            infoInstance.additionalHeads = headInfos.toArray(new HeadInfo[0]);
+                            if(infoInstance.additionalHeads != null)
+                            {
+                                ArrayList<HeadInfo> headInfos = new ArrayList<>(Arrays.asList(infoInstance.additionalHeads));
+                                headInfos.remove(additionalHead);
+                                if(headInfos.isEmpty())
+                                {
+                                    infoInstance.additionalHeads = null;
+                                }
+                                else
+                                {
+                                    infoInstance.additionalHeads = headInfos.toArray(new HeadInfo[0]);
+                                }
+                            }
 
                             getWorkspace().removeWindow(parent);
 
@@ -459,7 +496,7 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
 
             numberInput = new ElementNumberInput(this, true);
             numberInput.setTooltip(I18n.format("tabula.export.headInfo.hatTiltPitch.tooltip")).setId("hatTiltPitch");
-            numberInput.setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", infoInstance.hatTiltPitch));
+            numberInput.setMin(-180).setMax(180).setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", infoInstance.hatTiltPitch));
             numberInput.setResponder(responder).setEnterResponder(responder);
             numberInput.setWidth(50);
             numberInput.constraints().left(text, Constraint.Property.Type.RIGHT, 5).top(text, Constraint.Property.Type.TOP, 2);
@@ -467,7 +504,7 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
 
             numberInput1 = new ElementNumberInput(this, true);
             numberInput1.setTooltip(I18n.format("tabula.export.headInfo.hatTiltYaw.tooltip")).setId("hatTiltYaw");
-            numberInput1.setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", infoInstance.hatTiltYaw));
+            numberInput1.setMin(-180).setMax(180).setMaxDec(Tabula.configClient.guiMaxDecimals).setDefaultText(String.format(Locale.ENGLISH, "%." + Tabula.configClient.guiMaxDecimals + "f", infoInstance.hatTiltYaw));
             numberInput1.setResponder(responder).setEnterResponder(responder);
             numberInput1.setWidth(50);
             numberInput1.constraints().left(numberInput, Constraint.Property.Type.RIGHT, 5);
@@ -644,6 +681,8 @@ public class WindowExportHeadInfo extends Window<WorkspaceTabula>
             infoInstance.irisColour[2] = ((ElementNumberInput)getById("pupilColour2")).getInt() / 255F;
             infoInstance.halfInterpupillaryDistance = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("halfInterpupillaryDistance")).getDouble() / 16D));
             infoInstance.eyeScale = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("eyeScale")).getDouble()));
+            infoInstance.eyeYRotation = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("eyeYRotation")).getDouble()));
+            infoInstance.eyeXRotation = Float.parseFloat(String.format(Locale.ENGLISH, "%.7f", ((ElementNumberInput)getById("eyeXRotation")).getDouble()));
             infoInstance.sideEyed = ((ElementToggle)getById("sideEyed")).toggleState;
             infoInstance.topEyed = ((ElementToggle)getById("topEyed")).toggleState;
             infoInstance.eyeCount = ((ElementNumberInput)getById("eyeCount")).getInt();
