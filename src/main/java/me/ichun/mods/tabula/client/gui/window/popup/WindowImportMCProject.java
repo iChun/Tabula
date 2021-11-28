@@ -742,6 +742,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
             {
                 project.notes.add("suspected-origin-entity:" + model.originEntity.getName());
             }
+            project.notes.add("model-class:" + model.model.getClass().getName());
             if(texture && model.texture != null)
             {
                 try

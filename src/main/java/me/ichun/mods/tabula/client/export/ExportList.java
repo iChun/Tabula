@@ -10,6 +10,7 @@ public final class ExportList
 {
     public static final TreeMap<String, Exporter> EXPORTERS = new TreeMap<String, Exporter>(Comparator.naturalOrder()) {{
         put("blockJson", new ExportBlockJson());
+        put("handInfo", new ExportHandInfo());
         put("headInfo", new ExportHeadInfo());
         put("javaClass", new ExportJava());
         put("projectTexture", new ExportProjectTexture());

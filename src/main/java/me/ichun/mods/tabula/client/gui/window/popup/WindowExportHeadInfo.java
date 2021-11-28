@@ -18,7 +18,10 @@ import net.minecraft.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 public class WindowExportHeadInfo extends Window<WorkspaceTabula>

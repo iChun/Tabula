@@ -213,6 +213,12 @@
   "tabula.export.headInfo.preview": "Preview",
   "tabula.export.headInfo.preview.tooltip": "Attempts to render a preview on the Head part that you have selected.\n\nTry rotating the model a little bit to ensure it's accurate.",
 
+  "tabula.export.handInfo.name": "Hand Info JSON",
+  "tabula.export.handInfo.pick.leftParts": "Pick the parts for the LEFT hand.",
+  "tabula.export.handInfo.pick.rightParts": "Pick the parts for the RIGHT hand.",
+  "tabula.export.handInfo.set.leftParts": "Align the parts with the LEFT arm. The bottom of the overall part should align with the bottom of the arm.",
+  "tabula.export.handInfo.set.rightParts": "Align the parts with the RIGHT arm. The bottom of the overall part should align with the bottom of the arm.",
+
   "topdock.new": "New Project",
   "topdock.edit": "Edit Project",
   "topdock.open": "Open Project",
