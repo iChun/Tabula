@@ -18,6 +18,10 @@ public class ConfigClient extends ConfigBase
 
     public boolean animateImports = true;
 
+    public boolean addEntityTags = true;
+
+    public boolean readEmptyNbt = true;
+
     @Prop(min = 0, max = 10)
     public int guiMaxDecimals = 2;
 

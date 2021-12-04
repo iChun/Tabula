@@ -16,6 +16,7 @@ import me.ichun.mods.tabula.client.gui.window.popup.*;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
 import me.ichun.mods.tabula.common.Tabula;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
@@ -372,6 +373,10 @@ public class WindowToolbar extends Window<WorkspaceTabula>
 
         public void openImportMCProject()
         {
+            if(Screen.hasShiftDown())
+            {
+                WindowImportMCProject.resetHasInit();
+            }
             Window<?> window = new WindowImportMCProject(getWorkspace());
             getWorkspace().openWindowInCenter(window, 0.4D, 0.8D);
             window.init();

@@ -3,6 +3,7 @@ package me.ichun.mods.tabula.client.gui.window.popup;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import me.ichun.mods.ichunutil.client.gui.bns.Workspace;
 import me.ichun.mods.ichunutil.client.gui.bns.window.Window;
+import me.ichun.mods.ichunutil.client.gui.bns.window.WindowPopup;
 import me.ichun.mods.ichunutil.client.gui.bns.window.constraint.Constraint;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.View;
 import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.*;
@@ -34,10 +35,13 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.crafting.RecipeManager;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.profiler.EmptyProfiler;
 import net.minecraft.resources.IResource;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.tags.ITagCollectionSupplier;
+import net.minecraft.tags.TagCollectionManager;
+import net.minecraft.tags.TagRegistryManager;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -65,6 +69,7 @@ import java.util.Map;
 public class WindowImportMCProject extends Window<WorkspaceTabula>
 {
     public static final ArrayList<ModelInfo> MODELS = new ArrayList<>();
+
     public static class ModelInfo
             implements Comparable<ModelInfo>
     {
@@ -127,6 +132,11 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
     }
 
     private static boolean hasInit;
+    public static void resetHasInit()
+    {
+        hasInit = false;
+    }
+
     public static void initModels()
     {
         if(!hasInit)
@@ -236,7 +246,7 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                 {
 
                 }
-            }, World.OVERWORLD, DimensionType.OVERWORLD_TYPE, () -> EmptyProfiler.INSTANCE, false, false, 0L) {
+            }, World.OVERWORLD, DimensionType.OVERWORLD_TYPE, () -> EmptyProfiler.INSTANCE, true, false, 0L) {
                 @Override
                 public DynamicRegistries func_241828_r()
                 {
@@ -309,7 +319,25 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                 }
             };
 
-            Map<EntityType<?>, EntityRenderer<?>> renderers = Minecraft.getInstance().getRenderManager().renderers;
+            Minecraft mc = Minecraft.getInstance();
+
+            //More hackery: Should fix errors with Tags eg in DungeonMobs
+            if(Tabula.configClient.addEntityTags && mc.world == null)
+            {
+                ITagCollectionSupplier oriManager = TagCollectionManager.getManager();
+                ITagCollectionSupplier itagcollectionsupplier = ITagCollectionSupplier.getTagCollectionSupplier(oriManager.getBlockTags(), oriManager.getItemTags(), oriManager.getFluidTags(), oriManager.getEntityTypeTags());
+                itagcollectionsupplier = ITagCollectionSupplier.reinjectOptionalTags(itagcollectionsupplier);
+
+                TagCollectionManager.setManager(itagcollectionsupplier);
+                net.minecraftforge.common.ForgeTagHandler.reinjectOptionalTagsCustomTypes();
+
+                TagRegistryManager.fetchTags(itagcollectionsupplier);
+
+                TagCollectionManager.setManager(oriManager);
+            }
+
+            Map<EntityType<?>, EntityRenderer<?>> renderers = mc.getRenderManager().renderers;
+            boolean[] errored = new boolean[] { false };
             renderers.forEach((entityType, entityRenderer) -> {
                 try
                 {
@@ -318,7 +346,24 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                     {
                         instance = entityType.create(worldInstance);
                     }
-                    catch(Throwable ignored){}
+                    catch(Throwable e)
+                    {
+                        errored[0] = true;
+                        e.printStackTrace();
+                    }
+
+                    if(Tabula.configClient.readEmptyNbt && instance != null)
+                    {
+                        try
+                        {
+                            instance.read(new CompoundNBT());
+                        }
+                        catch(Throwable e)
+                        {
+                            errored[0] = true;
+                            e.printStackTrace();
+                        }
+                    }
 
                     ResourceLocation texLoc = null;
                     if(entityRenderer instanceof HorseRenderer)
@@ -333,11 +378,12 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                             {
                                 texLoc = RenderHelper.getEntityTexture(entityRenderer, instance);
                             }
-                            catch(Throwable ignored)
+                            catch(Throwable e)
                             {
+                                errored[0] = true;
+                                e.printStackTrace();
                             }
                         }
-
 
                         if(texLoc == null)
                         {
@@ -360,8 +406,10 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                                     clz = clz.getSuperclass();
                                 }
                             }
-                            catch(Throwable ignored)
+                            catch(Throwable e)
                             {
+                                errored[0] = true;
+                                e.printStackTrace();
                             }
                         }
                     }
@@ -425,7 +473,11 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                             clz = clz.getSuperclass();
                         }
                     }
-                    catch(Throwable ignored){}
+                    catch(Throwable e)
+                    {
+                        errored[0] = true;
+                        e.printStackTrace();
+                    }
 
                     if(entityRenderer instanceof LivingRenderer)
                     {
@@ -453,7 +505,11 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                                     clz = clz.getSuperclass();
                                 }
                             }
-                            catch(Throwable ignored){}
+                            catch(Throwable e)
+                            {
+                                errored[0] = true;
+                                e.printStackTrace();
+                            }
 
                             //we have the texture. let's get all the models now.
                             try
@@ -473,7 +529,10 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                                             if(model != null)
                                             {
                                                 ModelInfo info = new ModelInfo(texLoc1, model, layer);
-                                                info.origin = texLoc1.getNamespace();
+                                                if(texLoc1 != null)
+                                                {
+                                                    info.origin = texLoc1.getNamespace();
+                                                }
                                                 if(!MODELS.contains(info))
                                                 {
                                                     MODELS.add(info);
@@ -485,11 +544,19 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                                     clz = clz.getSuperclass();
                                 }
                             }
-                            catch(Throwable ignored){}
+                            catch(Throwable e)
+                            {
+                                errored[0] = true;
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
-                catch(Throwable ignored){}
+                catch(Throwable e)
+                {
+                    errored[0] = true;
+                    e.printStackTrace();
+                }
             });
 
             Map<TileEntityType<?>, TileEntityRenderer<?>> tileRenderers = TileEntityRendererDispatcher.instance.renderers;
@@ -522,9 +589,10 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                             clz = clz.getSuperclass();
                         }
                     }
-                    catch(Throwable ignored)
+                    catch(Throwable e)
                     {
-                        ignored.printStackTrace();
+                        errored[0] = true;
+                        e.printStackTrace();
                     }
 
 
@@ -563,7 +631,11 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                             clz = clz.getSuperclass();
                         }
                     }
-                    catch(Throwable ignored){}
+                    catch(Throwable e)
+                    {
+                        errored[0] = true;
+                        e.printStackTrace();
+                    }
 
                     if(rendererIsModel)
                     {
@@ -575,7 +647,11 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                         }
                     }
                 }
-                catch(Throwable ignored){}
+                catch(Throwable e)
+                {
+                    errored[0] = true;
+                    e.printStackTrace();
+                }
             });
 
             ModelInfo playerInfo = new ModelInfo(new ResourceLocation("textures/entity/steve.png"), new PlayerModel<>(0F, false), Minecraft.getInstance().getRenderManager().skinMap.get("default"));
@@ -607,6 +683,11 @@ public class WindowImportMCProject extends Window<WorkspaceTabula>
                 strings.add(info.model.getClass().getSimpleName() + " - " + info.source.getClass().getSimpleName() + (info.origin != null ? " - " + info.origin : ""));
                 return strings;
             });
+
+            if(errored[0] && mc.currentScreen instanceof WorkspaceTabula)
+            {
+                WindowPopup.popup((WorkspaceTabula)mc.currentScreen, 0.5D, 180, null, I18n.format("window.importMC.errored"));
+            }
         }
     }
 

@@ -10,6 +10,7 @@ import me.ichun.mods.ichunutil.client.gui.bns.window.view.element.*;
 import me.ichun.mods.ichunutil.common.module.tabula.formats.ImportList;
 import me.ichun.mods.ichunutil.common.module.tabula.project.Project;
 import me.ichun.mods.tabula.client.export.ExportList;
+import me.ichun.mods.tabula.client.gui.IProjectInfo;
 import me.ichun.mods.tabula.client.gui.WorkspaceTabula;
 import me.ichun.mods.tabula.client.tabula.Mainframe;
 import me.ichun.mods.tabula.common.Tabula;
@@ -85,6 +86,23 @@ public class WindowExportHandInfo extends Window<WorkspaceTabula>
                 }
 
                 //Delete all the non-relevant parts
+                for(Project.Part part : leftParts)
+                {
+                    if(!(part.parent instanceof Project))
+                    {
+                        part.parent.disown(part);
+                        projectInfo.project.adopt(part);
+                    }
+                }
+                for(Project.Part part : rightParts)
+                {
+                    if(!(part.parent instanceof Project))
+                    {
+                        part.parent.disown(part);
+                        projectInfo.project.adopt(part);
+                    }
+                }
+
                 ArrayList<Project.Part> parts = new ArrayList<>(projectInfo.project.parts);
                 for(Project.Part part : parts)
                 {
@@ -97,7 +115,6 @@ public class WindowExportHandInfo extends Window<WorkspaceTabula>
                 for(Project.Part leftPart : leftParts)
                 {
                     leftPart.rotAX = 0F;
-                    parent.mainframe.updatePart(leftPart, true);
                 }
 
                 for(Project.Part rightPart : rightParts)
@@ -108,9 +125,15 @@ public class WindowExportHandInfo extends Window<WorkspaceTabula>
                     {
                         rightPart.showModel = false;
                     }
-
-                    parent.mainframe.updatePart(rightPart, true);
                 }
+
+                projectInfo.markProjectDirty();
+
+                if(parent.mainframe.origin != null && !parent.mainframe.sessionEnded)
+                {
+                    parent.mainframe.sendContent("", projectInfo.project.identifier, "", projectInfo.project, (byte)2);
+                }
+                parent.projectChanged(IProjectInfo.ChangeType.PARTS);
 
                 alignedLeft = new ArrayList<>(leftParts);
                 alignedRight = new ArrayList<>(rightParts);

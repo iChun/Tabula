@@ -916,6 +916,8 @@ public class Mainframe
                     }
                 }
             }
+
+            createState();
         }
 
         public void tick()
